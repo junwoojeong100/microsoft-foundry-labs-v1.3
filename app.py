@@ -27,7 +27,7 @@ try:
     selected = state.selected()
 except (WorkshopError, OSError, ValueError) as exc:
     st.error(str(exc))
-    st.info("docs/00-setup.md와 Lab 03~04를 먼저 완료하세요.")
+    st.info("보존된 축약 예제입니다. docs/compact-example.md의 별도 환경을 확인하세요.")
     st.stop()
 
 st.info(

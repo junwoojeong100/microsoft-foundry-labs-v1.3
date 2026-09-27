@@ -1,19 +1,26 @@
 {
   "version": "1.5",
-  "title": "Microsoft Foundry: 출장 도우미 하나로 배우는 7시간",
-  "total_minutes": 420,
-  "preparation_included": false,
-  "lunch_included": false,
-  "sessions": [
-    {"id": "01", "title": "Foundry 이해와 첫 성공", "minutes": 35, "file": "docs/01-foundry.md"},
-    {"id": "02", "title": "모델과 프롬프트", "minutes": 45, "file": "docs/02-models-prompts.md"},
-    {"id": "break-1", "title": "휴식", "minutes": 10},
-    {"id": "03", "title": "문서에 근거하는 에이전트", "minutes": 70, "file": "docs/03-knowledge.md"},
-    {"id": "04", "title": "정확하게 계산하는 도구", "minutes": 65, "file": "docs/04-tools.md"},
-    {"id": "break-2", "title": "휴식", "minutes": 10},
-    {"id": "05", "title": "평가하고 개선하기", "minutes": 65, "file": "docs/05-evaluation.md"},
-    {"id": "06", "title": "앱과 Foundry 운영 화면", "minutes": 55, "file": "docs/06-app-operations.md"},
-    {"id": "break-3", "title": "휴식", "minutes": 10},
-    {"id": "07", "title": "최종 시연과 정리", "minutes": 55, "file": "docs/07-capstone.md"}
+  "title": "Microsoft Foundry: 구독 Owner의 처음부터 끝까지 자가 실습",
+  "pacing": "self-paced",
+  "entry_requirements": ["Microsoft Entra ID account", "Azure subscription", "Active subscription Owner role"],
+  "canonical_runtime": "pinned-v1.2",
+  "canonical_dataset": "hanbit-ko",
+  "steps": [
+    {"id": "00", "title": "계정·도구·개인 실습 환경", "file": "docs/00-setup.md", "depends_on": []},
+    {"id": "01", "title": "Foundry와 첫 모델 응답", "file": "docs/01-foundry.md", "depends_on": ["00"]},
+    {"id": "02", "title": "모델·프롬프트·비교·Router", "file": "docs/02-models-prompts.md", "depends_on": ["01"]},
+    {"id": "03", "title": "Prompt Agent와 File Search", "file": "docs/03-knowledge.md", "depends_on": ["02"]},
+    {"id": "04", "title": "MAF·함수·MCP·Code Interpreter", "file": "docs/04-tools.md", "depends_on": ["03"]},
+    {"id": "05", "title": "워크플로와 승인·복구", "file": "docs/05-workflows.md", "depends_on": ["04"]},
+    {"id": "06", "title": "Search·Foundry IQ·Hybrid", "file": "docs/06-search-iq.md", "depends_on": ["05"]},
+    {"id": "07", "title": "업무 평가와 Foundry 평가", "file": "docs/07-evaluation.md", "depends_on": ["06"]},
+    {"id": "08", "title": "Hosted 로컬 실행과 Azure 배포", "file": "docs/08-hosted.md", "depends_on": ["07"]},
+    {"id": "09", "title": "Trace·Insights·운영", "file": "docs/09-operations.md", "depends_on": ["08"]},
+    {"id": "10", "title": "Toolbox·Tool Search·Skills", "file": "docs/10-toolbox-skills.md", "depends_on": ["09"]},
+    {"id": "11", "title": "Memory·A2A·Routines", "file": "docs/11-memory-a2a-routines.md", "depends_on": ["10"]},
+    {"id": "12", "title": "대화 평가·Optimizer·배포 품질", "file": "docs/12-improvement.md", "depends_on": ["11"]},
+    {"id": "13", "title": "안전·권한·네트워크·Control Plane", "file": "docs/13-governance.md", "depends_on": ["12"]},
+    {"id": "14", "title": "추가 권한 기능의 준비와 경계", "file": "docs/14-additional-permissions.md", "depends_on": ["13"], "conditional": true},
+    {"id": "15", "title": "최종 인수와 비용 자원 정리", "file": "docs/15-capstone-cleanup.md", "depends_on": ["13"]}
   ]
 }

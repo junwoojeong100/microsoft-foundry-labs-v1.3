@@ -14,6 +14,8 @@ HELPERS = {
     "prepare-hosted": "scripts/prepare_hosted_azd.py",
     "export-evaluation": "scripts/export_evaluation.py",
     "resilience": "examples/resilient/workshop.py",
+    "package-toolbox": "scripts/package_toolbox.py",
+    "verify-toolbox-response": "scripts/verify_toolbox_response.py",
 }
 
 
@@ -36,10 +38,24 @@ def command_arguments(arguments: list[str]) -> tuple[str, list[str], dict[str, s
             )
     if entrypoint == "scripts/workshop.py" and not args:
         args = ["--help"]
+    if entrypoint == HELPERS["resilience"]:
+        for key in (
+            "FOUNDRY_HOSTING_ENVIRONMENT",
+            "FOUNDRY_PROJECT_ENDPOINT",
+            "AZURE_AI_PROJECT_ENDPOINT",
+            "AZURE_AIPROJECT_ENDPOINT",
+            "APPLICATIONINSIGHTS_CONNECTION_STRING",
+            "OTEL_EXPORTER_OTLP_ENDPOINT",
+            "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT",
+            "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT",
+            "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT",
+        ):
+            environment.pop(key, None)
+        environment["OTEL_SDK_DISABLED"] = "true"
     return entrypoint, args, environment
 
 
-def main() -> int:
+def main(*, managed: bool = False) -> int:
     if not SOURCE.exists():
         print(
             "먼저 python scripts/prepare_v12.py --install을 실행하세요.",
@@ -59,7 +75,14 @@ def main() -> int:
         )
         return 1
     entrypoint, args, environment = command_arguments(sys.argv[1:])
-    print(f"v1.2 호환 실행 · 작업/결과 폴더: {SOURCE}", file=sys.stderr)
+    if managed:
+        from selfstudy import validate_runtime_environment
+
+        validate_runtime_environment(
+            environment,
+            explicit_model="--model-deployment" in sys.argv[1:],
+        )
+    print(f"v1.5 실습 · 고정 v1.2 런타임 · 작업/결과 폴더: {SOURCE}", file=sys.stderr)
     completed = subprocess.run(
         [str(python), entrypoint, *args], cwd=SOURCE, env=environment, check=False
     )

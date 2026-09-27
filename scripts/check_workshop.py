@@ -4,6 +4,7 @@ import argparse
 import ast
 import json
 import re
+import shlex
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -12,9 +13,6 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-
-from evaluation import load_cases  # noqa: E402
-from tools import RATES, estimate_trip_cost  # noqa: E402
 
 
 def headings(path: Path) -> set[str]:
@@ -33,27 +31,47 @@ def headings(path: Path) -> set[str]:
 def check(require_reference: bool) -> dict[str, object]:
     errors = []
     curriculum = json.loads((ROOT / "curriculum.json").read_text(encoding="utf-8"))
-    sessions = curriculum["sessions"]
-    if curriculum["version"] != "1.5" or curriculum["total_minutes"] != 420:
-        errors.append("Workshop version or duration is not v1.5 / 420.")
-    if sum(item["minutes"] for item in sessions) != 420:
-        errors.append("Session minutes do not sum to 420.")
-    labs = [item for item in sessions if "file" in item]
-    if len(labs) != 7 or sum(item["minutes"] for item in labs) != 390:
-        errors.append("Expected seven labs and 390 teaching minutes.")
+    labs = curriculum["steps"]
+    if curriculum["version"] != "1.5" or curriculum["pacing"] != "self-paced":
+        errors.append("Workshop must be v1.5 and self-paced.")
+    if "total_minutes" in curriculum or any("minutes" in item for item in labs):
+        errors.append("Self-study must not have a mandatory time budget.")
+    if len(labs) != 16 or [item["id"] for item in labs] != [
+        f"{number:02d}" for number in range(16)
+    ]:
+        errors.append("Expected the ordered 00-15 path.")
+    if (
+        curriculum["canonical_runtime"] != "pinned-v1.2"
+        or curriculum["canonical_dataset"] != "hanbit-ko"
+    ):
+        errors.append(
+            "The primary path must use one pinned runtime and Hanbit dataset."
+        )
+    seen = set()
+    introduction = (ROOT / "README.md").read_text(encoding="utf-8")
     for item in labs:
+        if not set(item["depends_on"]).issubset(seen):
+            errors.append(f"Dependency points forward or does not exist: {item['id']}")
+        seen.add(item["id"])
         path = ROOT / item["file"]
         if not path.exists():
             errors.append(f"Missing lab: {item['file']}")
             continue
         text = path.read_text(encoding="utf-8")
-        if f"**{item['minutes']}분" not in text:
-            errors.append(f"Duration badge differs: {item['file']}")
-        minutes = [
-            int(value) for value in re.findall(r"^\| (\d+)분 \|", text, re.MULTILINE)
-        ]
-        if sum(minutes) != item["minutes"]:
-            errors.append(f"Activity minutes differ: {item['file']} ({sum(minutes)})")
+        if "**완료 목표:**" not in text or (
+            "**시작 조건:**" not in text and item["id"] not in {"00", "14", "15"}
+        ):
+            errors.append(f"Missing explicit outcome or prerequisites: {item['file']}")
+        if item["file"] not in introduction:
+            errors.append(f"Lab is not reachable from README: {item['file']}")
+        if (
+            "7시간" in text
+            or "다온테크" in text
+            or re.search(r"담당자에게.{0,30}(?:받|요청)", text)
+        ):
+            errors.append(
+                f"Old timed/instructor-provided/alternate-data dependency: {item['file']}"
+            )
 
     documents = (
         list(ROOT.glob("*.md"))
@@ -103,25 +121,6 @@ def check(require_reference: bool) -> dict[str, object]:
                 errors.append(f"Broken anchor: {path.relative_to(ROOT)} -> {target}")
             checked_links += 1
 
-    dev = load_cases(ROOT / "data/evaluation/dev.jsonl")
-    holdout = load_cases(ROOT / "data/evaluation/holdout.jsonl")
-    if len(dev) != 6 or len(holdout) != 4:
-        errors.append("Expected 6 dev and 4 holdout cases.")
-    if {case["id"] for case in dev} & {case["id"] for case in holdout}:
-        errors.append("Dev and holdout IDs overlap.")
-    current = (ROOT / "data/knowledge/01-travel-current.txt").read_text(
-        encoding="utf-8"
-    )
-    for value in [*RATES["lodging_per_night"].values(), RATES["meal_per_day"]]:
-        if f"{value}원" not in current:
-            errors.append(f"Policy and rate mismatch: {value}")
-    if RATES["policy_id"] not in current or RATES["effective_from"] not in current:
-        errors.append("Rate policy ID or effective date does not match the document.")
-    if (
-        estimate_trip_cost("서울", 2)["total"] != 390000
-        or estimate_trip_cost("부산", 2)["total"] != 330000
-    ):
-        errors.append("Required expected totals do not match.")
     for path in [
         *ROOT.glob("*.py"),
         *(ROOT / "scripts").glob("*.py"),
@@ -131,6 +130,8 @@ def check(require_reference: bool) -> dict[str, object]:
     ET.parse(ROOT / "docs/assets/architecture.svg")
 
     reference_verified = False
+    command_count = 0
+    dev, holdout = [], []
     if source.exists():
         result = subprocess.run(
             ["git", "-C", str(source), "rev-parse", "HEAD"],
@@ -142,22 +143,59 @@ def check(require_reference: bool) -> dict[str, object]:
             errors.append("Compatibility source commit differs.")
         else:
             reference_verified = True
+        dev = [
+            json.loads(line)
+            for line in (source / "data/evaluation/dev.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        ]
+        holdout = [
+            json.loads(line)
+            for line in (source / "data/evaluation/holdout.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        ]
+        policies = json.loads(
+            (source / "data/knowledge/policies.json").read_text(encoding="utf-8")
+        )
+        if len(dev) != 6 or len(holdout) != 4 or len(policies) != 6:
+            errors.append(
+                "Expected six Hanbit policies, six dev and four holdout cases."
+            )
+        if {case["case_id"] for case in dev} & {case["case_id"] for case in holdout}:
+            errors.append("Dev and holdout overlap.")
         extensions = source / "docs/ko/labs/extensions"
         mapping = (ROOT / "docs/feature-map.md").read_text(encoding="utf-8")
         for page in extensions.glob("*.md"):
             if f"extensions/{page.name}" not in mapping:
                 errors.append(f"v1.2 extension missing from feature map: {page.name}")
+        sys.path.insert(0, str(source / "src"))
+        from foundry_workshop.cli import parser as original_parser
+        from v12 import command_arguments
+
+        for path in documents:
+            for line in path.read_text(encoding="utf-8").splitlines():
+                if not line.startswith("python scripts/workshop.py "):
+                    continue
+                entry, args, _ = command_arguments(shlex.split(line)[2:])
+                if entry == "scripts/workshop.py" and "--help" not in args:
+                    try:
+                        original_parser().parse_args(args)
+                        command_count += 1
+                    except SystemExit:
+                        errors.append(
+                            f"Invalid executable arguments: {path.relative_to(ROOT)}: {line}"
+                        )
     elif require_reference:
         errors.append("Compatibility source is required. Run scripts/prepare_v12.py.")
     if errors:
         raise ValueError("\n".join(errors))
     return {
         "workshop_version": curriculum["version"],
-        "total_minutes": 420,
-        "teaching_minutes": 390,
-        "break_minutes": 30,
+        "pacing": "self-paced",
+        "canonical_dataset": "hanbit-ko",
         "labs": len(labs),
-        "feature_cards": len(list((ROOT / "docs/features").glob("[0-9]*.md"))),
+        "command_contracts_checked": command_count,
         "documents": len(documents),
         "document_links_checked": checked_links,
         "source_links_checked": source_links,
@@ -171,7 +209,7 @@ def check(require_reference: bool) -> dict[str, object]:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Check v1.5 documentation, timing, data and source links offline."
+        description="Check the self-paced path, prerequisites, command contracts and source links offline."
     )
     parser.add_argument("--require-reference", action="store_true")
     args = parser.parse_args()

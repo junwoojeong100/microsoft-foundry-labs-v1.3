@@ -131,7 +131,9 @@ def prepare(install: bool) -> None:
     print(f"v1.2 기능 소스: {SOURCE}")
     print(f"기준 커밋: {REFERENCE['commit']}")
     print("Azure 호출·리소스 생성·인증정보 복사는 수행하지 않았습니다.")
-    print("다음: docs/features/README.md의 필요한 기능 카드 하나를 여세요.")
+    print(
+        "다음: docs/00-setup.md에서 같은 실습 가상 환경을 활성화하고 계정·프로젝트 준비를 계속하세요."
+    )
 
 
 if __name__ == "__main__":

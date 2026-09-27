@@ -1,171 +1,181 @@
-# 수업 전 준비 — 수업 시간에는 AI에 집중하기
+# 00. 내 실습 환경 만들기
 
-**준비 완료 기준: 내 프로젝트에서 모델 답변을 받고, Python에서 같은 모델을 호출할 수 있습니다.**
+**완료 목표:** 내 Azure 구독에 Foundry 프로젝트와 모델 배포를 만들고, 데이터 작업 권한과 로컬 실행 환경을 직접 준비합니다.
 
-준비는 7시간에 포함하지 않습니다. 설치·리소스 준비에 **45~75분을 별도로 확보**하고, 조직의 권한 승인은 더 일찍 요청하세요. 혼자 학습한다면 아래의 “운영 담당자” 역할도 본인이 수행합니다.
+출발점은 **Microsoft Entra ID 계정 + Azure 구독 + 활성 구독 Owner**입니다. 이 장에서 다른 사람이 준비한 Endpoint나 Search를 받지 않습니다. 새 리소스와 모델 호출에는 비용이 발생할 수 있습니다.
 
-## 1. 준비할 화면과 파일
+## 1. 내 권한 확인
 
-| 작업할 곳 | 여기서 하는 일 |
+1. [Azure 포털](https://portal.azure.com)에 로그인합니다.
+2. **Subscriptions → 사용할 구독 → Access control (IAM) → View my access**에서 Owner를 확인합니다.
+3. PIM의 “할당 가능” 상태라면 조직의 정상 절차로 활성화합니다. 활성 역할과 자격만 있는 상태는 다릅니다.
+4. 구독 ID와 연결된 Tenant ID를 개인 워크북에 기록합니다.
+5. 조직의 허용 리전·서비스·네트워크 정책을 확인합니다. Owner도 관리 그룹의 거부 정책을 우회할 수 없습니다.
+
+**중요:** 구독 Owner와 Entra Global Administrator는 다릅니다. 이 과정의 Azure 리소스 준비에는 디렉터리 전체 관리자나 새 client secret이 필요하지 않습니다. 추가 통합의 권한은 14장에서 별도로 다룹니다.
+
+## 2. 실습 파일과 개발 도구
+
+이 저장소는 private입니다. 접근 권한이 있는 사용자는 복제할 수 있고, 다른 참가자는 배포받은 **실습 ZIP을 압축 해제**합니다. ZIP으로 시작하면 GitHub 계정은 필수가 아닙니다. 고정 v1.2 실행 소스는 공개 저장소에서 받습니다.
+
+PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owner로 해결되지 않으므로 승인된 개발 환경을 사용하세요.
+
+| 도구 | 설치와 확인 |
 |---|---|
-| 이 가이드 | 다음 단계 읽기 |
-| [Foundry 포털](https://ai.azure.com) | 프로젝트, 모델, 에이전트, 평가, trace |
-| VS Code 등의 편집기 | 이 폴더 열기, `.env` 수정, 결과 읽기 |
-| **이 폴더에서 연 터미널** | `python lab.py ...` 명령 실행 |
-| Excel 또는 CSV 편집기 | `review.csv`의 사람 검토 결과 입력 |
+| Python **3.13** | [Python](https://www.python.org/downloads/) 설치. macOS/Linux `python3.13 --version`, Windows `py -3.13 --version` |
+| Git | [Git](https://git-scm.com/downloads) 설치 후 `git --version` |
+| Azure CLI | [공식 설치](https://learn.microsoft.com/cli/azure/install-azure-cli) 후 `az version` |
+| Azure Developer CLI | [azd 설치](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) 후 `azd version` |
+| 편집기 | VS Code 등으로 **v1.5 폴더 전체** 열기 |
 
-**지침은 포털의 Instructions에, 질문은 채팅 입력창에, `python` 명령은 터미널에 넣습니다.** 서로 바꿔 붙여 넣지 마세요.
-
-이 폴더 전체를 사용합니다. 기본 경로의 SDK와 원본 v1.2의 `.env`를 섞어 쓰지 않습니다. v1.2 기능은 [전용 호환 환경](features/README.md)에서 유지합니다. [워크북](../worksheets/workbook.md)은 개인 사본으로 저장하세요.
-
-## 2. 운영 담당자: Azure 환경 준비
-
-참가자는 담당자에게 준비된 프로젝트 정보를 받습니다. 준비된 환경을 받았다면 새 리소스를 중복 생성하지 않습니다.
-
-### 2-1. Foundry 프로젝트 만들기
-
-1. 사용할 구독, 비용 책임자, 허용 리전, 수업 후 삭제 범위를 정합니다.
-2. [Foundry 포털](https://ai.azure.com)에 로그인합니다. **New Foundry** 전환이 보이면 현재 환경을 선택합니다.
-3. 왼쪽 위 프로젝트 선택 영역 → **Create new project**를 선택합니다.
-4. 프로젝트 이름을 정합니다. 예: `foundry-lab-01`.
-5. 고급 옵션에서 **실습 전용 리소스 그룹**, Foundry 리소스, 승인된 리전을 확인합니다.
-6. 생성 후 프로젝트의 **Overview / Project details**에서 프로젝트 Endpoint를 복사합니다.
-
-예시 형식:
-
-```text
-https://<리소스이름>.services.ai.azure.com/api/projects/<프로젝트이름>
-```
-
-포털에 표시된 값을 그대로 씁니다. `.openai.azure.com`의 모델 Endpoint나 구독 ID를 넣지 않습니다. 계정에 따라 `*.ai.azure.com/api/projects/...` 형식이 표시될 수도 있습니다.
-
-권장 구성은 **참가자별 프로젝트, 참가자별 고유 에이전트 이름**입니다. 하나의 Foundry 리소스에서 프로젝트를 나누면 모델 배포와 할당량은 공유될 수 있습니다. 프로젝트가 다르다고 모델 호출 한도까지 독립인 것은 아닙니다.
-
-### 2-2. 작은 모델 하나 배포하기
-
-1. **Discover → Models** 또는 **Model catalog**에서 모델을 찾습니다.
-2. 기본 후보는 **`gpt-4.1-mini`**입니다. 빠른 짧은 답변, Responses API, 함수 호출을 중심으로 선택했습니다.
-3. 모델 상세의 지원 기능·리전·수명 주기를 확인합니다. **최신 최고 성능 모델을 무조건 고르는 수업이 아닙니다.**
-4. **Deploy / Use this model**을 열고 배포 이름을 **`workshop-chat`**으로 지정합니다.
-5. 조직이 허용하는 종량제 Standard 계열 배포를 선택합니다. Global Standard는 데이터 처리 위치 정책에 맞는 경우에만 선택합니다. 실습에 Provisioned/PTU 계약은 필요하지 않습니다.
-6. 배포가 준비되면 Playground에서 “한국어로 인사 한 문장”을 전송합니다.
-
-`gpt-4.1-mini`를 사용할 수 없다면 **수업 전에** Responses, File Search, 함수 호출이 함께 동작하는 모델로 변경합니다. `gpt-5-mini`는 공식 File Search 예제의 다른 후보지만, 구독의 배포 가능 여부와 평가 모델 지원은 별도 점검해야 합니다. 코드의 배포 별칭은 계속 `workshop-chat`으로 유지할 수 있습니다.
-
-**카탈로그에 있다는 사실은 내 구독의 리전·할당량·도구 지원이 확인되었다는 뜻이 아닙니다.** File Search 성공까지 확인하는 절차는 [강사 사전 점검](instructor.md)에 있습니다.
-
-### 2-3. 필요한 권한만 부여하기
-
-| 할 일 | 준비할 권한/접근 |
-|---|---|
-| 프로젝트에서 에이전트·데이터 작업 | 프로젝트의 **Foundry User** 또는 같은 작업을 허용하는 조직 역할 |
-| Foundry 리소스·모델 배포 생성 | 담당자의 해당 범위 관리 권한. 일반 참가자에게 구독 Owner를 주지 않음 |
-| 역할 부여 | 역할 할당 권한이 있는 담당자가 수행. 리소스 생성 권한과 별개 |
-| 연결한 자체 Storage에 업로드 | 필요할 때 해당 Storage의 **Storage Blob Data Contributor** |
-| trace 조회 | 연결된 Application Insights/Log Analytics의 조회 권한. 공식 문서의 **Log Analytics Reader** 등 확인 |
-
-역할 이름 변경이 반영되지 않은 화면에서는 **Azure AI User** 등 이전 이름이 보일 수 있습니다. Foundry User와 같은 역할인지 [공식 RBAC 문서](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry)를 대조하세요. **Azure Contributor만 있다고 모든 데이터 작업이 되는 것은 아닙니다.**
-
-### 2-4. 포털 평가와 trace 미리 켜 두기
-
-**Lab 06도 필수 실습입니다. 첫날 수업 중에 연결·권한 문제를 해결하려고 미루지 않습니다.**
-
-1. 프로젝트의 **Agents → Traces → Connect**에서 준비한 Application Insights를 연결합니다.
-2. Connect가 없으면 **Manage → Project details → Connected resources → Add connection → Application Insights** 경로를 확인합니다.
-3. 참가자가 새 trace를 조회할 수 있는지 확인합니다. 연결만 했다고 조회 권한까지 부여되지는 않습니다.
-4. **Evaluation → Create → Dataset → Individual turns** 흐름을 확인합니다.
-5. AI-assisted 평가에 필요한 **Azure OpenAI 연결과 GPT judge 모델**을 준비합니다. 기존 `workshop-chat` 배포를 judge 선택기에서 사용할 수 있으면 재사용합니다. 안 보이면 담당자가 평가용 연결/지원 배포를 준비합니다.
-6. 작은 실제 응답 데이터로 **Relevance 하나**가 완료되는지 확인합니다.
-
-프로젝트를 Private Endpoint로 제한했다면 참가자 PC가 승인된 네트워크 경로에 있어야 합니다. 접근 문제를 해결하려고 방화벽이나 조직 정책을 임의로 해제하지 않습니다.
-
-공식 절차: [프로젝트 생성](https://learn.microsoft.com/azure/foundry/how-to/create-projects) · [trace 연결](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-setup) · [포털 평가](https://learn.microsoft.com/azure/foundry/how-to/evaluate-generative-ai-app).
-
-## 3. 참가자: Python 준비
-
-**권장 Python 3.13, 지원 범위 3.11~3.14.** Python과 [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)를 준비합니다. 패키지는 프로젝트 안의 가상 환경에 설치합니다. Docker, Node.js, 별도 Search 서비스 직접 구축, azd 설치는 이 수업에 필요하지 않습니다.
-
-VS Code에서 **이 폴더를 열고 새 터미널**을 만듭니다. `lab.py`와 `requirements.txt`가 보이는 폴더여야 합니다.
+터미널의 현재 폴더에 `README.md`, `scripts/`, `curriculum.json`이 보여야 합니다.
 
 ### macOS / Linux
 
 ```bash
-python3.13 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
+python3.13 scripts/prepare_v12.py --install
+source .reference/v1.2/.venv/bin/activate
 ```
-
-이미 Python 3.11~3.14의 다른 버전을 쓰면 첫 명령의 `python3.13`만 설치된 실행 파일 이름으로 바꿉니다.
 
 ### Windows PowerShell
 
 ```powershell
-py -3.13 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
+py -3.13 scripts/prepare_v12.py --install
+.\.reference\v1.2\.venv\Scripts\Activate.ps1
 ```
 
-회사 정책 때문에 활성화가 차단되면 보안 정책을 낮추지 마세요. 이후 모든 `python ...`을 `.\.venv\Scripts\python.exe ...`로 실행하면 활성화 없이 같은 가상 환경을 사용할 수 있습니다.
+PowerShell 활성화가 차단되면 시스템 정책을 낮추지 않습니다. 이후 모든 `python ...`을 `.\.reference\v1.2\.venv\Scripts\python.exe ...`로 실행할 수 있습니다.
 
-**새 터미널을 열 때마다 가상 환경을 다시 활성화합니다.** `python --version`으로 버전을 확인하세요.
+준비 도구는 고정 소스와 별도 Python 환경만 만듭니다. **Azure 리소스 생성·로그인·구독 변경은 하지 않습니다.** 이미 준비한 폴더는 덮어쓰지 않습니다.
 
-## 4. 참가자: 내 설정 세 개 넣기
-
-`.env.example`을 **`.env`라는 이름으로 복사**합니다. 이미 `.env`가 있으면 덮어쓰지 말고 기존 값을 확인합니다.
-
-```text
-FOUNDRY_PROJECT_ENDPOINT=https://내리소스.services.ai.azure.com/api/projects/내프로젝트
-FOUNDRY_MODEL_DEPLOYMENT_NAME=workshop-chat
-FOUNDRY_AGENT_NAME=trip-coach-01
+```bash
+python scripts/workshop.py doctor
 ```
 
-- 위 Endpoint는 형식 설명입니다. 실제 포털 값을 넣습니다.
-- `trip-coach-01`은 예시입니다. 담당자가 정한 본인 실습 ID로 고유하게 만듭니다. 영문 소문자·숫자·하이픈만 사용합니다.
-- 모델명과 배포 이름을 구분합니다. 모델명이 `gpt-4.1-mini`여도 코드가 호출할 이름은 `workshop-chat`입니다.
-- API key는 넣지 않습니다. 로컬 예제는 **Azure CLI에 로그인한 사용자**로 인증합니다.
-- 셸에 같은 환경변수가 이미 있으면 셸 값이 `.env`보다 우선합니다. 예전 실습 값이 남았는지 확인합니다.
+`documents: 6`, `dev_cases: 6`, `holdout_cases: 4`, `azure_tested: false`, `result: PASS`를 확인합니다. 아직 Azure 연결 시험은 아닙니다.
 
-인증합니다. 아래 구독 자리에 담당자가 알려 준 실제 구독 이름 또는 ID를 넣습니다.
+**새 터미널마다 같은 가상 환경을 활성화**합니다. 루트 `.venv`나 `requirements.txt`는 현재 본 과정의 환경이 아닙니다.
+
+## 3. 로그인과 이름 계획
 
 ```bash
 az login
-az account set --subscription "사용할-구독-이름-또는-ID"
+az account list --output table
+azd auth login
 ```
 
-브라우저와 CLI에 서로 다른 계정으로 로그인하지 않도록 주의하세요. 조직의 정상적인 로그인·MFA 절차를 따릅니다.
+조직의 정상 MFA 절차를 따릅니다. 브라우저·CLI·azd의 테넌트가 같은지 확인하세요. 이 가이드의 설정 수집기는 구독 ID를 명시하므로 기본 구독을 자동 변경하지 않습니다.
 
-## 5. 준비 확인: 로컬과 Azure를 따로 확인
+본인의 고유 접두사를 정합니다. 예시는 그대로 공유하지 마세요.
+
+| 용도 | 이름 예시 |
+|---|---|
+| 원본 소유권 접두사 | `mfv2-jw-0927` |
+| 리소스 그룹 | `rg-mf15-jw-0927` |
+| Foundry 프로젝트 | `mf15-jw-0927-project` |
+| Foundry 리소스 | 포털이 생성한 실제 이름을 기록 |
+| 처음 배포할 모델의 별칭 | `workshop-chat` |
+
+`mfv2-`는 원본 실행 코드의 소유권 네임스페이스입니다. 실습 자료의 v1.5나 향후 v2.0과 같은 뜻이 아닙니다. 소문자·숫자·하이픈, 최대 32자로 정하고 실습 도중 바꾸지 않습니다.
+
+## 4. 실습 전용 리소스 그룹 만들기
+
+1. Azure 포털 **Resource groups → Create**.
+2. 내 Owner 구독과 새 그룹 이름을 선택합니다.
+3. 리전을 정합니다. **Sweden Central은 시작 후보**이지 모든 모델·기능의 제공 보장이 아닙니다.
+4. [Foundry 리전](https://learn.microsoft.com/azure/foundry/reference/region-support)과 [Search 리전](https://learn.microsoft.com/azure/search/search-region-support)에서 이후 사용할 Hosted, Semantic ranker, Agentic retrieval의 지원을 확인합니다.
+5. `workshop=foundry-v1.5` 같은 비밀 아닌 태그를 달고 생성합니다.
+
+이 그룹에는 실습 자원만 넣습니다. 기존 업무용 그룹을 사용하면 마지막에 그룹 전체를 삭제할 수 없습니다.
+
+구독/그룹의 **Cost Management → Budgets**에서 본인의 실습 예산 알림을 설정할 수 있습니다. 금액은 현재 가격과 자신의 예산으로 정합니다. **알림은 자동 사용 중지나 환불 보장이 아닙니다.**
+
+## 5. Foundry 프로젝트 만들기
+
+1. [Foundry](https://ai.azure.com)를 엽니다. **New Foundry** 전환이 보이면 현재 포털을 선택합니다.
+2. 왼쪽 위 프로젝트 선택 영역 → **Create new project**.
+3. 프로젝트 이름을 입력하고 **Advanced options**를 엽니다.
+4. 사용할 구독, **방금 만든 실습 그룹**, 확인한 리전을 지정하고 생성합니다.
+5. Foundry 리소스 이름은 자동 생성될 수 있습니다. 예시 이름을 추측하지 말고 실제 이름을 기록합니다.
+6. 프로젝트 홈에서 **Project endpoint**를 복사합니다.
+
+형식은 `https://<실제-domain>.services.ai.azure.com/api/projects/<실제-project>`입니다. 모델의 `.openai.azure.com` Endpoint와 다릅니다. 고정 실행 코드가 받는 형식과 다른 URL만 보이면 Libraries/API 영역에서 프로젝트 Endpoint를 다시 확인하고, 도메인을 임의로 바꾸지 않습니다.
+
+Azure 포털에서 **프로젝트 리소스 → JSON View**를 열고 `id`도 복사합니다.
+
+```text
+/subscriptions/.../resourceGroups/.../providers/Microsoft.CognitiveServices/accounts/.../projects/...
+```
+
+부모 Foundry 계정 ID가 아니라 **`/projects/...`까지 포함한 ID**입니다.
+
+## 6. 첫 모델 배포
+
+1. Foundry **Discover → Models**에서 `gpt-4.1-mini`를 찾습니다.
+2. 지원 기능·버전·리전·할당량을 읽습니다. 이 과정은 빠른 짧은 답변과 도구 사용을 우선해 이 모델을 시작 후보로 씁니다.
+3. **Deploy / Use this model**에서 배포 이름을 `workshop-chat`으로 지정합니다.
+4. 본인 정책에 맞는 종량제 Standard 계열을 고릅니다. Global Standard는 글로벌 처리 정책이 허용할 때만 선택합니다. PTU 계약은 필요하지 않습니다.
+5. 상태가 **Succeeded**가 될 때까지 기다립니다. 실제 기반 모델·버전·유형·리전을 기록합니다.
+
+할당량이 없거나 모델이 제공되지 않으면 **Create를 반복하지 않습니다**. 모델 배포 화면/Quota 메뉴에서 해당 리전의 한도를 확인해 증가를 요청하거나, 필요한 기능을 지원하는 다른 리전/모델을 명시적으로 선택하고 변경 이유를 기록합니다. 코드가 자동으로 바꿔 주지는 않습니다.
+
+다른 모델을 선택한다면 Responses, Structured Outputs, 함수 호출을 먼저 확인하고 File Search는 03장에서 별도 확인합니다. 이후 IQ Chat·Optimizer용 모델은 필요할 때 추가합니다.
+
+## 7. 데이터 접근 역할 확인
+
+Azure 포털의 **실제 Foundry 리소스 → IAM → Role assignments**를 봅니다.
+
+| 주체 | 역할 | 범위 |
+|---|---|---|
+| 내 로그인 사용자 | **Foundry User** | 이 실습 Foundry 리소스 |
+| 이 프로젝트의 관리 ID | **Foundry User** | 같은 Foundry 리소스 |
+
+포털이 이미 부여했다면 중복 생성하지 않습니다. 없으면 **Add role assignment → Foundry User → Members**에서 해당 주체를 선택해 부여합니다. 이전 이름 **Azure AI User**가 보일 수 있으며 역할 ID는 `53ca6127-db72-4b80-b1b0-d745d6d5456d`입니다.
+
+관리 ID는 내 계정이나 프로젝트 이름 문자열이 아닙니다. 프로젝트 리소스 **JSON View → identity.principalId**로 구분합니다. Identity가 없다면 프로젝트의 관리 ID 설정을 확인한 뒤 계속합니다.
+
+구독 Owner의 리소스 관리 권한이 데이터 작업 권한을 대신하지 않습니다. 앱 등록이나 client secret은 만들지 않습니다.
+
+## 8. 실제 값으로 설정 자동 수집
+
+따옴표 안 세 곳과 접두사를 본인의 값으로 바꿉니다.
 
 ```bash
-python lab.py doctor
+python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" --endpoint "실제-프로젝트-Endpoint" --deployment "workshop-chat" --prefix "mfv2-jw-0927"
 ```
 
-기대 표시:
+이 도구는 Azure CLI로 **구독·프로젝트·계정·배포를 읽기만** 합니다. ID/Endpoint 일치와 배포 상태를 확인한 뒤 다음을 기록합니다.
 
-```json
-{"local_setup":"PASS","azure_tested":false,"agent_tested":false}
-```
+- `.reference/v1.2/.env`: SDK가 사용할 설정 한 벌.
+- `.selfstudy/azure.json`: 실제 리소스 ID, 관리 ID, 리전, 확인 시점.
 
-실제 출력에는 패키지 목록도 있습니다. **이 명령은 Azure 인증·모델·File Search를 시험한 것이 아닙니다.**
-
-담당자가 모델 호출 비용을 허용한 후 한 번 실행합니다.
+토큰·비밀번호·API key는 저장하지 않습니다. 기존 다른 프로젝트의 설정은 덮어쓰지 않습니다. `management_metadata_read: true`, `model_invoked: false`를 구분하세요.
 
 ```bash
-python lab.py doctor --live
+python scripts/selfstudy.py status
+python scripts/workshop.py doctor --cloud
 ```
 
-`azure_tested: true`와 실제 응답 ID, 답변이 있어야 합니다. 여전히 `agent_tested: false`입니다. 모델 호출 성공과 파일 검색·도구 성공은 서로 다릅니다.
+올바른 구독·테넌트·배포가 표시되는지 확인합니다. `doctor --cloud`도 추론 시험이 아니라 메타데이터/인증 확인입니다.
 
-## 준비 완료 체크
+## 9. 역할의 실제 명령이 필요할 때
 
-- [ ] 프로젝트, 구독, 모델 배포 이름을 기록했다.
-- [ ] `doctor`와 `doctor --live`가 각각 무엇을 확인했는지 설명할 수 있다.
-- [ ] 담당자가 이 환경에서 File Search, 함수 호출, 포털 평가, trace를 사전 실행했다.
-- [ ] 내 에이전트 이름이 다른 사람과 겹치지 않는다.
-- [ ] CSV를 열고 저장할 편집기가 있다.
-- [ ] 비용 책임자, 허용 예산, 수업 후 삭제 책임자를 알고 있다.
-- [ ] 실제 회사 문서나 개인정보 대신 **동봉한 가상 문서만** 사용한다.
+Azure 포털에서 본인 사용자 Object ID를 확인하거나 다음 읽기 명령을 사용합니다.
 
-Azure 권한이 없으면 로컬 함수와 문서를 학습할 수 있지만, 이를 Foundry 실습 완료로 기록하지 않습니다. [문제 해결](troubleshooting.md) 후 본인 환경 또는 담당자가 허용한 짝 실습 환경에서 재개하세요.
+```bash
+az ad signed-in-user show --query id --output tsv
+python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
+```
 
-**다음 실습 → [Lab 01. Foundry 이해와 첫 성공](01-foundry.md)**
+`roles`는 **필요 역할의 명령을 출력할 뿐 실행하지 않습니다.** Portal IAM과 비교하고 없는 역할만 직접 실행하세요. 기존 Owner를 다른 계정에 주거나 권한을 구독 전체로 넓히지 않습니다.
+
+## 완료 확인
+
+- [ ] 내 전용 그룹·Foundry 프로젝트·모델을 만들었다.
+- [ ] 내 사용자와 프로젝트 관리 ID의 데이터 역할을 확인했다.
+- [ ] 설정을 한 곳에 저장했고 실제 값을 다시 읽었다.
+- [ ] 비용과 추가 권한의 경계를 안다.
+
+막히면 [문제 해결](troubleshooting.md)의 해당 오류부터 해결합니다. 중단한다면 지금 [정리](15-capstone-cleanup.md)를 확인합니다.
+
+**다음 → [01. Foundry와 첫 모델 응답](01-foundry.md)**

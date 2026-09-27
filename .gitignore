@@ -1,7 +1,11 @@
 .env
+.env.*
+!.env.example
 .venv/
 .lab/
+.selfstudy/
 .reference/
+dist/
 outputs/
 __pycache__/
 *.py[cod]

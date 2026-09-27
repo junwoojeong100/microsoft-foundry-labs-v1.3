@@ -62,7 +62,7 @@ def doctor(live: bool) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Foundry 7시간 실습. doctor 외의 Azure 작업은 비용이 발생할 수 있습니다."
+        description="보존된 축약 예제. 현재 전체 과정은 scripts/workshop.py를 사용합니다."
     )
     parser.add_argument(
         "--version", action="version", version=f"Foundry workshop v{WORKSHOP_VERSION}"
