@@ -1,0 +1,9 @@
+{
+  "policy_id": "TRAVEL-2026",
+  "effective_from": "2026-07-01",
+  "currency": "KRW",
+  "lodging_per_night": {"서울": 150000, "부산": 120000, "기타": 100000},
+  "meal_per_day": 30000,
+  "min_nights": 1,
+  "max_nights": 6
+}

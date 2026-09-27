@@ -1,0 +1,10 @@
+{
+  "workshop_version": "1.5",
+  "source_version": "1.2",
+  "repository": "https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs.git",
+  "commit": "c2065477baf8210bbba4b845ab741ecd527b9559",
+  "directory": ".reference/v1.2",
+  "purpose": "Preserve the v1.2 feature implementation while v1.5 simplifies the learning experience.",
+  "excluded_media": ["recording", "videos", "docs/assets"],
+  "license": "MIT; retain the original LICENSE in the source checkout."
+}

@@ -1,0 +1,6 @@
+azure-ai-projects==2.7.0
+azure-identity==1.25.3
+openai==3.16.2
+httpx==0.28.1
+python-dotenv==1.2.3
+streamlit==1.64.0

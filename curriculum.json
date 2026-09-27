@@ -1,0 +1,19 @@
+{
+  "version": "1.5",
+  "title": "Microsoft Foundry: 출장 도우미 하나로 배우는 7시간",
+  "total_minutes": 420,
+  "preparation_included": false,
+  "lunch_included": false,
+  "sessions": [
+    {"id": "01", "title": "Foundry 이해와 첫 성공", "minutes": 35, "file": "docs/01-foundry.md"},
+    {"id": "02", "title": "모델과 프롬프트", "minutes": 45, "file": "docs/02-models-prompts.md"},
+    {"id": "break-1", "title": "휴식", "minutes": 10},
+    {"id": "03", "title": "문서에 근거하는 에이전트", "minutes": 70, "file": "docs/03-knowledge.md"},
+    {"id": "04", "title": "정확하게 계산하는 도구", "minutes": 65, "file": "docs/04-tools.md"},
+    {"id": "break-2", "title": "휴식", "minutes": 10},
+    {"id": "05", "title": "평가하고 개선하기", "minutes": 65, "file": "docs/05-evaluation.md"},
+    {"id": "06", "title": "앱과 Foundry 운영 화면", "minutes": 55, "file": "docs/06-app-operations.md"},
+    {"id": "break-3", "title": "휴식", "minutes": 10},
+    {"id": "07", "title": "최종 시연과 정리", "minutes": 55, "file": "docs/07-capstone.md"}
+  ]
+}
