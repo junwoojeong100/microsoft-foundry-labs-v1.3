@@ -19,6 +19,11 @@ def agent_options(settings: Settings | GenerationConfig) -> dict[str, Any]:
     return {"reasoning": Reasoning(effort=settings.reasoning_effort)}
 
 
+def agent_response_options(settings: Settings | GenerationConfig) -> dict[str, Any]:
+    # Agent-reference calls inherit reasoning from the immutable agent definition.
+    return {"max_output_tokens": settings.max_output_tokens}
+
+
 def maf_options(
     settings: Settings | GenerationConfig, *, api: str = "project-responses"
 ) -> dict[str, Any]:

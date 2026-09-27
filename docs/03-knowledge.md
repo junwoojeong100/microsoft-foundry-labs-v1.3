@@ -39,7 +39,7 @@ Foundry **Build → Agents**에서 같은 이름·버전·모델·지침을 확�
 
 ## 3. 실제 File Search 에이전트 만들기
 
-포털의 업로드 버튼 위치/노출에 의존하지 않고 **포함된 SDK 명령**으로 진행합니다. 기본 GPT-6 Luna를 그대로 쓰되, 인라인 agent와 다른 이름을 자동으로 생성합니다.
+포털의 업로드 버튼 위치/노출에 의존하지 않고 **포함된 SDK 명령**으로 진행합니다. 01에서 프로젝트 호출을 확인한 기본 배포를 사용하고, 인라인 agent와 다른 이름을 자동으로 생성합니다. Sol 호환 경로를 선택했다면 실제 모델도 Sol입니다.
 
 ```bash
 python scripts/workshop.py file-search create --confirm-create
@@ -51,7 +51,15 @@ python scripts/workshop.py file-search create --confirm-create
 
 저장소는 **마지막 활동 후 7일 만료**로 생성합니다. 이는 과정 시간 제한이 아니라 보관/비용 설정입니다. 만료 후 재개하거나 새 모델 설정으로 다시 실행할 때는 기존 자원을 확인하고 새 소유 이름으로 시작합니다.
 
+**자원을 보존하는 실습**에서는 처음 만들 때 다음 명령을 대신 사용합니다. `--retain`은 vector store의 자동 만료를 설정하지 않습니다. 소유 기록의 `retention: retain`을 확인하고, 재개할 때도 같은 옵션을 사용합니다. 파일 저장 비용은 계속 발생할 수 있습니다.
+
+```bash
+python scripts/workshop.py file-search create --confirm-create --retain
+```
+
 모델 카탈로그의 File Search 지원과 실제 내 배포의 성공은 별개입니다. SDK에서도 지원/권한 오류가 나면 해당 원인을 해결합니다. **인라인 답변이나 다른 모델로 몰래 대체하지 않습니다.**
+
+Reasoning은 생성 시 **agent definition**에 저장합니다. 이후 `agent_reference`로 호출할 때 같은 `reasoning`을 요청 본문에 다시 넣으면 `Not allowed when agent is specified` 오류가 납니다. 포함된 실행기는 저장 버전의 설정을 상속하고 출력 상한만 요청에 전달합니다.
 
 자체 Storage를 연결한 환경은 사용자/서비스 관리 ID의 **Storage Blob Data Contributor** 같은 추가 접근이 필요할 수 있습니다. Basic/Standard setup과 실제 저장소를 [공식 File Search 문서](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search)에서 확인하고 **본인 저장소 범위에만** 부여합니다.
 
@@ -79,6 +87,6 @@ python scripts/workshop.py file-search ask --question "도쿄 출장 호텔비 �
 
 **막히면:** 업로드 완료와 인덱싱 완료를 구분하고, API key를 넣어 우회하지 않습니다. 인용이 없거나 잘못된 날짜의 문서를 쓰면 실패 사례로 보존합니다.
 
-인덱싱이 아직 진행 중인 시간 초과라면 같은 생성 명령으로 상태를 다시 확인할 수 있습니다. 영구 실패나 만료라면 원인을 해결하고 **15의 소유 자산 정리 후 새 `--name`**으로 생성하세요. 같은 이름의 원격 agent가 있는데 버전 기록이 없다면 새 버전을 추측해 만들지 말고 포털의 실제 자산부터 확인합니다.
+인덱싱이 아직 진행 중인 시간 초과라면 같은 생성 명령으로 상태를 다시 확인할 수 있습니다. 영구 실패나 만료라면 원인을 해결하고 15의 소유 자산 목록을 확인한 뒤 **새 `--name`**으로 생성하세요. 보존 모드에서는 이전 자산도 삭제하지 않습니다. 같은 이름의 원격 agent가 있는데 버전 기록이 없다면 새 버전을 추측해 만들지 말고 포털의 실제 자산부터 확인합니다.
 
 **다음 → [04. MAF·함수·MCP·Code Interpreter](04-tools.md)**

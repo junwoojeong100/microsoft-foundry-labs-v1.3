@@ -1,0 +1,218 @@
+# 00. Set up your own lab environment
+
+**English** | [한국어](../00-setup.md) · [Course home](../../README.md)
+
+**Outcome:** Create a Foundry project and model deployment in your own Azure subscription, then prepare data-access permissions and the local runtime.
+
+Start with a **Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role**. You do not need someone else's preconfigured endpoint or Search service. New resources and model requests can incur charges.
+
+## 1. Check your permissions
+
+1. Sign in to the [Azure portal](https://portal.azure.com).
+2. Open **Subscriptions → your subscription → Access control (IAM) → View my access** and verify Owner.
+3. If your PIM role is only eligible, activate it through your organization's normal process. Eligibility is not an active assignment.
+4. Record the subscription ID and associated tenant ID in your private workbook.
+5. Check permitted regions, services, and network policies. Owner cannot bypass management-group deny policies.
+
+**Important:** Subscription Owner is not Entra Global Administrator. Preparing the Azure resources in this course does not require directory-wide administration or a new client secret. Chapter 14 covers additional integrations separately.
+
+## 2. Get the files and development tools
+
+Extract the **workshop ZIP**, or clone this repository if you have access. Code and data are bundled; do not download another repository. GitHub and Git are optional when using the ZIP.
+
+Use an approved development environment. Azure Owner does not override software-installation restrictions on your device.
+
+| Tool | Install and check |
+|---|---|
+| Python **3.13** | Install [Python](https://www.python.org/downloads/). Check `python3.13 --version` on macOS/Linux or `py -3.13 --version` on Windows. |
+| Azure CLI | Follow the [official installation guide](https://learn.microsoft.com/cli/azure/install-azure-cli), then run `az version`. |
+| Azure Developer CLI | [Install azd](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd), then run `azd version`. |
+| Editor | Open the **entire v1.5 folder** in VS Code or another editor. |
+
+Your terminal's current directory must contain `README.md`, `scripts/`, and `curriculum.json`.
+
+Do not overwrite a `.venv` created with another Python version or existing personal lab state. Preserve that folder and **extract the ZIP into a new folder**.
+
+### macOS / Linux
+
+```bash
+python3.13 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+### Windows PowerShell
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+If PowerShell blocks activation, do not weaken system policy. Replace subsequent `python ...` commands with `.\.venv\Scripts\python.exe ...`.
+
+This installs local packages only. **It does not create Azure resources, sign you in, or change subscriptions.** Preserve folders that already contain personal configuration or results.
+
+```bash
+python scripts/workshop.py --language en doctor
+```
+
+Check `language: en`, `documents: 6`, `dev_cases: 6`, `holdout_cases: 4`, `azure_tested: false`, and `result: PASS`. This is not an Azure connectivity test. It reports dataset counts; do not open holdout questions or answers.
+
+**Activate `.venv` in every new terminal.** Run all commands from the folder containing `README.md`.
+
+English workshop commands use `--language en` **before the subcommand**. Wrapper options (`--model-deployment`, `--script`) go before `--language en`. The shared `selfstudy.py` helper has no global language flag; its later `prepare-hosted` and `capture` subcommands accept their own `--language en`. Keep English labels and results separate from Korean runs; see [Data and localization](data-format.md).
+
+## 3. Sign in and plan names
+
+```bash
+az login
+az account list --output table
+azd auth login
+```
+
+Follow normal MFA procedures. Check that the browser, Azure CLI, and azd use the same tenant. The configuration helper explicitly supplies the subscription ID; it does not automatically switch your default subscription.
+
+Choose your own unique prefix. Replace every `YOUR-...`, `<...>`, and illustrative name in this guide with the actual value before execution.
+
+| Purpose | Illustrative name—replace it |
+|---|---|
+| Prefix identifying your assets | `lab-yourname-0927` |
+| Resource group | `rg-mf15-yourname-0927` |
+| Foundry project | `mf15-yourname-0927-project` |
+| Foundry resource | Record the actual name created by the portal. |
+| First model's deployment alias | `workshop-chat` |
+
+The prefix must start with `lab-`, use lowercase letters, numbers, and hyphens, and contain at most 32 characters. Keep it unchanged throughout the lab so ownership remains clear.
+
+## 4. Create a dedicated resource group
+
+1. In the Azure portal, open **Resource groups → Create**.
+2. Select your Owner subscription and a new group name.
+3. Select a region. **Sweden Central is a starting candidate**, not a guarantee that all models and features are available.
+4. Check the [Foundry region table](https://learn.microsoft.com/azure/foundry/reference/region-support) and [Search region table](https://learn.microsoft.com/azure/search/search-region-support) for Hosted, Semantic ranker, and Agentic retrieval.
+5. Add a nonsecret tag such as `workshop=foundry-v1.5`, then create the group.
+
+Keep only workshop resources in this group. You cannot safely delete an entire existing business resource group at the end.
+
+For the CLI alternative, replace the subscription ID and names. Do not recreate a group already made in the portal.
+
+```bash
+az group create --subscription "YOUR-SUBSCRIPTION-ID" --name "rg-mf15-your-lab" --location swedencentral --tags workshop=foundry-v1.5 lifecycle=retain
+```
+
+`lifecycle=retain` records an intention to keep resources; it is not a deletion lock. Apply [retention mode](15-capstone-cleanup.md#retention-mode) if you want to keep the environment.
+
+You can set a personal budget alert under the subscription or group's **Cost Management → Budgets**. Choose an amount using current prices and your own budget. **An alert does not automatically stop usage or guarantee a refund.**
+
+## 5. Create a Foundry project
+
+1. Open [Foundry](https://ai.azure.com). If a **New Foundry** switch appears, select the current portal.
+2. Open the project selector at the upper left → **Create new project**.
+3. Enter a project name and open **Advanced options**.
+4. Select your subscription, **the dedicated group you just created**, and the verified region; then create.
+5. The Foundry resource name may be generated automatically. Record the actual name instead of assuming an example.
+6. Copy the **Project endpoint** from the project home.
+
+Its format is `https://<your-domain>.services.ai.azure.com/api/projects/<your-project>`. It is different from the model's `.openai.azure.com` endpoint. If the displayed URL differs from the format accepted by this pinned runtime, check Libraries/API for the project endpoint. Do not invent a different domain.
+
+In the Azure portal, open **project resource → JSON View** and copy `id`.
+
+```text
+/subscriptions/.../resourceGroups/.../providers/Microsoft.CognitiveServices/accounts/.../projects/...
+```
+
+Use the **full ID through `/projects/...`**, not just the parent Foundry account ID.
+
+### CLI alternative
+
+Use this instead of the portal route. Do not omit `--assign-identity` or `--allow-project-management true`. Names must be globally unique where required; use the same subscription, group, and region throughout.
+
+```bash
+az cognitiveservices account create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-your-lab" --name "YOUR-UNIQUE-FOUNDRY-NAME" --custom-domain "YOUR-UNIQUE-FOUNDRY-NAME" --kind AIServices --sku S0 --location swedencentral --assign-identity --allow-project-management true
+az cognitiveservices account project create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-your-lab" --name "YOUR-UNIQUE-FOUNDRY-NAME" --project-name "your-project" --location swedencentral
+```
+
+CLI creation **does not guarantee Foundry User assignments** for the user and project. Verify both identities in section 7.
+
+## 6. Deploy the first model
+
+1. In Foundry **Discover → Models**, find **`gpt-6-luna`**.
+2. Check version **`2026-09-22`**, capabilities, regions, and quota. It is a starting choice for responsive, cost-efficient repeated requests and tool exercises. See [Model roles and selection](model-selection.md).
+3. Under **Deploy / Use this model**, name the deployment `workshop-chat`.
+4. Select a pay-as-you-go Standard variant permitted by your policies. Choose Global Standard only if global processing is allowed. No PTU contract is required.
+5. Wait for **Succeeded** and record the actual base model, version, deployment type, and region.
+
+If quota is unavailable or the model is not offered, **do not repeatedly click Create**. Check regional limits in model deployment/Quota, request an increase, or explicitly choose another supported region/model and record why. The code does not switch automatically.
+
+Luna remains the starting candidate. Sol is used for comparison in 02 and judging in 07; compatibility may require selecting it earlier in 01. Prepare dedicated IQ Chat and Optimizer models only in their respective chapters.
+
+If a different model already uses the same deployment name, create a new deployment and switch explicitly. The setup helper does not hide GPT-6 model/version mismatches. Do not relabel existing agents or evaluations as results from a new model.
+
+## 7. Verify data-access roles
+
+In the Azure portal, inspect **your actual Foundry resource → IAM → Role assignments**.
+
+| Identity | Role | Scope |
+|---|---|---|
+| Your signed-in user | **Foundry User** | This workshop's Foundry resource |
+| This project's managed identity | **Foundry User** | The same Foundry resource |
+
+Do not duplicate assignments already created by the portal. If missing, use **Add role assignment → Foundry User → Members** and select the correct identity. The older name **Azure AI User** may appear; the role ID is `53ca6127-db72-4b80-b1b0-d745d6d5456d`.
+
+The managed identity is not your user account or a project-name string. Identify it through **project resource → JSON View → identity.principalId**. If no identity exists, check the project's managed-identity configuration before continuing.
+
+Subscription Owner's resource-management permission does not replace data-plane permission. Do not create an app registration or client secret for this step.
+
+## 8. Collect configuration from actual values
+
+Replace the three values and prefix inside quotes:
+
+```bash
+python scripts/selfstudy.py configure --project-id "YOUR-PROJECT-ARM-ID" --endpoint "YOUR-PROJECT-ENDPOINT" --deployment "workshop-chat" --prefix "lab-yourname-0927"
+```
+
+This helper **only reads subscription, project, account, and deployment metadata** through Azure CLI. After verifying ID/endpoint consistency and deployment state, it records:
+
+- `.env`: one set of SDK configuration values.
+- `.selfstudy/azure.json`: actual resource IDs, managed identities, region, and verification time.
+
+It does not store tokens, passwords, or API keys, and does not overwrite configuration for a different existing project. Distinguish `management_metadata_read: true` from `model_invoked: false`.
+
+New configuration uses **reasoning `low` and a `32768` output-token cap**. Reasoning tokens count toward this cap. If reusing older personal settings, inspect and explicitly align them, then use new agents and experiment labels:
+
+```bash
+python scripts/selfstudy.py set WORKSHOP_REASONING_EFFORT low
+python scripts/selfstudy.py set WORKSHOP_MAX_OUTPUT_TOKENS 32768
+```
+
+```bash
+python scripts/selfstudy.py values
+python scripts/workshop.py --language en doctor --cloud
+```
+
+Check the subscription, tenant, and deployment. `doctor --cloud` checks authentication and metadata, not inference.
+
+**Pass the first real request in the next chapter before creating agents.** In a new Sweden Central project tested on 2026-09-27, Luna succeeded through the account API but returned 400/500 through the project API; Sol succeeded in the same project. For that symptom, follow [01's explicit compatibility path](01-foundry.md#distinguish-project-and-account-apis). Deployment status `Succeeded` is not proof of support for every API path.
+
+## 9. Generate role-assignment commands when needed
+
+Find your user Object ID in the Azure portal or use:
+
+```bash
+az ad signed-in-user show --query id --output tsv
+python scripts/selfstudy.py roles --user-object-id "YOUR-USER-OBJECT-ID"
+```
+
+`roles` **prints a plan; it does not execute assignments**. Compare it with Portal IAM and apply only missing roles. Do not grant Owner to another identity or broaden permissions to the whole subscription.
+
+## Completion check
+
+- [ ] I created my dedicated group, Foundry project, and model deployment.
+- [ ] I verified data roles for my user and the project's managed identity.
+- [ ] I saved one consistent configuration and read back its actual values.
+- [ ] I understand cost boundaries and additional-permission requirements.
+
+Resolve blockers using [Troubleshooting](troubleshooting.md). If stopping, review [cleanup and retention](15-capstone-cleanup.md) now.
+
+**Next → [01. Foundry and your first model response](01-foundry.md)**

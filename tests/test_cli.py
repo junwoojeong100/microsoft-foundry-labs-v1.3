@@ -29,6 +29,31 @@ class CliTests(unittest.TestCase):
         self.assertIn("routines", help_text)
         self.assertIn("Fixtures are not model-quality evidence.", help_text)
 
+    def test_direct_inference_api_is_explicit_and_project_default_is_preserved(self):
+        for command in (["model"], ["answer"], ["collect", "--label", "api-test"]):
+            with self.subTest(command=command):
+                self.assertEqual(parser().parse_args(command).api, "project-responses")
+                self.assertEqual(
+                    parser().parse_args([*command, "--api", "account-responses"]).api,
+                    "account-responses",
+                )
+
+    def test_model_api_selection_reaches_the_actual_client_factory(self):
+        for api in ("project-responses", "account-responses"):
+            with (
+                self.subTest(api=api),
+                workspace() as root,
+                patch("foundry_workshop.settings.Settings.from_env") as settings,
+                patch("foundry_workshop.cloud.project_clients") as clients,
+                patch("foundry_workshop.cloud.call_model", return_value={"mode": "live"}),
+            ):
+                clients.return_value.__enter__.return_value = (object(), object())
+                status, stdout, stderr = self.run_cli(root, ["model", "--api", api])
+                self.assertEqual(status, 0, stderr)
+                expected = {"account_api": True} if api == "account-responses" else {}
+                clients.assert_called_once_with(settings.return_value, **expected)
+                self.assertEqual(json.loads(stdout)["inference_api"], api)
+
     def test_invalid_questions_fail_before_cloud_configuration_or_imports(self):
         with tempfile.TemporaryDirectory() as directory:
             for question in ("", " ", "A" * 2001):

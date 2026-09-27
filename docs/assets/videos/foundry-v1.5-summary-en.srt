@@ -1,0 +1,163 @@
+1
+00:00:00,000 --> 00:00:06,000
+A concise lifecycle tour, edited from real portal and CLI captures.
+CLI panels recorded live subprocess output in a headless browser.
+
+2
+00:00:06,000 --> 00:00:12,000
+Business checks passed; review native findings.
+Native quality warnings remain. Deployment approval is false.
+
+3
+00:00:12,000 --> 00:00:20,000
+A new workshop group was created with lifecycle=retain.
+The Azure resources in this lab are retained, not deleted.
+
+4
+00:00:20,000 --> 00:00:27,000
+Luna returned a real response through account-responses.
+This Korean CLI capture does not validate Luna prompt-agent support.
+
+5
+00:00:27,000 --> 00:00:31,000
+The real model Playground, using the workshop-chat deployment.
+
+6
+00:00:31,000 --> 00:00:39,000
+The English prompt and response are genuinely in English.
+This is a crop of the recording, not a reconstructed result.
+
+7
+00:00:39,000 --> 00:00:47,000
+This Router response selected grok-4-1-fast-reasoning.
+It is not evidence of an invisible fallback to Luna or Sol.
+
+8
+00:00:47,000 --> 00:00:57,000
+Known limitation: Luna project-Responses returned 400/500 in this fresh project.
+Sol was explicitly selected for project and agent workflows.
+
+9
+00:00:57,000 --> 00:01:02,000
+Six synthetic Hanbit policy files were indexed and retained.
+This capture verifies indexing, not an agent invocation.
+
+10
+00:01:02,000 --> 00:01:07,000
+Lodging: KRW 120,000 before July 2026; then KRW 150,000 per night.
+These are synthetic teaching policies, not a real company's rules.
+
+11
+00:01:07,000 --> 00:01:13,000
+KRW 170,000 is KRW 20,000 above the current lodging limit.
+Explicit team-lead approval is required before booking.
+
+12
+00:01:13,000 --> 00:01:19,000
+The English capture records tool calls and tool_execution_verified=true.
+Local Python calls Azure; it does not approve, book, or pay.
+
+13
+00:01:19,000 --> 00:01:27,000
+Real Code Interpreter execution produced policy-summary.csv.
+Six rows and file hashes were checked; this is not overall answer-quality approval.
+
+14
+00:01:27,000 --> 00:01:32,000
+Basic provisioning failed: swedencentral capacity was unavailable.
+EXIT 1 is the actual result, not a successful deployment.
+
+15
+00:01:32,000 --> 00:01:37,000
+Standard S1 also returned ResourcesForSkuUnavailable.
+No substitute is presented as a successful Search service.
+
+16
+00:01:37,000 --> 00:01:45,000
+S2 could not be provisioned: subscription quota was 0 out of 0.
+Search, IQ, Hybrid, and dependent Toolbox/OpenAPI work remain blocked.
+
+17
+00:01:45,000 --> 00:01:54,000
+The real azd deployment succeeded in 2 minutes 12 seconds; waiting is cut.
+Editorial masks hide local command paths and deployment links.
+
+18
+00:01:54,000 --> 00:02:00,000
+The remote English Hosted v1 answered a real English policy prompt.
+It returned the KRW 150,000 limit and prior-approval requirement.
+
+19
+00:02:00,000 --> 00:02:06,000
+The Hosted matrix uses LOCAL keyword retrieval, not IQ.
+Policy guidance is not actual approval, booking, or payment.
+
+20
+00:02:06,000 --> 00:02:13,000
+The original and downloaded Skill files match byte for byte.
+This local integrity check sends no new Azure request.
+
+21
+00:02:13,000 --> 00:02:23,000
+The English caller v1 delegated to target v1 and returned its real result.
+A2A 1.0 / JSONRPC was verified in configuration, not by packet capture.
+
+22
+00:02:23,000 --> 00:02:32,000
+A fresh request received actual managed-memory API search results.
+Not automatic extraction, a native memory tool, or a real-user authorization test.
+
+23
+00:02:32,000 --> 00:02:37,000
+Configuration recap: 11 default protections were copied to a PRIVATE policy.
+Microsoft.DefaultV2 and shared settings were not changed.
+
+24
+00:02:37,000 --> 00:02:42,000
+The real D06 answer refused to claim approval by ignoring the policy.
+This was behavioral refusal; no platform filter intervention was observed.
+
+25
+00:02:42,000 --> 00:02:48,000
+The real readback shows immutable_subject=true.
+CI trust is scoped to the exact immutable repository and environment.
+
+26
+00:02:48,000 --> 00:02:54,000
+The foundry-workshop environment and main-only policy are configured.
+Dispatch awaits the final push; this video does not claim a successful CI run.
+
+27
+00:02:54,000 --> 00:03:00,000
+Frozen deployed v1 and v2 each passed 12/12 business checks.
+Six cases times two models; no pass-rate improvement was demonstrated.
+
+28
+00:03:00,000 --> 00:03:06,000
+The SHARED KOREAN v2 holdout was used once: 8/8 business checks.
+All 32 traces were exported. This is not a separate English holdout run.
+
+29
+00:03:06,000 --> 00:03:12,000
+Native Relevance warnings remain on D05/H04.
+Business passes do not change deployment_approved=false.
+
+30
+00:03:12,000 --> 00:03:18,000
+Judge calibration distinguished 2/2 prewritten good/bad fixtures.
+That checks the judge, not general agent quality or production readiness.
+
+31
+00:03:18,000 --> 00:03:24,000
+This real list shows five top-level ARM resources in swedencentral.
+It does not enumerate all child agents and model deployments.
+
+32
+00:03:24,000 --> 00:03:30,000
+Editorial status recap: resources retained; unused compute stopped.
+Routines, continuous evaluation, and Insights scheduling are paused or disabled.
+
+33
+00:03:30,000 --> 00:03:38,000
+Business checks passed; review native findings before a release decision.
+Search capacity and an actual CI run are still outstanding.

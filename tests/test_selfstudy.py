@@ -356,6 +356,31 @@ class SelfStudyTests(unittest.TestCase):
                 selfstudy.prepare_hosted("runtime", package, "hosted", "default")
             self.assertEqual(run.call_count, 1)
 
+    def test_english_matrix_preparation_passes_language_and_owned_name_to_child_only(self):
+        self.configure()
+        package = self.root / ".build/matrix-en"
+        package.mkdir(parents=True)
+        before = selfstudy.ENV.read_bytes()
+
+        def prepare(command, **kwargs):
+            self.assertEqual(command[2:6], ["--language", "en", "--kind", "matrix"])
+            name = "lab-user-0927-matrix-en"
+            self.assertEqual(kwargs["env"]["WORKSHOP_HOSTED_AGENT_NAME"], name)
+            directory = Path(command[command.index("--directory") + 1])
+            directory.mkdir(parents=True)
+            (directory / "azure.yaml").write_text(json.dumps({
+                "name": name,
+                "services": {"workshop-project": {"endpoint": ENDPOINT}, name: {}},
+            }))
+            return subprocess.CompletedProcess(command, 0)
+
+        with patch.object(selfstudy.subprocess, "run", side_effect=prepare):
+            result = selfstudy.prepare_hosted(
+                "matrix", package, "matrix-en", "v1", language="en"
+            )
+        self.assertEqual(result["language"], "en")
+        self.assertEqual(selfstudy.ENV.read_bytes(), before)
+
     def test_resilience_wrapper_disables_external_telemetry_only_for_child(self):
         with patch.dict(
             os.environ,
@@ -432,6 +457,18 @@ class SelfStudyTests(unittest.TestCase):
         self.assertEqual(output.read_bytes(), b"partial")
         self.assertEqual(output.with_suffix(".stderr.txt").read_bytes(), b"timeout")
 
+    def test_english_capture_uses_an_english_question(self):
+        folder, output = self.prepare_capture()
+        with (
+            patch.object(selfstudy.shutil, "which", return_value="/fake/azd"),
+            patch.object(selfstudy.subprocess, "run", side_effect=self.capture_process) as run,
+        ):
+            result = selfstudy.capture_hosted(
+                folder, "lab-user-0927-hosted", "3", output, True, language="en"
+            )
+        self.assertEqual(result["language"], "en")
+        self.assertIn("September 2026", run.call_args.args[0][-1])
+
     def test_capture_wrong_version_never_invokes(self):
         folder, output = self.prepare_capture()
         with (
@@ -503,6 +540,11 @@ class SelfStudyTests(unittest.TestCase):
             templates = self.root / "examples/hosted"
             templates.mkdir()
             (templates / "azure.yaml.example").write_text("name: template")
+            media = self.root / "docs/assets/videos"
+            media.mkdir(parents=True)
+            (media / "summary-en.mp4").write_bytes(b"synthetic-test-media")
+            (media / "summary-en.srt").write_text("synthetic captions")
+            (self.root / "docs/unreviewed-recording.mp4").write_bytes(b"must not ship")
             for name in (
                 ".env",
                 ".selfstudy/private.json",
@@ -516,6 +558,10 @@ class SelfStudyTests(unittest.TestCase):
             with ZipFile(output) as archive:
                 names = archive.namelist()
                 self.assertTrue(any(name.endswith("/README.md") for name in names))
+                self.assertTrue(any(name.endswith("/README.ko.md") for name in names))
+                self.assertTrue(any(name.endswith("/videos/summary-en.mp4") for name in names))
+                self.assertTrue(any(name.endswith("/videos/summary-en.srt") for name in names))
+                self.assertFalse(any("unreviewed-recording.mp4" in name for name in names))
                 self.assertFalse(
                     any(
                         "/.reference/" in name or "/outputs/" in name or name.endswith("/.env")

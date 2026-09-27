@@ -54,11 +54,11 @@ Playground에서 같은 배포를 유지하고 **각 실험 전에 새 대화**�
 python scripts/selfstudy.py model --role comparison
 ```
 
-처음에는 한빛기술 규정도 함께 쓰는 직접 SDK 응답을 만들어 봅니다.
+처음에는 한빛기술 규정도 함께 쓰는 직접 SDK 응답을 만들어 봅니다. 01에서 확인한 같은 계정의 `AZURE_OPENAI_ENDPOINT`를 설정하고, **두 모델 모두 계정 Responses API**를 사용합니다. 기본 배포를 Sol로 바꿨더라도 두 호출의 모델을 각각 명시합니다.
 
 ```bash
-python scripts/workshop.py answer --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-model-a.json
-python scripts/workshop.py --model-deployment workshop-compare answer --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-model-b.json
+python scripts/workshop.py --model-deployment workshop-chat answer --api account-responses --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-model-a.json
+python scripts/workshop.py --model-deployment workshop-compare answer --api account-responses --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-model-b.json
 ```
 
 같은 지침·질문·로컬 근거를 사용합니다. `--model-deployment`는 **이 요청만** 바꾸며 `.env`나 Azure의 기본 배포를 변경하지 않습니다. 응답·근거·오류·사용량을 비교하되 한 질문으로 모델 순위를 확정하지 않습니다. 전체 dev 비교는 07에서 진행합니다.

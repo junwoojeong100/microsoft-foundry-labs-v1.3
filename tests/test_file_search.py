@@ -116,6 +116,37 @@ class FileSearchTests(unittest.TestCase):
         self.assertEqual(self.client.files.create.call_count, 6)
         self.client.vector_stores.create.assert_called_once()
 
+    def test_retained_store_has_no_automatic_expiry(self):
+        result = file_search_lab.create(
+            self.project,
+            self.client,
+            self.root,
+            self.settings,
+            self.name,
+            confirmed=True,
+            retain=True,
+        )
+        self.client.vector_stores.create.assert_called_once_with(name=self.name + "-knowledge")
+        self.assertEqual(result["retention"], "retain")
+        state = file_search_lab.load_owned(self.root, self.settings, self.name)
+        self.assertEqual(state["retention"], "retain")
+
+    def test_partial_run_cannot_silently_change_retention(self):
+        self.client.vector_stores.files.create.return_value = SimpleNamespace(status="failed")
+        with self.assertRaisesRegex(ValueError, "Indexing failed"):
+            self.create()
+        with self.assertRaisesRegex(ValueError, "original retention"):
+            file_search_lab.create(
+                self.project,
+                self.client,
+                self.root,
+                self.settings,
+                self.name,
+                confirmed=True,
+                retain=True,
+            )
+        self.client.vector_stores.create.assert_called_once()
+
     def test_ask_pins_version_and_requires_owned_search_citations(self):
         self.create()
         raw = self.raw_response()
@@ -128,7 +159,7 @@ class FileSearchTests(unittest.TestCase):
             )
         self.assertTrue(result["file_search_verified"])
         self.assertEqual(request.call_args.kwargs["max_output_tokens"], 32768)
-        self.assertEqual(request.call_args.kwargs["reasoning"], {"effort": "low"})
+        self.assertNotIn("reasoning", request.call_args.kwargs)
         self.assertEqual(request.call_args.kwargs["extra_body"]["agent_reference"]["version"], "3")
         self.assertEqual(request.call_args.kwargs["include"], ["file_search_call.results"])
         self.assertTrue((Path(result["result_directory"]) / "response.json").is_file())

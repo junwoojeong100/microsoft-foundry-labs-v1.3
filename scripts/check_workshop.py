@@ -58,7 +58,10 @@ def check() -> dict[str, object]:
         errors.append("The path must contain ordered steps 00-15.")
     if "total_minutes" in curriculum or any("minutes" in step for step in steps):
         errors.append("A mandatory time budget must not be present.")
-    introduction = (ROOT / "README.md").read_text(encoding="utf-8")
+    introductions = {
+        "en": (ROOT / "README.md").read_text(encoding="utf-8"),
+        "ko": (ROOT / "README.ko.md").read_text(encoding="utf-8"),
+    }
     setup_text = (ROOT / "docs/00-setup.md").read_text(encoding="utf-8")
     env_text = (ROOT / ".env.example").read_text(encoding="utf-8")
     if PRIMARY_MODEL not in setup_text or PRIMARY_VERSION not in setup_text:
@@ -73,19 +76,29 @@ def check() -> dict[str, object]:
         if not set(step["depends_on"]).issubset(seen):
             errors.append(f"Invalid dependency: {step['id']}")
         seen.add(step["id"])
-        path = ROOT / step["file"]
-        if not path.is_file():
-            errors.append(f"Missing step: {step['file']}")
-            continue
-        text = path.read_text(encoding="utf-8")
-        if "**완료 목표:**" not in text:
-            errors.append(f"Missing outcome: {step['file']}")
-        if step["file"] not in introduction:
-            errors.append(f"Step missing from README: {step['file']}")
+        for language, marker in (("ko", "**완료 목표:**"), ("en", "**Outcome:**")):
+            relative = (
+                step["file"]
+                if language == "ko"
+                else str(Path("docs/en") / Path(step["file"]).relative_to("docs"))
+            )
+            path = ROOT / relative
+            if not path.is_file():
+                errors.append(f"Missing {language} step: {relative}")
+                continue
+            text = path.read_text(encoding="utf-8")
+            if marker not in text:
+                errors.append(f"Missing {language} outcome: {relative}")
+            if relative not in introductions[language]:
+                errors.append(f"Step missing from {language} README: {relative}")
+    for path in (ROOT / "docs").rglob("*.md"):
+        relative = path.relative_to(ROOT / "docs")
+        if relative.parts[0] != "en" and not (ROOT / "docs/en" / relative).is_file():
+            errors.append(f"Missing English guide: docs/en/{relative}")
     documents = [
         *ROOT.glob("*.md"),
         *(ROOT / "docs").rglob("*.md"),
-        *(ROOT / "worksheets").glob("*.md"),
+        *(ROOT / "worksheets").rglob("*.md"),
         *(ROOT / "data").rglob("*.md"),
         *(ROOT / "examples").rglob("*.md"),
     ]
@@ -164,6 +177,8 @@ def check() -> dict[str, object]:
         "primary_model": PRIMARY_MODEL,
         "primary_version": PRIMARY_VERSION,
         "labs": len(steps),
+        "languages": ["en", "ko"],
+        "localized_lab_pages": len(steps) * 2,
         "documents": len(documents),
         "links_checked": links,
         "command_contracts_checked": commands,

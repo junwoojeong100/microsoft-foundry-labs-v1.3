@@ -2,7 +2,19 @@
 
 **완료 목표:** 고정한 대상의 새 문항 결과를 확인하고, 본인이 만든 모든 비용 자원을 정리하거나 명시적으로 보관합니다.
 
-중도에 실습을 멈추는 경우에도 **아래 정리 절차는 지금 수행**합니다. 품질 실패 때문에 비용 자원을 방치하지 않습니다.
+중도에 실습을 멈추는 경우에도 **아래 중지·목록 확인·보관 결정을 지금 수행**합니다. 품질 실패 때문에 비용 자원을 방치하지 않습니다. 삭제는 별도로 선택하는 작업입니다.
+
+## 보존 모드로 진행할 때
+
+다음에 재사용하거나 검증 환경을 남기기로 했다면 **삭제 명령을 실행하지 않습니다.**
+
+- `--confirm-delete`, Memory `forget`/`cleanup`, `azd down`, 리소스 그룹 삭제를 모두 생략합니다.
+- 03의 File Search는 처음 만들 때 `--retain`을 사용해 vector store 자동 만료도 설정하지 않습니다.
+- 로컬 서버는 중지하고 Routines·반복 평가는 disabled/paused로 둡니다. 필요 없는 Hosted 실행 세션은 **stop만** 하며 agent·버전·volume은 삭제하지 않습니다.
+- `.env`, `.selfstudy/azure.json`, `outputs/`의 실제 ID와 소유권 기록을 개인의 승인된 위치에 보관합니다. 공개 저장소에 올리지 않습니다.
+- Search Basic, 파일/volume, 로그 등 남는 비용과 다음 확인 일자를 기록합니다. `lifecycle=retain` 태그는 관리용 표시일 뿐 삭제 방지 잠금이나 비용 상한이 아닙니다.
+
+이 모드는 **의도적인 보관**입니다. Memory 항목 TTL과 관리형 세션의 자체 만료까지 무기한 유지한다는 뜻은 아닙니다. 아래 삭제 절은 검토 자료로만 읽고, 최종 확인에는 “삭제하지 않고 보존”을 기록합니다.
 
 ## 1. 무엇을 최종 평가할지 고정
 
@@ -23,6 +35,8 @@ holdout 실행 전 다음을 확인합니다.
 ## 2. Hosted 최종 확인
 
 12의 모든 게이트를 통과한 경우에만:
+
+12에서 Search 미제공 경로를 명시적으로 선택했다면 아래 수집 명령의 **`--retrieval iq`를 `--retrieval local`로 바꾸고**, 같은 고정 matrix-local 버전을 사용합니다. 평가/trace/인수 기준은 낮추지 않습니다. 결과는 로컬 검색을 사용하는 Hosted의 인수이며 IQ 인수가 아닙니다.
 
 ```bash
 python scripts/workshop.py benchmark collect --split holdout --label wf-final --candidate wf-candidate --unlock-holdout --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost

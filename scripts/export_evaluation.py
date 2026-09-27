@@ -24,7 +24,7 @@ def export_evaluation(
 ) -> dict:
     if (
         not re.fullmatch(r"eval_[A-Za-z0-9_-]+", evaluation_id)
-        or not re.fullmatch(r"evalrun_[A-Za-z0-9_-]+", run_id)
+        or not re.fullmatch(r"(?:evalrun|continuousevalrun)_[A-Za-z0-9_-]+", run_id)
         or expected_rows < 1
     ):
         raise ValueError("Use actual evaluation/run IDs and a positive expected row count.")

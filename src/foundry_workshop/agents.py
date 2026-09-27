@@ -1,6 +1,7 @@
 import asyncio
 import json
 import sys
+from collections.abc import Awaitable, Callable
 from contextlib import AsyncExitStack
 from pathlib import Path
 from typing import Any
@@ -25,7 +26,14 @@ def policy_instructions(root: Path, language: str = "ko") -> str:
     return instructions + "\nJSON schema:\n" + json.dumps(ANSWER_SCHEMA)
 
 
-def build_policy_agent(settings: Settings, root: Path, credential: Any, *, tools: bool = True):
+def build_policy_agent(
+    settings: Settings,
+    root: Path,
+    credential: Any,
+    *,
+    tools: bool = True,
+    middleware: list[Any] | None = None,
+):
     from agent_framework import Agent, tool
     from agent_framework.foundry import FoundryChatClient
 
@@ -55,6 +63,7 @@ def build_policy_agent(settings: Settings, root: Path, credential: Any, *, tools
         name="HanbitPolicyGuide",
         instructions=instructions,
         tools=[lookup_policy] if tools else [],
+        middleware=middleware,
         default_options=maf_options(settings),
     )
 
@@ -62,7 +71,36 @@ def build_policy_agent(settings: Settings, root: Path, credential: Any, *, tools
 async def run_agent(
     settings: Settings, root: Path, question: str, *, tools: bool, mcp: bool
 ) -> dict[str, Any]:
+    from agent_framework import Content, FunctionInvocationContext, function_middleware
+    from pydantic import BaseModel
+
     validate_question(question)
+    calls: list[dict[str, Any]] = []
+
+    @function_middleware
+    async def record_tool(
+        context: FunctionInvocationContext, call_next: Callable[[], Awaitable[None]]
+    ) -> None:
+        event = {
+            "name": context.function.name,
+            "arguments": context.arguments.model_dump(mode="json")
+            if isinstance(context.arguments, BaseModel)
+            else dict(context.arguments),
+            "completed": False,
+        }
+        calls.append(event)
+        await call_next()
+        if not isinstance(context.result, list) or not context.result or any(
+            not isinstance(item, Content) for item in context.result
+        ):
+            raise ValueError("The invoked policy tool returned no result.")
+        text = "\n".join(
+            item.text for item in context.result if item.type == "text" and item.text
+        )
+        if not text.strip():
+            raise ValueError("The invoked policy tool returned no policy text.")
+        event.update(completed=True, result_text=text)
+
     with credential_for(settings) as credential:
         async with AsyncExitStack() as stack:
             if mcp:
@@ -95,14 +133,19 @@ async def run_agent(
                         else "\nMCP 도구에서 합성 규정 근거를 먼저 찾으세요."
                     ),
                     tools=[mcp_tool],
+                    middleware=[record_tool],
                     default_options=maf_options(settings),
                 )
             else:
-                agent = build_policy_agent(settings, root, credential, tools=tools)
+                agent = build_policy_agent(
+                    settings, root, credential, tools=tools, middleware=[record_tool]
+                )
             await stack.enter_async_context(agent)
             result = await agent.run(question)
             if not result.text.strip():
                 raise ValueError("The agent returned no text.")
+            if (tools or mcp) and (not calls or any(not call["completed"] for call in calls)):
+                raise ValueError("The requested policy tool was not actually invoked successfully.")
             answer = Answer.from_json(result.text).to_dict() if tools or mcp else None
             return {
                 "mode": "live",
@@ -111,6 +154,9 @@ async def run_agent(
                 "tools": "local-mcp" if mcp else "function" if tools else "none",
                 "text": result.text,
                 "answer": answer,
+                "tool_calls": calls,
+                "tool_execution_verified": bool(calls)
+                and all(call["completed"] for call in calls),
                 "note": "Local Python orchestration still calls a billable Azure model.",
             }
 

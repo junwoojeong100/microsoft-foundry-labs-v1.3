@@ -68,6 +68,7 @@ ROLE_IDS = {
     "Search Service Contributor": "7ca78c08-252a-4471-8644-bb5ff32d4ba0",
     "Cognitive Services User": "a97b65f3-24c7-4388-baec-2e87135dc908",
     "Log Analytics Reader": "73c42c96-874c-492b-b04d-ab87d138a893",
+    "Monitoring Reader": "43d0d8ad-25c7-4714-9337-8ba259a9fe05",
 }
 
 
@@ -276,7 +277,11 @@ def compare_files(first: Path, second: Path) -> dict:
     return {"files_equal": True, "sha256": digests[0], "azure_requests_sent": False}
 
 
-def prepare_hosted(kind: str, package: Path, name: str, run: str) -> dict:
+def prepare_hosted(
+    kind: str, package: Path, name: str, run: str, *, language: str = "ko"
+) -> dict:
+    if language not in {"ko", "en"}:
+        raise SetupError("언어는 ko 또는 en을 명시하세요.")
     state = read_state()
     validate_runtime_environment(os.environ.copy(), explicit_model=False)
     if kind not in {"runtime", "matrix", "toolbox"}:
@@ -293,12 +298,15 @@ def prepare_hosted(kind: str, package: Path, name: str, run: str) -> dict:
         raise SetupError(
             "이미 준비한 폴더는 덮어쓰지 않습니다. 기존 결과를 읽거나 새 --run을 사용하세요."
         )
+    environment = os.environ.copy()
+    if kind == "matrix":
+        environment["WORKSHOP_HOSTED_AGENT_NAME"] = service
     subprocess.run(
         [
             sys.executable,
             str(ROOT / "scripts/prepare_hosted_azd.py"),
             "--language",
-            "ko",
+            language,
             "--kind",
             kind,
             "--package",
@@ -316,6 +324,7 @@ def prepare_hosted(kind: str, package: Path, name: str, run: str) -> dict:
         cwd=ROOT,
         check=True,
         timeout=180,
+        env=environment,
     )
     manifest = json.loads((directory / "azure.yaml").read_text(encoding="utf-8"))
     if (
@@ -328,6 +337,7 @@ def prepare_hosted(kind: str, package: Path, name: str, run: str) -> dict:
         "service": service,
         "directory": str(directory),
         "azure_deployed": False,
+        "language": language,
         "next_commands": [
             f'azd deploy "{service}" --cwd "{directory}"',
             f'azd ai agent show "{service}" --cwd "{directory}" --output json',
@@ -728,6 +738,14 @@ def role_plan(user_id: str, hosted_id: str | None = None) -> dict:
                 )
         elif item["kind"] in {"insights", "logs"}:
             add(user_id, "User", "Log Analytics Reader", item["id"], "내 trace 조회")
+            if item["kind"] == "insights":
+                add(
+                    project["principal_id"],
+                    "ServicePrincipal",
+                    "Monitoring Reader",
+                    item["id"],
+                    "Insights 분석을 위한 프로젝트 관리 ID의 telemetry 조회",
+                )
     if hosted_id:
         add(
             hosted_id,
@@ -754,8 +772,16 @@ def role_plan(user_id: str, hosted_id: str | None = None) -> dict:
 
 
 def capture_hosted(
-    directory: Path, service: str, version: str, output: Path, confirmed: bool
+    directory: Path,
+    service: str,
+    version: str,
+    output: Path,
+    confirmed: bool,
+    *,
+    language: str = "ko",
 ) -> dict:
+    if language not in {"ko", "en"}:
+        raise SetupError("언어는 ko 또는 en을 명시하세요.")
     if not confirmed:
         raise SetupError("실제 모델/도구 호출입니다. 검토 후 --confirm-cost를 명시하세요.")
     state = read_state()
@@ -828,7 +854,11 @@ def capture_hosted(
         or actual.get("status") not in {"active", "deployed"}
     ):
         raise SetupError("요청한 실제 활성 서비스/버전과 조회 결과가 다릅니다.")
-    question = "2026년 9월 국내 출장에서 170000원 호텔의 사전 승인 조건은?"
+    question = (
+        "What advance approval is needed for a KRW 170000 hotel on a domestic business trip in September 2026?"
+        if language == "en"
+        else "2026년 9월 국내 출장에서 170000원 호텔의 사전 승인 조건은?"
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     try:
         completed = subprocess.run(
@@ -869,6 +899,7 @@ def capture_hosted(
         "agent": service,
         "version": version,
         "agent_response_verified": False,
+        "language": language,
     }
 
 
@@ -903,6 +934,7 @@ def argument_parser() -> argparse.ArgumentParser:
     hosted.add_argument("--package", type=Path, required=True)
     hosted.add_argument("--name", required=True, help="접두사 뒤에 붙일 짧은 이름")
     hosted.add_argument("--run", default="default", help="같은 서비스의 새 준비 폴더 구분")
+    hosted.add_argument("--language", choices=("ko", "en"), default="ko")
     bind = commands.add_parser(
         "bind-matrix", help="실제 활성 matrix 버전·Invocations Endpoint를 읽어 저장"
     )
@@ -921,6 +953,7 @@ def argument_parser() -> argparse.ArgumentParser:
     capture.add_argument("--version", required=True)
     capture.add_argument("--output", type=Path, required=True)
     capture.add_argument("--confirm-cost", action="store_true")
+    capture.add_argument("--language", choices=("ko", "en"), default="ko")
     return parser
 
 
@@ -985,9 +1018,15 @@ def main() -> None:
     elif args.command == "compare-files":
         result = compare_files(args.first, args.second)
     elif args.command == "prepare-hosted":
-        result = prepare_hosted(args.kind, args.package, args.name, args.run)
-        print(f"서비스: {result['service']}\n폴더: {result['directory']}")
-        print("아직 Azure에 배포하지 않았습니다. 대상과 비용을 확인한 뒤 다음 명령을 실행하세요.")
+        result = prepare_hosted(
+            args.kind, args.package, args.name, args.run, language=args.language
+        )
+        if args.language == "en":
+            print(f"Service: {result['service']}\nDirectory: {result['directory']}")
+            print("Not deployed to Azure. Review the target and cost before running these commands.")
+        else:
+            print(f"서비스: {result['service']}\n폴더: {result['directory']}")
+            print("아직 Azure에 배포하지 않았습니다. 대상과 비용을 확인한 뒤 다음 명령을 실행하세요.")
         for command in result["next_commands"]:
             print(command)
         return
@@ -995,7 +1034,12 @@ def main() -> None:
         result = bind_matrix(args.directory, args.service)
     elif args.command == "capture":
         result = capture_hosted(
-            args.directory, args.service, args.version, args.output, args.confirm_cost
+            args.directory,
+            args.service,
+            args.version,
+            args.output,
+            args.confirm_cost,
+            language=args.language,
         )
     elif args.command == "resource":
         result = register_resource(args.kind, args.id, args.endpoint)

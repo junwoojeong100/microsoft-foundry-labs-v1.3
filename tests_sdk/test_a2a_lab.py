@@ -20,6 +20,7 @@ class A2ATransport(HttpTransport):
     def __init__(self):
         self.requests = []
         self.agents = {}
+        self.versions = {}
         self.card_version = "1.0"
         self.patches = []
 
@@ -74,11 +75,14 @@ class A2ATransport(HttpTransport):
             name = path.split("/")[-2]
             if request.method == "POST":
                 self.agents[name] = json.loads(request.body)
-                return Reply(request, 200, {"name": name, "version": "1", **self.agents[name]})
+                versions = self.versions.setdefault(name, [])
+                item = {"name": name, "version": str(len(versions) + 1), **self.agents[name]}
+                versions.append(item)
+                return Reply(request, 200, item)
             return Reply(
                 request,
                 200,
-                {"data": [{"name": name, "version": "1", **self.agents[name]}], "has_more": False},
+                {"data": self.versions[name], "has_more": False},
             )
         name = path.rsplit("/", 1)[-1]
         if request.method == "PATCH":
@@ -118,6 +122,7 @@ class A2ASDKTests(unittest.TestCase):
             self.assertEqual(tool["type"], "a2a")
             self.assertEqual(tool["a2a_version"], "1.0")
             self.assertEqual(tool["project_connection_id"], "unit-a2a-link")
+            self.assertEqual(tool["base_url"], a2a_lab.base_path(settings()))
             self.assertIs(tool["send_credentials_for_agent_card"], True)
             sent = transport.agents[a2a_lab.names(settings())["caller"]]
             self.assertEqual(sent["definition"], ledger["caller_request"]["definition"])
@@ -132,6 +137,28 @@ class A2ASDKTests(unittest.TestCase):
             any("api-version=v1" in request.url for request in card_requests),
             "The protocol card uses the A2A header, not a management API version.",
         )
+
+    def test_owned_caller_update_is_explicit_and_preserves_version_history(self):
+        transport = A2ATransport()
+        with workspace() as root:
+            with AIProjectClient(
+                endpoint=settings().project_endpoint,
+                credential=DummyCredential(),
+                transport=transport,
+            ) as project:
+                a2a_lab.target(project, root, settings(), confirmed=True)
+                a2a_lab.caller(project, root, settings(), confirmed=True)
+                with self.assertRaisesRegex(ValueError, "implicitly"):
+                    a2a_lab.caller(project, root, settings(), confirmed=True)
+                result = a2a_lab.caller(
+                    project, root, settings(), confirmed=True, new_version=True
+                )
+            ledger = read_json(a2a_lab.ledger_path(root, settings()))
+            self.assertEqual(result["agent_version"], "2")
+            self.assertEqual(ledger["caller_version"], "2")
+            self.assertEqual(ledger["previous_callers"][0]["version"], "1")
+            self.assertEqual(len(transport.versions[a2a_lab.names(settings())["caller"]]), 2)
+            self.assertFalse(any(request.method == "DELETE" for request in transport.requests))
 
     def test_preview_card_is_not_accepted_as_ga(self):
         transport = A2ATransport()

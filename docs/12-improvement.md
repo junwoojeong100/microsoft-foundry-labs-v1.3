@@ -4,6 +4,27 @@
 
 **시작 조건:** 07의 judge와 dev 결과, 08의 Hosted 준비 방법, 06의 IQ/계정 OpenAI Endpoint, 09의 로그 연결. 수행하는 기능별 비용을 확인합니다. **holdout은 이 장에서도 열지 않습니다.**
 
+## Search를 만들 수 없을 때의 명시적 경로
+
+대화 평가·Optimizer는 Search 없이 진행할 수 있습니다. 4~9절의 Hosted matrix도 **로컬 합성 문서 검색**을 명시적으로 선택해 검증할 수 있습니다. 이때 아래 세 변경을 처음부터 끝까지 유지합니다.
+
+| 항목 | IQ 경로 | Search 미제공 경로 |
+|---|---|---|
+| 모든 패키징·benchmark 명령의 `--retrieval` | `iq` | `local` |
+| 준비 명령의 `--name` | `matrix` | `matrix-local` |
+| IQ reranker threshold 설정 | 5절에서 설정 | 생략 |
+
+예를 들어 첫 패키지와 폴더는 다음과 같습니다.
+
+```bash
+python scripts/workshop.py --script package-hosted --kind workflow --pattern sequential --retrieval local --prompt v1 --api account-chat --protocol invocations
+python scripts/selfstudy.py prepare-hosted --kind matrix --package "실제-local-v1-패키지-경로" --name matrix-local --run v1
+```
+
+이후에도 v2 패키징·dev 수집·15의 holdout에서 `--retrieval local`을 유지하고, 준비 도구가 반환한 **실제 matrix-local 서비스·폴더·버전**을 사용합니다. `wf-baseline`/`wf-candidate` label은 선택한 한 경로에서만 사용합니다. 준비 도구는 승인한 서비스 이름을 자식 프로세스에 전달하고, `bind-matrix`는 배포 후 실제 Endpoint를 읽어 저장합니다.
+
+로컬 검색은 Search·IQ·벡터 검색의 구현/검증이 아닙니다. 원격 Hosted 실행, 모델 호출, 평가, trace와 검색 provider를 각각 구분해 기록합니다. IQ 경로로 나중에 바꾸면 기존 결과를 재사용하지 않고 새 label과 전후 쌍을 만듭니다.
+
 ## 1. 대화 평가
 
 ```bash
@@ -36,7 +57,7 @@ python scripts/workshop.py prepare-extensions --label extensions-ko
 2. **Optimize / Create optimization run → Agent**를 선택합니다.
 3. 실제 target 버전·답변 모델을 고정합니다.
 4. 최적화 대상은 **Instruction만**, 최대 후보 **2**를 선택합니다.
-5. 준비한 dev를 업로드하고 evaluator의 query/response/context/ground_truth 연결을 검토합니다.
+5. 준비한 dev를 업로드하고 evaluator가 요구하는 `query`/`context`/`ground_truth` 열을 확인합니다. 현재 Prompt Agent wizard는 열 이름 재매핑을 지원하지 않으므로 업로드 전에 스키마를 맞춥니다. 생성될 응답은 evaluator의 response 입력이며 참조 정답을 agent 입력에 넣지 않습니다.
 6. 비용·예상 호출 범위를 확인한 뒤 한 번 제출합니다.
 7. baseline과 모든 후보의 지침 차이·전체 행·평가 결과를 읽습니다.
 
@@ -47,6 +68,8 @@ python scripts/workshop.py --script export-evaluation --language ko --evaluation
 ```
 
 raw 입력을 확인할 권한/기능이 없으면 그 제한을 기록하고 자동 승격하지 않습니다. [공식 Optimizer 개념](https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview).
+
+**실제 검증에서 발견한 주의점:** 이 환경의 Prompt Optimizer + Groundedness v18 실행은 baseline 1.0에서 조기 종료됐지만, 내려받은 **6행 모두 judge의 `context`가 생성된 `response`와 같았습니다.** 이는 답변이 자기 자신을 근거로 평가된 것이므로 정상적인 grounding 검증이나 개선 증거가 아닙니다. `judge_inputs_available: true`만 확인하지 말고 내용도 원래 `context` 열과 대조하세요. 점수·원시 결과를 바꾸지 않고 이 실행은 승격하지 않았습니다.
 
 ## 4. Hosted matrix의 범위 고정
 

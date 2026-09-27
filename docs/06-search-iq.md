@@ -13,6 +13,10 @@
 5. 가격을 확인한 뒤 생성하고 완료 상태를 기다립니다.
 6. Overview의 **URL**, JSON View의 **전체 리소스 ID**를 기록합니다.
 
+**리전 용량 오류:** `ResourcesForSkuUnavailable`은 권한 오류와 다릅니다. 2026-09-27 Sweden Central에서는 Basic과 Standard S1 생성이 모두 이 오류를 반환했고, S2는 구독의 서비스 quota가 0이어서 생성되지 않았습니다. 같은 Create를 반복하거나 SKU를 자동으로 올리지 않습니다. 리전 고정 조건이 있다면 그대로 유지하고, 해당 리전의 용량 또는 필요한 SKU의 quota가 확보될 때 재개합니다. 상위 SKU를 선택하기로 했다면 **실제 SKU·replica·partition과 더 높은 상시 비용**을 먼저 기록합니다.
+
+Search를 만들 수 없으면 이 장의 Azure Search/IQ/Hybrid와 10의 Search 기반 Toolbox/OpenAPI는 **차단**으로 남깁니다. 03의 File Search 또는 로컬 검색은 별도 성공으로 기록하되 Azure Search 성공으로 대신하지 않습니다. 나머지 독립 실습은 계속할 수 있습니다.
+
 ## 2. 토큰 인증과 관리 ID
 
 Search의 **Settings → Keys → API access control**을 **Role-based access control** 또는 전환 중 **Both**로 설정합니다. 새 개인 서비스에서만 변경하고 API key를 복사하지 않습니다.

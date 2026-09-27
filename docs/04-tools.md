@@ -18,7 +18,7 @@ python scripts/workshop.py maf --question "Foundry와 Agent Framework의 차이�
 python scripts/workshop.py maf --tools --question "2026년 9월 국내 출장 호텔이 170000원인데 예약해도 되나요? 한도와 절차를 알려주세요." --output outputs/learner-notes-ko/04-function.json
 ```
 
-`lookup_policy`는 동봉한 한빛기술 문서만 조회합니다. 실제 도구 호출과 `answer.decision`, `answer.limit_krw`, `answer.citations`를 봅니다.
+`lookup_policy`는 동봉한 한빛기술 문서만 조회합니다. **`tool_calls`의 실제 이름·인자·반환값, `tool_execution_verified: true`**와 `answer.decision`, `answer.limit_krw`, `answer.citations`를 봅니다. `tools: function`이라는 설정 표시만으로 실행을 증명하지 않습니다.
 
 ```text
 모델이 함수 호출을 요청
@@ -60,7 +60,7 @@ python scripts/workshop.py code-interpreter run --label code-policy-table --conf
 
 한빛기술 정책 6개로 만든 실제 CSV의 파일 ID·다운로드 경로·내용을 확인합니다. “생성했다”는 텍스트만으로 통과시키지 않습니다.
 
-결과를 보관한 뒤 **이 실행의 임시 자산만** 정리합니다.
+결과를 보관한 뒤, **삭제하기로 선택한 경우에만 이 실행의 임시 자산**을 정리합니다. [보존 모드](15-capstone-cleanup.md#보존-모드로-진행할-때)에서는 다음 명령을 실행하지 않고 agent·파일·container ID를 유지합니다. 서비스 자체의 세션 만료는 별도입니다.
 
 ```bash
 python scripts/workshop.py code-interpreter cleanup --label code-policy-table --confirm-delete

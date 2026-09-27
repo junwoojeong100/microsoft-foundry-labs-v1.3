@@ -10,6 +10,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 ROOT_FILES = (
     "README.md",
+    "README.ko.md",
     "curriculum.json",
     "LICENSE",
     "pyproject.toml",
@@ -41,6 +42,7 @@ ALLOWED_SUFFIXES = {
     ".yaml",
     ".yml",
 }
+MEDIA_SUFFIXES = {".mp4", ".png", ".srt", ".vtt"}
 
 
 def input_files() -> list[Path]:
@@ -52,6 +54,10 @@ def input_files() -> list[Path]:
             if path.is_file()
             and (
                 path.suffix in ALLOWED_SUFFIXES
+                or (
+                    path.is_relative_to(ROOT / "docs/assets/videos")
+                    and path.suffix in MEDIA_SUFFIXES
+                )
                 or path.name == ".agentignore"
                 or path.name.endswith(".yaml.example")
             )
@@ -96,6 +102,7 @@ def build(output: Path) -> Path:
             ".lab",
             "outputs",
             "dist",
+            ".playwright-mcp",
         ],
         "files": {
             str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()

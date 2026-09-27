@@ -26,11 +26,16 @@ python scripts/workshop.py memory recall --scope beta --label memory-beta --conf
 
 독립 명령 사이에도 alpha의 항목이 유지되고 beta에는 없는지 확인합니다. **scope는 실제 사용자 두 명의 인가 경계가 아닙니다.** 같은 운영자가 둘 다 조회할 수 있습니다.
 
-내용 변경과 삭제까지 수행합니다.
+먼저 같은 항목의 내용을 변경합니다.
 
 ```bash
 python scripts/workshop.py memory update --scope alpha --case D01 --memory-id "실제-memory_id" --confirm-write --confirm-cost
 python scripts/workshop.py memory inspect --scope alpha
+```
+
+**삭제 실습을 선택한 경우에만** 다음을 수행합니다. [보존 모드](15-capstone-cleanup.md#보존-모드로-진행할-때)에서는 생략하고 소유 store와 ID를 유지합니다. 단, Memory 항목의 1시간 TTL은 그대로 적용되므로 영구 보관을 검증한 것은 아닙니다.
+
+```bash
 python scripts/workshop.py memory forget --memory-id "실제-memory_id" --confirm-delete
 python scripts/workshop.py memory inspect --scope alpha
 python scripts/workshop.py memory cleanup --confirm-delete
@@ -57,6 +62,13 @@ python scripts/workshop.py a2a invoke --label a2a-first --confirm-cost
 ```
 
 caller 응답에 실제 성공한 A2A 호출이 있는지 확인합니다. 이름·버전·정확한 1.0 설정·원문 근거를 보존합니다. 지원되지 않는다고 0.3이나 다른 agent로 자동 바꾸지 않습니다.
+
+실습 코드는 연결의 target을 검사한 뒤 **A2A tool에도 같은 `base_url`을 명시**합니다. 연결 생성이 성공했더라도 tool의 URL이 빠지면 호출 시 `no valid target URL` 오류가 날 수 있습니다. 이전 코드로 caller를 이미 만들었다면 원래 실패를 보관하고 다음처럼 **명시적인 새 버전**을 만듭니다. 이전 버전은 삭제하지 않으며, 기록되지 않은 원격 버전이 있으면 갱신을 거부합니다.
+
+```bash
+python scripts/workshop.py a2a caller --confirm-create --new-version
+python scripts/workshop.py a2a invoke --label a2a-fixed --confirm-cost
+```
 
 부분 생성 후 실패했다면 기존 ID로 연결/권한을 확인합니다. target을 반복 생성하거나 ownership 파일을 고치지 않습니다. 최종 정리에서는 **caller → 연결 → target** 순서로 자신이 만든 것만 제거합니다.
 
@@ -99,7 +111,9 @@ python scripts/workshop.py routines inspect --name "내-prefix-timer" --dispatch
 
 최종 disabled 상태와 실제 전달 결과를 확인합니다. **예약 설정 성공, 전달 성공, agent 답변 확인, 미래 예약 실행은 서로 다릅니다.** 답변을 조회할 수 없으면 직접 호출한 다른 답변으로 대신하지 않습니다.
 
-더 쓰지 않으면 Foundry의 Routines 목록에서 본인 routine만 삭제합니다. 삭제 후에도 모델·Search·기존 로그가 모두 삭제되는 것은 아닙니다.
+답변 자체도 조회하려면 새 label로 `routines inspect ... --verify-response`를 실행할 수 있습니다. 404/권한 오류가 나면 전달 결과는 보존하되 `agent_answer_verified: false`로 남깁니다. 반복 dispatch로 다른 응답을 만들지 않습니다.
+
+더 쓰지 않고 삭제를 선택했다면 Foundry의 Routines 목록에서 본인 routine만 삭제합니다. 보존 모드에서는 **disabled 상태로 유지**합니다. 삭제 후에도 모델·Search·기존 로그가 모두 삭제되는 것은 아닙니다.
 
 **완료:** 세 기능의 실제 생성/조회/호출/정리와 미확인 부분을 기록합니다.
 

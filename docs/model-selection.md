@@ -4,6 +4,8 @@
 
 Microsoft의 공식 설명에서 Luna는 Sol보다 작고 빠른 고빈도 작업용 모델입니다. Sol은 복잡한 지식 작업·코딩·에이전트 워크플로에 적합하므로 **비교와 평가**에 사용합니다. 이 선택은 제품 특성에 근거한 시작점이며, 본인 환경의 실제 품질은 dev 결과로 판단합니다.
 
+**실측 호환성도 먼저 확인합니다.** 2026-09-27 Sweden Central의 새 프로젝트에서는 Luna의 계정 Responses/포털 호출은 성공했지만 프로젝트 Responses는 reasoning 400 또는 500을 반환했습니다. 같은 환경의 Sol 프로젝트 호출·Prompt Agent·File Search는 성공했습니다. 따라서 이 증상이 있는 환경은 [01의 명시적 Sol 호환 경로](01-foundry.md#프로젝트-api와-계정-api를-구분하기)로 진행합니다. 이는 Luna 자체의 전역 미지원 판정이나 자동 fallback이 아닙니다.
+
 ## 필요한 시점에만 배포
 
 | 역할 | 실제 모델 / 버전 | 배포 이름 | 준비 시점 |
@@ -15,6 +17,8 @@ Microsoft의 공식 설명에서 Luna는 Sol보다 작고 빠른 고빈도 작�
 | 개선 후보 생성 | gpt-5.5 / 2026-04-24 | `workshop-optimizer` | 12 |
 
 **한꺼번에 다 만들지 않습니다.** 비교용 Sol 배포를 judge로 재사용하므로 동일 모델을 불필요하게 중복 배포하지 않습니다.
+
+단, Sol을 기본 대상 모델로 선택한 **호환 경로**에서는 예외입니다. 평가 실행기는 대상과 judge에 같은 배포를 허용하지 않으므로 Sol / 같은 버전의 `workshop-judge`를 별도로 만듭니다. 배포 분리는 독립 모델 계열에 의한 평가를 뜻하지 않습니다.
 
 모델명과 배포 이름은 다릅니다. 코드에는 `workshop-chat`을 넣지만, 포털의 실제 기반 모델은 `gpt-6-luna`여야 합니다. 설정 도구가 이름뿐 아니라 실제 모델·버전·생성 상태를 확인합니다.
 
@@ -30,7 +34,7 @@ Reasoning effort: low
 
 32768은 초기 reasoning 여유를 두기 위한 실습 설정입니다. 무조건 이만큼 사용한다는 뜻은 아닙니다. 실제 사용량을 확인한 후 조정하되, 비교 중에는 같은 값과 reasoning을 유지합니다.
 
-Responses·Prompt Agent·MAF·Hosted에서 같은 설정을 사용합니다. Chat Completions를 쓰는 matrix 경로는 같은 의미를 해당 API의 `reasoning_effort`와 `max_completion_tokens`로 전달합니다.
+Responses·Prompt Agent·MAF·Hosted에서 같은 설정을 사용합니다. Prompt Agent의 reasoning은 저장된 **definition**에만 넣고, `agent_reference` 호출에서 다시 덮어쓰지 않습니다. Chat Completions를 쓰는 matrix 경로는 같은 의미를 해당 API의 `reasoning_effort`와 `max_completion_tokens`로 전달합니다.
 
 이 상한은 **실습 코드가 보내는 답변 생성 요청**에 적용합니다. 관리형 judge·IQ 계획/합성·Optimizer·중첩 agent의 내부 호출까지 같은 총예산으로 묶는 것은 아닙니다. 각 서비스의 설정·사용량·추가 비용을 별도로 확인합니다.
 

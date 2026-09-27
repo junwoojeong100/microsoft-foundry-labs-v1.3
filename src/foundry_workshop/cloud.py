@@ -14,7 +14,7 @@ from .contracts import (
     validate_question,
     write_json,
 )
-from .generation import agent_options, generation_metadata, response_options
+from .generation import agent_options, agent_response_options, generation_metadata, response_options
 from .knowledge import local_retrieve
 from .settings import Settings, credential_for, require_env, require_uuid
 
@@ -231,7 +231,7 @@ def create_prompt_agent(
 def invoke_prompt_agent(
     client: Any, name: str, agent_version: str, question: str, *, settings: Settings | None = None
 ) -> dict[str, Any]:
-    options = response_options(settings) if settings is not None else {}
+    options = agent_response_options(settings) if settings is not None else {}
     response = client.responses.create(
         input=validate_question(question),
         extra_body={

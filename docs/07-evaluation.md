@@ -67,6 +67,13 @@ python scripts/selfstudy.py model --role judge
 python scripts/workshop.py cloud-evaluate --label candidate --timeout 300 --confirm-cost
 ```
 
+**01의 Sol 호환 경로를 선택했다면** 대상과 judge의 배포 이름이 같아 위 기본 설정은 거부됩니다. 같은 모델/버전의 **새 `workshop-judge` 배포**를 만들어 다음 설정을 대신 사용한 뒤 평가합니다. 기존 `workshop-compare`의 모델을 바꾸거나 검사 조건을 낮추지 않습니다.
+
+```bash
+python scripts/selfstudy.py model --role judge --deployment workshop-judge
+python scripts/workshop.py cloud-evaluate --label candidate --timeout 300 --confirm-cost
+```
+
 이미 수집된 응답을 평가합니다. **새 target 응답을 수집하는 작업이 아닙니다.** native 평가 ID·실행 ID·모든 행의 원점수·오류·사용한 judge를 보관합니다.
 
 Foundry **Evaluation**에서 같은 실행을 찾아 행 수와 완료 상태를 확인합니다. `Partial`, 누락된 evaluator, 빈 결과를 완료로 처리하지 않습니다. 올바른 “근거 부족” 답변도 일반 Relevance judge가 낮게 평가할 수 있으므로 설명을 읽습니다.
@@ -86,7 +93,7 @@ python scripts/workshop.py cloud-evaluate --label candidate --business-evaluator
 
 ## 6. 모델 비교까지 확장
 
-02에서 만든 다른 배포가 있으면 **같은 v2·local·dev 조건**으로 수집합니다.
+기본 candidate가 Luna이고 두 배포의 프로젝트 경로가 모두 정상이라면, 02에서 만든 다른 배포를 **같은 v2·local·dev 조건**으로 수집합니다. Sol 호환 경로를 선택했다면 이 첫 블록을 건너뛰고 아래의 계정 API 쌍을 사용합니다.
 
 ```bash
 python scripts/workshop.py --model-deployment workshop-compare collect --split dev --label model-compare --prompt v2 --retrieval local
@@ -94,7 +101,17 @@ python scripts/workshop.py evaluate --label model-compare
 python scripts/workshop.py compare --baseline candidate --candidate model-compare --variable model
 ```
 
-품질·실패·토큰·지연을 함께 보고 선택/유지 이유를 적습니다. Router나 다른 provider를 오류 처리 fallback으로 쓰지 않습니다.
+위 명령은 기본 candidate가 Luna이고 두 배포의 프로젝트 경로가 모두 정상인 경우입니다. **01의 Sol 호환 경로를 선택했다면** 같은 Sol을 다시 수집해 모델 비교라고 하지 않습니다. 대신 02와 같이 두 모델의 계정 API를 맞춘 별도 dev 쌍을 사용합니다.
+
+```bash
+python scripts/workshop.py --model-deployment workshop-chat collect --api account-responses --split dev --label model-luna --prompt v2 --retrieval local
+python scripts/workshop.py --model-deployment workshop-compare collect --api account-responses --split dev --label model-sol --prompt v2 --retrieval local
+python scripts/workshop.py evaluate --label model-luna
+python scripts/workshop.py evaluate --label model-sol
+python scripts/workshop.py compare --baseline model-luna --candidate model-sol --variable model
+```
+
+계정 API와 프로젝트 API 결과를 섞으면 모델 외 조건도 달라집니다. 수집 manifest의 `inference.api`와 실제 Endpoint까지 고정하세요. 품질·실패·토큰·지연을 함께 보고 선택/유지 이유를 적습니다. Router나 다른 provider를 오류 처리 fallback으로 쓰지 않습니다.
 
 ## 완료 확인
 

@@ -91,6 +91,7 @@ def caller_definition(settings: Settings, instructions: str, connection_id: str)
         instructions=instructions,
         tools=[
             A2ATool(
+                base_url=base_path(settings),
                 project_connection_id=connection_id,
                 a2a_version=A2AProtocolVersion.V1_0,
                 send_credentials_for_agent_card=True,
@@ -220,27 +221,47 @@ def inspect(project: Any, root: Path, settings: Settings) -> dict[str, Any]:
     }
 
 
-def caller(project: Any, root: Path, settings: Settings, *, confirmed: bool) -> dict[str, Any]:
+def caller(
+    project: Any,
+    root: Path,
+    settings: Settings,
+    *,
+    confirmed: bool,
+    new_version: bool = False,
+) -> dict[str, Any]:
     if not confirmed:
         raise ValueError("Creating the relay caller requires --confirm-create.")
     from azure.core.exceptions import ResourceNotFoundError
 
     ownership = load_ownership(root, settings)
     inspect(project, root, settings)
-    if ownership["caller_version"] is not None:
+    if ownership["caller_version"] is not None and not new_version:
         raise ValueError("A caller is already recorded; do not create another version implicitly.")
+    if new_version and ownership["caller_version"] is None:
+        raise ValueError("--new-version requires an already recorded owned caller.")
     connection = project.connections.get(
         name=names(settings)["connection"], include_credentials=False
     )
     category = getattr(connection.type, "value", connection.type)
     if category != "RemoteA2A" or connection.target.rstrip("/") != base_path(settings):
         raise ValueError("The A2A connection does not target this owned agent's base path.")
-    try:
-        project.agents.get(agent_name=names(settings)["caller"])
-    except ResourceNotFoundError:
-        pass
+    if new_version:
+        known_versions = {ownership["caller_version"]} | {
+            item["version"] for item in ownership.get("previous_callers", [])
+        }
+        actual_versions = {
+            item.version
+            for item in project.agents.list_versions(agent_name=names(settings)["caller"])
+        }
+        if actual_versions != known_versions:
+            raise ValueError("The caller has unrecorded versions; inspect them before updating.")
     else:
-        raise ValueError("The A2A caller name already exists.")
+        try:
+            project.agents.get(agent_name=names(settings)["caller"])
+        except ResourceNotFoundError:
+            pass
+        else:
+            raise ValueError("The A2A caller name already exists.")
     instructions = (
         "Delegate the synthetic travel-policy question to the configured A2A specialist. Preserve its original policy IDs, dates and approval boundary. Do not book, pay or approve. Answer in English."
         if settings.language == "en"
@@ -250,6 +271,10 @@ def caller(project: Any, root: Path, settings: Settings, *, confirmed: bool) -> 
     agent = project.agents.create_version(
         agent_name=names(settings)["caller"], definition=definition
     )
+    if new_version:
+        ownership.setdefault("previous_callers", []).append(
+            {"version": ownership["caller_version"], "request": ownership["caller_request"]}
+        )
     ownership.update(
         caller_version=agent.version,
         caller_request={"definition": definition.as_dict()},
@@ -373,7 +398,7 @@ def invoke(
     if not confirmed:
         raise ValueError("A2A calls both caller and target models; pass --confirm-cost.")
     from .cloud import response_metadata, response_with_payload
-    from .generation import response_options
+    from .generation import agent_response_options
     from .toolbox import QUESTIONS
 
     ownership = load_ownership(root, settings)
@@ -383,7 +408,7 @@ def invoke(
     directory = root / "outputs/a2a-runs" / safe_label(label)
     directory.mkdir(parents=True, exist_ok=False)
     request = {
-        **response_options(settings),
+        **agent_response_options(settings),
         "input": QUESTIONS[settings.language],
         "tool_choice": "required",
         "store": False,

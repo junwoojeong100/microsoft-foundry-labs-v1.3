@@ -12,10 +12,14 @@
 | 401/로그인 만료 | 사용자·tenant·구독 일치 | 정상 로그인/MFA. 토큰 복사나 client secret 생성으로 우회 금지 |
 | Owner인데 모델/agent 403 | Foundry 데이터 역할 | 본인/실제 서비스 ID의 Foundry User와 범위 확인 |
 | Search 403 | RBAC/Both 인증, 실제 caller, 데이터 역할 | 내 사용자·프로젝트 MI·계정 MI·Search MI를 구분 |
+| Search `ResourcesForSkuUnavailable` | 해당 리전·SKU의 서비스 용량 | 같은 생성 반복 금지. 리전 고정 조건을 지키고 가용성 확인 또는 차단 기록 |
+| Search `ServiceQuotaExceeded`, `0 out of 0` | 해당 SKU의 구독 서비스 quota | 공식 Search quota 증가 요청. 다른 역할을 부여하거나 더 높은 SKU로 자동 전환하지 않음 |
 | Toolbox 목록은 되는데 query 실패 | downstream Search 접근 | 프로젝트 MI의 Index Data Reader와 필요한 Service Contributor 확인 |
 | OpenAPI만 실패 | 계정 MI인가, API 버전 인자인가 | `openapi plan`의 주체와 내부 오류 확인. Toolbox ID와 다름 |
 | Hosted만 403 | `instance_identity.principal_id` 역할 | 로컬 로그인 반복 대신 실제 원격 ID에 필요한 역할 |
 | 모델/버전/지역 제공 안 됨 | 실제 가용성·quota | 정식 quota 요청 또는 명시적 새 계획. 실행 중 몰래 모델 교체 금지 |
+| Luna 프로젝트 호출의 `reasoning.effort` 400 / 500 | 같은 배포의 계정 API·포털 결과와 프로젝트 결과를 구분 | 01의 명시적 계정 API 시험과 Sol 호환 선택. reasoning 제거·이름 변경·재생성을 반복하지 않음 |
+| `Not allowed when agent is specified`, `param: reasoning` | 저장 버전의 definition과 호출 본문 | reasoning은 definition에만 저장. `agent_reference` 요청에서 중복 전달하지 않음 |
 | 모델 배포 이름은 맞는데 configure가 거부 | 실제 기반 모델/버전이 다름 | 기본은 GPT-6 Luna / 2026-09-22. 이전 모델 배포를 새 모델로 간주하지 않음 |
 | `incomplete` / 텍스트가 비어 있음 | reasoning이 출력 예산을 소진했는가 | `WORKSHOP_REASONING_EFFORT=low`, `WORKSHOP_MAX_OUTPUT_TOKENS=32768`와 원래 incomplete_details 확인 |
 | 도구 후 `encrypted reasoning` / replay 오류 | stateless 도구 결과와 reasoning 항목의 연결 | 고정 requirements 환경과 코드의 명시적 encrypted-content include 확인. reasoning을 임의로 제거하지 않음 |
@@ -32,6 +36,10 @@
 | label/파일/패키지가 이미 존재 | 이전 실제 결과인가 | 먼저 읽고, 새 요청/패키지에는 새 이름/경로. 실패 삭제 금지 |
 | benchmark 고정 조건 오류 | 모델 map·코드·원문·API·버전·동시성 | 비교 가능 조건을 맞춘 새 실험. 원시 hash 편집 금지 |
 | judge/Optimizer 결과 누락 | evaluator 목록·전체 행·실제 입력 | 부분 결과로 통과 처리하지 않음 |
+| Optimizer가 baseline 1.0에서 조기 종료 | 실제 judge `context`가 원문인가 | 생성된 `response`와 같은 자기 근거면 점수를 승격 근거로 쓰지 않음 |
+| Red-team ASR과 설명이 모순 | 원점수·`attack_success`·전체 행·요청 수 | 원시 결과를 그대로 보관하고 불일치를 기록. 집계 숫자로 판정을 덮어쓰지 않음 |
+| judge must be separate from target | 실제 대상 배포와 judge 배포가 같은가 | Sol 호환 경로에서는 별도 `workshop-judge` 생성 후 07의 명시적 설정 사용 |
+| 첫 azd connection 생성에서 ARM context 발견 실패 | 비어 있는 프로젝트·azd 환경 여부 | 09의 첫 App Insights 연결을 포털에서 생성한 뒤 재시도하거나, 실제 프로젝트 ID를 가진 준비된 azd 폴더에서 실행. 다른 프로젝트의 연결을 빌려 쓰지 않음 |
 | trace가 없음 | 연결 이후 요청인가, 로그 권한/시간 범위인가 | 몇 분 대기 후 본인 요청 재조회. 로컬 JSON을 trace로 대신하지 않음 |
 | Memory 조회 지연 | 같은 store/ID·TTL·scope인가 | write 반복 대신 같은 항목을 제한적으로 읽기 |
 | Routine 전달 후 답변 없음 | dispatch/run과 response 보관 상태 | 전달·실행·답변을 구분. 직접 agent 호출로 대체 금지 |
@@ -40,6 +48,8 @@
 | Entra 앱/Fabric/M365 거부 | Azure Owner 외의 제품/디렉터리 권한 | 14의 추가 조건 확인. Owner로 강제 활성화하지 않음 |
 
 ## 오류와 품질 실패를 구분
+
+간단한 오류 출력만으로 원인을 알 수 없으면 `python scripts/workshop.py --debug ...`로 **한 번만** 원문과 request ID를 확인합니다. `--model-deployment`를 사용한다면 그 옵션을 `--debug`보다 먼저 둡니다. 디버그 출력에는 로컬 경로와 입력이 포함될 수 있으므로 공개 영상·저장소에 그대로 올리지 않습니다.
 
 `collect`/`evaluate`/`benchmark`가 비정상 종료해도 **오답을 제대로 발견한 결과**일 수 있습니다. 응답 6개가 모두 있는지, 요청 오류가 있는지, 업무 기준이 실패했는지 각각 읽습니다.
 

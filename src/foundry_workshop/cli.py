@@ -112,6 +112,13 @@ def parser() -> argparse.ArgumentParser:
         command = commands.add_parser(name, help=description, description=description)
         command.add_argument("--question")
         output_argument(command)
+        if name in {"model", "answer"}:
+            command.add_argument(
+                "--api",
+                choices=("project-responses", "account-responses"),
+                default="project-responses",
+                help="Choose the inference endpoint explicitly; never changed after an error.",
+            )
         if name == "answer":
             command.add_argument("--prompt", choices=("v1", "v2"), default="v2")
             command.add_argument("--retrieval", choices=RETRIEVALS, default="local")
@@ -208,6 +215,9 @@ def parser() -> argparse.ArgumentParser:
     batch.add_argument("--label", required=True)
     batch.add_argument("--split", choices=("dev", "holdout"), default="dev")
     batch.add_argument("--prompt", choices=("v1", "v2"), default="v1")
+    batch.add_argument(
+        "--api", choices=("project-responses", "account-responses"), default="project-responses"
+    )
     batch.add_argument(
         "--retrieval",
         choices=(*RETRIEVALS, "none"),
@@ -349,6 +359,11 @@ def parser() -> argparse.ArgumentParser:
     file_search.add_argument("--label")
     file_search.add_argument("--confirm-create", action="store_true")
     file_search.add_argument("--confirm-delete", action="store_true")
+    file_search.add_argument(
+        "--retain",
+        action="store_true",
+        help="Create without automatic vector-store expiry; storage charges can continue.",
+    )
     server = commands.add_parser(
         "serve", help="Run the optional local hosted-agent server. Inference remains billable."
     )
@@ -412,6 +427,12 @@ def parser() -> argparse.ArgumentParser:
     for action in ("target", "caller"):
         operation = a2a_actions.add_parser(action)
         operation.add_argument("--confirm-create", action="store_true")
+        if action == "caller":
+            operation.add_argument(
+                "--new-version",
+                action="store_true",
+                help="Create another owned caller version without deleting the prior version.",
+            )
     a2a_invoke = a2a_actions.add_parser("invoke")
     a2a_invoke.add_argument("--label", required=True)
     a2a_invoke.add_argument("--confirm-cost", action="store_true")
@@ -534,7 +555,13 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
                 if args.a2a_action == "target":
                     return a2a_lab.target(project, root, settings, confirmed=args.confirm_create)
                 if args.a2a_action == "caller":
-                    return a2a_lab.caller(project, root, settings, confirmed=args.confirm_create)
+                    return a2a_lab.caller(
+                        project,
+                        root,
+                        settings,
+                        confirmed=args.confirm_create,
+                        new_version=args.new_version,
+                    )
                 if args.a2a_action == "inspect":
                     return a2a_lab.inspect(project, root, settings)
                 return a2a_lab.invoke(
@@ -743,14 +770,25 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
             return None
         if args.command == "collect" and args.split == "holdout" and not args.unlock_holdout:
             raise ValueError("Freeze the candidate first, then explicitly pass --unlock-holdout.")
-        with project_clients(settings) as (project, client):
+        client_options = (
+            {"account_api": True}
+            if getattr(args, "api", None) == "account-responses"
+            else {}
+        )
+        with project_clients(settings, **client_options) as (project, client):
             if args.command == "file-search":
                 from . import file_search_lab
 
                 name = file_search_lab.agent_name(settings, args.name)
                 if args.action == "create":
                     return file_search_lab.create(
-                        project, client, root, settings, name, confirmed=args.confirm_create
+                        project,
+                        client,
+                        root,
+                        settings,
+                        name,
+                        confirmed=args.confirm_create,
+                        retain=args.retain,
                     )
                 if args.action == "cleanup":
                     return file_search_lab.cleanup(
@@ -758,7 +796,10 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
                     )
                 return file_search_lab.ask(client, root, settings, name, args.question, args.label)
             if args.command == "model":
-                return call_model(client, settings, args.question)
+                return {
+                    **call_model(client, settings, args.question),
+                    "inference_api": args.api,
+                }
             if args.command == "prompt-agent":
                 from .cloud import agent_reference_path, load_agent_reference, save_agent_reference
                 from .settings import owned_prefix
@@ -782,9 +823,12 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
                 return invoke_prompt_agent(client, name, version, args.question, settings=settings)
             if args.command == "answer":
                 context = retrieve(root, settings, args.question, args.retrieval)
-                return answer_with_context(
-                    client, settings, root, args.question, args.prompt, context
-                )
+                return {
+                    **answer_with_context(
+                        client, settings, root, args.question, args.prompt, context
+                    ),
+                    "inference_api": args.api,
+                }
             if args.command == "collect":
                 from .profiles import retrieval_configuration
 
@@ -810,7 +854,10 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
                     recoverable_errors=(ValueError, AzureError, OpenAIError, httpx.HTTPError),
                     inference={
                         "project_endpoint": settings.project_endpoint,
-                        "api": "project-responses",
+                        "api": args.api,
+                        "inference_endpoint": settings.openai_endpoint
+                        if args.api == "account-responses"
+                        else settings.project_endpoint,
                         "max_output_tokens": settings.max_output_tokens,
                         "reasoning_effort": settings.reasoning_effort,
                         "retrieval_configuration": {"provider": "none", "max_documents": 0}

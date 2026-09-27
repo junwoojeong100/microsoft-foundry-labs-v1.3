@@ -12,7 +12,7 @@ from .cloud import (
     save_agent_reference,
 )
 from .contracts import digest, load_documents, read_json, safe_label, validate_question, write_json
-from .generation import agent_options, generation_metadata, response_options
+from .generation import agent_options, agent_response_options, generation_metadata
 from .materials import policy_document_text
 from .settings import Settings, owned_prefix
 
@@ -51,7 +51,14 @@ def load_owned(root: Path, settings: Settings, name: str, *, check_generation: b
 
 
 def create(
-    project: Any, client: Any, root: Path, settings: Settings, name: str, *, confirmed: bool
+    project: Any,
+    client: Any,
+    root: Path,
+    settings: Settings,
+    name: str,
+    *,
+    confirmed: bool,
+    retain: bool = False,
 ) -> dict:
     name = agent_name(settings, name)
     if not confirmed:
@@ -62,9 +69,12 @@ def create(
     from azure.core.exceptions import ResourceNotFoundError
     from openai import NotFoundError
 
+    retention = "retain" if retain else "expire-after-7-days"
     path = ledger_path(root, name)
     if path.exists():
         state = load_owned(root, settings, name)
+        if state.get("retention", "expire-after-7-days") != retention:
+            raise ValueError("Resume with the original retention choice; do not change it silently.")
         if state["phase"] in {"ready", "deleting", "deleted"}:
             raise ValueError(
                 "This File Search run already exists. Ask it, finish cleanup, or choose a new owned name."
@@ -88,6 +98,7 @@ def create(
             "deployment": settings.deployment,
             "generation": generation_metadata(settings),
             "corpus_hash": digest(load_documents(root, settings.language)),
+            "retention": retention,
             "vector_store_id": None,
             "vector_store_deleted": False,
             "agent_version": None,
@@ -96,10 +107,10 @@ def create(
         }
         write_json(path, state)
     if not state["vector_store_id"]:
-        store = client.vector_stores.create(
-            name=name + "-knowledge",
-            expires_after={"anchor": "last_active_at", "days": 7},
-        )
+        options: dict[str, Any] = {"name": name + "-knowledge"}
+        if not retain:
+            options["expires_after"] = {"anchor": "last_active_at", "days": 7}
+        store = client.vector_stores.create(**options)
         state["vector_store_id"] = store.id
         write_json(path, state)
     for document in load_documents(root, settings.language):
@@ -181,6 +192,7 @@ def create(
         "agent_version": state["agent_version"],
         "indexed_files": len(state["files"]),
         "vector_store_id": state["vector_store_id"],
+        "retention": state.get("retention", "expire-after-7-days"),
         "ownership_file": str(path),
         "agent_invoked": False,
     }
@@ -228,7 +240,7 @@ def ask(
         },
         "include": ["file_search_call.results"],
         "store": False,
-        **response_options(settings),
+        **agent_response_options(settings),
     }
     write_json(directory / "request.json", request)
     response, raw = response_with_payload(

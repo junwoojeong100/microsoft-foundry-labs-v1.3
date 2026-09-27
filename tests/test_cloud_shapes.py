@@ -1,8 +1,9 @@
 import unittest
+from dataclasses import replace
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from foundry_workshop.cloud import answer_with_context, call_model
+from foundry_workshop.cloud import answer_with_context, call_model, invoke_prompt_agent
 from foundry_workshop.cloud_evaluation import normalize_results
 from foundry_workshop.contracts import ModelOutputError, load_documents
 from foundry_workshop.knowledge import evidence
@@ -81,6 +82,20 @@ class CloudShapeTests(unittest.TestCase):
         responses = RecordedResponses("", status="incomplete")
         with self.assertRaises(ModelOutputError):
             call_model(SimpleNamespace(responses=responses), self.settings(), "질문")
+
+    @patch("foundry_workshop.cloud.version", return_value="unit-test")
+    def test_agent_invocation_inherits_reasoning_from_saved_version(self, _version):
+        responses = RecordedResponses("Saved-agent response")
+        invoke_prompt_agent(
+            SimpleNamespace(responses=responses),
+            "lab-unit-policy",
+            "3",
+            "질문",
+            settings=replace(self.settings(), reasoning_effort="low"),
+        )
+        self.assertEqual(responses.kwargs["max_output_tokens"], 2048)
+        self.assertNotIn("reasoning", responses.kwargs)
+        self.assertEqual(responses.kwargs["extra_body"]["agent_reference"]["version"], "3")
 
     def result_item(self, case_id="D01"):
         return {

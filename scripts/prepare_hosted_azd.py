@@ -176,10 +176,12 @@ def prepare(
         protocol = "responses"
     elif kind == "matrix":
         profile = packaged_profile(package)
+        if profile.retrieval not in {"iq", "local"}:
+            raise ValueError("Use an explicitly selected local or IQ retrieval matrix package.")
         expected_profile = RuntimeProfile(
             kind="workflow",
             pattern="sequential",
-            retrieval="iq",
+            retrieval=profile.retrieval,
             prompt=profile.prompt,
             api="account-chat",
             protocol="invocations",
@@ -190,7 +192,7 @@ def prepare(
             or manifest.get("runtime_profile") != expected_profile.to_dict()
         ):
             raise ValueError(
-                "Use a language-matched sequential IQ/account-chat Invocations v1/v2 matrix package."
+                "Use a language-matched sequential local-or-IQ/account-chat Invocations v1/v2 matrix package."
             )
         if settings.openai_endpoint is None:
             raise ValueError("The matrix requires an explicit same-account OpenAI endpoint.")
@@ -199,18 +201,21 @@ def prepare(
         validate_inference_endpoint(settings, profile)
         require_env("WORKSHOP_MODEL_DEPLOYMENTS_JSON")
         models = model_deployments(settings)
-        search = search_configuration()
         environment.update(
             AZURE_OPENAI_ENDPOINT=settings.openai_endpoint,
             WORKSHOP_MODEL_DEPLOYMENTS_JSON=json.dumps(models),
             WORKSHOP_MAX_OUTPUT_TOKENS=str(settings.max_output_tokens),
-            AZURE_SEARCH_ENDPOINT=search["endpoint"],
-            AZURE_SEARCH_INDEX_NAME=search["index"],
-            AZURE_SEARCH_KNOWLEDGE_SOURCE_NAME=search["source"],
-            AZURE_SEARCH_KNOWLEDGE_BASE_NAME=search["knowledge_base"],
         )
-        if "iq_reranker_threshold" in search:
-            environment["WORKSHOP_IQ_RERANKER_THRESHOLD"] = str(search["iq_reranker_threshold"])
+        if profile.retrieval == "iq":
+            search = search_configuration()
+            environment.update(
+                AZURE_SEARCH_ENDPOINT=search["endpoint"],
+                AZURE_SEARCH_INDEX_NAME=search["index"],
+                AZURE_SEARCH_KNOWLEDGE_SOURCE_NAME=search["source"],
+                AZURE_SEARCH_KNOWLEDGE_BASE_NAME=search["knowledge_base"],
+            )
+            if "iq_reranker_threshold" in search:
+                environment["WORKSHOP_IQ_RERANKER_THRESHOLD"] = str(search["iq_reranker_threshold"])
         protocol = "invocations"
     else:
         expected_profile = RuntimeProfile(
@@ -292,7 +297,7 @@ if __name__ == "__main__":
         "--kind",
         choices=("toolbox", "workflow", "runtime", "matrix"),
         default="toolbox",
-        help="toolbox; workflow for fixed CI; runtime for introductory local v2 Responses; matrix for sequential IQ/account-chat Invocations v1/v2.",
+        help="toolbox; workflow for fixed CI; runtime for introductory local v2 Responses; matrix for sequential local-or-IQ/account-chat Invocations v1/v2.",
     )
     parser.add_argument("--package", type=Path, required=True)
     parser.add_argument("--directory", type=Path, required=True)

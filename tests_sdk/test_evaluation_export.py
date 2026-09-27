@@ -66,6 +66,19 @@ class EvaluationExportTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 module.export_evaluation(client, root / "export", "eval_unit", "evalrun_unit", 2)
 
+    def test_continuous_run_ids_preserve_the_same_read_only_contract(self):
+        run_id = "continuousevalrun_d4deb032-1606-49a7-9e88-d3e1302116ba"
+        with workspace() as root:
+            client = client_with_rows(self.rows())
+            client.evals.runs.retrieve.return_value = model(
+                {"id": run_id, "eval_id": "eval_unit", "status": "completed"}
+            )
+            result = module.export_evaluation(client, root / "export", "eval_unit", run_id, 2)
+            self.assertEqual(result["run_id"], run_id)
+            self.assertEqual(result["actual_rows"], 2)
+            client.responses.create.assert_not_called()
+            client.evals.runs.create.assert_not_called()
+
     def test_incomplete_duplicate_and_missing_judge_inputs_do_not_pass(self):
         scenarios = [
             ([self.rows()[0]], "Missing"),

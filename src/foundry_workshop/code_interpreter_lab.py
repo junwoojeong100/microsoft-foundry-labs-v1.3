@@ -6,7 +6,7 @@ from typing import Any
 
 from .contracts import digest, load_documents, read_json, safe_label, write_json
 from .extension_materials import files_for
-from .generation import agent_options, response_options
+from .generation import agent_options, agent_response_options
 from .settings import Settings, owned_prefix
 
 
@@ -121,7 +121,7 @@ def run(
         else "Code Interpreter로 policy-records.csv를 읽으세요. id,title 열만 포함하고 원래 순서의 6행을 그대로 가진 policy-summary.csv를 생성해 다운로드 링크를 주세요. 내용을 바꾸거나 행을 만들지 마세요."
     )
     request = {
-        **response_options(settings),
+        **agent_response_options(settings),
         "input": question,
         "tool_choice": "required",
         "store": False,

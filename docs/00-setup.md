@@ -91,6 +91,14 @@ azd auth login
 
 이 그룹에는 실습 자원만 넣습니다. 기존 업무용 그룹을 사용하면 마지막에 그룹 전체를 삭제할 수 없습니다.
 
+CLI로 만들려면 아래의 구독 ID와 이름을 본인 값으로 바꿉니다. 포털에서 이미 만든 그룹은 다시 만들 필요가 없습니다.
+
+```bash
+az group create --subscription "내-구독-ID" --name "rg-mf15-my-lab" --location swedencentral --tags workshop=foundry-v1.5 lifecycle=retain
+```
+
+`lifecycle=retain`은 보존 의사를 기록하는 태그이지 삭제 방지 잠금은 아닙니다. 자원을 남길 경우 [보존 모드](15-capstone-cleanup.md#보존-모드로-진행할-때)를 적용합니다.
+
 구독/그룹의 **Cost Management → Budgets**에서 본인의 실습 예산 알림을 설정할 수 있습니다. 금액은 현재 가격과 자신의 예산으로 정합니다. **알림은 자동 사용 중지나 환불 보장이 아닙니다.**
 
 ## 5. Foundry 프로젝트 만들기
@@ -111,6 +119,17 @@ Azure 포털에서 **프로젝트 리소스 → JSON View**를 열고 `id`도 �
 ```
 
 부모 Foundry 계정 ID가 아니라 **`/projects/...`까지 포함한 ID**입니다.
+
+### 같은 준비를 CLI로 할 때
+
+포털 경로 대신 사용할 수 있습니다. `--assign-identity`와 `--allow-project-management true`를 빠뜨리지 않습니다. 이름은 전역에서 고유해야 하며 모든 명령에 같은 구독·그룹·리전을 지정합니다.
+
+```bash
+az cognitiveservices account create --subscription "내-구독-ID" --resource-group "rg-mf15-my-lab" --name "내-고유-foundry-이름" --custom-domain "내-고유-foundry-이름" --kind AIServices --sku S0 --location swedencentral --assign-identity --allow-project-management true
+az cognitiveservices account project create --subscription "내-구독-ID" --resource-group "rg-mf15-my-lab" --name "내-고유-foundry-이름" --project-name "my-project" --location swedencentral
+```
+
+CLI 생성은 사용자·프로젝트의 **Foundry User 역할을 자동으로 보장하지 않습니다.** 7절에서 두 주체의 역할을 반드시 확인합니다.
 
 ## 6. 첫 모델 배포
 
@@ -169,6 +188,8 @@ python scripts/workshop.py doctor --cloud
 ```
 
 올바른 구독·테넌트·배포가 표시되는지 확인합니다. `doctor --cloud`도 추론 시험이 아니라 메타데이터/인증 확인입니다.
+
+**다음 장의 첫 실제 요청을 통과한 뒤 agent를 만듭니다.** 2026-09-27 Sweden Central의 새 프로젝트 검증에서는 Luna의 계정 API는 성공했지만 프로젝트 API는 400/500을 반환했고, 같은 프로젝트의 Sol은 성공했습니다. 동일 증상이 있으면 [01의 명시적 호환 경로](01-foundry.md#프로젝트-api와-계정-api를-구분하기)를 적용합니다. 모델 배포의 `Succeeded`만으로 모든 경로가 지원된다고 판단하지 않습니다.
 
 ## 9. 역할의 실제 명령이 필요할 때
 

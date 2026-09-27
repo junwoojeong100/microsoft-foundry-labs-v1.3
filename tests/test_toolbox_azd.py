@@ -132,7 +132,7 @@ class ToolboxAzdTests(unittest.TestCase):
                 ("language", "ko"),
                 ("kind", "policy"),
                 ("pattern", "concurrent"),
-                ("retrieval", "local"),
+                ("retrieval", "search"),
                 ("api", "project-responses"),
                 ("protocol", "responses"),
             ):
@@ -175,6 +175,36 @@ class ToolboxAzdTests(unittest.TestCase):
                         kind="matrix",
                     )
             self.assertEqual(list(Path(folder).iterdir()), [])
+
+    def test_explicit_local_matrix_needs_no_search_and_preserves_its_profile(self):
+        environment = {
+            **ENV,
+            "WORKSHOP_MODEL_DEPLOYMENTS_JSON": '{"a":"gpt-6-sol"}',
+            "WORKSHOP_HOSTED_AGENT_NAME": "lab-unit-matrix",
+        }
+        with (
+            workspace() as root,
+            tempfile.TemporaryDirectory() as folder,
+            patch.dict(os.environ, environment, clear=True),
+        ):
+            configuration = replace(settings(), openai_endpoint="https://unit.openai.azure.com")
+            profile = RuntimeProfile(
+                kind="workflow",
+                retrieval="local",
+                api="account-chat",
+                protocol="invocations",
+                language="en",
+            )
+            package = HOSTED_PACKAGE.build(root, profile)
+            with patch.object(PREPARE, "search_configuration") as search:
+                path = PREPARE.prepare(
+                    package, Path(folder) / "local", configuration, "lab-unit-matrix", kind="matrix"
+                )
+            search.assert_not_called()
+            data = json.loads(path.read_text())
+            service = data["services"]["lab-unit-matrix"]
+            self.assertFalse(any(key.startswith("AZURE_SEARCH_") for key in service["env"]))
+            self.assertEqual(packaged_profile(path.parent / service["project"]), profile)
 
     def test_introductory_runtime_preparation_preserves_packages_and_existing_source_projects(self):
         for language in ("en", "ko"):
