@@ -14,6 +14,9 @@ from azure.ai.projects.models import PromptAgentDefinition
 from azure.identity import AzureCliCredential
 from dotenv import load_dotenv
 
+from foundry_workshop.generation import agent_options, response_options
+from foundry_workshop.model_plan import GenerationConfig
+
 POLICIES = Path(
     os.environ.get("WORKSHOP_POLICIES_FILE")
     or Path(__file__).resolve().parents[2] / "data/knowledge/en/policies.json"
@@ -31,15 +34,24 @@ def instructions() -> str:
 def create_agent(project, name: str, deployment: str):
     return project.agents.create_version(
         agent_name=name,
-        definition=PromptAgentDefinition(model=deployment, instructions=instructions()),
+        definition=PromptAgentDefinition(
+            model=deployment,
+            instructions=instructions(),
+            **agent_options(GenerationConfig.from_env()),
+        ),
     )
 
 
 def invoke(client, name: str, version: str, question: str) -> dict:
     reference = {"type": "agent_reference", "name": name, "version": version}
     response = client.responses.create(
-        input=question, extra_body={"agent_reference": reference}, store=False
+        input=question,
+        extra_body={"agent_reference": reference},
+        store=False,
+        **response_options(GenerationConfig.from_env()),
     )
+    if response.status != "completed" or not response.output_text.strip():
+        raise SystemExit(f"No completed text (status={response.status}); no fallback was used.")
     return {
         "agent": name,
         "version": version,

@@ -40,6 +40,8 @@ jobs:
       WORKSHOP_PREFIX: ${{ vars.WORKSHOP_PREFIX }}
       WORKSHOP_HOSTED_AGENT_NAME: ${{ vars.WORKSHOP_HOSTED_AGENT_NAME }}
       WORKSHOP_AUTH_MODE: cli
+      WORKSHOP_MAX_OUTPUT_TOKENS: "32768"
+      WORKSHOP_REASONING_EFFORT: low
     steps:
       - uses: actions/checkout@v4
       - name: Require explicit execution approval

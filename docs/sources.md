@@ -8,6 +8,7 @@
 | 프로젝트 생성 | [Create projects](https://learn.microsoft.com/azure/foundry/how-to/create-projects) |
 | 역할과 관리 ID | [Foundry RBAC](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry) |
 | 모델과 리전 | [Azure 판매 모델](https://learn.microsoft.com/azure/ai-foundry/foundry-models/concepts/models-sold-directly-by-azure), [리전](https://learn.microsoft.com/azure/foundry/reference/region-support) |
+| GPT-6 선택·가격·reasoning | [선택 근거와 역할](model-selection.md), [Reasoning](https://learn.microsoft.com/azure/foundry/openai/how-to/reasoning) |
 | SDK와 Responses API | [Quickstart](https://learn.microsoft.com/azure/foundry/quickstarts/get-started-code) |
 | File Search·함수 | [File Search](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search), [Function calling](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/function-calling) |
 | Search 생성·인증 | [Create Search](https://learn.microsoft.com/azure/search/search-create-service-portal), [RBAC](https://learn.microsoft.com/azure/search/search-security-enable-roles) |

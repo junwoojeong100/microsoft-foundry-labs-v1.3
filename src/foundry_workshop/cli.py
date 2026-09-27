@@ -340,6 +340,15 @@ def parser() -> argparse.ArgumentParser:
     agent.add_argument("--question")
     agent.add_argument("--confirm-create", action="store_true")
     output_argument(agent)
+    file_search = commands.add_parser(
+        "file-search", help="Create, query or clean up an owned File Search agent."
+    )
+    file_search.add_argument("action", choices=("create", "ask", "cleanup"))
+    file_search.add_argument("--name")
+    file_search.add_argument("--question")
+    file_search.add_argument("--label")
+    file_search.add_argument("--confirm-create", action="store_true")
+    file_search.add_argument("--confirm-delete", action="store_true")
     server = commands.add_parser(
         "serve", help="Run the optional local hosted-agent server. Inference remains billable."
     )
@@ -735,6 +744,19 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
         if args.command == "collect" and args.split == "holdout" and not args.unlock_holdout:
             raise ValueError("Freeze the candidate first, then explicitly pass --unlock-holdout.")
         with project_clients(settings) as (project, client):
+            if args.command == "file-search":
+                from . import file_search_lab
+
+                name = file_search_lab.agent_name(settings, args.name)
+                if args.action == "create":
+                    return file_search_lab.create(
+                        project, client, root, settings, name, confirmed=args.confirm_create
+                    )
+                if args.action == "cleanup":
+                    return file_search_lab.cleanup(
+                        project, client, root, settings, name, confirmed=args.confirm_delete
+                    )
+                return file_search_lab.ask(client, root, settings, name, args.question, args.label)
             if args.command == "model":
                 return call_model(client, settings, args.question)
             if args.command == "prompt-agent":
@@ -757,7 +779,7 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
                 version = (
                     args.version or load_agent_reference(root, settings, name)["agent_version"]
                 )
-                return invoke_prompt_agent(client, name, version, args.question)
+                return invoke_prompt_agent(client, name, version, args.question, settings=settings)
             if args.command == "answer":
                 context = retrieve(root, settings, args.question, args.retrieval)
                 return answer_with_context(
@@ -790,6 +812,7 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
                         "project_endpoint": settings.project_endpoint,
                         "api": "project-responses",
                         "max_output_tokens": settings.max_output_tokens,
+                        "reasoning_effort": settings.reasoning_effort,
                         "retrieval_configuration": {"provider": "none", "max_documents": 0}
                         if args.retrieval == "none"
                         else retrieval_configuration(

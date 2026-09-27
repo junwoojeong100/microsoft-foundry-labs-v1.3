@@ -6,6 +6,8 @@ from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import UUID
 
+from .model_plan import REASONING_EFFORTS, GenerationConfig
+
 
 def require_env(name: str) -> str:
     value = os.environ.get(name, "").strip()
@@ -71,10 +73,13 @@ class Settings:
     max_output_tokens: int
     openai_endpoint: str | None = None
     language: str = "ko"
+    reasoning_effort: str | None = None
 
     def __post_init__(self):
         if self.language not in {"ko", "en"}:
             raise ValueError("Workshop language must be ko or en.")
+        if self.reasoning_effort is not None and self.reasoning_effort not in REASONING_EFFORTS:
+            raise ValueError("Reasoning effort must be none, low, medium or high.")
 
     @classmethod
     def from_env(cls, *, language: str = "ko") -> "Settings":
@@ -87,25 +92,19 @@ class Settings:
             if os.environ.get("AZURE_CLIENT_ID", "").strip()
             else None
         )
-        try:
-            tokens = int(os.environ.get("WORKSHOP_MAX_OUTPUT_TOKENS", "2048"))
-        except ValueError as exc:
-            raise ValueError(
-                "WORKSHOP_MAX_OUTPUT_TOKENS must be an integer from 256 to 8192."
-            ) from exc
-        if not 256 <= tokens <= 8192:
-            raise ValueError("WORKSHOP_MAX_OUTPUT_TOKENS must be an integer from 256 to 8192.")
+        generation = GenerationConfig.from_env()
         return cls(
             project_endpoint=azure_endpoint(require_env("AZURE_AI_PROJECT_ENDPOINT"), "project"),
             deployment=require_env("AZURE_AI_MODEL_DEPLOYMENT_NAME"),
             tenant_id=tenant,
             auth_mode=mode,
             managed_identity_client_id=client_id,
-            max_output_tokens=tokens,
+            max_output_tokens=generation.max_output_tokens,
             openai_endpoint=azure_endpoint(os.environ["AZURE_OPENAI_ENDPOINT"], "openai")
             if os.environ.get("AZURE_OPENAI_ENDPOINT", "").strip()
             else None,
             language=language,
+            reasoning_effort=generation.reasoning_effort,
         )
 
 

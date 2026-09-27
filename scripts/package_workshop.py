@@ -50,10 +50,15 @@ def input_files() -> list[Path]:
             path
             for path in (ROOT / directory).rglob("*")
             if path.is_file()
-            and (path.suffix in ALLOWED_SUFFIXES or path.name == ".agentignore")
+            and (
+                path.suffix in ALLOWED_SUFFIXES
+                or path.name == ".agentignore"
+                or path.name.endswith(".yaml.example")
+            )
             and not any(
                 (part.startswith(".") and part not in {".github", ".agentignore"})
                 or part == "__pycache__"
+                or part.endswith(".egg-info")
                 for part in path.relative_to(ROOT).parts
             )
         )

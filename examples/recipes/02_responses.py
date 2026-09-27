@@ -1,6 +1,6 @@
 """Lab 02 minimal recipe: one billable Responses call through a Foundry project.
 
-Standalone: needs only azure-ai-projects, azure-identity, openai and python-dotenv.
+Uses this repository's shared generation settings.
 Reads AZURE_AI_PROJECT_ENDPOINT and AZURE_AI_MODEL_DEPLOYMENT_NAME from the environment or .env.
 """
 
@@ -12,9 +12,17 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import AzureCliCredential
 from dotenv import load_dotenv
 
+from foundry_workshop.generation import response_options
+from foundry_workshop.model_plan import GenerationConfig
+
 
 def ask(client, deployment: str, question: str) -> dict:
-    response = client.responses.create(model=deployment, input=question, store=False)
+    response = client.responses.create(
+        model=deployment,
+        input=question,
+        store=False,
+        **response_options(GenerationConfig.from_env()),
+    )
     if response.status != "completed" or not response.output_text.strip():
         raise SystemExit(f"No completed text (status={response.status}); no fallback was used.")
     return {

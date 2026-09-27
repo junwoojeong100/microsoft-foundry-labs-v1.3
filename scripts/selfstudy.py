@@ -15,6 +15,18 @@ from urllib.parse import unquote, urlsplit
 from uuid import UUID
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from foundry_workshop.model_plan import (  # noqa: E402
+    DEFAULT_MAX_OUTPUT_TOKENS,
+    DEFAULT_REASONING_EFFORT,
+    MAX_OUTPUT_TOKENS,
+    MODEL_ROLES,
+    PRIMARY_MODEL,
+    PRIMARY_VERSION,
+    REASONING_EFFORTS,
+)
+
 STATE = ROOT / ".selfstudy/azure.json"
 ENV = ROOT / ".env"
 PROJECT_ID = re.compile(
@@ -36,6 +48,7 @@ MUTABLE_KEYS = {
     "WORKSHOP_EMBEDDING_DIMENSIONS",
     "WORKSHOP_EMBEDDING_API",
     "WORKSHOP_MAX_OUTPUT_TOKENS",
+    "WORKSHOP_REASONING_EFFORT",
     "WORKSHOP_IQ_RERANKER_THRESHOLD",
     "WORKSHOP_MODEL_DEPLOYMENTS_JSON",
     "AZURE_SEARCH_INDEX_NAME",
@@ -322,6 +335,60 @@ def prepare_hosted(kind: str, package: Path, name: str, run: str) -> dict:
     }
 
 
+def bind_matrix(directory: Path, service: str) -> dict:
+    from foundry_workshop.bindings import hosted_binding
+
+    state = read_state()
+    validate_runtime_environment(os.environ.copy(), explicit_model=False)
+    directory = directory.resolve()
+    if (
+        not directory.is_relative_to((ROOT / ".selfstudy").resolve())
+        or not (directory / "azure.yaml").is_file()
+    ):
+        raise SetupError(".selfstudy 아래에서 준비한 실제 matrix 폴더를 지정하세요.")
+    executable = shutil.which("azd")
+    if not executable:
+        raise SetupError("azd와 microsoft.foundry 확장이 필요합니다.")
+    received = subprocess.run(
+        [executable, "env", "get-values", "--output", "json", "--cwd", str(directory)],
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=90,
+    )
+    values = json.loads(received.stdout)
+    if not isinstance(values, dict) or values.get("AZURE_AI_PROJECT_ENDPOINT") != state["endpoint"]:
+        raise SetupError("azd 환경이 현재 실습 프로젝트와 다릅니다.")
+    result = hosted_binding(values, state["endpoint"], state["prefix"], service)
+    shown = subprocess.run(
+        [executable, "ai", "agent", "show", service, "--cwd", str(directory), "--output", "json"],
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=90,
+    )
+    actual = json.loads(shown.stdout)
+    if (
+        actual.get("name") != service
+        or str(actual.get("version")) != result["WORKSHOP_HOSTED_AGENT_VERSION"]
+        or actual.get("status") not in {"active", "deployed"}
+    ):
+        raise SetupError("azd 환경의 버전과 실제 활성 agent 버전이 다릅니다.")
+    update_env(result)
+    state.setdefault("hosted_bindings", {})[service] = {
+        **result,
+        "directory": str(directory),
+        "captured_at": datetime.now(UTC).isoformat(),
+    }
+    save_state(state)
+    return {
+        "binding": result,
+        "instance_identity": actual.get("instance_identity"),
+        "model_invoked": False,
+        "note": "Actual version and Invocations endpoint were read and saved; no URL was guessed.",
+    }
+
+
 def resource_record(value: dict, kind: str) -> dict:
     if not isinstance(value.get("id"), str):
         raise SetupError("Azure 리소스 응답에 실제 ID가 없습니다.")
@@ -339,7 +406,66 @@ def resource_record(value: dict, kind: str) -> dict:
     }
 
 
-def configure(project_id: str, endpoint: str, deployment: str, prefix: str) -> dict:
+def validate_model(value: dict, name: str, version: str | None) -> dict:
+    properties = value.get("properties") or {}
+    model = properties.get("model") or {}
+    if properties.get("provisioningState") != "Succeeded":
+        raise SetupError("모델 배포가 Succeeded가 아닙니다. 생성 완료/할당량을 확인하세요.")
+    if model.get("name") != name or (version and model.get("version") != version):
+        raise SetupError(
+            f"필요한 모델은 {name}"
+            + (f" / {version}" if version else "")
+            + f"입니다. 실제 배포는 {model.get('name')} / {model.get('version')}입니다. "
+            "기존 배포 이름만 바꾸지 말고 포털에서 실제 기반 모델을 확인하세요."
+        )
+    return model
+
+
+def inspect_model(role: str, deployment: str | None) -> dict:
+    state = read_state()
+    spec = MODEL_ROLES[role]
+    deployment = deployment or spec["deployment"]
+    actual = az_json(
+        "cognitiveservices",
+        "account",
+        "deployment",
+        "show",
+        "--name",
+        state["account"],
+        "--resource-group",
+        state["group"],
+        "--deployment-name",
+        deployment,
+        "--subscription",
+        state["subscription"],
+    )
+    model = validate_model(actual, spec["model"], spec["version"])
+    if spec["environment"]:
+        update_env({spec["environment"]: deployment})
+    state.setdefault("model_roles", {})[role] = {
+        "deployment": deployment,
+        "model": model,
+        "captured_at": datetime.now(UTC).isoformat(),
+    }
+    if role == "answer":
+        state["deployment_at_capture"] = model
+    save_state(state)
+    return {
+        "role": role,
+        "deployment": deployment,
+        "model": model,
+        "management_metadata_read": True,
+        "model_invoked": False,
+    }
+
+
+def configure(
+    project_id: str,
+    endpoint: str,
+    deployment: str,
+    prefix: str,
+    expected_model: str = PRIMARY_MODEL,
+) -> dict:
     verify_runtime()
     parsed = parse_project_id(project_id)
     endpoint = validate_endpoint(endpoint, "project")
@@ -395,8 +521,7 @@ def configure(project_id: str, endpoint: str, deployment: str, prefix: str) -> d
         "--subscription",
         parsed["subscription"],
     )
-    if model.get("properties", {}).get("provisioningState") != "Succeeded":
-        raise SetupError("모델 배포가 Succeeded가 아닙니다. 생성 완료/할당량을 확인하세요.")
+    validate_model(model, expected_model, PRIMARY_VERSION)
     identity = {
         "AZURE_SUBSCRIPTION_ID": parsed["subscription"],
         "AZURE_TENANT_ID": tenant,
@@ -412,7 +537,9 @@ def configure(project_id: str, endpoint: str, deployment: str, prefix: str) -> d
             raise SetupError(f"{key}: 기존 .env의 다른 실습 설정을 덮어쓰지 않습니다.")
     updates = {**identity, "AZURE_AI_MODEL_DEPLOYMENT_NAME": deployment}
     if not existing.get("WORKSHOP_MAX_OUTPUT_TOKENS"):
-        updates["WORKSHOP_MAX_OUTPUT_TOKENS"] = "2048"
+        updates["WORKSHOP_MAX_OUTPUT_TOKENS"] = str(DEFAULT_MAX_OUTPUT_TOKENS)
+    if not existing.get("WORKSHOP_REASONING_EFFORT"):
+        updates["WORKSHOP_REASONING_EFFORT"] = DEFAULT_REASONING_EFFORT
     state = {
         "schema_version": 1,
         "workshop_version": "1.5",
@@ -423,6 +550,7 @@ def configure(project_id: str, endpoint: str, deployment: str, prefix: str) -> d
         "identity_env": identity,
         "location": project.get("location"),
         "deployment_at_capture": model.get("properties", {}).get("model"),
+        "model_roles": dict(previous.get("model_roles", {})) if previous else {},
         "resources": dict(previous["resources"]) if previous else {},
         "management_metadata_read": True,
         "model_invoked": False,
@@ -451,8 +579,10 @@ def set_value(key: str, value: str) -> None:
     elif key == "WORKSHOP_EMBEDDING_API" and value not in {"account", "project"}:
         raise SetupError("embedding API는 account 또는 project를 명시하세요.")
     elif key == "WORKSHOP_MAX_OUTPUT_TOKENS":
-        if not value.isdigit() or not 256 <= int(value) <= 8192:
-            raise SetupError("출력 토큰 한도는 256~8192입니다.")
+        if not value.isdigit() or not 256 <= int(value) <= MAX_OUTPUT_TOKENS:
+            raise SetupError(f"출력 토큰 한도는 256~{MAX_OUTPUT_TOKENS}입니다.")
+    elif key == "WORKSHOP_REASONING_EFFORT" and value not in REASONING_EFFORTS:
+        raise SetupError("Reasoning은 none, low, medium, high 중에서 명시하세요.")
     elif key == "WORKSHOP_IQ_RERANKER_THRESHOLD":
         threshold = float(value)
         if not math.isfinite(threshold) or not 0 <= threshold <= 4:
@@ -752,6 +882,12 @@ def argument_parser() -> argparse.ArgumentParser:
     config.add_argument("--endpoint", required=True)
     config.add_argument("--deployment", default="workshop-chat")
     config.add_argument("--prefix", required=True)
+    config.add_argument(
+        "--expected-model", choices=("gpt-6-luna", "gpt-6-sol"), default=PRIMARY_MODEL
+    )
+    model = commands.add_parser("model", help="역할에 맞는 실제 모델/버전을 읽고 연결 설정")
+    model.add_argument("--role", choices=MODEL_ROLES, required=True)
+    model.add_argument("--deployment")
     commands.add_parser("status", help="기록한 설정/자원 표시; Azure 현재 상태 조회가 아님")
     commands.add_parser("values", help="다음 명령에 복사할 핵심 설정만 표시")
     setting = commands.add_parser("set", help="허용된 비밀 아닌 SDK 설정만 변경")
@@ -767,6 +903,11 @@ def argument_parser() -> argparse.ArgumentParser:
     hosted.add_argument("--package", type=Path, required=True)
     hosted.add_argument("--name", required=True, help="접두사 뒤에 붙일 짧은 이름")
     hosted.add_argument("--run", default="default", help="같은 서비스의 새 준비 폴더 구분")
+    bind = commands.add_parser(
+        "bind-matrix", help="실제 활성 matrix 버전·Invocations Endpoint를 읽어 저장"
+    )
+    bind.add_argument("--directory", type=Path, required=True)
+    bind.add_argument("--service", required=True)
     resource = commands.add_parser("resource", help="직접 만든 추가 자원을 읽어 등록")
     resource.add_argument("--kind", choices=RESOURCE_TYPES, required=True)
     resource.add_argument("--id", required=True)
@@ -786,7 +927,11 @@ def argument_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = argument_parser().parse_args()
     if args.command == "configure":
-        result = configure(args.project_id, args.endpoint, args.deployment, args.prefix)
+        result = configure(
+            args.project_id, args.endpoint, args.deployment, args.prefix, args.expected_model
+        )
+    elif args.command == "model":
+        result = inspect_model(args.role, args.deployment)
     elif args.command == "values":
         state = read_state()
         values = env_values()
@@ -796,6 +941,11 @@ def main() -> None:
             "프로젝트 ARM ID": state["project_id"],
             "리전 코드": state["location"],
             "기본 모델 배포": values["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            "확인한 모델": state.get("deployment_at_capture"),
+            "Reasoning": values.get("WORKSHOP_REASONING_EFFORT", DEFAULT_REASONING_EFFORT),
+            "출력 토큰 한도": values.get(
+                "WORKSHOP_MAX_OUTPUT_TOKENS", str(DEFAULT_MAX_OUTPUT_TOKENS)
+            ),
             "기본 agent 이름": state["prefix"] + "-policy-ko",
             "agent 버전": "생성 후 outputs/agents/에서 확인",
             "Search Endpoint": values.get("AZURE_SEARCH_ENDPOINT", "아직 연결하지 않음"),
@@ -841,6 +991,8 @@ def main() -> None:
         for command in result["next_commands"]:
             print(command)
         return
+    elif args.command == "bind-matrix":
+        result = bind_matrix(args.directory, args.service)
     elif args.command == "capture":
         result = capture_hosted(
             args.directory, args.service, args.version, args.output, args.confirm_cost

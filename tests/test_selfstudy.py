@@ -11,6 +11,8 @@ from pathlib import Path
 from unittest.mock import patch
 from zipfile import ZipFile
 
+from foundry_workshop.model_plan import DEFAULT_MAX_OUTPUT_TOKENS, PRIMARY_MODEL, PRIMARY_VERSION
+
 REPOSITORY = Path(__file__).resolve().parents[1]
 selfstudy = importlib.import_module("scripts.selfstudy")
 bundler = importlib.import_module("scripts.package_workshop")
@@ -92,11 +94,15 @@ class SelfStudyTests(unittest.TestCase):
                     "properties": {"AppId": APP_ID},
                 }
         if args[:4] == ("cognitiveservices", "account", "deployment", "show"):
+            deployment = args[args.index("--deployment-name") + 1]
             return {
-                "name": "workshop-chat",
+                "name": deployment,
                 "properties": {
                     "provisioningState": "Succeeded",
-                    "model": {"name": "test-model", "version": "test"},
+                    "model": {
+                        "name": PRIMARY_MODEL if deployment == "workshop-chat" else "gpt-6-sol",
+                        "version": PRIMARY_VERSION,
+                    },
                 },
             }
         self.fail(f"Unexpected Azure request: {args}")
@@ -111,7 +117,8 @@ class SelfStudyTests(unittest.TestCase):
         values = selfstudy.env_values()
         self.assertEqual(values["AZURE_SUBSCRIPTION_ID"], SUB)
         self.assertEqual(values["AZURE_AI_PROJECT_ENDPOINT"], ENDPOINT)
-        self.assertEqual(values["WORKSHOP_MAX_OUTPUT_TOKENS"], "2048")
+        self.assertEqual(values["WORKSHOP_MAX_OUTPUT_TOKENS"], str(DEFAULT_MAX_OUTPUT_TOKENS))
+        self.assertEqual(values["WORKSHOP_REASONING_EFFORT"], "low")
         self.assertEqual(state["resources"][PROJECT.casefold()]["principal_id"], PROJECT_MI)
         self.assertFalse(state["model_invoked"])
         self.assertTrue(state["management_metadata_read"])
@@ -164,6 +171,31 @@ class SelfStudyTests(unittest.TestCase):
         with self.assertRaisesRegex(selfstudy.SetupError, "Succeeded"):
             self.configure()
         self.assertFalse(selfstudy.ENV.exists())
+
+    def test_same_alias_with_wrong_model_is_not_accepted(self):
+        original = self.fake_azure
+
+        def old_model(*args):
+            value = original(*args)
+            if args[0] == "cognitiveservices":
+                value["properties"]["model"]["name"] = "not-the-selected-model"
+            return value
+
+        self.reader.side_effect = old_model
+        with self.assertRaisesRegex(selfstudy.SetupError, "실제 배포"):
+            self.configure()
+        self.assertFalse(selfstudy.ENV.exists())
+
+    def test_judge_role_reuses_verified_sol_without_changing_answer_model(self):
+        self.configure()
+        result = selfstudy.inspect_model("judge", None)
+        self.assertEqual(result["model"]["name"], "gpt-6-sol")
+        self.assertEqual(result["deployment"], "workshop-compare")
+        self.assertFalse(result["model_invoked"])
+        self.assertEqual(
+            selfstudy.env_values()["AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME"], "workshop-compare"
+        )
+        self.assertEqual(selfstudy.env_values()["AZURE_AI_MODEL_DEPLOYMENT_NAME"], "workshop-chat")
 
     def test_another_prefix_or_existing_environment_is_preserved(self):
         self.configure()
@@ -411,6 +443,50 @@ class SelfStudyTests(unittest.TestCase):
         self.assertEqual(run.call_count, 2)
         self.assertFalse(output.exists())
 
+    def test_matrix_binding_reads_actual_version_and_endpoint(self):
+        self.configure()
+        folder = self.root / ".selfstudy/matrix"
+        folder.mkdir()
+        (folder / "azure.yaml").write_text("{}")
+        service = "lab-user-0927-matrix"
+        endpoint = ENDPOINT + f"/agents/{service}/endpoint/protocols/invocations?api-version=v1"
+        values = {
+            "AZURE_AI_PROJECT_ENDPOINT": ENDPOINT,
+            "AGENT_LAB_USER_0927_MATRIX_NAME": service,
+            "AGENT_LAB_USER_0927_MATRIX_VERSION": "5",
+            "AGENT_LAB_USER_0927_MATRIX_INVOCATIONS_ENDPOINT": endpoint,
+            "UNRELATED": "not copied",
+        }
+
+        def run(command, **kwargs):
+            if command[1:3] == ["env", "get-values"]:
+                return subprocess.CompletedProcess(command, 0, json.dumps(values), "")
+            self.assertEqual(command[1:4], ["ai", "agent", "show"])
+            return subprocess.CompletedProcess(
+                command,
+                0,
+                json.dumps(
+                    {
+                        "name": service,
+                        "version": "5",
+                        "status": "active",
+                        "instance_identity": {"principal_id": HOST_MI},
+                    }
+                ),
+                "",
+            )
+
+        with (
+            patch.object(selfstudy.shutil, "which", return_value="/fake/azd"),
+            patch.object(selfstudy.subprocess, "run", side_effect=run) as calls,
+        ):
+            result = selfstudy.bind_matrix(folder, service)
+        self.assertEqual(calls.call_count, 2)
+        self.assertFalse(result["model_invoked"])
+        self.assertEqual(selfstudy.env_values()["WORKSHOP_HOSTED_AGENT_ENDPOINT"], endpoint)
+        self.assertEqual(selfstudy.env_values()["WORKSHOP_HOSTED_AGENT_VERSION"], "5")
+        self.assertNotIn("UNRELATED", selfstudy.env_values())
+
     def test_packaging_excludes_personal_state_and_records_hashes(self):
         with patch.object(bundler, "ROOT", self.root):
             for name in bundler.ROOT_FILES:
@@ -421,6 +497,12 @@ class SelfStudyTests(unittest.TestCase):
             for directory in bundler.DIRECTORIES:
                 (self.root / directory).mkdir()
                 (self.root / directory / "sample.md").write_text("synthetic")
+            metadata = self.root / "src/temporary.egg-info"
+            metadata.mkdir()
+            (metadata / "SOURCES.txt").write_text("generated metadata")
+            templates = self.root / "examples/hosted"
+            templates.mkdir()
+            (templates / "azure.yaml.example").write_text("name: template")
             for name in (
                 ".env",
                 ".selfstudy/private.json",
@@ -439,6 +521,10 @@ class SelfStudyTests(unittest.TestCase):
                         "/.reference/" in name or "/outputs/" in name or name.endswith("/.env")
                         for name in names
                     )
+                )
+                self.assertFalse(any(".egg-info/" in name for name in names))
+                self.assertTrue(
+                    any(name.endswith("/examples/hosted/azure.yaml.example") for name in names)
                 )
                 manifest = json.loads(
                     archive.read("microsoft-foundry-v1.5-labs/bundle-manifest.json")

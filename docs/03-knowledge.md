@@ -39,44 +39,46 @@ Foundry **Build → Agents**에서 같은 이름·버전·모델·지침을 확�
 
 ## 3. 실제 File Search 에이전트 만들기
 
-인라인과 검색을 섞지 않도록 **`<내-prefix>-files`라는 별도 Prompt Agent**를 만듭니다.
+포털의 업로드 버튼 위치/노출에 의존하지 않고 **포함된 SDK 명령**으로 진행합니다. 기본 GPT-6 Luna를 그대로 쓰되, 인라인 agent와 다른 이름을 자동으로 생성합니다.
 
-1. Foundry **Agents → Create agent**에서 내 이름과 `workshop-chat`을 선택합니다.
-2. Instructions에는 아래 지침만 넣습니다. 정책 원문 전체를 붙여 넣지 않습니다.
-3. **Tools / Knowledge → Add → File Search**에서 새 저장소를 만들고 앞의 TXT 6개를 업로드합니다.
-4. 파일의 인덱싱 상태가 완료될 때까지 기다립니다.
-5. 설정을 저장하고 실제 agent 버전을 기록합니다.
-
-```text
-당신은 한빛기술의 합성 출장 규정 안내 도우미입니다.
-규정 질문은 반드시 File Search로 검색한 뒤 답하세요.
-질문의 출장일에 유효한 문서를 선택하고 파일 인용과 문서 ID를 표시하세요.
-자료가 없거나 날짜가 부족하면 추측하지 말고 확인을 요청하세요.
-예약, 승인, 지급은 실행할 수 없습니다.
+```bash
+python scripts/workshop.py file-search create --confirm-create
 ```
 
-File Search 버튼이나 업로드가 지원되지 않으면 모델·지역·에이전트 설정을 확인합니다. **인라인 원문으로 대체한 뒤 RAG 성공이라고 표시하지 않습니다.** 본인 구독에서 지원되는 모델을 명시적으로 준비하거나 해당 기능을 차단으로 남깁니다.
+이 명령은 합성 문서 6개 업로드 → vector store 인덱싱 확인 → File Search Prompt Agent 생성 → 정확한 버전/소유 ID 기록을 수행합니다. 정책 전체를 지침에 붙여 넣는 방식이 아닙니다.
+
+출력에서 `indexed_files: 6`, 실제 `agent_name`, `agent_version`, `vector_store_id`를 확인합니다. 소유 기록은 `outputs/file-search/<agent-name>/ownership.json`입니다. 중간 오류가 나도 이미 생성한 ID는 보존하므로 임의로 파일을 중복 업로드하지 않습니다.
+
+저장소는 **마지막 활동 후 7일 만료**로 생성합니다. 이는 과정 시간 제한이 아니라 보관/비용 설정입니다. 만료 후 재개하거나 새 모델 설정으로 다시 실행할 때는 기존 자원을 확인하고 새 소유 이름으로 시작합니다.
+
+모델 카탈로그의 File Search 지원과 실제 내 배포의 성공은 별개입니다. SDK에서도 지원/권한 오류가 나면 해당 원인을 해결합니다. **인라인 답변이나 다른 모델로 몰래 대체하지 않습니다.**
 
 자체 Storage를 연결한 환경은 사용자/서비스 관리 ID의 **Storage Blob Data Contributor** 같은 추가 접근이 필요할 수 있습니다. Basic/Standard setup과 실제 저장소를 [공식 File Search 문서](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search)에서 확인하고 **본인 저장소 범위에만** 부여합니다.
 
 ## 4. 세 질문으로 구분
 
-Playground에서 독립적인 새 대화로 각각 묻습니다.
+각 질문은 저장한 정확한 agent 버전에 독립적으로 전달합니다.
 
-```text
-2026년 9월 국내 출장 숙박비 한도와 근거는?
-2026년 5월 국내 출장 숙박비 한도와 근거는?
-도쿄 출장 호텔비 한도는?
+```bash
+python scripts/workshop.py file-search ask --question "2026년 9월 국내 출장 숙박비 한도와 근거는?" --label current
+python scripts/workshop.py file-search ask --question "2026년 5월 국내 출장 숙박비 한도와 근거는?" --label previous
+python scripts/workshop.py file-search ask --question "도쿄 출장 호텔비 한도는?" --label missing
 ```
 
 기대 결과는 **150,000원 / 120,000원 / 근거 부족**입니다. 현재와 과거의 날짜를 뒤집지 않았는지 확인합니다.
 
-인용을 눌러 실제 파일의 해당 문장을 읽습니다. 실행 세부 정보에서 File Search 호출도 확인합니다. **문서 ID를 답변에 써 놓은 것과 실제 파일 인용은 다릅니다.**
+실제 `file_search_calls`, 내 업로드 파일을 가리키는 `file_citations`, `file_search_verified: true`를 확인합니다. 프로그램은 검색 호출이나 소유 파일 인용이 없으면 성공으로 처리하지 않습니다.
+
+`result_directory`의 원시 응답과 원문 TXT를 대조합니다. Foundry Agents 목록에서도 같은 이름/버전을 열어 지침과 File Search를 확인할 수 있습니다. **문서 ID를 답변에 써 놓은 것과 실제 파일 인용은 다릅니다.**
 
 ## 5. 저장할 것
 
 인라인 agent와 File Search agent 각각의 이름·버전·응답 ID, 파일/저장소 ID, 원문 대조 결과를 워크북에 기록합니다. 파일 저장과 검색은 모델 토큰 외 과금이 있을 수 있습니다.
 
+같은 label은 덮어쓰지 않습니다. 필요한 재시도에는 `current-2`처럼 새 label을 사용하고 원래 실패도 보관합니다. 이 단계의 삭제는 15장에서 소유 기록을 확인한 뒤 진행합니다.
+
 **막히면:** 업로드 완료와 인덱싱 완료를 구분하고, API key를 넣어 우회하지 않습니다. 인용이 없거나 잘못된 날짜의 문서를 쓰면 실패 사례로 보존합니다.
+
+인덱싱이 아직 진행 중인 시간 초과라면 같은 생성 명령으로 상태를 다시 확인할 수 있습니다. 영구 실패나 만료라면 원인을 해결하고 **15의 소유 자산 정리 후 새 `--name`**으로 생성하세요. 같은 이름의 원격 agent가 있는데 버전 기록이 없다면 새 버전을 추측해 만들지 말고 포털의 실제 자산부터 확인합니다.
 
 **다음 → [04. MAF·함수·MCP·Code Interpreter](04-tools.md)**

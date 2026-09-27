@@ -98,6 +98,20 @@ python scripts/workshop.py cleanup-plan
 
 주요 소유권 기록은 `outputs/` 아래에 있습니다. 지우면 정리가 쉬워지는 것이 아니라 어떤 자산이 내 것인지 확인하기 어려워집니다.
 
+03의 SDK File Search 자산은 먼저 삭제 계획을 봅니다.
+
+```bash
+python scripts/workshop.py file-search cleanup
+```
+
+본인 이름·파일·저장소와 다른 agent의 참조 여부를 확인한 뒤 삭제를 결정하면 실행합니다.
+
+```bash
+python scripts/workshop.py file-search cleanup --confirm-delete
+```
+
+기록된 버전·저장소·업로드 파일만 정리하며, 포털에서 별도로 만든 자산이나 공유 프로젝트는 삭제하지 않습니다. 새 이름으로 만든 실험은 동일한 `--name`을 지정합니다.
+
 ## 6. 실습 전용 그룹 삭제
 
 모든 자원이 이 과정 전용이고 더 사용할 계획이 없다면 Azure 포털에서:

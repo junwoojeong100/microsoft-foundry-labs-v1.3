@@ -21,6 +21,7 @@ from .contracts import (
 )
 from .evaluation import summarize
 from .extension_materials import CONVERSATIONS
+from .generation import response_options
 from .settings import Settings
 
 
@@ -79,6 +80,7 @@ def collect(
         "deployment": settings.deployment,
         "project_endpoint": settings.project_endpoint,
         "max_output_tokens": settings.max_output_tokens,
+        "reasoning_effort": settings.reasoning_effort,
         "plan_hash": digest(configuration),
         "dataset_hash": configuration["dataset_hash"],
         "corpus_hash": configuration["corpus_hash"],
@@ -276,7 +278,7 @@ def collect_live(
                         "schema": ANSWER_SCHEMA,
                     }
                 },
-                max_output_tokens=settings.max_output_tokens,
+                **response_options(settings),
                 store=False,
             )
             raw = response.model_dump(mode="json")

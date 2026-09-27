@@ -83,8 +83,11 @@ def incoming_update() -> dict[str, Any]:
 def caller_definition(settings: Settings, instructions: str, connection_id: str) -> Any:
     from azure.ai.projects.models import A2AProtocolVersion, A2ATool, PromptAgentDefinition
 
+    from .generation import agent_options
+
     return PromptAgentDefinition(
         model=settings.deployment,
+        **agent_options(settings),
         instructions=instructions,
         tools=[
             A2ATool(
@@ -370,6 +373,7 @@ def invoke(
     if not confirmed:
         raise ValueError("A2A calls both caller and target models; pass --confirm-cost.")
     from .cloud import response_metadata, response_with_payload
+    from .generation import response_options
     from .toolbox import QUESTIONS
 
     ownership = load_ownership(root, settings)
@@ -379,6 +383,7 @@ def invoke(
     directory = root / "outputs/a2a-runs" / safe_label(label)
     directory.mkdir(parents=True, exist_ok=False)
     request = {
+        **response_options(settings),
         "input": QUESTIONS[settings.language],
         "tool_choice": "required",
         "store": False,

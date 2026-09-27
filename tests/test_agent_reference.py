@@ -93,6 +93,8 @@ class AgentReferenceTests(unittest.TestCase):
                 self.assertEqual(
                     main(root, ["prompt-agent", "invoke", "--question", "합성 질문"]), 0
                 )
-                invoke.assert_called_once_with(client, "lab-unit-policy-ko", "7", "합성 질문")
+                invoke.assert_called_once_with(
+                    client, "lab-unit-policy-ko", "7", "합성 질문", settings=self.settings
+                )
                 self.assertEqual(main(root, ["prompt-agent", "create", "--confirm-create"]), 2)
             project.agents.create_version.assert_called_once()

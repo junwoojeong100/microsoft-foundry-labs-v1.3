@@ -154,6 +154,7 @@ def runtime_contract(root: Path, settings: Settings, profile: RuntimeProfile) ->
         if profile.api == "account-chat"
         else settings.project_endpoint,
         "max_output_tokens": settings.max_output_tokens,
+        "reasoning_effort": settings.reasoning_effort,
         "prompt_hash": prompt_hash,
         "effective_prompt_hash": digest(instructions),
         "execution_path": execution_path,

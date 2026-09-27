@@ -17,6 +17,9 @@ from agent_framework.orchestrations import SequentialBuilder
 from azure.identity.aio import AzureCliCredential
 from dotenv import load_dotenv
 
+from foundry_workshop.generation import maf_options
+from foundry_workshop.model_plan import GenerationConfig
+
 POLICIES = Path(
     os.environ.get("WORKSHOP_POLICIES_FILE")
     or Path(__file__).resolve().parents[2] / "data/knowledge/en/policies.json"
@@ -29,12 +32,14 @@ def build_workflow(chat_client):
         client=chat_client,
         name="PolicyAnalyst",
         instructions="Identify the policy rules and dates that apply. Cite policy IDs." + DATA_RULE,
+        default_options=maf_options(GenerationConfig.from_env()),
     )
     writer = Agent(
         client=chat_client,
         name="AnswerWriter",
         instructions="Write a short answer from the analysis. Do not approve, book or pay."
         + DATA_RULE,
+        default_options=maf_options(GenerationConfig.from_env()),
     )
     return SequentialBuilder(participants=[analyst, writer]).build()
 

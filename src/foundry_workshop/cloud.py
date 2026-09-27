@@ -14,6 +14,7 @@ from .contracts import (
     validate_question,
     write_json,
 )
+from .generation import agent_options, generation_metadata, response_options
 from .knowledge import local_retrieve
 from .settings import Settings, credential_for, require_env, require_uuid
 
@@ -54,6 +55,12 @@ def response_metadata(response: Any) -> dict[str, Any]:
                 "request_id": openai_request_id(response),
                 "response_model": response.model,
                 "raw_response_text": response.output_text,
+                "status": response.status,
+                "incomplete_details": (
+                    response.incomplete_details.model_dump()
+                    if getattr(response, "incomplete_details", None) is not None
+                    else None
+                ),
             },
         )
     usage = response.usage
@@ -118,7 +125,7 @@ def call_model(client: Any, settings: Settings, question: str) -> dict[str, Any]
         model=settings.deployment,
         input=validate_question(question),
         instructions=f"Explain clearly in {'English' if settings.language == 'en' else 'Korean'}. Do not invent company policies.",
-        max_output_tokens=settings.max_output_tokens,
+        **response_options(settings),
         store=False,
     )
     return {
@@ -154,7 +161,7 @@ def answer_with_context(
                 "schema": ANSWER_SCHEMA,
             }
         },
-        max_output_tokens=settings.max_output_tokens,
+        **response_options(settings),
         store=False,
     )
     metadata = response_metadata(response)
@@ -205,7 +212,9 @@ def create_prompt_agent(
     )
     agent = project.agents.create_version(
         agent_name=name,
-        definition=PromptAgentDefinition(model=settings.deployment, instructions=instructions),
+        definition=PromptAgentDefinition(
+            model=settings.deployment, instructions=instructions, **agent_options(settings)
+        ),
         description="Synthetic Microsoft Foundry v1.5 workshop. No external actions.",
     )
     return {
@@ -220,14 +229,16 @@ def create_prompt_agent(
 
 
 def invoke_prompt_agent(
-    client: Any, name: str, agent_version: str, question: str
+    client: Any, name: str, agent_version: str, question: str, *, settings: Settings | None = None
 ) -> dict[str, Any]:
+    options = response_options(settings) if settings is not None else {}
     response = client.responses.create(
         input=validate_question(question),
         extra_body={
             "agent_reference": {"type": "agent_reference", "name": name, "version": agent_version}
         },
         store=False,
+        **options,
     )
     return {
         "mode": "live",
@@ -262,6 +273,8 @@ def save_agent_reference(root: Path, settings: Settings, result: dict[str, Any])
         "tenant_id": settings.tenant_id,
         "language": settings.language,
         "corpus_hash": digest(load_documents(root, settings.language)),
+        "deployment": settings.deployment,
+        "generation": generation_metadata(settings),
     }
     write_json(agent_reference_path(root, settings, name), record, overwrite=False)
 
@@ -275,6 +288,8 @@ def load_agent_reference(root: Path, settings: Settings, name: str) -> dict[str,
             "No saved agent version. Create the agent first, or pass its explicit --name and --version."
         )
     record = read_json(path)
+    if isinstance(record, dict) and record.get("deleted"):
+        raise ValueError("The saved agent version was deleted. Do not invoke a stale reference.")
     expected = {
         "schema_version": 1,
         "agent_name": name,
@@ -282,11 +297,15 @@ def load_agent_reference(root: Path, settings: Settings, name: str) -> dict[str,
         "tenant_id": settings.tenant_id,
         "language": settings.language,
         "corpus_hash": digest(load_documents(root, settings.language)),
+        "deployment": settings.deployment,
+        "generation": generation_metadata(settings),
     }
     if not isinstance(record, dict) or any(
         record.get(key) != value for key, value in expected.items()
     ):
-        raise ValueError("The saved agent belongs to a different project, language or corpus.")
+        raise ValueError(
+            "The saved agent belongs to a different project, model, generation setting, language or corpus. Create a new owned agent for changed settings."
+        )
     if not isinstance(record.get("agent_version"), str) or not record["agent_version"].strip():
         raise ValueError(
             "The saved agent version is invalid; never select the latest version implicitly."

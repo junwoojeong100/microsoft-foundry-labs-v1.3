@@ -16,7 +16,6 @@ REMOTE_ENV = {
     "WORKSHOP_MODEL_DEPLOYMENTS_JSON": "${WORKSHOP_MODEL_DEPLOYMENTS_JSON}",
     "WORKSHOP_PREFIX": "${WORKSHOP_PREFIX}",
     "WORKSHOP_AUTH_MODE": "managed-identity",
-    "WORKSHOP_MAX_OUTPUT_TOKENS": "2048",
 }
 
 
@@ -87,6 +86,9 @@ def prepare(path: Path, settings: Settings, agent_name: str) -> None:
     if not isinstance(environment, dict):
         raise ValueError("The generated service env must be a mapping.")
     environment.update(REMOTE_ENV)
+    environment["WORKSHOP_MAX_OUTPUT_TOKENS"] = str(settings.max_output_tokens)
+    if settings.reasoning_effort is not None:
+        environment["WORKSHOP_REASONING_EFFORT"] = settings.reasoning_effort
     path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
 
 

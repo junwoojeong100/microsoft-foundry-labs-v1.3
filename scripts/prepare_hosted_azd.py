@@ -40,13 +40,17 @@ def environment_values(settings: Settings, project_id: str) -> dict[str, str]:
     )
     if project_id.casefold() != expected.casefold():
         raise ValueError("The supplied actual project ARM ID differs from the workshop scope.")
-    return {
+    values = {
         "AZURE_AI_PROJECT_ID": project_id,
         "AZURE_AI_PROJECT_ENDPOINT": settings.project_endpoint,
         "FOUNDRY_PROJECT_ENDPOINT": settings.project_endpoint,
         "AZURE_AI_MODEL_DEPLOYMENT_NAME": settings.deployment,
         "AZURE_TENANT_ID": settings.tenant_id,
+        "WORKSHOP_MAX_OUTPUT_TOKENS": str(settings.max_output_tokens),
     }
+    if settings.reasoning_effort is not None:
+        values["WORKSHOP_REASONING_EFFORT"] = settings.reasoning_effort
+    return values
 
 
 def initialize_environment(
@@ -119,8 +123,10 @@ def prepare(
         "AZURE_AI_MODEL_DEPLOYMENT_NAME": settings.deployment,
         "WORKSHOP_PREFIX": owned_prefix(),
         "WORKSHOP_AUTH_MODE": "managed-identity",
-        "WORKSHOP_MAX_OUTPUT_TOKENS": "2048",
+        "WORKSHOP_MAX_OUTPUT_TOKENS": str(settings.max_output_tokens),
     }
+    if settings.reasoning_effort is not None:
+        environment["WORKSHOP_REASONING_EFFORT"] = settings.reasoning_effort
     if kind == "toolbox":
         profile = read_json(package / "toolbox-profile.json")
         if (

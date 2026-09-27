@@ -21,6 +21,7 @@ from .contracts import (
     safe_label,
     write_json,
 )
+from .generation import generation_metadata, maf_options
 from .search import search_configuration
 from .settings import Settings, credential_for, owned_prefix, require_env
 
@@ -637,7 +638,11 @@ async def execute(
                         instructions += "\nOutput JSON schema:\n" + json.dumps(ANSWER_SCHEMA)
                     write_json(
                         directory / "request.json",
-                        {"question": question, "instructions": instructions},
+                        {
+                            "question": question,
+                            "instructions": instructions,
+                            "generation": generation_metadata(settings),
+                        },
                     )
                     agent = await stack.enter_async_context(
                         Agent(
@@ -655,10 +660,7 @@ async def execute(
                             if with_skill
                             else [],
                             middleware=[audit, audit_function],
-                            default_options={
-                                "store": False,
-                                "max_tokens": settings.max_output_tokens,
-                            },
+                            default_options=maf_options(settings),
                         )
                     )
                     response = await asyncio.wait_for(agent.run(question), timeout=180)

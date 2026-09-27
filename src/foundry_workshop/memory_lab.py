@@ -7,6 +7,7 @@ from typing import Any
 from uuid import uuid4
 
 from .contracts import digest, load_cases, read_json, safe_label, write_json
+from .generation import response_options
 from .settings import Settings, owned_prefix, require_env
 
 
@@ -294,7 +295,7 @@ def recall(
         model=settings.deployment,
         instructions=instructions,
         input=json.dumps({"question": question, "memories": retrieved}, ensure_ascii=False),
-        max_output_tokens=settings.max_output_tokens,
+        **response_options(settings),
         store=False,
     )
     write_json(directory / "response.json", response.model_dump(mode="json"))

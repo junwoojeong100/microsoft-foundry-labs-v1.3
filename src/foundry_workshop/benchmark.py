@@ -421,10 +421,11 @@ def compare_matrices(root: Path, baseline: str, candidate: str) -> dict[str, Any
         "project_endpoint",
         "inference_endpoint",
         "max_output_tokens",
+        "reasoning_effort",
         "code_hash",
         "retrieval_configuration",
     ):
-        if a[key] != b[key]:
+        if a.get(key) != b.get(key):
             raise ValueError(f"Controlled comparison changed runtime {key}.")
     for key in ("kind", "pattern", "retrieval", "api", "protocol"):
         if a["profile"][key] != b["profile"][key]:

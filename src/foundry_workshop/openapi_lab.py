@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any
 
 from .contracts import digest, load_documents, parse_json, read_json, safe_label, write_json
+from .generation import response_options
 from .search import SEARCH_API, search_configuration
 from .settings import Settings
 from .toolbox import QUESTIONS, require_synthetic_index
@@ -145,7 +146,7 @@ def invoke(
         "tool_choice": "required",
         "store": False,
         "extra_body": {"tools": [configuration["tool"]]},
-        "max_output_tokens": settings.max_output_tokens,
+        **response_options(settings),
     }
     write_json(directory / "request.json", request)
     response, raw = response_with_payload(

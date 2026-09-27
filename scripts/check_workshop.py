@@ -16,6 +16,12 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from foundry_workshop.cli import parser as runtime_parser  # noqa: E402
 from foundry_workshop.contracts import load_cases, load_documents  # noqa: E402
+from foundry_workshop.model_plan import (  # noqa: E402
+    DEFAULT_MAX_OUTPUT_TOKENS,
+    DEFAULT_REASONING_EFFORT,
+    PRIMARY_MODEL,
+    PRIMARY_VERSION,
+)
 from scripts.selfstudy import argument_parser as setup_parser  # noqa: E402
 from scripts.workshop import command_arguments  # noqa: E402
 
@@ -53,6 +59,15 @@ def check() -> dict[str, object]:
     if "total_minutes" in curriculum or any("minutes" in step for step in steps):
         errors.append("A mandatory time budget must not be present.")
     introduction = (ROOT / "README.md").read_text(encoding="utf-8")
+    setup_text = (ROOT / "docs/00-setup.md").read_text(encoding="utf-8")
+    env_text = (ROOT / ".env.example").read_text(encoding="utf-8")
+    if PRIMARY_MODEL not in setup_text or PRIMARY_VERSION not in setup_text:
+        errors.append("The setup guide must name the selected model and version.")
+    if (
+        f"WORKSHOP_MAX_OUTPUT_TOKENS={DEFAULT_MAX_OUTPUT_TOKENS}" not in env_text
+        or f"WORKSHOP_REASONING_EFFORT={DEFAULT_REASONING_EFFORT}" not in env_text
+    ):
+        errors.append("The environment template and shared generation defaults differ.")
     seen: set[str] = set()
     for step in steps:
         if not set(step["depends_on"]).issubset(seen):
@@ -80,6 +95,10 @@ def check() -> dict[str, object]:
         text = path.read_text(encoding="utf-8")
         if any(re.search(pattern, text, re.IGNORECASE) for pattern in REMOVED_READER_PATTERNS):
             errors.append(f"Removed reader-facing wording remains: {path.relative_to(ROOT)}")
+        if "gpt-4.1-mini" in text:
+            errors.append(
+                f"An obsolete primary-model recommendation remains: {path.relative_to(ROOT)}"
+            )
         if len(re.findall(r"^```", text, re.MULTILINE)) % 2:
             errors.append(f"Unclosed code fence: {path.relative_to(ROOT)}")
         for target in re.findall(r"!?\[[^\]]*\]\(([^)\n]+)\)", text):
@@ -142,6 +161,8 @@ def check() -> dict[str, object]:
         "package": project["name"],
         "pacing": "self-paced",
         "runtime_included": True,
+        "primary_model": PRIMARY_MODEL,
+        "primary_version": PRIMARY_VERSION,
         "labs": len(steps),
         "documents": len(documents),
         "links_checked": links,

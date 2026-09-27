@@ -18,12 +18,13 @@ python scripts/workshop.py conversations evaluate --label conversations-first --
 
 ## 2. Optimizer를 위한 모델과 데이터 직접 준비
 
-1. Foundry agent의 **Optimize** 화면에서 현재 지원하는 optimizer 모델을 확인합니다.
-2. 해당 모델이 없다면 02의 배포 방법으로 **별도의 optimizer 배포**를 만듭니다. 실제 지역/할당량/비용을 먼저 확인합니다.
-3. 07의 judge를 재사용하거나 지원되는 별도 judge를 지정합니다. 답변 모델, optimizer, judge는 다른 역할입니다.
+1. Foundry agent의 **Optimize** 화면에서 지원 모델을 확인합니다.
+2. 이 실습은 후보 생성용으로 **`gpt-5.5` / `2026-04-24` → `workshop-optimizer`**를 사용합니다. 지역/할당량/비용을 확인하고 02와 같은 방법으로 만듭니다.
+3. 답변은 GPT-6 Luna, judge는 07의 GPT-6 Sol 배포를 유지합니다. 후보 생성 모델의 지원 목록은 별개이므로 GPT-6으로 무조건 대체하지 않습니다.
 4. 같은 prefix/언어의 확장 입력이 없으면 생성합니다.
 
 ```bash
+python scripts/selfstudy.py model --role optimizer
 python scripts/workshop.py prepare-extensions --label extensions-ko
 ```
 
@@ -81,12 +82,10 @@ azd deploy "내-prefix-matrix" --cwd "실제-matrix-v1-절대경로"
 azd ai agent show "내-prefix-matrix" --cwd "실제-matrix-v1-절대경로" --output json
 ```
 
-08과 같은 방식으로 실제 런타임 ID와 역할을 확인합니다. **실제 반환된 Invocations Endpoint와 버전**을 저장합니다. URL을 직접 조합하지 않습니다.
+08과 같은 방식으로 실제 런타임 ID와 역할을 확인합니다. 준비 단계가 출력한 서비스/폴더를 사용해 **실제 활성 버전과 Invocations Endpoint를 자동으로 읽어 저장**합니다.
 
 ```bash
-python scripts/selfstudy.py set WORKSHOP_HOSTED_AGENT_NAME "내-prefix-matrix"
-python scripts/selfstudy.py set WORKSHOP_HOSTED_AGENT_VERSION "실제-v1-버전"
-python scripts/selfstudy.py set WORKSHOP_HOSTED_AGENT_ENDPOINT "실제-v1-Invocations-Endpoint"
+python scripts/selfstudy.py bind-matrix --directory "실제-matrix-v1-폴더" --service "실제-matrix-서비스-이름"
 python scripts/workshop.py benchmark smoke --label matrix-v1-smoke --kind workflow --pattern sequential --retrieval iq --prompt v1 --api account-chat --protocol invocations --case D01 --model-key primary --confirm-cost
 ```
 
@@ -122,8 +121,7 @@ python scripts/selfstudy.py prepare-hosted --kind matrix --package "실제-v2-�
 출력된 배포·조회 명령을 실행해 새 버전을 확인합니다.
 
 ```bash
-python scripts/selfstudy.py set WORKSHOP_HOSTED_AGENT_VERSION "실제-v2-버전"
-python scripts/selfstudy.py set WORKSHOP_HOSTED_AGENT_ENDPOINT "실제-v2-Invocations-Endpoint"
+python scripts/selfstudy.py bind-matrix --directory "실제-matrix-v2-폴더" --service "같은-matrix-서비스-이름"
 python scripts/workshop.py benchmark collect --label wf-candidate --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 python scripts/workshop.py benchmark compare --baseline wf-baseline --candidate wf-candidate
 python scripts/workshop.py benchmark evaluate --label wf-candidate --reference wf-baseline --confirm-cost

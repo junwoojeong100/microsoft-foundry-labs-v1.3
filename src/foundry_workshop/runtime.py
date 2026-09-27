@@ -14,6 +14,7 @@ from .contracts import (
     openai_request_id,
     validate_question,
 )
+from .generation import maf_options
 from .profiles import RuntimeProfile, validate_inference_endpoint
 from .settings import Settings, credential_for
 
@@ -171,7 +172,7 @@ async def run_pipeline(
                         name=name,
                         instructions=text,
                         middleware=[audit],
-                        default_options={"store": False, "max_tokens": settings.max_output_tokens},
+                        default_options=maf_options(settings, api=profile.api),
                     )
                     await stack.enter_async_context(agent)
                     participants.append(agent)
@@ -194,10 +195,7 @@ async def run_pipeline(
                             name="FinalPolicyReviewer",
                             instructions=instructions["EvidenceReviewer"],
                             middleware=[audit],
-                            default_options={
-                                "store": False,
-                                "max_tokens": settings.max_output_tokens,
-                            },
+                            default_options=maf_options(settings, api=profile.api),
                         )
                         await stack.enter_async_context(reviewer)
                         final = await reviewer.run(

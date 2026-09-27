@@ -133,16 +133,16 @@ class ContractTests(unittest.TestCase):
             "AZURE_AI_PROJECT_ENDPOINT": "https://unit.services.ai.azure.com/api/projects/workshop",
             "AZURE_AI_MODEL_DEPLOYMENT_NAME": "actual-deployment-name",
         }
-        for value in ("", "not-a-number", "2048.5", "255", "8193"):
+        for value in ("", "not-a-number", "2048.5", "255", "32769"):
             with (
                 self.subTest(value=value),
                 patch.dict(
                     os.environ, {**environment, "WORKSHOP_MAX_OUTPUT_TOKENS": value}, clear=True
                 ),
-                self.assertRaisesRegex(ValueError, "WORKSHOP_MAX_OUTPUT_TOKENS.*256.*8192"),
+                self.assertRaisesRegex(ValueError, "WORKSHOP_MAX_OUTPUT_TOKENS.*256.*32768"),
             ):
                 Settings.from_env()
-        for value in ("256", "2048", "8192"):
+        for value in ("256", "2048", "8192", "32768"):
             with patch.dict(
                 os.environ, {**environment, "WORKSHOP_MAX_OUTPUT_TOKENS": value}, clear=True
             ):

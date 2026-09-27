@@ -58,18 +58,20 @@ python scripts/workshop.py compare --baseline baseline --candidate candidate --v
 
 ## 4. judge 모델 직접 준비
 
-1. Foundry 카탈로그에서 평가에 지원되는 GPT 모델을 확인합니다. 시작 후보는 `gpt-4.1-mini`입니다.
-2. 같은 리소스에 `workshop-judge`라는 별도 배포를 만들고 Succeeded를 확인합니다.
-3. judge와 답변 모델을 구분해 기록합니다.
+1. 02에서 만든 **`workshop-compare` — GPT-6 Sol / 2026-09-22**를 재사용합니다.
+2. 아직 만들지 않았다면 02의 모델 배포 절차로 같은 이름/모델을 준비합니다.
+3. 답변은 Luna, judge는 Sol이라는 역할을 기록합니다. 같은 Sol 배포를 중복 생성할 필요는 없습니다.
 
 ```bash
-python scripts/selfstudy.py set AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME workshop-judge
+python scripts/selfstudy.py model --role judge
 python scripts/workshop.py cloud-evaluate --label candidate --timeout 300 --confirm-cost
 ```
 
 이미 수집된 응답을 평가합니다. **새 target 응답을 수집하는 작업이 아닙니다.** native 평가 ID·실행 ID·모든 행의 원점수·오류·사용한 judge를 보관합니다.
 
 Foundry **Evaluation**에서 같은 실행을 찾아 행 수와 완료 상태를 확인합니다. `Partial`, 누락된 evaluator, 빈 결과를 완료로 처리하지 않습니다. 올바른 “근거 부족” 답변도 일반 Relevance judge가 낮게 평가할 수 있으므로 설명을 읽습니다.
+
+Sol이 생성한 비교 답변을 같은 Sol로 평가할 때는 자기 평가 편향도 고려합니다. 업무 검사와 사람의 원문 검토를 생략하지 않습니다.
 
 ## 5. 사용자 지정 업무 기준과 실행 비교
 

@@ -16,6 +16,11 @@
 | OpenAPI만 실패 | 계정 MI인가, API 버전 인자인가 | `openapi plan`의 주체와 내부 오류 확인. Toolbox ID와 다름 |
 | Hosted만 403 | `instance_identity.principal_id` 역할 | 로컬 로그인 반복 대신 실제 원격 ID에 필요한 역할 |
 | 모델/버전/지역 제공 안 됨 | 실제 가용성·quota | 정식 quota 요청 또는 명시적 새 계획. 실행 중 몰래 모델 교체 금지 |
+| 모델 배포 이름은 맞는데 configure가 거부 | 실제 기반 모델/버전이 다름 | 기본은 GPT-6 Luna / 2026-09-22. 이전 모델 배포를 새 모델로 간주하지 않음 |
+| `incomplete` / 텍스트가 비어 있음 | reasoning이 출력 예산을 소진했는가 | `WORKSHOP_REASONING_EFFORT=low`, `WORKSHOP_MAX_OUTPUT_TOKENS=32768`와 원래 incomplete_details 확인 |
+| 도구 후 `encrypted reasoning` / replay 오류 | stateless 도구 결과와 reasoning 항목의 연결 | 고정 requirements 환경과 코드의 명시적 encrypted-content include 확인. reasoning을 임의로 제거하지 않음 |
+| 모델/생성 설정 변경 후 agent 참조 거부 | 저장한 agent 버전과 현재 조건이 다름 | 기존 결과를 보존하고 새 소유 이름으로 agent 생성. 최신 버전 자동 선택 금지 |
+| File Search 포털 업로드가 보이지 않음 | UI·모델·지역 제공 차이 | 03의 SDK 생성/조회 경로를 사용하고 실제 File Search call과 인용을 확인 |
 | 429 | 공유 한도·동시 요청 | 중단/대기 후 제한적 재시도. 전후 평가 조건을 유지 |
 | Provider 등록/Policy 거부 | Subscription의 provider와 조직 정책 | Owner로 가능한 등록은 Portal 절차 사용. 상위 정책 우회 금지 |
 | Public access disabled/timeout | Private Link·DNS·client 위치 | 승인된 네트워크 경로 사용. 공유 방화벽/인증서 보호 해제 금지 |

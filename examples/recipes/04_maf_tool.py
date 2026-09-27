@@ -15,6 +15,9 @@ from agent_framework.foundry import FoundryChatClient
 from azure.identity.aio import AzureCliCredential
 from dotenv import load_dotenv
 
+from foundry_workshop.generation import maf_options
+from foundry_workshop.model_plan import GenerationConfig
+
 POLICIES = Path(
     os.environ.get("WORKSHOP_POLICIES_FILE")
     or Path(__file__).resolve().parents[2] / "data/knowledge/en/policies.json"
@@ -41,6 +44,7 @@ def build_agent(chat_client) -> Agent:
             "evidence is missing. Never approve, book or pay."
         ),
         tools=[lookup_policy],
+        default_options=maf_options(GenerationConfig.from_env()),
     )
 
 

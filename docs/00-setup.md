@@ -114,15 +114,17 @@ Azure 포털에서 **프로젝트 리소스 → JSON View**를 열고 `id`도 �
 
 ## 6. 첫 모델 배포
 
-1. Foundry **Discover → Models**에서 `gpt-4.1-mini`를 찾습니다.
-2. 지원 기능·버전·리전·할당량을 읽습니다. 이 과정은 빠른 짧은 답변과 도구 사용을 우선해 이 모델을 시작 후보로 씁니다.
+1. Foundry **Discover → Models**에서 **`gpt-6-luna`**를 찾습니다.
+2. 버전 **`2026-09-22`**, 지원 기능·리전·할당량을 확인합니다. 반복 질의·도구 실습의 응답성과 비용을 고려한 선택입니다. [모델 역할과 기준](model-selection.md).
 3. **Deploy / Use this model**에서 배포 이름을 `workshop-chat`으로 지정합니다.
 4. 본인 정책에 맞는 종량제 Standard 계열을 고릅니다. Global Standard는 글로벌 처리 정책이 허용할 때만 선택합니다. PTU 계약은 필요하지 않습니다.
 5. 상태가 **Succeeded**가 될 때까지 기다립니다. 실제 기반 모델·버전·유형·리전을 기록합니다.
 
 할당량이 없거나 모델이 제공되지 않으면 **Create를 반복하지 않습니다**. 모델 배포 화면/Quota 메뉴에서 해당 리전의 한도를 확인해 증가를 요청하거나, 필요한 기능을 지원하는 다른 리전/모델을 명시적으로 선택하고 변경 이유를 기록합니다. 코드가 자동으로 바꿔 주지는 않습니다.
 
-다른 모델을 선택한다면 Responses, Structured Outputs, 함수 호출을 먼저 확인하고 File Search는 03장에서 별도 확인합니다. 이후 IQ Chat·Optimizer용 모델은 필요할 때 추가합니다.
+여기서는 Luna를 기본으로 진행합니다. Sol은 02의 비교와 07의 judge에 사용합니다. IQ Chat·Optimizer의 전용 모델은 해당 장에서만 준비합니다.
+
+같은 배포 이름으로 다른 모델을 이미 사용하고 있다면 새 배포를 만들어 명시적으로 전환합니다. 설정 도구는 GPT-6 모델/버전 불일치를 숨기지 않습니다. 기존 agent·평가를 새 모델의 결과로 재사용하지 마세요.
 
 ## 7. 데이터 접근 역할 확인
 
@@ -153,6 +155,13 @@ python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" 
 - `.selfstudy/azure.json`: 실제 리소스 ID, 관리 ID, 리전, 확인 시점.
 
 토큰·비밀번호·API key는 저장하지 않습니다. 기존 다른 프로젝트의 설정은 덮어쓰지 않습니다. `management_metadata_read: true`, `model_invoked: false`를 구분하세요.
+
+새 설정은 **reasoning `low`, 출력 상한 `32768`**을 사용합니다. 값에는 reasoning 토큰도 포함됩니다. 예전 개인 설정을 재사용한다면 값을 직접 확인하고 다음과 같이 맞춘 뒤 새 agent·실험 label을 사용합니다.
+
+```bash
+python scripts/selfstudy.py set WORKSHOP_REASONING_EFFORT low
+python scripts/selfstudy.py set WORKSHOP_MAX_OUTPUT_TOKENS 32768
+```
 
 ```bash
 python scripts/selfstudy.py values

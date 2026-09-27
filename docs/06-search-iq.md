@@ -66,7 +66,7 @@ python scripts/workshop.py answer --prompt v2 --retrieval iq --question "2026년
 4. 같은 Foundry 계정의 **Azure OpenAI 루트 Endpoint**를 포털에서 확인합니다. 프로젝트 Endpoint와 다릅니다.
 
 ```bash
-python scripts/selfstudy.py set AZURE_AI_EMBEDDING_DEPLOYMENT_NAME workshop-embedding
+python scripts/selfstudy.py model --role embedding
 python scripts/selfstudy.py set WORKSHOP_EMBEDDING_DIMENSIONS 3072
 python scripts/selfstudy.py set WORKSHOP_EMBEDDING_API account
 python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "실제-같은-계정의-OpenAI-루트-URL"
@@ -95,12 +95,15 @@ python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "4절에서-기록한-�
 
 이 실험은 **`gpt-5.6-luna` / `2026-07-09`**, Search system-assigned identity를 사용합니다.
 
+기본 답변 모델은 계속 GPT-6 Luna입니다. 여기의 모델은 **Search가 계획/합성에 사용하는 별도 모델**이며, [별도의 지원 목록](model-selection.md)에 맞춥니다.
+
 1. 카탈로그에서 해당 모델/버전의 가용성과 할당량을 확인합니다.
 2. 같은 Foundry 계정에 배포 이름 **`gpt-5.6-luna`**로 만듭니다. 기본 답변 모델은 바꾸지 않습니다.
 3. Foundry 계정 IAM에서 **Search 관리 ID → Cognitive Services User**를 부여합니다. 내 사용자나 프로젝트 ID와 혼동하지 않습니다.
 4. 앞에서 기록한 OpenAI 루트 Endpoint와 Search 기능 플랜을 확인합니다.
 
 ```bash
+python scripts/selfstudy.py model --role iq
 python scripts/workshop.py iq-chat check
 python scripts/workshop.py iq-chat setup --confirm-create
 python scripts/workshop.py iq-chat ask --label iq-chat-first --confirm-cost
