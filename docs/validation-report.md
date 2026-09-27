@@ -19,7 +19,9 @@
 | 예약 | 실제 일회 수동 dispatch 완료 후 disabled로 보관. 응답 조회 실패와 미래 timer 미검증을 별도 기록 |
 | 운영 | 실제 App Insights 조회로 요청 추적. Insights는 실제 7 trace 분석, 0 finding; 건강 보장은 아님. Continuous 평가 1건 확인 후 Pause |
 | 안전 | 11개 기본 보호 설정을 유지한 별도 RAI policy 생성, 별도 Hosted v2의 실제 참조 확인. 정상/경계 응답 확인; 지침 거절을 플랫폼 차단으로 부르지 않음 |
-| CI 준비 | client secret 없는 전용 MI, 실제 immutable OIDC subject, `main` 전용 Environment, 비밀 아닌 설정 readback 검증 |
+| CI/CD | client secret 없는 전용 MI, 실제 immutable OIDC subject, `main` 전용 Environment. 같은 검증 커밋으로 영문 agent v1 배포·프로젝트 한정 런타임 역할·dev 6/6·세션 중지 완료 |
+
+[GitHub 검사](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36336934973)와 [승인된 OIDC 릴리스](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36337095039)는 커밋 `24ea3be`에서 성공했습니다. 릴리스 artifact의 실제 버전, 6개 응답, 역할 범위, `persistent_files_deleted: false`도 내려받아 대조했습니다. 영상의 CI 장면은 이 릴리스 이전에 녹화한 설정 확인 장면입니다.
 
 ## 최종 Hosted 인수
 
@@ -52,3 +54,5 @@
 에이전트 definition의 reasoning과 호출 옵션을 분리했고, 계정 Responses API 선택을 명시화했습니다. 실제 함수 실행 증거, A2A `base_url`과 명시적 버전 복구, 영어 Hosted 준비/capture, 로컬 matrix, 연속 평가 ID export, File Search 무만료 보존 옵션을 추가했습니다. 한·영 문서와 명령을 함께 검사하고, ZIP은 편집 영상만 허용된 위치에서 포함합니다.
 
 **보관:** 리소스·agent 버전·파일·평가·소유권 기록은 유지합니다. 불필요한 실행 세션은 중지하고 일정/모니터는 비활성화했습니다. Memory 항목의 TTL이나 관리형 세션 자체 만료는 영구 보관과 다르며, 저장·로그 등 남는 비용은 계속 확인해야 합니다.
+
+실습 그룹의 Cost Management `ActualCost` 조회에는 아직 게시된 행이 없었습니다. 청구 반영 지연이 있으므로 이를 총비용 0으로 해석하지 않습니다.

@@ -19,7 +19,9 @@ The group is `rg-mf15-jw-0927-e2e`, region `swedencentral`, and project `mf15-pr
 | Scheduling | One actual manual dispatch completed and the routine was disabled. Response-readback failure and untested future timer firing remain separate |
 | Operations | Actual App Insights request queries. Insights analyzed seven real traces and returned zero findings, not a health guarantee. One continuous evaluation completed, then paused |
 | Governance | A separate RAI policy preserved 11 default protections and was referenced by a separate Hosted v2. Normal/boundary responses were checked; instruction refusal was not called platform filtering |
-| CI preparation | Dedicated secretless MI, actual immutable OIDC subject, `main`-only environment, and nonsecret settings verified by readback |
+| CI/CD | Dedicated secretless MI, actual immutable OIDC subject, `main`-only environment. The verified commit deployed English agent v1, assigned only its project-scoped runtime role, passed 6/6 dev cases, and stopped the session |
+
+[GitHub checks](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36336934973) and the [approved OIDC release](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36337095039) succeeded on commit `24ea3be`. Downloaded artifacts were checked for the actual version, six responses, role scope, and `persistent_files_deleted: false`. The video's CI scene records configuration before this release ran.
 
 ## Final Hosted acceptance
 
@@ -52,3 +54,5 @@ This is acceptance for a small synthetic exercise, not every native metric passi
 Agent-definition reasoning was separated from invocation options. Explicit account Responses selection, actual tool-execution evidence, A2A `base_url` and owned-version repair, English Hosted preparation/capture, local matrix support, continuous-run export IDs, and non-expiring File Search retention were added. Both language guides and command contracts are checked, and packaging allows only curated videos from the designated media folder.
 
 **Retention:** resources, agent versions, files, evaluations, and ownership records remain. Unneeded execution sessions were stopped and schedules/monitors disabled. Memory-item TTLs and managed-session expiration are not indefinite preservation; retained storage and logs may still incur charges.
+
+The resource group's Cost Management `ActualCost` query had no posted rows yet. Billing can lag; this does not establish a total cost of zero.
