@@ -38,7 +38,7 @@ v1.5 루트의 실습 터미널에서 실행합니다.
 python scripts/workshop.py model --question "처음 국내 출장을 가는 직원의 준비 체크리스트를 한국어 3줄로 써 주세요." --output outputs/learner-notes-ko/01-model.json
 ```
 
-실제 파일은 `.reference/v1.2/outputs/learner-notes-ko/01-model.json`에 있습니다. 실행기가 출력한 위치를 사용하세요.
+실제 파일은 `outputs/learner-notes-ko/01-model.json`에 있습니다. 실행기가 출력한 위치를 사용하세요.
 
 답변, 실제 모델/배포 정보, 응답 ID와 사용량을 읽습니다. 같은 질문도 문장이 매번 같을 필요는 없습니다. 빈 응답·오류는 성공이 아닙니다.
 

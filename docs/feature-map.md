@@ -1,45 +1,26 @@
-# v1.2 기능과 현재 자가 실습의 대응
+# 기능 찾기
 
-**기능은 유지하고, 준비와 진행을 참가자 본인이 수행하도록 바꿨습니다.** 코드·데이터·SDK는 고정 v1.2 구현 하나를 사용합니다.
+처음 진행한다면 [00부터 순서대로](00-setup.md) 따라갑니다. 다시 확인할 기능이 있을 때 이 표를 사용하세요.
 
-| v1.2 기본 범위 | v1.5 자가 실습 |
+| 찾는 기능 | 실습 |
 |---|---|
-| 환경·프로젝트·모델·RBAC | [00](00-setup.md)에서 직접 생성/권한/설정 |
-| 모델·프롬프트·비교·Router | [01](01-foundry.md), [02](02-models-prompts.md) |
-| Prompt Agent·파일 근거 | [03](03-knowledge.md) |
-| MAF·함수·MCP | [04](04-tools.md) |
+| Azure 환경·모델·데이터 역할 | [00](00-setup.md) |
+| Foundry 개념·모델 호출 | [01](01-foundry.md) |
+| 프롬프트·모델 비교·Router | [02](02-models-prompts.md) |
+| Prompt Agent·File Search·문서 인용 | [03](03-knowledge.md) |
+| MAF·함수·MCP·Code Interpreter | [04](04-tools.md) |
 | 순차·병렬·Group Chat | [05](05-workflows.md) |
-| Search·IQ·Hybrid·IQ Chat | [06](06-search-iq.md), 직접 서비스/embedding/모델 준비 |
-| dev·candidate·native 평가 | [07](07-evaluation.md) |
+| 승인 대기·재시작·거절·steering | [05](05-workflows.md), [상세 실험](advanced/recovery.md) |
+| Search·Foundry IQ·Hybrid·IQ Chat | [06](06-search-iq.md) |
+| 업무 평가·native 평가·모델 비교 | [07](07-evaluation.md) |
 | Hosted 패키지·로컬·원격·workflow | [08](08-hosted.md) |
-| trace·운영·비용 | [09](09-operations.md), 직접 로그 환경 준비 |
-| Toolbox·IQ 확장 | [10](10-toolbox-skills.md), [14](14-additional-permissions.md) |
-| 최종 인수·정리 | [15](15-capstone-cleanup.md) |
+| 세션 파일 회수 | [세션과 파일](advanced/session-files.md) |
+| Trace·Insights·지속 평가·비용 | [09](09-operations.md) |
+| Toolbox·Tool Search·Skills·OpenAPI·Hosted Toolbox | [10](10-toolbox-skills.md) |
+| Memory·A2A·Routines | [11](11-memory-a2a-routines.md) |
+| 대화 평가·Optimizer·matrix·calibration·회귀 | [12](12-improvement.md) |
+| Guardrails·red teaming·네트워크·Control Plane | [13](13-governance.md) |
+| CI/CD·OIDC·Fabric·Work IQ·전문 영역 | [14](14-additional-permissions.md) |
+| Holdout·최종 인수·비용 자원 정리 | [15](15-capstone-cleanup.md) |
 
-## 확장 기능도 포함
-
-| 기능 | 현재 안내 | 고정 원본의 상세 계약 |
-|---|---|---|
-| Toolbox lifecycle | 10 | [toolbox](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/toolbox.md) |
-| Hosted Toolbox | 10 | [toolbox-hosted](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/toolbox-hosted.md) |
-| Code Interpreter·OpenAPI | 04, 10 | [additional-tools](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/additional-tools.md) |
-| Tool Search·Skills | 10 | [tool-search-skills](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/tool-search-skills.md) |
-| 대화 평가 | 12 | [conversation-evaluation](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/conversation-evaluation.md) |
-| Agent Insights | 09 | [agent-insights](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/agent-insights.md) |
-| Agent Optimizer | 12 | [agent-optimizer](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/agent-optimizer.md) |
-| 승인·복구·steering | 05 | [approval-recovery](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/approval-recovery.md) |
-| A2A 1.0 | 11 | [a2a](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/a2a.md) |
-| Memory lifecycle | 11 | [memory](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/memory.md) |
-| Routines | 11 | [routines](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/routines.md) |
-| 안전 제어·red teaming | 13 | [agent-safety](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/agent-safety.md) |
-| 지속 평가·CI/CD·OIDC·rollback | 09, 14 | [release-operations](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/release-operations.md) |
-| 모델 교체·Router·폐기 | 02, 07, 15 | [model-operations](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/model-operations.md) |
-| 거버넌스·네트워크 | 13 | [governance-networking](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/governance-networking.md) |
-| 개발 Toolkit·SDK 연습 | 00, [코드 읽기](code-reading.md) | [developer-toolkit](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/developer-toolkit.md) |
-| 전문 영역·추가 권한 | 14 | [specialist-scope](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/specialist-scope.md) |
-
-고정 Hosted matrix·calibration·회귀·trace는 [12](12-improvement.md), 최종 holdout은 [15](15-capstone-cleanup.md)에 있습니다.
-
-**상태를 구분합니다:** 직접 실행 / 검증 / 미지원·차단 / 추가 권한 필요 / 설계만. 원본에서 설계만 다룬 Fabric·Work IQ·전문 기능을 새 구현으로 과장하지 않습니다.
-
-이전의 별도 A/B/C 또는 7시간/상세 분기를 고를 필요 없이 [00](00-setup.md)부터 진행합니다.
+**실행·검증·미지원·설계만**을 구분해서 기록합니다. 필요한 추가 권한이 없는 기능을 수행한 것으로 표시하지 않습니다.

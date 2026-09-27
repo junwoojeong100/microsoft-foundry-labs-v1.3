@@ -1,0 +1,147 @@
+import json
+import os
+import unittest
+from unittest.mock import patch
+from urllib.parse import urlsplit
+
+from azure.ai.projects import AIProjectClient
+from azure.core.pipeline.transport import HttpTransport
+
+from foundry_workshop import a2a_lab
+from foundry_workshop.contracts import read_json
+from tests import workspace
+from tests.test_toolbox import settings
+
+from .test_sdk_contracts import DummyCredential
+from .test_toolbox_transport import Reply
+
+
+class A2ATransport(HttpTransport):
+    def __init__(self):
+        self.requests = []
+        self.agents = {}
+        self.card_version = "1.0"
+        self.patches = []
+
+    def open(self):
+        return self
+
+    def close(self):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        self.close()
+
+    def send(self, request, **_kwargs):
+        self.requests.append(request)
+        path = urlsplit(request.url).path
+        if path.endswith("/agentCard/v1.0"):
+            return Reply(
+                request,
+                200,
+                {
+                    "supportedInterfaces": [
+                        {
+                            "url": a2a_lab.base_path(settings()),
+                            "protocolBinding": "JSONRPC",
+                            "protocolVersion": self.card_version,
+                        }
+                    ],
+                    "description": "Synthetic policy",
+                    "skills": [],
+                },
+            )
+        if "/connections/" in path:
+            return Reply(
+                request,
+                200,
+                {
+                    "name": a2a_lab.names(settings())["connection"],
+                    "id": "unit-a2a-link",
+                    "type": "RemoteA2A",
+                    "target": a2a_lab.base_path(settings()),
+                    "is_default": False,
+                    "credentials": {"type": "AAD"},
+                    "metadata": {},
+                },
+            )
+        if path.endswith("/agents"):
+            return Reply(request, 200, {"data": [], "has_more": False})
+        if path.endswith("/versions"):
+            name = path.split("/")[-2]
+            if request.method == "POST":
+                self.agents[name] = json.loads(request.body)
+                return Reply(request, 200, {"name": name, "version": "1", **self.agents[name]})
+            return Reply(
+                request,
+                200,
+                {"data": [{"name": name, "version": "1", **self.agents[name]}], "has_more": False},
+            )
+        name = path.rsplit("/", 1)[-1]
+        if request.method == "PATCH":
+            self.patches.append(json.loads(request.body))
+            return Reply(request, 200, {"name": name, "id": name, "versions": {}})
+        if name not in self.agents:
+            return Reply(
+                request,
+                404,
+                {"error": {"code": "ResourceNotFound", "message": "Unit agent absent"}},
+            )
+        return Reply(request, 200, {"name": name, "versions": {"latest": {"version": "1"}}})
+
+
+class A2ASDKTests(unittest.TestCase):
+    def setUp(self):
+        environment = patch.dict(os.environ, {"WORKSHOP_PREFIX": "lab-unit"}, clear=True)
+        environment.start()
+        self.addCleanup(environment.stop)
+
+    def test_typed_sdk_requests_serialize_to_the_recorded_v1_contract(self):
+        transport = A2ATransport()
+        with workspace() as root:
+            with AIProjectClient(
+                endpoint=settings().project_endpoint,
+                credential=DummyCredential(),
+                transport=transport,
+            ) as project:
+                target = a2a_lab.target(project, root, settings(), confirmed=True)
+                inspected = a2a_lab.inspect(project, root, settings())
+                caller = a2a_lab.caller(project, root, settings(), confirmed=True)
+            self.assertEqual(target["agent_version"], "1")
+            self.assertEqual(inspected["selected_interface"]["protocolVersion"], "1.0")
+            self.assertEqual(caller["requested_protocol"], "1.0")
+            ledger = read_json(a2a_lab.ledger_path(root, settings()))
+            tool = ledger["caller_request"]["definition"]["tools"][0]
+            self.assertEqual(tool["type"], "a2a")
+            self.assertEqual(tool["a2a_version"], "1.0")
+            self.assertEqual(tool["project_connection_id"], "unit-a2a-link")
+            self.assertIs(tool["send_credentials_for_agent_card"], True)
+            sent = transport.agents[a2a_lab.names(settings())["caller"]]
+            self.assertEqual(sent["definition"], ledger["caller_request"]["definition"])
+        card_requests = [
+            request for request in transport.requests if request.url.endswith("/agentCard/v1.0")
+        ]
+        self.assertTrue(card_requests)
+        self.assertTrue(all(request.headers["A2A-Version"] == "1.0" for request in card_requests))
+        self.assertTrue(all(not request.body for request in card_requests))
+        self.assertEqual(transport.patches, [a2a_lab.incoming_patch()])
+        self.assertFalse(
+            any("api-version=v1" in request.url for request in card_requests),
+            "The protocol card uses the A2A header, not a management API version.",
+        )
+
+    def test_preview_card_is_not_accepted_as_ga(self):
+        transport = A2ATransport()
+        with workspace() as root:
+            with AIProjectClient(
+                endpoint=settings().project_endpoint,
+                credential=DummyCredential(),
+                transport=transport,
+            ) as project:
+                a2a_lab.target(project, root, settings(), confirmed=True)
+                transport.card_version = "0.3"
+                with self.assertRaisesRegex(ValueError, "A2A 1.0 JSONRPC"):
+                    a2a_lab.inspect(project, root, settings())

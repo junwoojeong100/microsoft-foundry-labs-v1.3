@@ -1,0 +1,31 @@
+# Reference only: the evaluation workbook generates this environment with
+# scripts/prepare_hosted_azd.py --kind matrix; no manual YAML merge is required.
+# Service fragment only: the generated manifest also binds the existing project.
+# This profile exposes typed Invocations for the Hosted evaluation matrix.
+services:
+  workflow-evaluation:
+    name: ${WORKSHOP_HOSTED_AGENT_NAME}
+    project: ./src/${WORKSHOP_HOSTED_AGENT_NAME}
+    host: azure.ai.agent
+    language: python
+    kind: hosted
+    env:
+      AZURE_AI_PROJECT_ENDPOINT: ${AZURE_AI_PROJECT_ENDPOINT}
+      AZURE_AI_MODEL_DEPLOYMENT_NAME: ${AZURE_AI_MODEL_DEPLOYMENT_NAME}
+      AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT}
+      WORKSHOP_MODEL_DEPLOYMENTS_JSON: ${WORKSHOP_MODEL_DEPLOYMENTS_JSON}
+      WORKSHOP_AUTH_MODE: managed-identity
+      WORKSHOP_MAX_OUTPUT_TOKENS: "${WORKSHOP_MAX_OUTPUT_TOKENS}"
+      WORKSHOP_PREFIX: ${WORKSHOP_PREFIX}
+      AZURE_SEARCH_ENDPOINT: ${AZURE_SEARCH_ENDPOINT}
+      AZURE_SEARCH_INDEX_NAME: ${AZURE_SEARCH_INDEX_NAME}
+      AZURE_SEARCH_KNOWLEDGE_SOURCE_NAME: ${AZURE_SEARCH_KNOWLEDGE_SOURCE_NAME}
+      AZURE_SEARCH_KNOWLEDGE_BASE_NAME: ${AZURE_SEARCH_KNOWLEDGE_BASE_NAME}
+      WORKSHOP_IQ_RERANKER_THRESHOLD: ${WORKSHOP_IQ_RERANKER_THRESHOLD}
+    codeConfiguration:
+      runtime: python_3_13
+      entryPoint: main.py
+      dependencyResolution: remote_build
+    protocols:
+      - protocol: invocations
+        version: 1.0.0

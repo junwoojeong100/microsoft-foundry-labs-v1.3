@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "purpose": "Explicit translations of guide command text; not additional evaluation cases.",
+  "pairs": [
+    {"ko":"2026년 5월 국내 출장 숙박비의 1박 한도는 얼마인가요?","en":"What was the domestic business-trip lodging limit per night in May 2026?"},
+    {"ko":"2026년 9월 국내 출장 숙박비 한도는?","en":"What is the domestic business-trip lodging limit for September 2026?"},
+    {"ko":"2026년 9월 국내 출장 숙박비와 한도 초과 사전 승인 규정","en":"Domestic lodging and advance approval for over-limit costs in September 2026"},
+    {"ko":"2026년 9월 국내 출장 호텔이 170000원인데 예약해도 되나요? 한도와 절차를 알려주세요.","en":"My domestic business-trip hotel in September 2026 costs KRW 170000. May I book it? State the limit and procedure."},
+    {"ko":"2026년 9월 국내 출장 호텔이 170000원입니다. 적용 한도와 예약 전 필요한 절차를 알려주세요.","en":"My domestic business-trip hotel in September 2026 costs KRW 170000. State the applicable limit and the steps required before booking."},
+    {"ko":"2026년 9월 국내 출장 호텔이 1인 1박에 170000원입니다. 적용 한도와 예약 전 필요한 절차를 알려주세요.","en":"My domestic business-trip hotel in September 2026 costs KRW 170000 per person per night. State the applicable limit and the steps required before booking."},
+    {"ko":"2026년 9월 국내 출장에서 170000원 호텔을 예약하려면 어떤 절차가 필요한가요?","en":"What procedure is required to book a KRW 170000 hotel for a domestic business trip in September 2026?"},
+    {"ko":"2026년 9월 국내 출장에서 170000원 호텔의 사전 승인 조건은?","en":"What are the advance-approval requirements for a KRW 170000 hotel on a domestic business trip in September 2026?"},
+    {"ko":"2026년 9월 국내 출장 호텔 170000원의 한도와 사전 승인 조건을 알려주세요.","en":"Explain the limit and advance-approval requirements for a KRW 170000 domestic business-trip hotel in September 2026."},
+    {"ko":"Foundry와 Agent Framework의 차이를 세 문장으로 설명해 주세요.","en":"Explain the difference between Foundry and Agent Framework in three sentences."},
+    {"ko":"Foundry와 Agent Framework의 차이를 한국어로 세 문장으로 설명해 주세요.","en":"Explain the difference between Foundry and Agent Framework in three English sentences."},
+    {"ko":"실제 응답과 원문 승인 규정을 비교했고 누락된 판단 조건을 다음 dev에서 다시 확인합니다.","en":"I compared the actual response with the original approval policy and will recheck the omitted decision condition in the next dev run."},
+    {"ko":"실제 응답의 승인 조건과 인용을 원문 규정과 대조하고 누락 원인을 검토합니다.","en":"Review the approval conditions and citations in the actual response against the original policy and investigate omissions."},
+    {"ko":"이 응답은 합성 워크숍 연결 확인입니다. 한국어로 짧게 답하세요.","en":"This is a synthetic workshop connectivity check. Reply briefly in English."}
+  ]
+}

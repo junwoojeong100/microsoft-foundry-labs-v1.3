@@ -3,7 +3,7 @@
   "title": "Microsoft Foundry: 구독 Owner의 처음부터 끝까지 자가 실습",
   "pacing": "self-paced",
   "entry_requirements": ["Microsoft Entra ID account", "Azure subscription", "Active subscription Owner role"],
-  "canonical_runtime": "pinned-v1.2",
+  "canonical_runtime": "local-package",
   "canonical_dataset": "hanbit-ko",
   "steps": [
     {"id": "00", "title": "계정·도구·개인 실습 환경", "file": "docs/00-setup.md", "depends_on": []},

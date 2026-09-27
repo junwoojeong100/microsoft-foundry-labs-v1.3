@@ -80,7 +80,7 @@ python scripts/selfstudy.py status
 python scripts/workshop.py cleanup-plan
 ```
 
-둘 다 **삭제하지 않습니다**. 워크북, 실제 포털, 원본의 ownership ledger와 대조합니다.
+둘 다 **삭제하지 않습니다**. 워크북, 실제 포털, `outputs/`의 소유권 기록과 대조합니다.
 
 | 자산 | 확인/정리 |
 |---|---|
@@ -96,7 +96,7 @@ python scripts/workshop.py cleanup-plan
 | 모델/Foundry | 더 필요한 호출자가 없는지 확인 |
 | 역할·관리 ID·federation | 직접 추가한 scope/assignment만 확인 |
 
-주요 소유권 기록은 `.reference/v1.2/outputs/` 아래에 있습니다. 지우면 정리가 쉬워지는 것이 아니라 어떤 자산이 내 것인지 확인하기 어려워집니다.
+주요 소유권 기록은 `outputs/` 아래에 있습니다. 지우면 정리가 쉬워지는 것이 아니라 어떤 자산이 내 것인지 확인하기 어려워집니다.
 
 ## 6. 실습 전용 그룹 삭제
 
@@ -122,6 +122,6 @@ Azure의 soft delete/보관 정책은 API 삭제와 즉시 물리 삭제를 다�
 - [ ] 합성 결과와 오류·미실행 범위를 사실대로 기록했다.
 - [ ] 개인정보·토큰·`.env`를 공개 저장소에 올리지 않았다.
 
-이전 축약 예제를 이미 실행한 사용자는 루트 `.lab/`의 별도 자산도 [축약 예제 안내](compact-example.md)에 따라 확인합니다. 현재 원본 런타임의 정리 명령과 섞지 않습니다.
+이 폴더 밖에서도 실습 자원을 만들었다면 그 기록을 함께 확인합니다. 다른 개인 기록이나 공유 자원을 임의로 삭제하지 않습니다.
 
 **과정 종료. [전체 지도](../README.md) · [내 워크북](../worksheets/workbook.md)**

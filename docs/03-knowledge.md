@@ -6,7 +6,7 @@
 
 ## 1. 원문부터 읽기
 
-로컬 `.reference/v1.2/data/learner/ko/policies/`를 엽니다.
+로컬 `data/policies/`를 엽니다.
 
 | 문서 | 핵심 사실 |
 |---|---|
@@ -21,18 +21,18 @@
 
 ## 2. 저장되는 Prompt Agent
 
-내 `WORKSHOP_PREFIX` 뒤에 `-policy`를 붙여 고유 이름을 만듭니다. 다음 예시 이름을 본인의 것으로 바꿉니다.
+설정한 접두사로 이름을 만들고 실제 버전을 자동 기록합니다.
 
 ```bash
-python scripts/workshop.py prompt-agent create --name "mfv2-jw-0927-policy" --confirm-create --output outputs/learner-notes-ko/03-agent-created.json
+python scripts/workshop.py prompt-agent create --confirm-create --output outputs/learner-notes-ko/03-agent-created.json
 ```
 
 이 실행기는 시작 지침과 합성 정책을 포함한 **관리형 Prompt Agent**를 만듭니다. 이 단계는 문서를 지침/컨텍스트에 넣는 **인라인 근거 방식**이며 File Search 실습을 완료한 것은 아닙니다.
 
-실제로 반환된 버전을 기록하고 호출합니다. `1`이라고 가정하지 않습니다.
+이어서 호출합니다. 방금 생성해 `outputs/agents/`에 기록한 정확한 버전을 사용하며, 최신 버전을 임의로 선택하지 않습니다.
 
 ```bash
-python scripts/workshop.py prompt-agent invoke --name "mfv2-jw-0927-policy" --version "실제-버전" --question "2026년 9월 국내 출장 호텔이 170000원인데 예약해도 되나요?" --output outputs/learner-notes-ko/03-agent-answer.json
+python scripts/workshop.py prompt-agent invoke --question "2026년 9월 국내 출장 호텔이 170000원인데 예약해도 되나요?" --output outputs/learner-notes-ko/03-agent-answer.json
 ```
 
 Foundry **Build → Agents**에서 같은 이름·버전·모델·지침을 확인합니다. 응답의 날짜, 150,000원 한도, 초과 시 예약 전 승인, 원문 ID를 대조하세요.

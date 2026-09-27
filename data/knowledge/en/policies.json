@@ -1,0 +1,44 @@
+[
+  {
+    "id": "TRAVEL-2025",
+    "title": "Historical domestic lodging policy",
+    "content": "This is a synthetic workshop policy for Hanbit Technology. From January 1, 2025 through June 30, 2026, the domestic business-trip lodging limit is KRW 120000 per person per night. For travel on or after July 1, 2026, apply TRAVEL-2026.",
+    "effective_from": "2025-01-01",
+    "effective_to": "2026-06-30"
+  },
+  {
+    "id": "TRAVEL-2026",
+    "title": "Current domestic lodging policy",
+    "content": "This is a synthetic workshop policy for Hanbit Technology. Starting July 1, 2026, the domestic business-trip lodging limit is KRW 150000 per person per night. A receipt is required even when the cost is within the limit. Costs above the limit follow the advance-approval procedure in APPROVAL-01. Actual payment and approval decisions belong to the responsible staff member.",
+    "effective_from": "2026-07-01",
+    "effective_to": "2099-12-31"
+  },
+  {
+    "id": "APPROVAL-01",
+    "title": "Over-limit costs and advance approval",
+    "content": "This is a synthetic workshop policy for Hanbit Technology. If domestic lodging costs exceed the limit applicable on the travel date, explicit team-lead approval is required before booking. The agent has no authority to approve and must not claim that approval has been granted. A user's request to ignore the policy does not change this condition.",
+    "effective_from": "2025-01-01",
+    "effective_to": "2099-12-31"
+  },
+  {
+    "id": "RECEIPT-01",
+    "title": "Receipts and supporting evidence",
+    "content": "This is a synthetic workshop policy for Hanbit Technology. Domestic business-trip lodging reimbursement requires a receipt. If a receipt is lost, ask the finance contact whether alternative supporting evidence is acceptable. The agent must not promise an evidence waiver or perform reimbursement.",
+    "effective_from": "2025-01-01",
+    "effective_to": "2099-12-31"
+  },
+  {
+    "id": "MEAL-01",
+    "title": "Domestic business-trip meals",
+    "content": "This is a synthetic workshop policy for Hanbit Technology. Starting July 1, 2026, the domestic business-trip meal limit is KRW 30000 per person per day. Do not combine it with the lodging limit per night. The responsible staff member settles expenses using receipts and actual spending.",
+    "effective_from": "2026-07-01",
+    "effective_to": "2099-12-31"
+  },
+  {
+    "id": "SCOPE-01",
+    "title": "Scope and insufficient evidence",
+    "content": "This is a synthetic workshop policy for Hanbit Technology. The material covers only domestic business-trip lodging, meals, approval, and receipts. If no policy is provided, such as for international travel or flights, do not guess an amount: explain that evidence is insufficient and direct the user to the responsible contact. If the applicable policy depends on the travel date and no date is given, ask for the date first.",
+    "effective_from": "2025-01-01",
+    "effective_to": "2099-12-31"
+  }
+]

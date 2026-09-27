@@ -4,7 +4,6 @@ import importlib
 import json
 import os
 import subprocess
-import sys
 import tempfile
 import unittest
 from contextlib import ExitStack
@@ -13,10 +12,9 @@ from unittest.mock import patch
 from zipfile import ZipFile
 
 REPOSITORY = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPOSITORY / "scripts"))
-selfstudy = importlib.import_module("selfstudy")
-bundler = importlib.import_module("package_workshop")
-bridge = importlib.import_module("v12")
+selfstudy = importlib.import_module("scripts.selfstudy")
+bundler = importlib.import_module("scripts.package_workshop")
+bridge = importlib.import_module("scripts.workshop")
 
 SUB = "11111111-1111-4111-8111-111111111111"
 TENANT = "22222222-2222-4222-8222-222222222222"
@@ -26,10 +24,14 @@ ACCOUNT_MI = "55555555-5555-4555-8555-555555555555"
 SEARCH_MI = "66666666-6666-4666-8666-666666666666"
 APP_ID = "77777777-7777-4777-8777-777777777777"
 HOST_MI = "88888888-8888-4888-8888-888888888888"
-ACCOUNT = f"/subscriptions/{SUB}/resourceGroups/rg-lab/providers/Microsoft.CognitiveServices/accounts/lab"
+ACCOUNT = (
+    f"/subscriptions/{SUB}/resourceGroups/rg-lab/providers/Microsoft.CognitiveServices/accounts/lab"
+)
 PROJECT = ACCOUNT + "/projects/p"
 SEARCH = f"/subscriptions/{SUB}/resourceGroups/rg-search/providers/Microsoft.Search/searchServices/search-lab"
-INSIGHTS = f"/subscriptions/{SUB}/resourceGroups/rg-logs/providers/Microsoft.Insights/components/insights"
+INSIGHTS = (
+    f"/subscriptions/{SUB}/resourceGroups/rg-logs/providers/Microsoft.Insights/components/insights"
+)
 ENDPOINT = "https://custom-lab.services.ai.azure.com/api/projects/p"
 
 
@@ -38,18 +40,14 @@ class SelfStudyTests(unittest.TestCase):
         self.stack = ExitStack()
         self.addCleanup(self.stack.close)
         self.root = Path(
-            self.stack.enter_context(
-                tempfile.TemporaryDirectory(prefix="mf-selfstudy-")
-            )
+            self.stack.enter_context(tempfile.TemporaryDirectory(prefix="mf-selfstudy-"))
         )
-        self.source = self.root / ".reference/v1.2"
         self.stack.enter_context(patch.object(selfstudy, "ROOT", self.root))
-        self.stack.enter_context(patch.object(selfstudy, "SOURCE", self.source))
         self.stack.enter_context(
             patch.object(selfstudy, "STATE", self.root / ".selfstudy/azure.json")
         )
-        self.stack.enter_context(patch.object(selfstudy, "ENV", self.source / ".env"))
-        self.stack.enter_context(patch.object(selfstudy, "verify_source"))
+        self.stack.enter_context(patch.object(selfstudy, "ENV", self.root / ".env"))
+        self.stack.enter_context(patch.object(selfstudy, "verify_runtime"))
         self.calls = []
         self.reader = self.stack.enter_context(
             patch.object(selfstudy, "az_json", side_effect=self.fake_azure)
@@ -104,7 +102,7 @@ class SelfStudyTests(unittest.TestCase):
         self.fail(f"Unexpected Azure request: {args}")
 
     def configure(self):
-        return selfstudy.configure(PROJECT, ENDPOINT, "workshop-chat", "mfv2-user-0927")
+        return selfstudy.configure(PROJECT, ENDPOINT, "workshop-chat", "lab-user-0927")
 
     def test_configure_reads_only_explicit_subscription_and_writes_one_environment(
         self,
@@ -114,9 +112,7 @@ class SelfStudyTests(unittest.TestCase):
         self.assertEqual(values["AZURE_SUBSCRIPTION_ID"], SUB)
         self.assertEqual(values["AZURE_AI_PROJECT_ENDPOINT"], ENDPOINT)
         self.assertEqual(values["WORKSHOP_MAX_OUTPUT_TOKENS"], "2048")
-        self.assertEqual(
-            state["resources"][PROJECT.casefold()]["principal_id"], PROJECT_MI
-        )
+        self.assertEqual(state["resources"][PROJECT.casefold()]["principal_id"], PROJECT_MI)
         self.assertFalse(state["model_invoked"])
         self.assertTrue(state["management_metadata_read"])
         for command in self.calls:
@@ -141,9 +137,7 @@ class SelfStudyTests(unittest.TestCase):
         ):
             with self.subTest(resource_id=resource_id, endpoint=endpoint):
                 with self.assertRaises(selfstudy.SetupError):
-                    selfstudy.configure(
-                        resource_id, endpoint, "workshop-chat", "mfv2-user"
-                    )
+                    selfstudy.configure(resource_id, endpoint, "workshop-chat", "lab-user")
         self.assertEqual(self.calls, [])
 
     def test_account_domain_must_match_server_metadata(self):
@@ -152,7 +146,7 @@ class SelfStudyTests(unittest.TestCase):
                 PROJECT,
                 "https://someone-else.services.ai.azure.com/api/projects/p",
                 "workshop-chat",
-                "mfv2-user",
+                "lab-user",
             )
         self.assertFalse(selfstudy.ENV.exists())
         self.assertFalse(selfstudy.STATE.exists())
@@ -175,7 +169,7 @@ class SelfStudyTests(unittest.TestCase):
         self.configure()
         before = selfstudy.ENV.read_bytes()
         with self.assertRaisesRegex(selfstudy.SetupError, "덮어쓰지"):
-            selfstudy.configure(PROJECT, ENDPOINT, "workshop-chat", "mfv2-other")
+            selfstudy.configure(PROJECT, ENDPOINT, "workshop-chat", "lab-other")
         self.assertEqual(selfstudy.ENV.read_bytes(), before)
         selfstudy.STATE.unlink()
         selfstudy.ENV.write_text(
@@ -190,9 +184,7 @@ class SelfStudyTests(unittest.TestCase):
         self,
     ):
         self.configure()
-        selfstudy.register_resource(
-            "search", SEARCH, "https://search-lab.search.windows.net"
-        )
+        selfstudy.register_resource("search", SEARCH, "https://search-lab.search.windows.net")
         selfstudy.register_resource("insights", INSIGHTS, None)
         before = len(self.calls)
         plan = selfstudy.role_plan(USER, HOST_MI)
@@ -212,9 +204,7 @@ class SelfStudyTests(unittest.TestCase):
         for row in rows:
             self.assertIn(f'--subscription "{SUB}"', row["command"])
             self.assertNotEqual(row["role"], "Owner")
-        self.assertEqual(
-            selfstudy.env_values()["AZURE_APPLICATION_INSIGHTS_APP_ID"], APP_ID
-        )
+        self.assertEqual(selfstudy.env_values()["AZURE_APPLICATION_INSIGHTS_APP_ID"], APP_ID)
 
     def test_search_type_endpoint_and_subscription_cannot_be_substituted(self):
         self.configure()
@@ -257,18 +247,14 @@ class SelfStudyTests(unittest.TestCase):
 
     def test_models_command_and_configuration_update_preserve_other_values(self):
         self.configure()
-        selfstudy.set_value(
-            "AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME", "workshop-judge"
-        )
+        selfstudy.set_value("AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME", "workshop-judge")
         selfstudy.set_models(["primary=workshop-chat", "comparison=workshop-compare"])
         values = selfstudy.env_values()
         self.assertEqual(
             json.loads(values["WORKSHOP_MODEL_DEPLOYMENTS_JSON"])["comparison"],
             "workshop-compare",
         )
-        self.assertEqual(
-            values["AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME"], "workshop-judge"
-        )
+        self.assertEqual(values["AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME"], "workshop-judge")
         for models in (
             ["primary=workshop-chat", "same=workshop-chat"],
             ["other=not-primary"],
@@ -303,6 +289,41 @@ class SelfStudyTests(unittest.TestCase):
         with self.assertRaisesRegex(selfstudy.SetupError, "폴더"):
             selfstudy.compare_files(Path("/etc/hosts"), second)
 
+    def test_hosted_preparation_reuses_saved_values_without_deploying(self):
+        self.configure()
+        package = self.root / ".build/hosted"
+        package.mkdir(parents=True)
+
+        def prepare(command, **kwargs):
+            self.assertEqual(command[2:6], ["--language", "ko", "--kind", "runtime"])
+            self.assertIn(PROJECT, command)
+            self.assertIn("swedencentral", command)
+            self.assertNotIn("deploy", command)
+            directory = Path(command[command.index("--directory") + 1])
+            name = command[command.index("--agent-name") + 1]
+            directory.mkdir(parents=True)
+            (directory / "azure.yaml").write_text(
+                json.dumps(
+                    {
+                        "name": name,
+                        "services": {
+                            "workshop-project": {"endpoint": ENDPOINT},
+                            name: {"host": "azure.ai.agent"},
+                        },
+                    }
+                )
+            )
+            return subprocess.CompletedProcess(command, 0)
+
+        with patch.object(selfstudy.subprocess, "run", side_effect=prepare) as run:
+            result = selfstudy.prepare_hosted("runtime", package, "hosted", "default")
+            self.assertEqual(result["service"], "lab-user-0927-hosted")
+            self.assertFalse(result["azure_deployed"])
+            self.assertEqual(run.call_count, 1)
+            with self.assertRaises(selfstudy.SetupError):
+                selfstudy.prepare_hosted("runtime", package, "hosted", "default")
+            self.assertEqual(run.call_count, 1)
+
     def test_resilience_wrapper_disables_external_telemetry_only_for_child(self):
         with patch.dict(
             os.environ,
@@ -334,7 +355,7 @@ class SelfStudyTests(unittest.TestCase):
                 0,
                 json.dumps(
                     {
-                        "name": "mfv2-user-0927-hosted",
+                        "name": "lab-user-0927-hosted",
                         "version": "3",
                         "status": "active",
                     }
@@ -342,42 +363,32 @@ class SelfStudyTests(unittest.TestCase):
                 "",
             )
         if command[1:4] == ["ai", "agent", "invoke"]:
-            return subprocess.CompletedProcess(
-                command, 0, "data: 합성 응답\n".encode(), b""
-            )
+            return subprocess.CompletedProcess(command, 0, "data: 합성 응답\n".encode(), b"")
         self.fail(f"Unexpected process: {command}")
 
     def test_capture_is_explicit_and_retains_utf8_bytes_without_success_claim(self):
         folder, output = self.prepare_capture()
         with (
             patch.object(selfstudy.shutil, "which", return_value="/fake/azd"),
-            patch.object(
-                selfstudy.subprocess, "run", side_effect=self.capture_process
-            ) as run,
+            patch.object(selfstudy.subprocess, "run", side_effect=self.capture_process) as run,
         ):
             with self.assertRaisesRegex(selfstudy.SetupError, "confirm-cost"):
-                selfstudy.capture_hosted(
-                    folder, "mfv2-user-0927-hosted", "3", output, False
-                )
+                selfstudy.capture_hosted(folder, "lab-user-0927-hosted", "3", output, False)
             run.assert_not_called()
-            result = selfstudy.capture_hosted(
-                folder, "mfv2-user-0927-hosted", "3", output, True
-            )
+            result = selfstudy.capture_hosted(folder, "lab-user-0927-hosted", "3", output, True)
         self.assertEqual(output.read_bytes(), "data: 합성 응답\n".encode())
         self.assertFalse(result["agent_response_verified"])
         self.assertEqual(run.call_count, 3)
         self.assertIn("--new-conversation", run.call_args.args[0])
         with self.assertRaises(selfstudy.SetupError):
-            selfstudy.capture_hosted(folder, "mfv2-user-0927-hosted", "3", output, True)
+            selfstudy.capture_hosted(folder, "lab-user-0927-hosted", "3", output, True)
 
     def test_capture_timeout_and_failure_preserve_original_output(self):
         folder, output = self.prepare_capture()
 
         def timeout(command, **kwargs):
             if command[1:4] == ["ai", "agent", "invoke"]:
-                raise subprocess.TimeoutExpired(
-                    command, 300, output=b"partial", stderr=b"timeout"
-                )
+                raise subprocess.TimeoutExpired(command, 300, output=b"partial", stderr=b"timeout")
             return self.capture_process(command, **kwargs)
 
         with (
@@ -385,9 +396,7 @@ class SelfStudyTests(unittest.TestCase):
             patch.object(selfstudy.subprocess, "run", side_effect=timeout),
         ):
             with self.assertRaisesRegex(selfstudy.SetupError, "시간 초과"):
-                selfstudy.capture_hosted(
-                    folder, "mfv2-user-0927-hosted", "3", output, True
-                )
+                selfstudy.capture_hosted(folder, "lab-user-0927-hosted", "3", output, True)
         self.assertEqual(output.read_bytes(), b"partial")
         self.assertEqual(output.with_suffix(".stderr.txt").read_bytes(), b"timeout")
 
@@ -395,14 +404,10 @@ class SelfStudyTests(unittest.TestCase):
         folder, output = self.prepare_capture()
         with (
             patch.object(selfstudy.shutil, "which", return_value="/fake/azd"),
-            patch.object(
-                selfstudy.subprocess, "run", side_effect=self.capture_process
-            ) as run,
+            patch.object(selfstudy.subprocess, "run", side_effect=self.capture_process) as run,
         ):
             with self.assertRaisesRegex(selfstudy.SetupError, "활성"):
-                selfstudy.capture_hosted(
-                    folder, "mfv2-user-0927-hosted", "99", output, True
-                )
+                selfstudy.capture_hosted(folder, "lab-user-0927-hosted", "99", output, True)
         self.assertEqual(run.call_count, 2)
         self.assertFalse(output.exists())
 
@@ -410,14 +415,16 @@ class SelfStudyTests(unittest.TestCase):
         with patch.object(bundler, "ROOT", self.root):
             for name in bundler.ROOT_FILES:
                 destination = self.root / name
-                destination.write_text("{}" if name == "v12-reference.json" else "test")
+                destination.write_text(
+                    '[project]\nname="test-workshop"\n' if name == "pyproject.toml" else "test"
+                )
             for directory in bundler.DIRECTORIES:
                 (self.root / directory).mkdir()
                 (self.root / directory / "sample.md").write_text("synthetic")
             for name in (
                 ".env",
                 ".selfstudy/private.json",
-                ".reference/v1.2/.env",
+                ".cache/private/.env",
                 "outputs/private.json",
             ):
                 destination = self.root / name
@@ -429,16 +436,15 @@ class SelfStudyTests(unittest.TestCase):
                 self.assertTrue(any(name.endswith("/README.md") for name in names))
                 self.assertFalse(
                     any(
-                        "/.reference/" in name
-                        or "/outputs/" in name
-                        or name.endswith("/.env")
+                        "/.reference/" in name or "/outputs/" in name or name.endswith("/.env")
                         for name in names
                     )
                 )
                 manifest = json.loads(
                     archive.read("microsoft-foundry-v1.5-labs/bundle-manifest.json")
                 )
-                self.assertTrue(manifest["runtime_download_required"])
+                self.assertFalse(manifest["runtime_download_required"])
+                self.assertTrue(manifest["runtime_included"])
                 self.assertEqual(manifest["pacing"], "self-paced")
             with self.assertRaises(FileExistsError):
                 bundler.build(output)

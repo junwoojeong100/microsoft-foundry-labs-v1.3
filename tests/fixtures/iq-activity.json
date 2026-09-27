@@ -1,0 +1,135 @@
+{
+  "activity": [
+    {
+      "type": "modelQueryPlanning",
+      "id": 0,
+      "startedAt": "2026-09-15T12:33:35.2688047Z",
+      "completedAt": "2026-09-15T12:33:37.7506757Z",
+      "inputTokens": 1207,
+      "outputTokens": 101,
+      "elapsedMs": 2479,
+      "model": {
+        "modelName": "gpt-5.6-luna",
+        "deploymentId": "gpt-5.6-luna"
+      }
+    },
+    {
+      "type": "searchIndex",
+      "id": 1,
+      "startedAt": "2026-09-15T12:33:37.7590505Z",
+      "completedAt": "2026-09-15T12:33:37.9541402Z",
+      "knowledgeSourceName": "lab-action-20260914-source",
+      "queryTime": "2026-09-15T12:33:37.8995211Z",
+      "count": 6,
+      "elapsedMs": 140,
+      "searchIndexArguments": {
+        "search": "2026년 9월 국내 출장 호텔 숙박비 170000원 사전 승인 필요 적용 한도 근거",
+        "filter": null,
+        "semanticConfigurationName": "policy-semantic",
+        "sourceDataFields": [
+          {
+            "name": "title"
+          },
+          {
+            "name": "content"
+          },
+          {
+            "name": "id"
+          }
+        ],
+        "searchFields": []
+      }
+    },
+    {
+      "type": "searchIndex",
+      "id": 2,
+      "startedAt": "2026-09-15T12:33:37.9001859Z",
+      "completedAt": "2026-09-15T12:33:37.9541415Z",
+      "knowledgeSourceName": "lab-action-20260914-source",
+      "queryTime": "2026-09-15T12:33:37.9261666Z",
+      "count": 6,
+      "elapsedMs": 25,
+      "searchIndexArguments": {
+        "search": "국내 출장 숙박비 한도 사전 승인 호텔 170000원",
+        "filter": null,
+        "semanticConfigurationName": "policy-semantic",
+        "sourceDataFields": [
+          {
+            "name": "title"
+          },
+          {
+            "name": "content"
+          },
+          {
+            "name": "id"
+          }
+        ],
+        "searchFields": []
+      }
+    },
+    {
+      "type": "searchIndex",
+      "id": 3,
+      "startedAt": "2026-09-15T12:33:37.9264795Z",
+      "completedAt": "2026-09-15T12:33:37.9541419Z",
+      "knowledgeSourceName": "lab-action-20260914-source",
+      "queryTime": "2026-09-15T12:33:37.9535604Z",
+      "count": 6,
+      "elapsedMs": 27,
+      "searchIndexArguments": {
+        "search": "출장비 규정 2026 국내 숙박비 승인 한도",
+        "filter": null,
+        "semanticConfigurationName": "policy-semantic",
+        "sourceDataFields": [
+          {
+            "name": "title"
+          },
+          {
+            "name": "content"
+          },
+          {
+            "name": "id"
+          }
+        ],
+        "searchFields": []
+      }
+    },
+    {
+      "type": "modelAnswerSynthesis",
+      "id": 4,
+      "startedAt": "2026-09-15T12:33:37.9625308Z",
+      "completedAt": "2026-09-15T12:33:41.5619211Z",
+      "inputTokens": 1891,
+      "outputTokens": 370,
+      "elapsedMs": 3598,
+      "model": {
+        "modelName": "gpt-5.6-luna",
+        "deploymentId": "gpt-5.6-luna"
+      }
+    },
+    {
+      "type": "agenticReasoning",
+      "id": 5,
+      "startedAt": "2026-09-15T12:33:41.562377Z",
+      "completedAt": "2026-09-15T12:33:41.562377Z",
+      "reasoningTokens": 1515,
+      "retrievalReasoningEffort": {
+        "kind": "low"
+      },
+      "logicalReasoningEffort": {
+        "kind": "low"
+      }
+    }
+  ],
+  "response": [
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "Synthetic protocol test response: lodging limit KRW 150000."
+        }
+      ]
+    }
+  ],
+  "fixture_note": "Protocol fixture for isolated tests; not a learner execution result."
+}

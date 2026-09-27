@@ -4,7 +4,7 @@
 
 | 증상 | 먼저 확인할 것 | 다음 행동 |
 |---|---|---|
-| Python/패키지 오류 | `.reference/v1.2/.venv`의 Python 3.13인가 | 00의 환경 활성화/설치. 루트 축약 예제 SDK와 혼합 금지 |
+| Python/패키지 오류 | `.venv`의 Python 3.13인가 | 00의 환경 활성화/설치. 루트 축약 예제 SDK와 혼합 금지 |
 | `az`/`azd`/Foundry 명령 없음 | 도구와 `microsoft.foundry` 확장 | 00/08의 설치. 기존 동작 환경을 무조건 업그레이드하지 않음 |
 | configure에 계정 ARM ID 입력 | `/projects/...`까지 있는가 | 프로젝트 JSON View의 실제 id 복사 |
 | Endpoint 불일치 | 모델 URL, 다른 계정/프로젝트 URL인가 | 같은 프로젝트 홈의 Endpoint와 실제 customSubDomainName 대조 |
@@ -44,7 +44,7 @@
 
 프로젝트·prefix·언어·소스·소유권 ledger를 유지합니다. 이미 생성한 ID를 다시 조회하고, 이전 결과를 읽은 뒤 **실제로 필요한 다음 단계만** 진행합니다.
 
-완전히 다른 프로젝트/접두사로 바꾸려면 기존 자산을 정리/기록하고 새 실습 폴더에서 시작합니다. `.selfstudy`, `.reference/v1.2/outputs`, `.env`를 삭제해 보호 조건을 우회하지 않습니다.
+완전히 다른 프로젝트/접두사로 바꾸려면 기존 자산을 정리/기록하고 새 실습 폴더에서 시작합니다. `.selfstudy`, `outputs`, `.env`를 삭제해 보호 조건을 우회하지 않습니다.
 
 ## 오류 보고 양식
 

@@ -51,7 +51,7 @@ raw 입력을 확인할 권한/기능이 없으면 그 제한을 기록하고 �
 
 이제 **실제 배포한 버전**을 평가합니다. 07의 직접 SDK 결과를 Hosted 품질로 옮기지 않습니다.
 
-고정 원본의 matrix 경로는 **workflow / sequential / IQ / account-chat / Invocations**입니다. 08의 기본 Responses 프로필과 다릅니다. 새 profile·패키지·azd 폴더를 만듭니다.
+이번 matrix의 실행 방식은 **workflow / sequential / IQ / account-chat / Invocations**입니다. 08의 기본 Responses 프로필과 다르므로 새 profile·패키지·azd 폴더를 만듭니다.
 
 처음에는 실제 기본 모델 한 개로 시작할 수 있습니다. 두 모델을 준비했다면 다음처럼 기록합니다. JSON의 값은 실제 배포 이름입니다.
 
@@ -76,7 +76,7 @@ python scripts/workshop.py --script package-hosted --kind workflow --pattern seq
 반환된 패키지 경로로 **새 빈 폴더**를 준비합니다. 00에서 수집한 project_id/location을 사용합니다.
 
 ```bash
-python scripts/workshop.py --script prepare-hosted --language ko --kind matrix --package "실제-v1-패키지-경로" --directory "새-matrix-v1-절대경로" --agent-name "내-prefix-matrix" --initialize-env --project-id "실제-project-id" --location "실제-location"
+python scripts/selfstudy.py prepare-hosted --kind matrix --package "실제-v1-패키지-경로" --name matrix --run v1
 azd deploy "내-prefix-matrix" --cwd "실제-matrix-v1-절대경로"
 azd ai agent show "내-prefix-matrix" --cwd "실제-matrix-v1-절대경로" --output json
 ```
@@ -114,6 +114,12 @@ python scripts/workshop.py --script package-hosted --kind workflow --pattern seq
 ```
 
 **같은 agent 이름**으로, v2 패키지를 사용하는 **새 matrix-v2 폴더**를 5절과 같이 준비·배포합니다. 기존 v1 폴더를 덮어쓰지 않습니다. 새 실제 버전/Invocations Endpoint로 두 설정값을 갱신합니다.
+
+```bash
+python scripts/selfstudy.py prepare-hosted --kind matrix --package "실제-v2-패키지-경로" --name matrix --run v2
+```
+
+출력된 배포·조회 명령을 실행해 새 버전을 확인합니다.
 
 ```bash
 python scripts/selfstudy.py set WORKSHOP_HOSTED_AGENT_VERSION "실제-v2-버전"

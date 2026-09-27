@@ -1,0 +1,36 @@
+# Reference only. Lab 08 generates the actual standalone azure.yaml with
+# scripts/prepare_hosted_azd.py --kind runtime; do not copy this into the source root.
+# Service keys and paths below illustrate the shape, not a ready deployment.
+# No subscription, existing resource ID, or model catalog name is guessed here.
+name: microsoft-foundry-v1.2-labs
+services:
+  foundry-project:
+    host: azure.ai.project
+    endpoint: ${AZURE_AI_PROJECT_ENDPOINT}
+  policy-guide:
+    project: ./src/${WORKSHOP_HOSTED_AGENT_NAME}
+    host: azure.ai.agent
+    language: python
+    uses:
+      - foundry-project
+    kind: hosted
+    name: ${WORKSHOP_HOSTED_AGENT_NAME}
+    description: Synthetic travel-policy guide. Read-only tools and no real company data.
+    env:
+      AZURE_AI_PROJECT_ENDPOINT: ${AZURE_AI_PROJECT_ENDPOINT}
+      AZURE_AI_MODEL_DEPLOYMENT_NAME: ${AZURE_AI_MODEL_DEPLOYMENT_NAME}
+      WORKSHOP_AUTH_MODE: managed-identity
+      WORKSHOP_MAX_OUTPUT_TOKENS: "${WORKSHOP_MAX_OUTPUT_TOKENS}"
+    codeConfiguration:
+      runtime: python_3_13
+      entryPoint: main.py
+      dependencyResolution: remote_build
+    container:
+      resources:
+        cpu: "1"
+        memory: 2Gi
+    protocols:
+      - protocol: responses
+        version: 2.0.0
+infra:
+  provider: microsoft.foundry

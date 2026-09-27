@@ -16,37 +16,40 @@
 
 ## 2. 실습 파일과 개발 도구
 
-이 저장소는 private입니다. 접근 권한이 있는 사용자는 복제할 수 있고, 다른 참가자는 배포받은 **실습 ZIP을 압축 해제**합니다. ZIP으로 시작하면 GitHub 계정은 필수가 아닙니다. 고정 v1.2 실행 소스는 공개 저장소에서 받습니다.
+받은 **실습 ZIP을 압축 해제**하거나, 접근 권한이 있는 이 저장소를 복제합니다. 코드와 데이터가 모두 포함되어 있으므로 추가 저장소를 받지 않습니다. ZIP으로 시작하면 GitHub 계정과 Git 설치는 필수가 아닙니다.
 
 PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owner로 해결되지 않으므로 승인된 개발 환경을 사용하세요.
 
 | 도구 | 설치와 확인 |
 |---|---|
 | Python **3.13** | [Python](https://www.python.org/downloads/) 설치. macOS/Linux `python3.13 --version`, Windows `py -3.13 --version` |
-| Git | [Git](https://git-scm.com/downloads) 설치 후 `git --version` |
 | Azure CLI | [공식 설치](https://learn.microsoft.com/cli/azure/install-azure-cli) 후 `az version` |
 | Azure Developer CLI | [azd 설치](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) 후 `azd version` |
 | 편집기 | VS Code 등으로 **v1.5 폴더 전체** 열기 |
 
 터미널의 현재 폴더에 `README.md`, `scripts/`, `curriculum.json`이 보여야 합니다.
 
+이미 다른 Python으로 만든 `.venv`나 개인 실습 상태가 있다면 덮어쓰지 않습니다. 기존 폴더를 보관하고 **새 폴더에 ZIP을 풀어 시작**하세요.
+
 ### macOS / Linux
 
 ```bash
-python3.13 scripts/prepare_v12.py --install
-source .reference/v1.2/.venv/bin/activate
+python3.13 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
 ### Windows PowerShell
 
 ```powershell
-py -3.13 scripts/prepare_v12.py --install
-.\.reference\v1.2\.venv\Scripts\Activate.ps1
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 ```
 
-PowerShell 활성화가 차단되면 시스템 정책을 낮추지 않습니다. 이후 모든 `python ...`을 `.\.reference\v1.2\.venv\Scripts\python.exe ...`로 실행할 수 있습니다.
+PowerShell 활성화가 차단되면 시스템 정책을 낮추지 않습니다. 이후 모든 `python ...`을 `.\.venv\Scripts\python.exe ...`로 실행할 수 있습니다.
 
-준비 도구는 고정 소스와 별도 Python 환경만 만듭니다. **Azure 리소스 생성·로그인·구독 변경은 하지 않습니다.** 이미 준비한 폴더는 덮어쓰지 않습니다.
+이 단계는 로컬 패키지만 설치합니다. **Azure 리소스 생성·로그인·구독 변경은 하지 않습니다.** 이미 개인 설정이나 실행 결과가 있는 폴더를 덮어쓰지 말고 보관하세요.
 
 ```bash
 python scripts/workshop.py doctor
@@ -54,7 +57,7 @@ python scripts/workshop.py doctor
 
 `documents: 6`, `dev_cases: 6`, `holdout_cases: 4`, `azure_tested: false`, `result: PASS`를 확인합니다. 아직 Azure 연결 시험은 아닙니다.
 
-**새 터미널마다 같은 가상 환경을 활성화**합니다. 루트 `.venv`나 `requirements.txt`는 현재 본 과정의 환경이 아닙니다.
+**새 터미널마다 `.venv`를 활성화**합니다. 이후 모든 명령은 README.md가 있는 폴더에서 실행합니다.
 
 ## 3. 로그인과 이름 계획
 
@@ -70,13 +73,13 @@ azd auth login
 
 | 용도 | 이름 예시 |
 |---|---|
-| 원본 소유권 접두사 | `mfv2-jw-0927` |
+| 내 자산을 구분할 접두사 | `lab-jw-0927` |
 | 리소스 그룹 | `rg-mf15-jw-0927` |
 | Foundry 프로젝트 | `mf15-jw-0927-project` |
 | Foundry 리소스 | 포털이 생성한 실제 이름을 기록 |
 | 처음 배포할 모델의 별칭 | `workshop-chat` |
 
-`mfv2-`는 원본 실행 코드의 소유권 네임스페이스입니다. 실습 자료의 v1.5나 향후 v2.0과 같은 뜻이 아닙니다. 소문자·숫자·하이픈, 최대 32자로 정하고 실습 도중 바꾸지 않습니다.
+접두사는 `lab-`로 시작하는 소문자·숫자·하이픈, 최대 32자로 정합니다. 모든 자산을 내 것과 구분하는 이름이므로 실습 도중 바꾸지 않습니다.
 
 ## 4. 실습 전용 리소스 그룹 만들기
 
@@ -141,18 +144,18 @@ Azure 포털의 **실제 Foundry 리소스 → IAM → Role assignments**를 봅
 따옴표 안 세 곳과 접두사를 본인의 값으로 바꿉니다.
 
 ```bash
-python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" --endpoint "실제-프로젝트-Endpoint" --deployment "workshop-chat" --prefix "mfv2-jw-0927"
+python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" --endpoint "실제-프로젝트-Endpoint" --deployment "workshop-chat" --prefix "lab-jw-0927"
 ```
 
 이 도구는 Azure CLI로 **구독·프로젝트·계정·배포를 읽기만** 합니다. ID/Endpoint 일치와 배포 상태를 확인한 뒤 다음을 기록합니다.
 
-- `.reference/v1.2/.env`: SDK가 사용할 설정 한 벌.
+- `.env`: SDK가 사용할 설정 한 벌.
 - `.selfstudy/azure.json`: 실제 리소스 ID, 관리 ID, 리전, 확인 시점.
 
 토큰·비밀번호·API key는 저장하지 않습니다. 기존 다른 프로젝트의 설정은 덮어쓰지 않습니다. `management_metadata_read: true`, `model_invoked: false`를 구분하세요.
 
 ```bash
-python scripts/selfstudy.py status
+python scripts/selfstudy.py values
 python scripts/workshop.py doctor --cloud
 ```
 

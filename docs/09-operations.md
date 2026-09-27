@@ -24,10 +24,10 @@ python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 
 ## 2. 연결 이후 새 요청 한 번
 
-03에서 만든 **실제 이름과 버전**으로 호출합니다.
+03에서 기록한 에이전트 버전으로 다시 호출합니다.
 
 ```bash
-python scripts/workshop.py prompt-agent invoke --name "내-prefix-policy" --version "저장한-실제-버전" --question "2026년 9월 국내 출장 숙박비 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/09-trace-response.json
+python scripts/workshop.py prompt-agent invoke --question "2026년 9월 국내 출장 숙박비 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/09-trace-response.json
 ```
 
 기존 파일 이름을 덮어쓰지 않습니다. 이미 사용했으면 새 파일명을 정합니다.

@@ -77,6 +77,6 @@ python scripts/workshop.py --script resilience --language ko --run-id first-pass
 
 결과를 보관하고 A에서 `Ctrl+C`로 **내 서버만** 종료합니다. 포트 충돌이면 다른 사람 프로세스를 죽이지 말고 이 실행의 모든 명령에 동일한 다른 `--port`를 지정합니다.
 
-재시작·취소·steering까지 시험하려면 [원본 복구 절차](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/approval-recovery.md)의 추가 실험을 같은 고정 SDK에서 수행합니다. 외부 예약·송금 같은 효과는 연결하지 않습니다.
+재시작·취소·steering은 [같은 코드로 이어 하는 추가 실험](advanced/recovery.md)에 있습니다. 외부 예약·송금 같은 효과는 연결하지 않습니다.
 
 **다음 → [06. Search·Foundry IQ·Hybrid](06-search-iq.md)**

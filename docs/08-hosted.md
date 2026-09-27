@@ -27,7 +27,7 @@ azd ai agent show --help
 python scripts/workshop.py --script package-hosted
 ```
 
-출력 경로의 `package-manifest.json`, `runtime-profile.json`, `requirements.txt`를 엽니다. 기본 경로는 `.reference/v1.2/.build/hosted/`입니다.
+출력 경로의 `package-manifest.json`, `runtime-profile.json`, `requirements.txt`를 엽니다. 기본 경로는 `.build/hosted/`입니다.
 
 코드·합성 정책·지침은 있고, `.env`·인증정보·평가 정답·실행 결과는 없어야 합니다. `cloud_deployed: false`는 **패키징 결과**이며 Azure 조회 결과가 아닙니다.
 
@@ -39,15 +39,15 @@ python scripts/workshop.py --script package-hosted
 python scripts/selfstudy.py status
 ```
 
-기록된 실제 **project_id와 location**을 사용합니다. 새 Hosted 폴더는 원본 소스 밖의 빈 절대 경로로 정합니다. 예: 이 v1.5 폴더 아래 `.selfstudy/hosted-policy`.
-
-다섯 자리표시자를 실제 값으로 바꿉니다.
+프로젝트 ID·리전·접두사는 저장한 설정을 재사용합니다. 앞 명령이 출력한 **패키지 경로 하나만** 넣습니다.
 
 ```bash
-python scripts/workshop.py --script prepare-hosted --language ko --kind runtime --package "실제-패키지-절대경로" --directory "새-Hosted-절대경로" --agent-name "내-prefix-hosted" --initialize-env --project-id "기록된-project-id" --location "기록된-location"
+python scripts/selfstudy.py prepare-hosted --kind runtime --package "실제-패키지-경로" --name hosted
 ```
 
 생성된 `azure.yaml`에는 기존 프로젝트 연결과 의도한 Hosted 서비스 하나만 있어야 합니다. 모델 배포 목록을 새로 추가하거나 소스 전체를 서비스로 만들지 않습니다. 별도 Foundry 프로젝트를 또 provision할 필요가 없는 경로입니다.
+
+명령이 **서비스 이름, 폴더, 다음 배포/조회 명령**을 출력합니다. 이후의 서비스 이름과 Hosted 경로에는 이 값을 사용합니다.
 
 서비스 이름, `main.py`, Python 3.13, Responses protocol, 실제 Endpoint와 모델, 원격 인증 `managed-identity`를 확인합니다.
 

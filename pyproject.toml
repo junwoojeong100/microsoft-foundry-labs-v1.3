@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "microsoft-foundry-v1.5-labs"
+version = "1.5.0"
+description = "A self-contained, self-paced Microsoft Foundry hands-on guide."
+requires-python = ">=3.13,<3.15"
+license = "MIT"
+dependencies = []
+
+[project.optional-dependencies]
+cloud = [
+  "azure-ai-projects==2.6.1",
+  "azure-identity==1.25.3",
+  "openai==3.16.1",
+  "httpx==0.28.1",
+  "python-dotenv==1.2.3",
+]
+agents = [
+  "microsoft-foundry-v1.5-labs[cloud]",
+  "agent-framework-core==1.18.0",
+  "agent-framework-foundry==1.13.0",
+  "agent-framework-orchestrations==1.1.1",
+  "mcp==1.30.0",
+]
+hosted = [
+  "microsoft-foundry-v1.5-labs[agents]",
+  "agent-framework-foundry-hosting==1.0.0b260910",
+]
+dev = [
+  "playwright==1.62.0",
+  "ruff==0.16.6",
+  "PyYAML==6.0.3",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]

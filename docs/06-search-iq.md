@@ -42,7 +42,7 @@ python scripts/workshop.py seed-search --confirm-create
 python scripts/workshop.py retrieve --provider search --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-search.json
 ```
 
-`seed-search`는 새 서비스가 아니라 **내 Prefix의 index와 합성 문서**를 생성합니다. 실제 index 이름과 `.reference/v1.2/outputs/azure-objects.json`을 보관합니다.
+`seed-search`는 새 서비스가 아니라 **내 Prefix의 index와 합성 문서**를 생성합니다. 실제 index 이름과 `outputs/azure-objects.json`을 보관합니다.
 
 `provider: azure-ai-search-keyword`, 실제 index/Endpoint, 원문 ID와 내용을 확인합니다. 로컬 검색은 의미 검색이나 Azure 서비스 호출이 아닙니다.
 
@@ -75,7 +75,7 @@ python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "실제-같은-계정의-O
 원래 index는 그대로 두고 **새 hybrid index 이름**을 명시합니다. 예시 접두사는 내 값으로 바꿉니다.
 
 ```bash
-python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "mfv2-jw-0927-policies-hybrid"
+python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "lab-jw-0927-policies-hybrid"
 python scripts/workshop.py seed-search --hybrid --confirm-create --confirm-cost
 python scripts/workshop.py retrieve --provider hybrid --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-hybrid.json
 python scripts/workshop.py answer --prompt v2 --retrieval hybrid --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-hybrid-answer.json
@@ -93,7 +93,7 @@ python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "4절에서-기록한-�
 
 ## 7. 모델 기반 IQ Chat
 
-고정 v1.2 preset은 **`gpt-5.6-luna` / `2026-07-09`**, Search system-assigned identity를 사용합니다.
+이 실험은 **`gpt-5.6-luna` / `2026-07-09`**, Search system-assigned identity를 사용합니다.
 
 1. 카탈로그에서 해당 모델/버전의 가용성과 할당량을 확인합니다.
 2. 같은 Foundry 계정에 배포 이름 **`gpt-5.6-luna`**로 만듭니다. 기본 답변 모델은 바꾸지 않습니다.

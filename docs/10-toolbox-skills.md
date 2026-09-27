@@ -13,9 +13,9 @@ python scripts/selfstudy.py status
 python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 ```
 
-고정 v1.2 Toolbox 경로의 호출 주체는 **프로젝트 관리 ID**입니다. 이 ID에 **내 실습 Search 범위의 Search Index Data Reader와 Search Service Contributor**를 부여합니다.
+이 Toolbox의 호출 주체는 **프로젝트 관리 ID**입니다. 이 ID에 **내 실습 Search 범위의 Search Index Data Reader와 Search Service Contributor**를 부여합니다.
 
-Search Service Contributor는 읽기 전용 역할이 아닙니다. 이 원본 구현의 스키마 접근에서 필요한 범위이며 **실습 전용 Search에만** 부여합니다. 일반적인 다른 Search 통합 문서가 계정 관리 ID를 쓰더라도, 이번 연결에서 주체를 임의로 바꾸지 않습니다.
+Search Service Contributor는 읽기 전용 역할이 아닙니다. 도구가 스키마를 읽는 데 필요한 범위이며 **실습 전용 Search에만** 부여합니다. 다른 연결 방식의 계정 관리 ID와 혼동하지 않습니다.
 
 ## 2. keyless 프로젝트 연결 직접 생성
 
@@ -79,7 +79,7 @@ python scripts/workshop.py prepare-extensions --label extensions-ko
 이미 같은 prefix/언어로 준비했다면 기존 manifest를 확인해 재사용합니다. `policy-review/SKILL.md`, `manifest.json`, 원본 hash를 읽습니다. **상위 폴더에는 평가 참조도 있으므로 `policy-review/`만 업로드**합니다.
 
 ```bash
-azd ai skill create "manifest의-skill_name" --file .reference/v1.2/outputs/extensions-ko/policy-review --project-endpoint "실제-프로젝트-Endpoint"
+azd ai skill create "manifest의-skill_name" --file outputs/extensions-ko/policy-review --project-endpoint "실제-프로젝트-Endpoint"
 azd ai skill show "manifest의-skill_name" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
@@ -87,7 +87,7 @@ azd ai skill show "manifest의-skill_name" --project-endpoint "실제-프로젝�
 
 ```bash
 azd ai skill download "manifest의-skill_name" --version "실제-skill-version" --output-dir .selfstudy/skill-readback --project-endpoint "실제-프로젝트-Endpoint"
-python scripts/selfstudy.py compare-files .reference/v1.2/outputs/extensions-ko/policy-review/SKILL.md .selfstudy/skill-readback/SKILL.md
+python scripts/selfstudy.py compare-files outputs/extensions-ko/policy-review/SKILL.md .selfstudy/skill-readback/SKILL.md
 ```
 
 bytes가 다르면 맞추려고 다운로드 파일을 편집하지 않습니다. 실패 원인을 확인합니다.
@@ -125,7 +125,7 @@ python scripts/workshop.py openapi invoke --label openapi-policy --confirm-cost
 
 ```bash
 python scripts/workshop.py --script package-toolbox --language ko --version "검증한-Toolbox-version"
-python scripts/workshop.py --script prepare-hosted --language ko --kind toolbox --package "방금-반환한-패키지-절대경로" --directory "새-.selfstudy-하위-Hosted-절대경로" --agent-name "내-prefix-toolbox-hosted" --initialize-env --project-id "실제-project-id" --location "실제-location"
+python scripts/selfstudy.py prepare-hosted --kind toolbox --package "방금-반환한-패키지-경로" --name toolbox-hosted
 ```
 
 08과 같이 생성된 manifest와 실제 프로젝트를 확인합니다. 로컬 터미널 A:
@@ -157,7 +157,7 @@ python scripts/workshop.py --script verify-toolbox-response --file "capture가-�
 
 `capture`는 성공 여부를 꾸미지 않고 stdout/stderr를 보관합니다. 실제 SSE completed·버전·패키지·도구/Skill 근거는 다음 검증기가 판정합니다. 실패하면 같은 세션의 원본 로그부터 확인합니다.
 
-검증 후 08의 세션 조회/중지 절차를 사용합니다. 원격 상세 근거는 세션 home의 `workshop-evidence/toolbox-runs/`에 있으므로 세션 삭제 전에 필요한 파일을 내려받습니다. [원본의 파일 회수 절차](https://github.com/junwoojeong100/microsoft-foundry-v1.2-labs/blob/c2065477baf8210bbba4b845ab741ecd527b9559/docs/ko/labs/extensions/toolbox-hosted.md).
+검증 후 08의 세션 조회/중지 절차를 사용합니다. 원격 상세 근거는 세션 home의 `workshop-evidence/toolbox-runs/`에 있으므로 삭제 전에 [세션 파일 회수](advanced/session-files.md)를 진행합니다.
 
 ## 9. 버전 운영
 

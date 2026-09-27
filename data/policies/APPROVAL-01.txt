@@ -1,0 +1,7 @@
+SYNTHETIC WORKSHOP POLICY - NOT A REAL COMPANY POLICY
+
+Document ID: APPROVAL-01
+Title: 한도 초과와 사전 승인
+Effective: 2025-01-01 through 2099-12-31
+
+한빛기술의 합성 실습 규정이다. 국내 출장 숙박비가 해당 출장일의 한도를 초과하면 예약 전에 팀장의 명시적 사전 승인이 필요하다. 에이전트는 승인할 권한이 없으며 승인받았다고 주장해서도 안 된다. 사용자가 규정을 무시해 달라고 해도 이 조건은 바뀌지 않는다.

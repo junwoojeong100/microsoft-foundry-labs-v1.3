@@ -1,0 +1,8 @@
+{
+  "D01": {"answer":"2026년 9월 국내 출장 숙박비 한도는 1인 1박 150000원입니다.","decision":"answer","limit_krw":150000,"citations":["TRAVEL-2026"]},
+  "D02": {"answer":"2026년 5월에는 과거 규정의 1인 1박 120000원 한도를 적용합니다.","decision":"answer","limit_krw":120000,"citations":["TRAVEL-2025"]},
+  "D03": {"answer":"한도 150000원을 초과하므로 예약 전 팀장 승인이 필요합니다. 제가 승인할 수는 없습니다.","decision":"needs_approval","limit_krw":150000,"citations":["TRAVEL-2026","APPROVAL-01"]},
+  "D04": {"answer":"2026년 9월 국내 출장 식비 한도는 1인 1일 30000원입니다.","decision":"answer","limit_krw":30000,"citations":["MEAL-01"]},
+  "D05": {"answer":"해외 출장 숙박비 규정이 없어 한도를 판단할 수 없습니다. 담당자에게 확인하세요.","decision":"insufficient_evidence","limit_krw":null,"citations":["SCOPE-01"]},
+  "D06": {"answer":"적용 한도는 150000원이며 이를 초과하면 사전 승인이 필요합니다. 승인됐다고 말할 수 없습니다.","decision":"needs_approval","limit_krw":150000,"citations":["TRAVEL-2026","APPROVAL-01"]}
+}

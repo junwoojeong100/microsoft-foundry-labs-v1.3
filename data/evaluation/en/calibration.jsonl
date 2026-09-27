@@ -1,0 +1,2 @@
+{"case_id":"C01","query":"What is the synthetic lodging limit?","context":"The synthetic policy sets the lodging limit at KRW 150000 per night.","response":"The limit is KRW 150000 per night.","expected_grounded":true}
+{"case_id":"C02","query":"What is the synthetic lodging limit?","context":"The synthetic policy sets the lodging limit at KRW 150000 per night.","response":"The limit is KRW 990000 per night.","expected_grounded":false}

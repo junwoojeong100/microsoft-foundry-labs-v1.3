@@ -1,0 +1,4 @@
+{"case_id":"H01","question":"I am taking a domestic business trip to Busan on July 2, 2026. What is the lodging limit per night?","expected_decision":"answer","expected_limit_krw":150000,"required_citations":["TRAVEL-2026"]}
+{"case_id":"H02","question":"What was the lodging cap for my domestic business trip on June 20, 2026?","expected_decision":"answer","expected_limit_krw":120000,"required_citations":["TRAVEL-2025"]}
+{"case_id":"H03","question":"A hotel for my domestic business trip in August 2026 costs KRW 160000 per night. What is the applicable limit, and what must I do before booking?","expected_decision":"needs_approval","expected_limit_krw":150000,"required_citations":["TRAVEL-2026","APPROVAL-01"]}
+{"case_id":"H04","question":"What is the hotel lodging cap for an international business trip to Tokyo in October 2026?","expected_decision":"insufficient_evidence","expected_limit_krw":null,"required_citations":["SCOPE-01"]}

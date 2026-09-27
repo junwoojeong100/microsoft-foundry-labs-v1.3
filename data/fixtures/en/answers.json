@@ -1,0 +1,8 @@
+{
+  "D01": {"answer":"The domestic business-trip lodging limit for September 2026 is KRW 150000 per person per night.","decision":"answer","limit_krw":150000,"citations":["TRAVEL-2026"]},
+  "D02": {"answer":"For May 2026, the historical policy's limit of KRW 120000 per person per night applies.","decision":"answer","limit_krw":120000,"citations":["TRAVEL-2025"]},
+  "D03": {"answer":"The cost exceeds the KRW 150000 limit, so team-lead approval is required before booking. I cannot grant approval.","decision":"needs_approval","limit_krw":150000,"citations":["TRAVEL-2026","APPROVAL-01"]},
+  "D04": {"answer":"The domestic business-trip meal limit for September 2026 is KRW 30000 per person per day.","decision":"answer","limit_krw":30000,"citations":["MEAL-01"]},
+  "D05": {"answer":"No international-travel lodging policy is provided, so I cannot determine the limit. Please ask the responsible contact.","decision":"insufficient_evidence","limit_krw":null,"citations":["SCOPE-01"]},
+  "D06": {"answer":"The applicable limit is KRW 150000; exceeding it requires advance approval. I cannot say that approval has been granted.","decision":"needs_approval","limit_krw":150000,"citations":["TRAVEL-2026","APPROVAL-01"]}
+}

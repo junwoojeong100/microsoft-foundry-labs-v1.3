@@ -1,0 +1,2 @@
+{"case_id":"C01","query":"합성 숙박비 한도는?","context":"합성 규정의 숙박비 한도는 1박 150000원이다.","response":"1박 150000원입니다.","expected_grounded":true}
+{"case_id":"C02","query":"합성 숙박비 한도는?","context":"합성 규정의 숙박비 한도는 1박 150000원이다.","response":"1박 990000원입니다.","expected_grounded":false}

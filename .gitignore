@@ -2,9 +2,15 @@
 .env.*
 !.env.example
 .venv/
+.venv-*/
 .lab/
 .selfstudy/
 .reference/
+.build/
+.azure/
+.foundry/
+*.egg-info/
+build/
 dist/
 outputs/
 __pycache__/

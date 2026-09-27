@@ -21,7 +21,7 @@ python scripts/workshop.py collect --split dev --label baseline --prompt v1 --re
 python scripts/workshop.py evaluate --label baseline
 ```
 
-`.reference/v1.2/outputs/baseline/`의 `manifest.json`, `responses.jsonl`, `business-evaluation.json`을 엽니다.
+`outputs/baseline/`의 `manifest.json`, `responses.jsonl`, `business-evaluation.json`을 엽니다.
 
 `total`, `passed`, `errors`, `business_gate_passed`와 **6개 사례의 checks 전체**를 읽습니다. 이 평가는 결정적 업무 검사이며 LLM judge가 아닙니다.
 
@@ -44,7 +44,7 @@ python scripts/workshop.py feedback --label baseline --case "실제-실패-case-
 
 ## 3. 같은 조건으로 candidate
 
-원본의 v1/v2 지침을 `.reference/v1.2/prompts/`에서 비교합니다. v2는 개선 지침 이름이지 향후 자료 v2.0이 아닙니다. 모델·코드·원문·질문·retrieval은 그대로 둡니다.
+`prompts/v1.txt`와 `prompts/v2.txt`를 비교합니다. 두 파일은 비교할 지침입니다. 모델·코드·원문·질문·retrieval은 그대로 둡니다.
 
 ```bash
 python scripts/workshop.py collect --split dev --label candidate --prompt v2 --retrieval local

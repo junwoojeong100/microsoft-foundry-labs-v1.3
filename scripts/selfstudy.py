@@ -14,10 +14,9 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 from uuid import UUID
 
-from prepare_v12 import ROOT, SOURCE, verify_source
-
+ROOT = Path(__file__).resolve().parents[1]
 STATE = ROOT / ".selfstudy/azure.json"
-ENV = SOURCE / ".env"
+ENV = ROOT / ".env"
 PROJECT_ID = re.compile(
     r"^/subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/"
     r"Microsoft\.CognitiveServices/accounts/([^/]+)/projects/([^/]+)$",
@@ -63,6 +62,12 @@ class SetupError(RuntimeError):
     pass
 
 
+def verify_runtime() -> None:
+    for name in ("src/foundry_workshop/cli.py", "data/knowledge/policies.json", "pyproject.toml"):
+        if not (ROOT / name).is_file():
+            raise SetupError("실습 폴더 전체가 필요합니다. README.md가 있는 폴더에서 실행하세요.")
+
+
 def uuid_value(value: str) -> str:
     try:
         return str(UUID(value))
@@ -104,15 +109,11 @@ def validate_endpoint(value: str, kind: str) -> str:
         or parsed.query
         or parsed.fragment
     ):
-        raise SetupError(
-            f"{kind}: 인증정보·쿼리가 없는 실제 Azure HTTPS Endpoint를 입력하세요."
-        )
+        raise SetupError(f"{kind}: 인증정보·쿼리가 없는 실제 Azure HTTPS Endpoint를 입력하세요.")
     path = parsed.path.rstrip("/")
     if kind == "project":
         if not re.fullmatch(r"/api/projects/[^/]+", path):
-            raise SetupError(
-                "모델 URL이 아닌 /api/projects/... 프로젝트 Endpoint가 필요합니다."
-            )
+            raise SetupError("모델 URL이 아닌 /api/projects/... 프로젝트 Endpoint가 필요합니다.")
     elif path:
         raise SetupError(f"{kind}: 서비스 루트 Endpoint만 입력하세요.")
     if any(marker in value.lower() for marker in ("your-", "replace", "<", ">")):
@@ -158,11 +159,9 @@ def env_values() -> dict[str, str]:
         from dotenv import dotenv_values
     except ModuleNotFoundError as exc:
         raise SetupError(
-            "먼저 prepare_v12.py --install 후 실습 가상 환경을 활성화하세요."
+            "먼저 .venv를 활성화하고 python -m pip install -r requirements.txt를 실행하세요."
         ) from exc
-    return {
-        key: value or "" for key, value in dotenv_values(ENV, interpolate=False).items()
-    }
+    return {key: value or "" for key, value in dotenv_values(ENV, interpolate=False).items()}
 
 
 def update_env(updates: dict[str, str]) -> None:
@@ -207,9 +206,7 @@ def read_state() -> dict:
     return state
 
 
-def validate_runtime_environment(
-    environment: dict[str, str], *, explicit_model: bool
-) -> None:
+def validate_runtime_environment(environment: dict[str, str], *, explicit_model: bool) -> None:
     if not STATE.exists():
         return
     state = read_state()
@@ -266,6 +263,65 @@ def compare_files(first: Path, second: Path) -> dict:
     return {"files_equal": True, "sha256": digests[0], "azure_requests_sent": False}
 
 
+def prepare_hosted(kind: str, package: Path, name: str, run: str) -> dict:
+    state = read_state()
+    validate_runtime_environment(os.environ.copy(), explicit_model=False)
+    if kind not in {"runtime", "matrix", "toolbox"}:
+        raise SetupError("지원하는 실행 방식은 runtime, matrix, toolbox입니다.")
+    for value in (name, run):
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,31}", value):
+            raise SetupError("이름과 run은 소문자·숫자·하이픈 1~32자로 입력하세요.")
+    package = package.resolve()
+    if not package.is_relative_to((ROOT / ".build").resolve()) or not package.is_dir():
+        raise SetupError("이 폴더의 .build 아래에서 생성한 패키지를 사용하세요.")
+    service = state["prefix"] + "-" + name
+    directory = ROOT / ".selfstudy" / (service + "-" + run)
+    if directory.exists():
+        raise SetupError(
+            "이미 준비한 폴더는 덮어쓰지 않습니다. 기존 결과를 읽거나 새 --run을 사용하세요."
+        )
+    subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts/prepare_hosted_azd.py"),
+            "--language",
+            "ko",
+            "--kind",
+            kind,
+            "--package",
+            str(package),
+            "--directory",
+            str(directory),
+            "--agent-name",
+            service,
+            "--initialize-env",
+            "--project-id",
+            state["project_id"],
+            "--location",
+            state["location"],
+        ],
+        cwd=ROOT,
+        check=True,
+        timeout=180,
+    )
+    manifest = json.loads((directory / "azure.yaml").read_text(encoding="utf-8"))
+    if (
+        manifest.get("name") != service
+        or set(manifest.get("services", {})) != {"workshop-project", service}
+        or manifest["services"]["workshop-project"].get("endpoint") != state["endpoint"]
+    ):
+        raise SetupError("생성된 Hosted 폴더가 요청한 서비스/프로젝트와 일치하지 않습니다.")
+    return {
+        "service": service,
+        "directory": str(directory),
+        "azure_deployed": False,
+        "next_commands": [
+            f'azd deploy "{service}" --cwd "{directory}"',
+            f'azd ai agent show "{service}" --cwd "{directory}" --output json',
+        ],
+    }
+
+
 def resource_record(value: dict, kind: str) -> dict:
     if not isinstance(value.get("id"), str):
         raise SetupError("Azure 리소스 응답에 실제 ID가 없습니다.")
@@ -284,7 +340,7 @@ def resource_record(value: dict, kind: str) -> dict:
 
 
 def configure(project_id: str, endpoint: str, deployment: str, prefix: str) -> dict:
-    verify_source()
+    verify_runtime()
     parsed = parse_project_id(project_id)
     endpoint = validate_endpoint(endpoint, "project")
     if (
@@ -292,10 +348,8 @@ def configure(project_id: str, endpoint: str, deployment: str, prefix: str) -> d
         != parsed["project"].casefold()
     ):
         raise SetupError("프로젝트 ARM ID와 Endpoint의 프로젝트 이름이 다릅니다.")
-    if not re.fullmatch(r"mfv2-[a-z0-9]+(?:-[a-z0-9]+)*", prefix) or len(prefix) > 32:
-        raise SetupError(
-            "고유한 mfv2-접두사(소문자·숫자·하이픈, 최대 32자)를 사용하세요."
-        )
+    if not re.fullmatch(r"lab-[a-z0-9]+(?:-[a-z0-9]+)*", prefix) or len(prefix) > 32:
+        raise SetupError("고유한 lab-접두사(소문자·숫자·하이픈, 최대 32자)를 사용하세요.")
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", deployment):
         raise SetupError("실제 모델 배포 이름을 입력하세요.")
     previous = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else None
@@ -342,9 +396,7 @@ def configure(project_id: str, endpoint: str, deployment: str, prefix: str) -> d
         parsed["subscription"],
     )
     if model.get("properties", {}).get("provisioningState") != "Succeeded":
-        raise SetupError(
-            "모델 배포가 Succeeded가 아닙니다. 생성 완료/할당량을 확인하세요."
-        )
+        raise SetupError("모델 배포가 Succeeded가 아닙니다. 생성 완료/할당량을 확인하세요.")
     identity = {
         "AZURE_SUBSCRIPTION_ID": parsed["subscription"],
         "AZURE_TENANT_ID": tenant,
@@ -411,13 +463,10 @@ def set_value(key: str, value: str) -> None:
             not isinstance(models, dict)
             or not models
             or not all(
-                isinstance(k, str) and isinstance(v, str) and v.strip()
-                for k, v in models.items()
+                isinstance(k, str) and isinstance(v, str) and v.strip() for k, v in models.items()
             )
         ):
-            raise SetupError(
-                "모델 map은 별칭과 실제 배포 이름으로 된 JSON 객체여야 합니다."
-            )
+            raise SetupError("모델 map은 별칭과 실제 배포 이름으로 된 JSON 객체여야 합니다.")
         if env_values()["AZURE_AI_MODEL_DEPLOYMENT_NAME"] not in models.values():
             raise SetupError("모델 map에 현재 기본 배포를 포함하세요.")
     update_env({key: value})
@@ -445,9 +494,7 @@ def register_resource(kind: str, resource_id: str, endpoint: str | None) -> dict
             raise SetupError("Search 리소스 이름과 Endpoint가 다릅니다.")
         existing = env_values().get("AZURE_SEARCH_ENDPOINT")
         if existing and existing != endpoint:
-            raise SetupError(
-                "기존 Search 소유권 기록과 섞지 않도록 서비스 변경을 거부합니다."
-            )
+            raise SetupError("기존 Search 소유권 기록과 섞지 않도록 서비스 변경을 거부합니다.")
         updates = {
             "AZURE_SEARCH_ENDPOINT": endpoint,
             "AZURE_SEARCH_RESOURCE_GROUP": resource_id.split("/")[4],
@@ -470,9 +517,7 @@ def role_plan(user_id: str, hosted_id: str | None = None) -> dict:
     rows = []
     pending = []
 
-    def add(
-        principal: str | None, principal_type: str, role: str, scope: str, reason: str
-    ) -> None:
+    def add(principal: str | None, principal_type: str, role: str, scope: str, reason: str) -> None:
         if not principal:
             raise SetupError(
                 f"{reason}: 관리 ID가 없습니다. 해당 리소스의 Identity를 켜고 다시 등록하세요."
@@ -582,17 +627,12 @@ def capture_hosted(
     directory: Path, service: str, version: str, output: Path, confirmed: bool
 ) -> dict:
     if not confirmed:
-        raise SetupError(
-            "실제 모델/도구 호출입니다. 검토 후 --confirm-cost를 명시하세요."
-        )
+        raise SetupError("실제 모델/도구 호출입니다. 검토 후 --confirm-cost를 명시하세요.")
     state = read_state()
     directory = directory.resolve()
     output = output.resolve()
     private_root = (ROOT / ".selfstudy").resolve()
-    if (
-        not directory.is_relative_to(private_root)
-        or not (directory / "azure.yaml").is_file()
-    ):
+    if not directory.is_relative_to(private_root) or not (directory / "azure.yaml").is_file():
         raise SetupError(".selfstudy 아래에 준비한 독립 Hosted 프로젝트만 사용하세요.")
     if (
         not output.is_relative_to(private_root)
@@ -688,9 +728,7 @@ def capture_hosted(
     except subprocess.TimeoutExpired as exc:
         output.write_bytes(exc.stdout or b"")
         output.with_suffix(".stderr.txt").write_bytes(exc.stderr or b"")
-        raise SetupError(
-            f"호출 시간 초과의 부분 bytes를 보관했습니다: {output}"
-        ) from exc
+        raise SetupError(f"호출 시간 초과의 부분 bytes를 보관했습니다: {output}") from exc
     output.write_bytes(completed.stdout)
     output.with_suffix(".stderr.txt").write_bytes(completed.stderr)
     if completed.returncode:
@@ -704,51 +742,65 @@ def capture_hosted(
     }
 
 
-def main() -> None:
+def argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="자가 실습 설정/읽기. capture만 --confirm-cost 후 실제 추론 수행"
     )
     commands = parser.add_subparsers(dest="command", required=True)
-    config = commands.add_parser(
-        "configure", help="포털에서 만든 프로젝트/배포를 읽고 설정 기록"
-    )
+    config = commands.add_parser("configure", help="포털에서 만든 프로젝트/배포를 읽고 설정 기록")
     config.add_argument("--project-id", required=True)
     config.add_argument("--endpoint", required=True)
     config.add_argument("--deployment", default="workshop-chat")
     config.add_argument("--prefix", required=True)
-    commands.add_parser(
-        "status", help="기록한 설정/자원 표시; Azure 현재 상태 조회가 아님"
-    )
+    commands.add_parser("status", help="기록한 설정/자원 표시; Azure 현재 상태 조회가 아님")
+    commands.add_parser("values", help="다음 명령에 복사할 핵심 설정만 표시")
     setting = commands.add_parser("set", help="허용된 비밀 아닌 SDK 설정만 변경")
     setting.add_argument("key", choices=sorted(MUTABLE_KEYS))
     setting.add_argument("value")
     models = commands.add_parser("models", help="JSON 셸 escaping 없이 모델 map 설정")
     models.add_argument("pairs", nargs="+", help="primary=실제배포 comparison=다른배포")
-    comparison = commands.add_parser(
-        "compare-files", help="실습 내 원본/readback bytes 비교"
-    )
+    comparison = commands.add_parser("compare-files", help="실습 내 원본/readback bytes 비교")
     comparison.add_argument("first", type=Path)
     comparison.add_argument("second", type=Path)
+    hosted = commands.add_parser("prepare-hosted", help="저장한 Azure 값으로 독립 Hosted 폴더 준비")
+    hosted.add_argument("--kind", choices=("runtime", "matrix", "toolbox"), default="runtime")
+    hosted.add_argument("--package", type=Path, required=True)
+    hosted.add_argument("--name", required=True, help="접두사 뒤에 붙일 짧은 이름")
+    hosted.add_argument("--run", default="default", help="같은 서비스의 새 준비 폴더 구분")
     resource = commands.add_parser("resource", help="직접 만든 추가 자원을 읽어 등록")
     resource.add_argument("--kind", choices=RESOURCE_TYPES, required=True)
     resource.add_argument("--id", required=True)
     resource.add_argument("--endpoint")
-    roles = commands.add_parser(
-        "roles", help="역할 명령 생성만; 직접 검토 후 필요한 항목만 실행"
-    )
+    roles = commands.add_parser("roles", help="역할 명령 생성만; 직접 검토 후 필요한 항목만 실행")
     roles.add_argument("--user-object-id", required=True)
     roles.add_argument("--hosted-principal-id")
-    capture = commands.add_parser(
-        "capture", help="검토한 Hosted 버전을 호출하고 raw bytes 보존"
-    )
+    capture = commands.add_parser("capture", help="검토한 Hosted 버전을 호출하고 raw bytes 보존")
     capture.add_argument("--directory", type=Path, required=True)
     capture.add_argument("--service", required=True)
     capture.add_argument("--version", required=True)
     capture.add_argument("--output", type=Path, required=True)
     capture.add_argument("--confirm-cost", action="store_true")
-    args = parser.parse_args()
+    return parser
+
+
+def main() -> None:
+    args = argument_parser().parse_args()
     if args.command == "configure":
         result = configure(args.project_id, args.endpoint, args.deployment, args.prefix)
+    elif args.command == "values":
+        state = read_state()
+        values = env_values()
+        result = {
+            "접두사": state["prefix"],
+            "프로젝트 Endpoint": state["endpoint"],
+            "프로젝트 ARM ID": state["project_id"],
+            "리전 코드": state["location"],
+            "기본 모델 배포": values["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            "기본 agent 이름": state["prefix"] + "-policy-ko",
+            "agent 버전": "생성 후 outputs/agents/에서 확인",
+            "Search Endpoint": values.get("AZURE_SEARCH_ENDPOINT", "아직 연결하지 않음"),
+            "결과 폴더": str(ROOT / "outputs"),
+        }
     elif args.command == "status":
         state = read_state()
         visible_keys = (
@@ -782,6 +834,13 @@ def main() -> None:
         }
     elif args.command == "compare-files":
         result = compare_files(args.first, args.second)
+    elif args.command == "prepare-hosted":
+        result = prepare_hosted(args.kind, args.package, args.name, args.run)
+        print(f"서비스: {result['service']}\n폴더: {result['directory']}")
+        print("아직 Azure에 배포하지 않았습니다. 대상과 비용을 확인한 뒤 다음 명령을 실행하세요.")
+        for command in result["next_commands"]:
+            print(command)
+        return
     elif args.command == "capture":
         result = capture_hosted(
             args.directory, args.service, args.version, args.output, args.confirm_cost

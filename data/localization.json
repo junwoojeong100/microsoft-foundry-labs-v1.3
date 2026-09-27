@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "bundle_version": "en-20260915-v1",
+  "source_language": "ko",
+  "translation_language": "en",
+  "development_frozen_at": "2026-09-15T08:43:29.784430+00:00",
+  "english_workflow_instruction_hashes": {
+    "v1": "8c017b9fb1bc2bd1898dc9a7ce01cb4a9007c7ca6424648c448da76aa0818e4c",
+    "v2": "2686868917df841baca7d34ebfb255aad70d9f1fde13c936fc6a8768ea30c381"
+  },
+  "translation_contract": "Preserve IDs, currency limits, dates, approval/abstention behavior and reference judgments. Language versions are separate datasets, never error fallbacks.",
+  "holdout_prepared": true,
+  "files": [
+    {
+      "source": "prompts/v1.txt",
+      "translation": "prompts/en/v1.txt",
+      "kind": "prompt",
+      "source_sha256": "fb6e5f43288e2aa5d6a6c719a46f568783d7df13847d273228c788910d1e3516",
+      "translation_sha256": "705dc29ecb89c047dcfd6489f8d08c81c429f5c7ec7c6e5a5aa0a31f4c0339a6"
+    },
+    {
+      "source": "prompts/v2.txt",
+      "translation": "prompts/en/v2.txt",
+      "kind": "prompt",
+      "source_sha256": "2b4a2b5e322a85349559fd55436521edf29334b8e69556bfbb4b43239edb9e25",
+      "translation_sha256": "05c0d23b0f56b08077cbb436cae4b51fdb438f41493ca476bb02394938043ea8"
+    },
+    {
+      "source": "data/knowledge/policies.json",
+      "translation": "data/knowledge/en/policies.json",
+      "kind": "corpus",
+      "source_sha256": "9f76019ea07840ebdfce10feeec8c678c03e369395b75d1a0925ae0a771e4f16",
+      "translation_sha256": "0f0e92f7a255906d851af7a03544e654071a784e02b7417e4d683415d970e02e"
+    },
+    {
+      "source": "data/evaluation/dev.jsonl",
+      "translation": "data/evaluation/en/dev.jsonl",
+      "kind": "dev",
+      "source_sha256": "4e1f41d5f8f71bfc7a3553311d21b9b67b7fcaeb71e7839c22a2e651f0a97f21",
+      "translation_sha256": "5dded72369ac4b9de1b73388b56cb4062828e3c8291e7a6bb5fd543ee4f93d3e"
+    },
+    {
+      "source": "data/evaluation/calibration.jsonl",
+      "translation": "data/evaluation/en/calibration.jsonl",
+      "kind": "calibration",
+      "source_sha256": "356d5561e392e9fb12a5cb072870519712cdf76047974805b07aa5598c1190cf",
+      "translation_sha256": "750c63ce52bfbd8c6b3fd378d64d2d93f77b41d8b38635c06e0d72bfc9f5bddf"
+    },
+    {
+      "source": "data/fixtures/answers.json",
+      "translation": "data/fixtures/en/answers.json",
+      "kind": "offline-fixture",
+      "source_sha256": "0046b3e986fd149283d3c702a4f4c1a526e8a27a766318ddeb57dcb4e19485d3",
+      "translation_sha256": "3db2ae790f4762ba363a60e6202685dd7df0d72802204d9e4682210bec71eb27"
+    },
+    {
+      "source": "data/evaluation/holdout.jsonl",
+      "translation": "data/evaluation/en/holdout.jsonl",
+      "kind": "holdout",
+      "source_sha256": "03f35c65b43c87c0a7e3ee340ff673e98b9a9b10fff796758b7b6592423a3ab7",
+      "translation_sha256": "1b2f7518b02311bc7d951e7ba94398d39dcab98ed71b0f1c8510b1b4e686de1c"
+    }
+  ],
+  "holdout_translation_frozen_at": "2026-09-15T08:45:08.905018+00:00",
+  "holdout_policy": "Prepared after freezing English development inputs; use only for final acceptance, never prompt tuning or regression harvesting."
+}
