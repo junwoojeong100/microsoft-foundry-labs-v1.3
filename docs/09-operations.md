@@ -4,11 +4,7 @@
 
 **시작 조건:** 03의 Prompt Agent 또는 08의 Hosted. 이 장에서 Application Insights와 Log Analytics를 직접 준비합니다.
 
-새 NC 프로젝트에서는 리전별 검증의 원래 요청을 추적하기 위해 **로그 자원을 이 장보다 일찍 생성**했습니다. 이전 Sweden workspace/customerId·projectId·trace를 복사하지 않고 새 실제 자원을 등록합니다. 자원 생성/연결과 실제 trace 조회·Insights 성공은 별도 확인입니다.
-
-**현재 재실행 결과:** Hosted v1/v2 dev와 진단 trace를 확인했습니다. On-demand Insights는 1시간 창의 **3개 trace·새 finding 0개**, 예약 disabled입니다. Coherence v13은 원래 저장 응답 **1행 score 5/pass**를 확인한 뒤 pause했습니다. 이전 NC의 16개 trace·finding 1개와 버전별 실패는 과거 기록으로 보존합니다. 이번에는 최종 holdout을 열지 않았습니다. [현재 보고서](validation-report.md).
-
-**선택적 조기 준비:** 00의 프로젝트/모델 설정 후, 추적할 첫 요청을 보내기 전에 이 절의 로그 생성·연결을 먼저 수행할 수 있습니다. 일반 학습 순서는 09장에서 유지합니다. 이미 준비했다면 새 자원을 중복 생성하지 않고 실제 연결/권한을 확인합니다.
+**순서:** 로그 자원 생성·연결 → 연결 이후 새 요청 → trace 조회 → Insights·비용·반복 평가 확인입니다. 앞 장의 응답이 소급 수집되지는 않습니다. 로그를 미리 준비했다면 새 자원을 만들지 말고 같은 연결과 권한을 확인합니다.
 
 ## 1. 로그 환경 생성·연결
 
@@ -17,6 +13,9 @@
 3. 두 리소스 각각의 **JSON View → id**를 기록합니다. 다른 그룹에 자동 생성된 자원이 없는지 확인합니다.
 4. Foundry **Agents → Traces → Connect**에서 방금 만든 Application Insights를 선택합니다.
 5. Connect가 없으면 **Manage → Project details → Connected resources → Add connection → Application Insights**를 사용합니다.
+
+<details>
+<summary>연결이 막히거나 13장 SDK에서 ResourceId/credential 오류가 날 때</summary>
 
 ### 첫 CLI 연결과 native SDK의 실제 요구 조건
 
@@ -34,6 +33,8 @@
 
 현재 CLI는 `--metadata KEY=VALUE`를 반복 지정하고 `--auth-type api-key`/`--key`로 이 credential을 전달할 수 있습니다. **실제 connection string은 비공개 설정으로 다루고 녹화·저장소·공유 로그에 노출하지 않습니다.** 연결 metadata/credential을 확인한 뒤 새 native 실행에서 6행을 받았으며, 실패한 0행 시도는 보존합니다.
 
+</details>
+
 연결만으로 조회 권한까지 부여된 것은 아닙니다. 본인의 로그 조회 권한을 확인합니다.
 
 ```bash
@@ -46,7 +47,7 @@ python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 
 필요한 범위의 **Log Analytics Reader**를 IAM에서 확인/부여합니다. 보호된 테이블을 사용하는 조직은 별도 Privileged Monitoring Data Reader가 필요할 수 있습니다. 토큰이나 connection string을 로그/환경 예제에 넣지 않습니다.
 
-**Insights 분석에는 호출 주체가 하나 더 있습니다.** 사용자뿐 아니라 프로젝트 관리 ID의 Monitoring Reader와, 보호 콘텐츠를 읽을 때 필요한 Privileged Monitoring Data Reader 범위를 확인합니다. **이전 Sweden 실행의** 의존 권한 403은 역사적 진단 사례이지 NC의 권한 검증이 아닙니다. 새 실습 로그 자원 범위에서만 필요한 역할을 확인합니다.
+**Insights 분석에는 호출 주체가 하나 더 있습니다.** 사용자뿐 아니라 프로젝트 관리 ID의 Monitoring Reader와, 보호 콘텐츠를 읽을 때 필요한 Privileged Monitoring Data Reader 범위를 확인합니다. 해당 실습 로그 자원 범위에서 필요한 역할만 확인합니다.
 
 ## 2. 연결 이후 새 요청 한 번
 

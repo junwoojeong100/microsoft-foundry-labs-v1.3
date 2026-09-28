@@ -6,13 +6,7 @@
 
 아래 label은 새 실습의 예시입니다. 기존 결과가 있다면 새로운 baseline/candidate label을 정하고 모든 후속 참조에 동일하게 사용합니다. 이전 모델·judge·코드 조건의 파일이나 점수를 덮어쓰지 않습니다.
 
-**현재 재실행 상태:** 새 한국어 SDK baseline/candidate가 각각 dev 6/6·세 policy 기준 각각 6/6, calibration 24/24입니다. 동일 account-responses 조건의 별도 Sol/Luna 비교도 각각 6/6입니다. **이전 NC의 한·영 IQ SDK/calibration과 영어 최초 5/6은 과거 기록**입니다. Hosted와 관리형 red team은 12/13의 별도 대상이며, 학습자는 자신의 새 label·원문·judge·전체 결과를 확인합니다. [새 실행 보고서](validation-report.md).
-
-**역사적 Sweden Central 기록:** 당시 Sol + GA IQ SDK candidate는 세 policy 기준 각각 6/6과 valid 참조 감사를 확인했고, 한국어/영어 calibration은 각각 24/24였습니다. 이전 groundedness 5/6과 `APPROVAL-01` 없는 D01 팀장 정보 오류도 보관합니다.
-
-**비교의 한계:** 이전/새 r2 SDK 쌍은 결합된 코드 변경으로 `code_hash`가 달라 통제 비교가 올바르게 거부되었습니다. 이 과거 쌍을 지침만의 개선 증거로 바꾸지 않습니다. 이후 **동결한 코드·corpus로 새로 실행한 Hosted IQ v1/v2**는 각 6행의 세 policy 기준 6/6, 참조 감사 valid, 실제 trace 6/6을 확인했고 `benchmark compare`도 허용되었습니다. 이는 별도의 실제 Hosted 증거입니다. 두 실행 모두 통과 수가 같으므로 dev 통과율 향상을 주장하지 않으며, 8문항 진단과 최종 인수는 구분합니다.
-
-이후 **Sweden의 Hosted IQ 배포 버전 3**은 canonical 6행과 진단 8행을 확인했습니다. 이 역사적 custom 진단은 새 NC 실행이나 13의 관리형 AI red teaming 증거가 아니며, 새로운 holdout 검증도 아닙니다.
+**순서:** baseline 수집·업무 검사 → candidate 수집·비교 → judge 준비 → calibration·policy 평가입니다. 먼저 포함된 `v1`/`v2`를 비교하며, **중간에 코드나 원문을 수정하지 않습니다**. 과거 실행의 점수·실패 이력은 [검증 보고서](validation-report.md)에서 별도로 볼 수 있습니다.
 
 ## 1. dev와 holdout 분리
 
@@ -35,6 +29,8 @@ python scripts/workshop.py evaluate --label baseline
 `outputs/baseline/`의 `manifest.json`, `responses.jsonl`, `business-evaluation.json`을 엽니다.
 
 `total`, `passed`, `errors`, `business_gate_passed`와 **6개 사례의 checks 전체**를 읽습니다. 이 평가는 결정적 업무 검사이며 LLM judge가 아닙니다.
+
+`evaluate`가 종료 코드 1과 `business_gate_passed: false`를 반환해도 **6개 응답이 있고 요청 오류가 없다면 오답을 찾아낸 결과**일 수 있습니다. 그 실패를 분석한 뒤 candidate와 비교합니다. 응답 누락·인증/API 오류라면 다음 수집부터 반복하지 말고 먼저 원인을 해결합니다.
 
 | 문항 | 확인 |
 |---|---|
@@ -79,11 +75,16 @@ python scripts/workshop.py compare --baseline baseline --candidate candidate --v
 python scripts/selfstudy.py model --role judge --deployment workshop-judge
 ```
 
-**삭제되지 않은 같은 프로젝트를 재개할 때만:** `workshop-optimizer`가 실제 GPT-5.5 / 2026-04-24인지 다시 확인했다면 아래 별칭을 사용할 수 있습니다. 새 NC에서는 Sweden 보관본의 배포를 인수하지 않고 새 `workshop-judge`를 준비합니다.
+<details>
+<summary>이전 환경이 있을 때만: 기존 GPT-5.5 별칭을 judge로 재사용</summary>
+
+삭제되지 않은 같은 프로젝트에서 `workshop-optimizer`가 실제 GPT-5.5 / 2026-04-24인지 확인했다면 다음을 **대신** 사용할 수 있습니다. 새 환경의 기본은 `workshop-judge`입니다.
 
 ```bash
 python scripts/selfstudy.py model --role judge --deployment workshop-optimizer
 ```
+
+</details>
 
 Judge를 대상 model map에 넣거나, 분리 검사를 낮추거나, 별칭만으로 실제 모델을 판단하지 않습니다. 비교할 모든 평가에서 같은 judge 조건을 유지합니다.
 

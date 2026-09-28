@@ -10,13 +10,13 @@
 
 이미 진행 중이라면 → [내 진행표](worksheets/workbook.md)
 
-**리포 이름 변경 후 새 그룹 `rg-mflabs15-jw-0928`에서 00~15장을 재실행했습니다.** 이전 실습 그룹은 삭제하고 부재를 확인했습니다. North Central US(`northcentralus`)의 실제 Search·IQ·Hybrid·도구·배포·운영과 한·영 OIDC 릴리스를 확인했습니다. **최종 품질 인수는 보류입니다:** 새 관리형 Task Adherence는 6행 중 5 pass/1 fail이며 실패 행의 severity와 판정 flag가 일치하지 않습니다. 이전 환경의 5/5를 재사용하거나 새 holdout을 열지 않았습니다. [새 실행 결과와 제한](docs/validation-report.md), [새 workspace/보관 경계](docs/00-setup.md#새-프로젝트에서-이전-상태를-인수하지-않기)를 확인하세요.
+## 처음 시작하는 순서
 
-13장의 기본 red-team 검증 대상은 **관리형 AI red-teaming 서비스**입니다. 사용자 지정 8문항 policy 진단은 보완 자료이며 관리형 서비스의 실행 증거를 대신하지 않습니다.
+1. **00장에서 파일 다운로드·도구 설치·Azure 설정을 마칩니다.** 아직 터미널 사용이 익숙하지 않아도 이 순서로 시작하면 됩니다.
+2. **한국어 가이드 하나로 01~15장을 순서대로 진행합니다.** 번호가 붙은 기본 절차를 한 단계씩 실행하고, 결과를 확인한 뒤 다음으로 갑니다. `선택`, `문제가 있을 때`, `이전 환경`으로 표시한 절은 해당할 때만 읽습니다.
+3. **진행한 장과 결과 파일을 내 워크북에 기록합니다.** 다음 날에는 [재개 방법과 완료 기준](docs/checkpoints.md)을 확인합니다. 중간에 끝내도 [15장의 중지·정리](docs/15-capstone-cleanup.md#4-먼저-실행-중인-것을-멈추기)는 수행합니다.
 
-새 SDK baseline·candidate와 Hosted IQ v1/v2는 각각 dev 6/6, 세 policy 기준 각각 6/6입니다. **새 Optimizer는 원래 평가기·문턱 4에서 baseline 1.0과 원문 참조 감사를 확인했지만 새 전체 후보는 0개**였습니다. 개선·승격은 주장하지 않습니다. 이전 Optimizer 후보와 Prohibited Actions 결과는 과거 기록으로 보존합니다.
-
-North Central US는 **두 공식 리전 문서에 모두 포함**되지만 전체 목록은 현재 서로 다릅니다. [13장의 문서 불일치](docs/13-governance.md#5-관리형-ai-red-teaming--기본-검증-대상)를 확인하며, 이전 ASR 문제의 원인이 Sweden이거나 리전 변경이 지표 방향을 고친다고 단정하지 않습니다.
+02장의 Luna·Router 비교는 선택 사항입니다. 14장은 GitHub 저장소 권한이 있을 때 수행합니다. 그 밖의 기능이 지원되지 않으면 **해당 기능을 차단/미실행으로 기록**하고, 필요한 선행 기능이 준비된 단계만 이어갑니다. 전체 실습이 무료이거나 모든 구독에서 끝까지 실행된다는 보장은 없습니다.
 
 ## 무엇을 만드나요?
 
@@ -50,10 +50,10 @@ Foundry는 모델 하나가 아니라 **모델·에이전트·지식·도구·�
 | [11 기억·위임·예약](docs/11-memory-a2a-routines.md) | Memory·A2A·Routines 실행 | 상태와 실행 기록 |
 | [12 품질 개선](docs/12-improvement.md) | 대화 평가·Optimizer·배포 평가 | 검토한 개선 후보 |
 | [13 실습 안전](docs/13-governance.md) | 관리형 AI red teaming·실습 정책·관리 ID·자산 확인 | 실제 관리형 실행 근거와 한계 |
-| [14 GitHub OIDC CI/CD](docs/14-additional-permissions.md) | 포함된 ID 기반 실습 릴리스 workflow 실행 | 정확한 버전과 smoke/dev 근거 |
+| [14 GitHub OIDC CI/CD](docs/14-additional-permissions.md) | 포함된 ID 기반 실습 릴리스 workflow 실행 | 정확한 버전과 dev 업무 검사 |
 | [15 마무리](docs/15-capstone-cleanup.md) | 최종 확인·자원 정리 | 결과물과 정리 기록 |
 
-각 장의 **실행 → 확인 → 다음**만 따라가세요. 별도 학습 경로를 고르거나 다른 저장소를 받을 필요가 없습니다.
+각 장의 **실행 → 확인 → 다음**을 따라가세요. 낯선 용어, 명령의 자리표시자, 이미 있는 결과 파일의 처리 방법은 [진행 도움말](docs/checkpoints.md)에 모았습니다.
 
 ## 세 곳만 기억하세요
 
@@ -63,14 +63,14 @@ Foundry는 모델 하나가 아니라 **모델·에이전트·지식·도구·�
 | `.env` | 실제 Azure 연결 설정. 도구가 생성하며 공유하지 않음 |
 | `outputs/` | 실제 답변·평가·소유 자산 기록 |
 
-모든 명령은 **이 README가 있는 폴더**에서 실행합니다.
+모든 명령은 **이 README가 있는 폴더**에서 실행합니다. **아래는 00장의 `configure`까지 마친 뒤 재개할 때 쓰는 명령**입니다. 처음이라면 먼저 00장으로 갑니다.
 
 ```bash
 python scripts/workshop.py doctor
 python scripts/selfstudy.py values
 ```
 
-첫 명령은 로컬 준비 확인, 둘째는 설정한 값을 다시 보는 명령입니다. 설치와 Azure 준비는 00장에서 안내합니다.
+첫 명령은 로컬 준비 확인, 둘째는 저장한 설정을 다시 보는 명령입니다. 둘 다 모델에 질문하지 않습니다. `.selfstudy/`에는 개인 설정·배포 준비 정보도 있으므로 `outputs/`와 함께 보관합니다.
 
 ## 진행 규칙
 
@@ -81,6 +81,12 @@ python scripts/selfstudy.py values
 - **중간에 멈출 때도 [15의 정리](docs/15-capstone-cleanup.md)를 확인**합니다.
 
 Owner 역할이 있어도 모델 할당량·지역·제한 제공 기능을 자동으로 사용할 수 있는 것은 아닙니다. 조직의 보호 설정을 유지합니다. 14장은 포함된 GitHub OIDC CI/CD 실습에 필요한 저장소·환경 권한만 다룹니다.
+
+## 검증 상태와 한계
+
+**2026-09-28 검증에서 실습 실행과 최종 품질 인수는 구분했습니다.** 새 SDK·Hosted dev 결과는 각각 6/6이지만, 관리형 Task Adherence는 6행 중 5 pass/1 fail이며 severity/판정 flag가 불일치해 **최종 인수는 보류, 새 holdout은 미실행**입니다. Optimizer도 새 전체 후보가 없어 개선·승격을 주장하지 않습니다.
+
+[실제 검증 보고서](docs/validation-report.md)는 참고 기록이지 본인의 완료 기록이 아닙니다. 13장의 관리형 AI red teaming은 사용자 지정 8문항 진단으로 대체하지 않습니다. 리전 문서 차이와 과거 실행의 상세 이력도 보고서와 해당 장에서 확인할 수 있습니다.
 
 <a id="포털cli-요약-영상"></a>
 
@@ -95,4 +101,4 @@ Owner 역할이 있어도 모델 할당량·지역·제한 제공 기능을 자�
 
 [녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). 현재 파일은 **새 그룹의 포털·CLI 재실행판**입니다. 이전 NC 포털판은 revision `7b7ca26`, NC CLI판은 `1d53a68`, Sweden판은 `0a8ab50`에 보존합니다. 한·영 자막이 전체 실습을 두 언어로 각각 수행했다는 뜻은 아닙니다.
 
-**도움말:** [문제 해결](docs/troubleshooting.md) · [기능 찾기](docs/feature-map.md) · [코드 읽기](docs/code-reading.md) · [공식 자료](docs/sources.md)
+**도움말:** [진행·재개·완료 기준](docs/checkpoints.md) · [문제 해결](docs/troubleshooting.md) · [기능 찾기](docs/feature-map.md) · [코드 읽기](docs/code-reading.md) · [공식 자료](docs/sources.md)

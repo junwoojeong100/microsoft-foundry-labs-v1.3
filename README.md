@@ -10,13 +10,13 @@ You need a **Microsoft Entra ID account, an Azure subscription, and an active su
 
 Already started? → [Your workbook](worksheets/en/workbook.md)
 
-**After the repository rename, chapters 00-15 were rerun in the new group `rg-mflabs15-jw-0928`.** The old lab group was deleted and its absence verified. Actual Search, IQ, Hybrid, tools, deployments, operations, and Korean/English OIDC releases were exercised in North Central US (`northcentralus`). **Final quality acceptance is held:** the new managed Task Adherence run returned six rows, five pass/one fail, with inconsistent severity and flags on the failing row. The previous environment's 5/5 was not reused, and no new holdout was unlocked. Read the [new results and limits](docs/en/validation-report.md) and preserve the [fresh-workspace boundary](docs/en/00-setup.md#start-a-new-project-without-adopting-old-state).
+## Start in this order
 
-The primary red-team target is the **managed AI red-teaming service** in chapter 13. The custom eight-case policy diagnostic is complementary, not a replacement or evidence that managed red teaming works.
+1. **Complete 00: download the files, install tools, and configure Azure.** Start there even if you are new to terminals.
+2. **Follow one language edition through 01-15.** Run each numbered step, inspect its result, then continue. Read sections marked optional, troubleshooting, or existing-environment only when they apply.
+3. **Record the chapter and result files in your private workbook.** Use [resume instructions and checkpoints](docs/en/checkpoints.md) next time. Even if you finish early, follow [15's stopping and cleanup steps](docs/en/15-capstone-cleanup.md#4-stop-running-work-first).
 
-New SDK baseline/candidate and Hosted IQ v1/v2 each passed dev 6/6 and all three policy criteria. **The new Optimizer retained the original evaluator versions/threshold 4 and audited its 1.0 baseline, but returned no new full candidate.** Neither improvement nor promotion is claimed. Earlier Optimizer candidates and Prohibited Actions results remain historical evidence.
-
-North Central US appears in **both official regional sources**, although their wider lists currently conflict. [Chapter 13 records that discrepancy](docs/en/13-governance.md#5-managed-ai-red-teaming--the-primary-verification-target). Do not infer that Sweden caused the old ASR problem or that changing regions fixes metric direction.
+Luna and Router comparisons in 02 are optional. Chapter 14 requires GitHub repository permissions. If another feature is unavailable, **record it as blocked/not run** and continue only where prerequisites are met. This is not an entirely free workshop or a guarantee that every subscription can run every feature.
 
 ## What will you build?
 
@@ -52,14 +52,14 @@ The shared diagram shows local CLI/MAF code calling Foundry models and agents, r
 | [11 State and scheduling](docs/en/11-memory-a2a-routines.md) | Use Memory, A2A, and Routines | State and dispatch records |
 | [12 Improvement](docs/en/12-improvement.md) | Evaluate conversations, optimization, and deployed versions | Reviewed candidates |
 | [13 Lab safety](docs/en/13-governance.md) | Verify managed AI red teaming, lab guardrails, identities, and inventory | Native run evidence and limitations |
-| [14 GitHub OIDC CI/CD](docs/en/14-additional-permissions.md) | Run the included identity-based lab release workflow | Exact version and smoke/dev evidence |
+| [14 GitHub OIDC CI/CD](docs/en/14-additional-permissions.md) | Run the included identity-based lab release workflow | Exact version and dev business checks |
 | [15 Acceptance and cleanup](docs/en/15-capstone-cleanup.md) | Verify the final target and stop, retain, or remove resources | Results and lifecycle records |
 
-Follow each chapter's **run → verify → next** sequence. No second repository or separate learning path is required.
+Follow each chapter's **run → verify → next** sequence. [The progress guide](docs/en/checkpoints.md) explains unfamiliar terms, command placeholders, and handling existing results.
 
 ## Run in English
 
-Run all commands from **the folder containing this README**, after the setup in chapter 00.
+Run all commands from **the folder containing this README**. **These are resume commands, after completing `configure` in chapter 00.** For a first run, start with 00 instead.
 
 ```bash
 python scripts/workshop.py --language en doctor
@@ -68,7 +68,7 @@ python scripts/selfstudy.py values
 
 `--language en` selects the bundled English prompts, policies, and cases. It goes **before the workshop subcommand**; wrapper options such as `--model-deployment` and `--script` go before it. `selfstudy.py` has no global language flag, but its `prepare-hosted` and `capture` subcommands require their own `--language en` for English work. See [Data and localization](docs/en/data-format.md).
 
-Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/` for real results and ownership records. English examples use separate labels and `outputs/learner-notes-en/`.
+Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/` for real results and ownership records. Retain `.selfstudy/` too: it holds personal configuration and deployment preparation. English examples use separate labels and `outputs/learner-notes-en/`. Neither command above invokes a model.
 
 ## Ground rules
 
@@ -76,6 +76,12 @@ Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/`
 - Create services only when needed. Owner does not guarantee quota, regional availability, or preview access; keep organizational protections in place.
 - Never replace errors or empty responses with fixtures, or treat one good answer as evidence that the whole lab passed.
 - **Even when stopping early, follow [chapter 15](docs/en/15-capstone-cleanup.md).** In retention mode, keep resources and ownership records, disable routines, and stop compute without deleting agents or volumes.
+
+## Validation status and limits
+
+**The September 28, 2026 validation separates execution from final quality acceptance.** New SDK and Hosted dev results passed 6/6 each, but managed Task Adherence returned six rows/five pass/one fail with inconsistent severity/verdict flags. **Final acceptance is held and no new holdout was run.** Optimizer returned no new full candidate, so no improvement or promotion is claimed.
+
+The [live validation report](docs/en/validation-report.md) is reference evidence, not your completion record. Chapter 13's managed AI red teaming cannot be replaced by the custom eight-case diagnostic. The report and relevant chapters retain regional-document discrepancies and historical run details.
 
 <a id="portal-and-cli-summary-videos"></a>
 

@@ -6,7 +6,7 @@
 
 **Prerequisites:** Configuration and a working project-response deployment from 00–02. Use **only the six synthetic Hanbit Technology documents** below.
 
-**Verified NC scope:** beyond Prompt Agent creation/invocation, **both Korean and English File Search indexed six files and returned actual file citations**. Korean current-limit KRW 150000, historical KRW 120000, and unknown-Tokyo responses were recorded. Inline agents and File Search remain distinct executions; preserve each language/version/file-ID record.
+**You create two agents in this chapter:** one with inline policy text and one that actually searches files. The runner keeps their names and versions separate; follow the default commands in order.
 
 ## 1. Read the original evidence first
 
@@ -47,6 +47,8 @@ In Foundry **Build → Agents**, verify the same name, version, model, and instr
 
 Use the **bundled SDK commands** rather than depending on the portal's upload-button location. Use the actual Sol deployment whose project call passed in 01; an independent name is generated for this agent.
 
+**Choose one creation command only.** The default below expires the store seven days after its last activity. For longer retention, use the collapsed `--retain` alternative **instead**. Do not run both commands to change retention afterward.
+
 ```bash
 python scripts/workshop.py --language en file-search create --confirm-create
 ```
@@ -57,17 +59,27 @@ Check `indexed_files: 6`, the actual `agent_name`, `agent_version`, and `vector_
 
 By default, the vector store **expires seven days after its last activity**. This is a retention/cost setting, not a course deadline. After expiry or a model change, inspect existing resources and use a new owned name.
 
-**For a retained environment, use this alternative at creation time.** `--retain` omits automatic vector-store expiry. Verify `retention: retain` in the ownership record and use the same option when resuming. Storage charges may continue.
+<details>
+<summary>Optional: retain without automatic expiry — instead of the default create</summary>
+
+`--retain` omits automatic vector-store expiry. Verify `retention: retain` in the ownership record and use the same option when resuming. Storage charges may continue.
 
 ```bash
 python scripts/workshop.py --language en file-search create --confirm-create --retain
 ```
 
+</details>
+
 Catalog support and successful execution on your particular deployment are different. Resolve SDK capability or permission errors rather than **silently substituting inline answers or another model**.
+
+<details>
+<summary>Only when changing code or using your own Storage</summary>
 
 Reasoning is stored in the **agent definition** at creation. An `agent_reference` request must inherit it: sending another `reasoning` override produces `Not allowed when agent is specified`. The runner inherits the immutable version's reasoning and sends only the output cap on the request.
 
 Environments using their own Storage may require additional access such as **Storage Blob Data Contributor** for the actual user/service identity. Check Basic/Standard setup and the real store in the [official File Search documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search), and scope assignments **only to your storage**.
+
+</details>
 
 ## 4. Distinguish three questions
 

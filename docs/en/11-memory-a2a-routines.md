@@ -6,11 +6,11 @@
 
 **Prerequisites:** Project identity roles from 00, the embedding deployment from 06, and the azd Foundry extension from 08. Review creation and request costs for each feature.
 
-**Current rerun:** a new Korean TTL-zero Memory store verified alpha, empty beta, and same-item update; actual A2A 1.0 and the timer's original telemetry response were checked. The timer is disabled, preserving `Finished/cancelled` and a separate `Killed/cancelled` attempt. An immediate A2A connection 400 passed after the same connection propagated, under a new label. Earlier bilingual NC Memory is historical, not new English evidence. See the [current report](validation-report.md).
+**These are three separate experiments:** storing/recalling an item, delegating to another agent, and running at a scheduled time. **Always disable the Routine at the end.** Record scheduled delivery separately from verification of its actual answer.
 
 ## 1. Memory: persist an item and recall it in a new request
 
-Verify `workshop-embedding` from 06 and select a **new retained-store name under the current prefix**. Replace `YOUR-PREFIX` with your actual `WORKSHOP_PREFIX`. Leave the existing one-hour store and its records unchanged:
+Verify `workshop-embedding` from 06 and select a **new retained-store name under the current prefix**. Replace `YOUR-PREFIX` with your actual `WORKSHOP_PREFIX`. If an older store exists, preserve its settings and records:
 
 ```bash
 python scripts/selfstudy.py status
@@ -28,8 +28,6 @@ python scripts/workshop.py --language en memory put --scope alpha --case D02 --c
 ```
 
 Record the **new store name, memory_id, and ownership file**. Verify `default_ttl_seconds: 0` in the creation readback and `automatic_expiration_enabled: false`. This verifies configuration, not a long-duration survival test. Storage charges may continue.
-
-**Historical Sweden TTL-0 stores** were created/recalled in both languages, with separate-process reads, an empty beta scope, and a 4063-second item read. This archived observation is not NC persistence/scope verification or proof those remote resources still exist.
 
 For another **new store** that should expire items, `--ttl-seconds` accepts 1–31,536,000 seconds (365 days). Previously recorded stores keep their original TTL; the new default does not update them. If your selected store already exists with an ownership record, do not create it again: inspect and recall it. For another new run, choose an unused name under the same prefix, without adopting unrecorded remote assets.
 
@@ -51,7 +49,7 @@ python scripts/workshop.py --language en memory update --scope alpha --case D01 
 python scripts/workshop.py --language en memory inspect --scope alpha
 ```
 
-This exercise **retains both the old and new stores**. Do not run `memory forget`, `memory cleanup`, or `--confirm-delete`. Preserve IDs, TTLs, and ownership records. Older one-hour items still follow their original expiry setting. Do not rewrite earlier labels or ownership files as evidence for the new store.
+This chapter **retains the store you created**. Do not run `memory forget`, `memory cleanup`, or `--confirm-delete`. Preserve IDs, TTLs, and ownership records. Any older stores keep their original expiry settings. Decide separately about deletion in 15.
 
 For transient 404s or delays, perform bounded reads of the same item; do not repeatedly `put` duplicate items. This is explicit Memory API usage, not proof of automatic memory extraction from conversations.
 
@@ -65,17 +63,20 @@ python scripts/workshop.py --language en a2a inspect
 
 Create a target under your prefix and inspect its actual card's `supportedInterfaces` for **1.0 / JSONRPC / the exact URL**. Two local participants are not proof of A2A.
 
-Use the returned **target_base and connection_name**. The target is a base path, not the card URL:
+Use the returned **target_base and connection_name**. The target is a base path, not the card URL. `--cwd` is the actual Hosted folder prepared in 08:
 
 ```bash
-azd ai connection create "RETURNED-CONNECTION-NAME" --kind remote-a2a --target "RETURNED-TARGET-BASE" --auth-type project-managed-identity --audience https://ai.azure.com --project-endpoint "YOUR-PROJECT-ENDPOINT"
+azd ai connection create "RETURNED-CONNECTION-NAME" --kind remote-a2a --target "RETURNED-TARGET-BASE" --auth-type project-managed-identity --audience https://ai.azure.com --project-endpoint "YOUR-PROJECT-ENDPOINT" --cwd "YOUR-08-HOSTED-ABSOLUTE-PATH"
 python scripts/workshop.py --language en a2a caller --confirm-create
 python scripts/workshop.py --language en a2a invoke --label a2a-first-en --confirm-cost
 ```
 
 Verify a real successful A2A call in the caller response. Preserve names, versions, exact 1.0 configuration, and source evidence. Do not automatically downgrade to 0.3 or substitute another agent when unsupported.
 
-The code checks the connection target and also sets the same explicit **`base_url` on the A2A tool**. A connection can exist while invocation fails with `no valid target URL` when this field is missing. If you created the caller with earlier code, preserve the failure and explicitly create a corrected version:
+<details>
+<summary>Only for an older caller reporting no valid target URL</summary>
+
+Current code checks both the connection target and A2A tool's `base_url`. If an older caller lacks the URL, preserve the failure and create an explicit new version. Do not run this after an already successful call:
 
 ```bash
 python scripts/workshop.py --language en a2a caller --confirm-create --new-version
@@ -84,6 +85,8 @@ python scripts/workshop.py --language en a2a invoke --label a2a-fixed-en --confi
 
 This keeps the previous version. The helper refuses an update when unrecorded remote versions exist; do not edit the ownership ledger to bypass that check.
 
+</details>
+
 After partial creation, inspect existing IDs, connections, and roles. Do not repeatedly recreate targets or edit ownership files. If choosing final deletion, remove only your assets in **caller → connection → target** order. Retention mode keeps all three.
 
 ## 3. Routines: prepare a disabled schedule
@@ -91,8 +94,6 @@ After partial creation, inspect existing IDs, connections, and roles. Do not rep
 Use the actual **Prompt Agent name** you invoked in 03—not a model deployment name. Record its actual target version too.
 
 **Never pass a user-created conversation to an unattended routine in this lab.** Both project-scoped and agent-endpoint conversations failed with `conversation_not_found` under the routine actor. Preserve those failures and resources. Use a **fresh timer with static `action.input` and no conversation**.
-
-The **new NC stateless timer also delivered at its scheduled time**. Telemetry matched the original response ID, agent version, project, trace, and answer. Earlier Sweden manual/scheduled responses remain separate archived evidence, not new responses.
 
 First register the actual log workspace from 09. Its real `customerId` binds `AZURE_LOG_ANALYTICS_WORKSPACE_ID`, and the actual project ARM ID binds `AZURE_AI_PROJECT_ID`. This does not create a workspace or generate a model response:
 
@@ -157,6 +158,9 @@ azd ai routine show "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-PROJE
 
 **In the historical Sweden run**, disabling changed `phase` from `completed` to `cancelled` while `Finished` and the original response ID remained. In NC, preserve the actual raw phase and verify the original completed response rather than rewriting status.
 
+<details>
+<summary>Only if the CLI list is empty after disabling: read SDK history</summary>
+
 ### Recover native history when the CLI list is empty
 
 In NC, `azd ai routine run list` returned `value: null` although SDK history contained the real delivery. Disable the timer as planned, then export its actual IDs without creating another timer or manual dispatch:
@@ -166,6 +170,8 @@ python scripts/routine_runs.py --name "YOUR-PREFIX-timer-static-en" --label rout
 ```
 
 Read **every attempt** in `outputs/routine-runs/routine-native-history-en/runs.json`. Use the actual `Finished` attempt's `dispatch_id` below; retain `Killed`/`cancelled` entries. Listing history does not verify the answer, and export labels are never overwritten.
+
+</details>
 
 ### Verify the same scheduled response through telemetry
 
@@ -179,6 +185,9 @@ The verifier checks the timer source/timestamps, original response ID, agent/ver
 
 Post-disable evidence must retain **`run_phase: cancelled`**. This exception applies only with `Finished` status and complete telemetry for the same original response; not every cancelled run is successful. If ingestion is delayed, retry reading the same ID—not a new dispatch or replacement model call.
 
+<details>
+<summary>Only if you have a separate manual Routine run — skip on a first pass</summary>
+
 ### Read the original manual response from telemetry
 
 Read back only an original manual run whose logs still exist in the **same currently configured project**. Read deleted Sweden-resource evidence from its archive; do not pass those old IDs to the NC command below. Use an unused label for another readback:
@@ -188,6 +197,8 @@ python scripts/workshop.py --language en routines inspect --name "ORIGINAL-MANUA
 ```
 
 Do not add `--scheduled` to a manual readback. Manual and timer runs are different evidence, both verified without new inference. **Retain routines disabled** and preserve earlier failures, conversations, and raw records.
+
+</details>
 
 **Completion check:** Record creation, execution, readback, and retention separately. Verified timer delivery does not mean every new policy-quality criterion has passed.
 

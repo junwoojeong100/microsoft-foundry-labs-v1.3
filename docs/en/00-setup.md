@@ -6,9 +6,9 @@
 
 Start with a **Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role**. You do not need someone else's preconfigured endpoint or Search service. New resources and model requests can incur charges.
 
-**The current target is the new North Central US (`northcentralus`) project created after the repository rename.** Group `rg-mflabs15-jw-0928` was used for foundation, Sol project Responses, Prompt Agents, MAF functions/MCP, and the later chapters. Do not recreate resources already prepared.
+**Default order:** permissions → files/tools → sign-in → dedicated group/project/Sol deployment → data roles → configuration checks. Prepare Azure resources in **North Central US (`northcentralus`)**. On your first run, follow the **portal route**; the collapsed CLI alternatives are not additional required steps.
 
-New evidence includes Korean/English six-file File Search, an actual six-row CSV, Korean Search/GA IQ/Hybrid/IQ Chat, Hosted IQ v1/v2 dev 6/6, and the original scheduled response. **The new managed Task Adherence run returned six rows, five pass/one fail with inconsistent severity/flags; final acceptance is held.** Previous 5/5 or English retrieval results are not adopted as new evidence. Read the [current results and limits](validation-report.md).
+Names in this guide are examples. Do not copy resource groups or IDs from validation reports into your configuration. To continue an existing environment, start with [resume instructions](checkpoints.md#resume-on-another-day).
 
 ## 1. Check your permissions
 
@@ -22,7 +22,23 @@ New evidence includes Korean/English six-file File Search, an actual six-row CSV
 
 ## 2. Get the files and development tools
 
-Extract the **workshop ZIP**, or clone this repository if you have access. Code and data are bundled; do not download another repository. GitHub and Git are optional when using the ZIP.
+1. Extract the **workshop ZIP** you received. Otherwise, open [this repository](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5) and select **Code → Download ZIP**. A private repository requires access.
+2. Find the extracted folder containing **`README.md`, `scripts/`, and `curriculum.json` together**. Do not work inside the ZIP or its parent folder.
+3. Open that entire folder using your editor's **File → Open Folder**. In VS Code, choose **Terminal → New Terminal** to enter commands.
+
+All code and data are included. A ZIP provided to you requires neither a GitHub account nor Git.
+
+<details>
+<summary>Optional: clone instead of downloading a ZIP if Git is already installed</summary>
+
+```bash
+git clone https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5.git
+cd microsoft-foundry-labs-v1.5
+```
+
+Open the cloned folder in your editor. Do not also repeat the ZIP route.
+
+</details>
 
 Use an approved development environment. Azure Owner does not override software-installation restrictions on your device.
 
@@ -33,21 +49,27 @@ Use an approved development environment. Azure Owner does not override software-
 | Azure Developer CLI | [Install azd](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd), then run `azd version`. |
 | Editor | Open the **entire v1.5 folder** in VS Code or another editor. |
 
-Your terminal's current directory must contain `README.md`, `scripts/`, and `curriculum.json`.
+**Windows execution boundary:** you can prepare the lab in PowerShell, but **05 section 5's local SDK pause/resume and its recovery extension require macOS/Linux, including approved WSL**. The runner uses POSIX `fcntl` locks and does not run in Windows Python. To do that section, use a separate source copy in approved WSL/Linux and complete only the Linux Python setup and doctor below; that local experiment needs no Azure configuration or login. Do not copy a Windows `.venv` or private Azure state.
+
+Check your current folder/files using `pwd` and `ls` on macOS/Linux, or `Get-Location` and `Get-ChildItem` in PowerShell. The `bash`/`powershell` labels above code blocks are not commands. **Execute one line at a time; stop on an error before running the next line.**
 
 Do not overwrite a `.venv` created with another Python version or existing personal lab state. Preserve that folder and **extract the ZIP into a new folder**.
 
+**On a first run, skip the collapsed section below and execute only the installation block for your OS.**
+
+<details>
+<summary>Existing environments only: start again with a different project</summary>
+
 ### Start a new project without adopting old state
 
-1. Privately archive the previous `.env`, `.selfstudy` configuration/ownership records, CI identity information, `outputs/`, and `.build/`, retaining original hashes. Keep raw recordings unchanged.
-2. This repository rerun deleted only the confirmed old NC group `rg-mf15-jw-nc-0928` and verified its absence. Previous local state—3,428 files—and videos were privately archived with hashes, including the older Sweden archive. This is history, not permission to delete other groups, identities, or evidence.
-3. Use a fresh source copy/workspace and terminal. Do not copy old `.env`, active `.selfstudy`, result folders, or azd environments into the new project's active state. If reusing a checkout, verify the archive/hashes first and initialize only fresh active state through the supported setup flow.
-4. Choose a new NC prefix and unused labels, for example `lab-yourname-nc-0928`, `nc-baseline-en`, and `nc-candidate-en`. If replacing example labels, update every collect/evaluate/compare/verify reference consistently.
-5. Never delete or edit `.env`/ownership ledgers to bypass cross-project checks. Retaining a previous CI identity does not establish its roles or access in the new project.
+1. Follow [15's stopping/retention steps](15-capstone-cleanup.md#4-stop-running-work-first) for the old environment. Privately preserve `.env`, `.selfstudy`, `outputs/`, `.build/`, and ownership records.
+2. Extract or clone **source only into a new folder** and open a new terminal. Do not copy previous settings, results, or azd environments into the new project's active state.
+3. Choose a new project/prefix and unused result labels. If labels change, update every collect/evaluate/compare/verify reference.
+4. Deleting previous resources is a separate decision. Do not follow a report's deletion history as an instruction or edit ownership records to bypass cross-project checks.
 
 **Run `configure`, `set`, `models`, `resource`, and `bind-matrix` one at a time in a checkout.** Concurrent writers can conflict while replacing settings files. Parallel experiments need separate workspaces and ownership records.
 
-The commands below target **the fresh workspace and new NC resources**. Do not adopt archived Sweden responses, traces, evaluations, or deployment versions as new results.
+</details>
 
 ### macOS / Linux
 
@@ -55,6 +77,7 @@ The commands below target **the fresh workspace and new NC resources**. Do not a
 python3.13 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+python -m pip check
 ```
 
 ### Windows PowerShell
@@ -63,6 +86,7 @@ python -m pip install -r requirements.txt
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
+python -m pip check
 ```
 
 If PowerShell blocks activation, do not weaken system policy. Replace subsequent `python ...` commands with `.\.venv\Scripts\python.exe ...`.
@@ -73,9 +97,11 @@ This installs local packages only. **It does not create Azure resources, sign yo
 python scripts/workshop.py --language en doctor
 ```
 
-Check `language: en`, `documents: 6`, `dev_cases: 6`, `holdout_cases: 4`, `azure_tested: false`, and `result: PASS`. This is not an Azure connectivity test. It reports dataset counts; do not open holdout questions or answers.
+Check the installation's `No broken requirements found.` and doctor's `language: en`, `documents: 6`, `dev_cases: 6`, `holdout_cases: 4`, `azure_tested: false`, and `result: PASS`. This is not an Azure connectivity test. It reports dataset counts; do not open holdout questions or answers.
 
 **Activate `.venv` in every new terminal.** Run all commands from the folder containing `README.md`.
+
+Create a `.selfstudy` folder in your editor and use **Save As** to copy `worksheets/en/workbook.md` to `.selfstudy/workbook-en.md`. Record values and progress in this private copy, not in the repository's blank workbook.
 
 English workshop commands use `--language en` **before the subcommand**. Wrapper options (`--model-deployment`, `--script`) go before `--language en`. The shared `selfstudy.py` helper has no global language flag; its later `prepare-hosted` and `capture` subcommands accept their own `--language en`. Keep English labels and results separate from Korean runs; see [Data and localization](data-format.md).
 
@@ -106,16 +132,21 @@ The prefix must start with `lab-`, use lowercase letters, numbers, and hyphens, 
 1. In the Azure portal, open **Resource groups → Create**.
 2. Select your Owner subscription and a new group name.
 3. Select **North Central US**. Project availability is not proof that every model/tool call will work.
-4. Check the [Foundry region table](https://learn.microsoft.com/azure/foundry/reference/region-support) and [Search region table](https://learn.microsoft.com/azure/search/search-region-support). The managed red-teaming [regional matrix](https://learn.microsoft.com/azure/foundry/concepts/evaluation-regions-limits-virtual-network#supported-regions-for-ai-red-teaming) and [concept overview](https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent#agentic-risks) disagree on the wider list, but **both include North Central US**. Keep this region without treating the discrepancy as proof that Sweden was unsupported or caused the ASR error.
+4. Check the [Foundry region table](https://learn.microsoft.com/azure/foundry/reference/region-support) and [Search region table](https://learn.microsoft.com/azure/search/search-region-support). Both official managed red-teaming lists also include North Central US. [Chapter 13 explains their differences](13-governance.md#5-managed-ai-red-teaming--the-primary-verification-target).
 5. Add a nonsecret tag such as `workshop=foundry-v1.5`, then create the group.
 
 Keep only workshop resources in this group. You cannot safely delete an entire existing business resource group at the end.
 
-For the CLI alternative, replace the subscription ID and names. Do not recreate a group already made in the portal.
+<details>
+<summary>Optional: create the group with CLI instead of the portal — use only one route</summary>
+
+Replace the subscription ID and names. Do not recreate a group already made in the portal.
 
 ```bash
-az group create --subscription "YOUR-SUBSCRIPTION-ID" --name "rg-mf15-nc-your-lab" --location northcentralus --tags workshop=foundry-v1.5 lifecycle=retain
+az group create --subscription "YOUR-SUBSCRIPTION-ID" --name "rg-mf15-yourname-nc-0928" --location northcentralus --tags workshop=foundry-v1.5 lifecycle=retain
 ```
+
+</details>
 
 `lifecycle=retain` records an intention to keep resources; it is not a deletion lock. Apply [retention mode](15-capstone-cleanup.md#retention-mode) if you want to keep the environment.
 
@@ -140,16 +171,21 @@ In the Azure portal, open **project resource → JSON View** and copy `id`.
 
 Use the **full ID through `/projects/...`**, not just the parent Foundry account ID.
 
+<details>
+<summary>Optional: create the Foundry project with CLI instead of the portal</summary>
+
 ### CLI alternative
 
 Use this instead of the portal route. Do not omit `--assign-identity` or `--allow-project-management true`. Names must be globally unique where required; use the same subscription, group, and region throughout.
 
 ```bash
-az cognitiveservices account create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-nc-your-lab" --name "YOUR-UNIQUE-FOUNDRY-NAME" --custom-domain "YOUR-UNIQUE-FOUNDRY-NAME" --kind AIServices --sku S0 --location northcentralus --assign-identity --allow-project-management true
-az cognitiveservices account project create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-nc-your-lab" --name "YOUR-UNIQUE-FOUNDRY-NAME" --project-name "mf15-nc-project" --location northcentralus
+az cognitiveservices account create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-yourname-nc-0928" --name "YOUR-UNIQUE-FOUNDRY-NAME" --custom-domain "YOUR-UNIQUE-FOUNDRY-NAME" --kind AIServices --sku S0 --location northcentralus --assign-identity --allow-project-management true
+az cognitiveservices account project create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-yourname-nc-0928" --name "YOUR-UNIQUE-FOUNDRY-NAME" --project-name "mf15-nc-project" --location northcentralus
 ```
 
 CLI creation **does not guarantee Foundry User assignments** for the user and project. Verify both identities in section 7.
+
+</details>
 
 ## 6. Deploy the first model
 
@@ -182,19 +218,31 @@ Subscription Owner's resource-management permission does not replace data-plane 
 
 ## 8. Collect configuration from actual values
 
-Replace the three values and prefix inside quotes:
+Check these sources, then replace the placeholders inside quotes. Keep the quotes:
+
+| Argument | Value to use |
+|---|---|
+| `--project-id` | Section 5's JSON View ID, including `/projects/...` |
+| `--endpoint` | Section 5's Project endpoint |
+| `--deployment` | Section 6's Sol deployment alias; default `workshop-chat` |
+| `--prefix` | Your `lab-` prefix from section 3 |
 
 ```bash
 python scripts/selfstudy.py configure --project-id "YOUR-NEW-NC-PROJECT-ARM-ID" --endpoint "YOUR-NEW-NC-PROJECT-ENDPOINT" --deployment "workshop-chat" --expected-model gpt-6-sol --prefix "lab-yourname-nc-0928"
 ```
 
-**Only when resuming an intact, unchanged project:** after freshly verifying that `workshop-compare` contains Sol, its alias may be reused with the same project, endpoint, and prefix. **This exception is not the new NC rebuild.** Do not adopt a deleted Sweden project's aliases or archived state into the new project:
+<details>
+<summary>Existing environments only: use a differently named Sol deployment</summary>
+
+After verifying `workshop-compare` really contains Sol in the same intact project, use its alias with the same project, endpoint, and prefix. Do not also run the default fresh-environment command:
 
 ```bash
 python scripts/selfstudy.py configure --project-id "YOUR-PROJECT-ARM-ID" --endpoint "YOUR-PROJECT-ENDPOINT" --deployment workshop-compare --expected-model gpt-6-sol --prefix "YOUR-UNCHANGED-LAB-PREFIX"
 ```
 
 Keep earlier result labels, files, and agent versions immutable. Use new names/labels for changed model or evaluation conditions. See [existing deployment aliases](model-selection.md#reuse-existing-deployments-without-changing-them).
+
+</details>
 
 This helper **only reads subscription, project, account, and deployment metadata** through Azure CLI. After verifying ID/endpoint consistency and deployment state, it records:
 
@@ -219,9 +267,7 @@ Check the subscription, tenant, and deployment. `doctor --cloud` checks authenti
 
 **Pass the first real Sol request in the next chapter before creating agents.** Deployment status `Succeeded` is not proof that every tool/API path works. Preserve original errors and use [Troubleshooting](troubleshooting.md) when needed.
 
-Before adding dependent resources, also perform [04's bare MAF model → local function probes](04-tools.md#1-run-a-maf-agent) early. A regional Function table and local Python execution are different evidence layers; record both actual requests separately.
-
-For region-specific checks that need traces from their first requests, **optionally prepare [09's logging resources and connection](09-operations.md#1-create-and-connect-logging-resources) early**. Logging resources were created early in this NC run for that purpose. The normal course still introduces logging in 09; do not assume responses from before connection were backfilled.
+**A first-time learner does not need to jump ahead.** MAF is introduced in 04 and logging in 09. Only for a separate investigation requiring traces from its first request, prepare [09's logging connection](09-operations.md#1-create-and-connect-logging-resources) early. Earlier responses are not collected retroactively.
 
 ## 9. Generate role-assignment commands when needed
 

@@ -1,6 +1,8 @@
 import importlib.util
+import shlex
 import unittest
 
+from foundry_workshop.cli import parser
 from foundry_workshop.contracts import read_json
 from foundry_workshop.profiles import RuntimeProfile, packaged_profile
 
@@ -15,6 +17,25 @@ def load_script(name):
 
 
 class PackagingTests(unittest.TestCase):
+    def test_bilingual_intro_guides_serve_the_matching_workflow_profile(self):
+        for language, relative in (
+            ("ko", "docs/08-hosted.md"),
+            ("en", "docs/en/08-hosted.md"),
+        ):
+            profiles = []
+            for line in (ROOT / relative).read_text(encoding="utf-8").splitlines():
+                if not line.startswith("python scripts/workshop.py "):
+                    continue
+                arguments = shlex.split(line)[2:]
+                if "serve" not in arguments:
+                    continue
+                args = parser().parse_args(arguments)
+                profiles.append(RuntimeProfile(**{
+                    field: getattr(args, field) for field in RuntimeProfile.__dataclass_fields__
+                }))
+            with self.subTest(guide=relative):
+                self.assertIn(RuntimeProfile(kind="workflow", language=language), profiles)
+
     def test_workflow_profiles_are_immutable_and_packaged_without_judge_data(self):
         with workspace() as root:
             builder = load_script("package_hosted")

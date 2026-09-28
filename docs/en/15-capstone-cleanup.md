@@ -6,9 +6,13 @@
 
 Even when stopping early, **perform the stopping, inventory, and retention decisions below now**. Quality failures are not a reason to leave chargeable resources unattended. Deletion is a separate choice.
 
-**Current repository-rerun boundary:** only old NC group `rg-mf15-jw-nc-0928` was deleted; new `rg-mflabs15-jw-0928` is retained. **New Task Adherence returned six rows/five pass/one fail with inconsistent severity/flags, so final acceptance is held and no new holdout was unlocked.** All 13 observed Hosted sessions are idle; timer/continuous/Insights schedules are disabled/paused. Eight remote evidence files were archived. See the [new results and retention costs](validation-report.md).
+| Your current state | Where to go |
+|---|---|
+| Stopping early, or a prerequisite gate failed/is blocked | **Keep holdout closed; go to [4: stop](#4-stop-running-work-first), then 5–7 for inventory/costs** |
+| Frozen candidate and all prerequisite gates satisfied | Section 1 → **one chosen target** in 2 → sections 3–7 |
+| Retaining resources for reuse | Retention mode below plus 4, 5, and 7; skip deletion commands and section 6 |
 
-Sweden and earlier NC 5/5, four-known-case, and Optimizer-candidate statements below describe historical runs. They do not grant new acceptance or make previously used holdout cases unseen. **Finishing the lab execution and passing final quality acceptance are different states.**
+**Reference validation still holds final acceptance.** The new managed Task Adherence result has six rows/five pass/one fail with inconsistent severity/flags, so no new holdout was opened. The [report's results and lifecycle history](validation-report.md) are not your completion record or deletion instructions. **Execution and final quality acceptance are separate.**
 
 ## Retention mode
 
@@ -16,7 +20,7 @@ If you want to reuse the lab or preserve a validation environment, **do not exec
 
 - Skip `--confirm-delete`, all Memory `forget`/`cleanup`, other cleanup operations, `azd down`, and resource-group deletion.
 - Create File Search in 03 with `--retain` so the vector store has no automatically configured expiry.
-- In 11, explicitly select a new language-specific Memory store and use **`memory create --ttl-seconds 0 --confirm-create`** for no automatic item expiry. Do not delete or modify the existing one-hour store.
+- In 11, explicitly select a new language-specific Memory store and use **`memory create --ttl-seconds 0 --confirm-create`** for no automatic item expiry. If older stores exist, do not silently change their TTLs.
 - Stop local servers and leave Routines/recurring evaluation **disabled/paused**. **Stop only** unnecessary Hosted compute sessions; do not delete agents, versions, or persistent volumes.
 - Privately retain `.env`, `.selfstudy/azure.json`, actual IDs, and `outputs/` ownership records in an approved location. Do not upload them to a public repository.
 - Record remaining Search Basic, file/volume, and logging costs and the next review date. `lifecycle=retain` is an administrative tag, not a deletion lock or a budget cap.
@@ -40,21 +44,15 @@ Before unlocking holdout, verify:
 - Record chapter 13's **managed run and full row/version/direction audit**, explicitly retaining the Prohibited Actions limitation. Judge a new Task Adherence-only result only within that native scope; filtered old rows or custom `policy-lab` are not substitutes.
 - You did not lower thresholds after seeing failures or edit raw results.
 
-**Historical Sweden evidence:** preserve its Hosted IQ v1/v2 pair, language calibrations, earlier groundedness 5/6, and rejected comparison under their original conditions. They do not complete NC execution, evaluation, or managed AI red teaming.
-
-**The old Sweden v3 canonical-six/custom-eight passes** are historical complementary evidence. Its native ASR remained unvalidated, and official regional descriptions conflict; unsupported region is not a proven cause. Custom results or a region change cannot replace actual NC managed verification, metric-direction checks, or holdout.
-
-Preserve **the old Sweden Optimizer/audit and NC initialization failure**. Chapter 12's follow-up NC job succeeded by explicitly binding the original evaluator versions and required `pass_threshold: 4`; baseline and candidate each passed their six-row source-reference audits. Both scored 1.0, and neither was promoted. This new-job evidence does not overwrite a failure or replace holdout/production approval.
-
 If not satisfied, **do not open holdout; record incomplete acceptance**. If unavailable features prevented the Hosted matrix, you may instead select 07's SDK candidate as a separate final target. Do not call that Hosted acceptance.
 
 **Use holdout for only one chosen final target in an experiment.** Cases already seen in an SDK run cannot later be called unseen Hosted test data.
 
 ## 2. Run final acceptance
 
-The NC run `nc-known-final-ko` used four previously seen cases as **known-case regression** on the same frozen v2, passing 4/4, policy, and trace gates. It is not fresh unseen holdout or production approval; its original `split: holdout` record is not rewritten.
+If you already saw these four cases, another run is **known-case regression**, not a new unseen test or production approval, even if its recorded split is `holdout`.
 
-Only after all gates in 12 pass, run the block matching your **chosen final target**. Never run the IQ block against a local matrix or count local results as IQ validation.
+Only after **all section 1 prerequisites pass**, run the block matching your **chosen final target**. `--unlock-holdout` is not permission to ignore unfinished evaluation. Never run the IQ block against a local matrix or count local results as IQ validation.
 
 ### IQ Hosted target
 
@@ -62,7 +60,7 @@ Only after all gates in 12 pass, run the block matching your **chosen final targ
 python scripts/workshop.py --language en benchmark collect --split holdout --label wf-final-en --candidate wf-candidate-en --unlock-holdout --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-final-en --reference wf-baseline-en --confirm-cost
 python scripts/workshop.py --language en benchmark monitor --label wf-final-en
-python scripts/workshop.py --language en benchmark verify --policy --baseline wf-baseline-en --candidate wf-candidate-en --holdout wf-final-en --require-native --require-traces --calibration policy-calibration-en
+python scripts/workshop.py --language en benchmark verify --policy --baseline wf-baseline-en --candidate wf-candidate-en --holdout wf-final-en --require-native --require-native-pass --require-traces --calibration policy-calibration-en
 ```
 
 ### Local-retrieval Hosted target
@@ -73,12 +71,14 @@ For 12's separately named `matrix-local-en`, keep the frozen local profile throu
 python scripts/workshop.py --language en benchmark collect --split holdout --label wf-local-final-en --candidate wf-local-candidate-en --unlock-holdout --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-local-final-en --reference wf-local-baseline-en --confirm-cost
 python scripts/workshop.py --language en benchmark monitor --label wf-local-final-en
-python scripts/workshop.py --language en benchmark verify --policy --baseline wf-local-baseline-en --candidate wf-local-candidate-en --holdout wf-local-final-en --require-native --require-traces --calibration policy-calibration-local-en
+python scripts/workshop.py --language en benchmark verify --policy --baseline wf-local-baseline-en --candidate wf-local-candidate-en --holdout wf-local-final-en --require-native --require-native-pass --require-traces --calibration policy-calibration-local-en
 ```
 
 `benchmark verify` checks the stored run contracts and exact versions; it does **not** accept `--retrieval`. Verify the selected manifests contain `retrieval: local` and retain their original hashes. The explicit local collection and local-only labels determine which profile is verified; do not override, edit, or substitute IQ results.
 
-For either Hosted path, inspect every row and error after each step. This guide's single Sol target requires **four core holdout rows**. Read `gate_passed`, native quality, recommendations, and `deployment_approved: false` together. A local Hosted pass does not complete Search/IQ/Hybrid or Toolbox/OpenAPI work.
+For either Hosted path, inspect every row and error after each step. This guide's single Sol target requires **four core holdout rows**. Check `gate_passed`, `native_quality_passed`, `native_quality_required: true`, and `deployment_approved: false` together. A local Hosted pass does not complete Search/IQ/Hybrid or Toolbox/OpenAPI work.
+
+**`--require-native` requires Foundry policy-evaluation evidence; `--require-native-pass` also requires candidate/holdout scores to pass.** They are not interchangeable. This command does not verify chapter 13's separate managed red-team audit; check that explicitly in section 1.
 
 ### SDK-only target
 
@@ -87,7 +87,7 @@ For either Hosted path, inspect every row and error after each step. This guide'
 ```bash
 python scripts/workshop.py --language en collect --split holdout --label final-holdout-en --prompt v2 --retrieval local --candidate candidate-en --unlock-holdout
 python scripts/workshop.py --language en evaluate --label final-holdout-en
-python scripts/workshop.py --language en cloud-evaluate --policy --label final-holdout-en --confirm-cost --timeout 900
+python scripts/workshop.py --language en cloud-evaluate --policy --label final-holdout-en --reference baseline-en --confirm-cost --timeout 900
 python scripts/workshop.py --language en accept --candidate candidate-en --holdout final-holdout-en
 ```
 
@@ -113,7 +113,7 @@ Learning completion and passing the small lab quality gate are different states.
 
 1. Stop your local `serve`/recovery servers with `Ctrl+C` in their terminals.
 2. Verify Routines and recurring evaluations are **disabled/paused**.
-3. If you ran a Hosted matrix, stop sessions for labels that actually exist. For the IQ path:
+3. If you ran a Hosted matrix, stop **only labels that actually exist**. Skip the final-label line if holdout was not run. For the IQ path:
 
 ```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-baseline-en

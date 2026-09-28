@@ -4,7 +4,7 @@
 
 **시작 조건:** 06의 원래 Search index/조회, 00의 프로젝트 관리 ID, 08에서 설치한 azd Foundry 확장. 새 서비스를 미리 제공받을 필요는 없습니다.
 
-**현재 NC 상태:** 한국어 Toolbox v1과 Skill을 연결한 v3에서 실제 도구/모델 호출을 확인했고 v3의 `skill_load_verified`도 true입니다. OpenAPI와 독립 Hosted Toolbox 호출도 별도 NC 기록으로 보관합니다. 아래에서 **Sweden**으로 표시한 버전/갱신 이력은 과거 기록이며, 숫자가 같다는 이유로 새 자산의 소유권이나 실행을 추정하지 않습니다.
+**순서:** Search 연결 → 일반 Toolbox → 도구 발견 → Skill 업로드·연결 → OpenAPI → Hosted Toolbox입니다. **Skill 버전, Toolbox 버전, Hosted agent 버전은 서로 다른 값**입니다. 매번 명령이 반환한 버전을 기록합니다.
 
 ## 1. 프로젝트 → Search 권한
 
@@ -21,10 +21,10 @@ Search Service Contributor는 읽기 전용 역할이 아닙니다. 도구가 �
 
 ## 2. keyless 프로젝트 연결 직접 생성
 
-실제 Search/프로젝트 Endpoint와 본인의 고유 연결 이름으로 바꿉니다.
+실제 Search/프로젝트 Endpoint와 본인의 고유 연결 이름으로 바꿉니다. `--cwd`에는 **08의 `prepare-hosted`가 출력한 폴더**를 넣어 같은 프로젝트의 ARM 설정을 사용합니다. 저장소 루트나 `.build` 패키지 경로가 아닙니다.
 
 ```bash
-azd ai connection create "내-prefix-search" --kind cognitive-search --target "실제-Search-Endpoint" --auth-type project-managed-identity --audience https://search.azure.com --project-endpoint "실제-프로젝트-Endpoint"
+azd ai connection create "내-prefix-search" --kind cognitive-search --target "실제-Search-Endpoint" --auth-type project-managed-identity --audience https://search.azure.com --project-endpoint "실제-프로젝트-Endpoint" --cwd "실제-08-Hosted-절대경로"
 python scripts/selfstudy.py set TOOLBOX_SEARCH_CONNECTION_NAME "내-prefix-search"
 ```
 
@@ -55,11 +55,9 @@ python scripts/workshop.py toolbox ask --version "실제-버전" --label toolbox
 
 목록 조회가 성공해도 Search의 downstream 권한이 맞는 것은 아닙니다. query가 403이면 원래 실패와 실제 호출 ID를 확인하고 그 ID의 Search 역할만 수정합니다.
 
-**역사적 Sweden 확인 범위:** `ProjectManagedIdentity`를 사용한 Toolbox v1의 probe/query/ask가 통과했습니다. 새 NC에서 같은 버전 번호만 보고 성공이나 소유권을 추정하지 않습니다. 새 요청에는 새 label을 사용합니다.
-
 ## 4. Tool Search와 도구 고정
 
-일반 v1의 성공은 Tool Search·Skill의 실행 증거가 아닙니다. **이전 Sweden에서** v2 목록의 `tool_search`, `call_tool`, `policy_search`를 확인했습니다. 새 NC 목록·실행은 아직 확인하지 않았습니다.
+일반 Toolbox의 성공은 Tool Search·Skill의 실행 증거가 아닙니다. 이번에는 새 Toolbox 버전을 만들어 추가 기능을 따로 확인합니다.
 
 이 기능의 Preview/제공 상태와 CLI 명령을 먼저 확인합니다.
 
@@ -100,6 +98,11 @@ python scripts/selfstudy.py compare-files outputs/extensions-ko/policy-review/SK
 
 bytes가 다르면 맞추려고 다운로드 파일을 편집하지 않습니다. 실패 원인을 확인합니다.
 
+**처음 만든 Skill의 readback이 일치했다면 바로 6절로 갑니다.** 아래는 이전 Skill의 지침을 실제로 바꿀 때만 사용하는 절차입니다.
+
+<details>
+<summary>기존 지침을 변경할 때만: Skill 새 버전 만들기</summary>
+
 ### 기존 Skill을 새 버전으로 갱신하기
 
 강화된 v2는 **인용 ID뿐 아니라 답변의 사실 자체도 실제 근거로 제한**합니다. 기존 입력 폴더를 수정하지 말고 새 label로 준비한 `SKILL.md`에서 이 지침을 확인합니다.
@@ -115,7 +118,7 @@ azd ai skill update "기존-소유-Skill-이름" --file outputs/skill-update-inp
 azd ai skill show "기존-소유-Skill-이름" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
-**이전 Sweden 갱신**은 버전 2를 반환하고 버전 1을 보존했습니다. 새 NC에서는 숫자 2를 복사하지 말고 실제 새 반환 버전을 사용합니다.
+이전 버전은 보존하며, 버전 번호를 추측하지 말고 실제 새 반환 버전을 사용합니다.
 
 ```bash
 azd ai skill download "기존-소유-Skill-이름" --version "반환된-새-Skill-버전" --output-dir .selfstudy/skill-readback-v2-ko --project-endpoint "실제-프로젝트-Endpoint"
@@ -123,6 +126,8 @@ python scripts/selfstudy.py compare-files outputs/skill-update-inputs-ko/policy-
 ```
 
 이미 사용한 label/readback 폴더는 덮어쓰지 않습니다. 새 Skill 버전은 6절의 **새 Toolbox 버전**에 명시적으로 연결하고 새 호출 결과로 확인합니다. 이전 Toolbox의 고정된 Skill 버전이나 기존 성공 기록이 자동 변경되는 것은 아닙니다.
+
+</details>
 
 ## 6. 정확한 Skill 버전을 연결
 
@@ -134,8 +139,6 @@ python scripts/workshop.py toolbox ask --version "새-Toolbox-version" --label s
 ```
 
 `skill_load_verified`, 실제 호출과 정책 결과를 봅니다. 등록했다는 사실만으로 Skill을 읽었다고 하지 않습니다. 이 예제는 Skill의 임의 스크립트를 실행하지 않습니다.
-
-**역사적 Sweden v3 결과:** `load_skill`, `tool_search`, `call_tool`과 Search 근거·Sol JSON을 확인했습니다. 새 NC에서는 정확한 새 버전·호출·원문을 별도로 대조합니다.
 
 ## 7. OpenAPI도 같은 Search로
 
@@ -153,11 +156,7 @@ python scripts/workshop.py openapi invoke --label openapi-policy --confirm-cost
 
 실제 OpenAPI tool call과 반환 원문을 확인합니다. `lookup_policy`, MCP, OpenAPI, Code Interpreter가 서로 같은 실행이 아니라는 점을 설명합니다.
 
-**이전 Sweden OpenAPI 실행**은 원문 6개와 Sol 답변을 확인했습니다. 이는 NC 검증이 아닙니다. 새 계정 관리 ID와 Toolbox의 새 프로젝트 관리 ID를 구분하고 실제 호출·문서·답변을 다시 확인합니다.
-
 ## 8. 같은 Toolbox를 Hosted로
-
-**이전 Sweden의 원격 실행:** Hosted agent 버전 1을 패키지·실제 호출·session·source hash로 확인했습니다. 이 역사적 증거는 새 NC Hosted, 다른 버전, 또는 관리형 red teaming의 성공을 뜻하지 않습니다.
 
 검증된 **일반 Toolbox 버전**부터 패키징합니다. Skill 포함 버전을 선택했다면 패키징과 serve 양쪽에 `--with-skill`을 추가하고 같은 선택을 유지합니다.
 
@@ -166,16 +165,16 @@ python scripts/workshop.py --script package-toolbox --language ko --version "검
 python scripts/selfstudy.py prepare-hosted --kind toolbox --package "방금-반환한-패키지-경로" --name toolbox-hosted
 ```
 
-08과 같이 생성된 manifest와 실제 프로젝트를 확인합니다. 로컬 터미널 A:
+08과 같이 생성된 manifest와 실제 프로젝트를 확인합니다. 이전 로컬 서버를 중지한 뒤, 루트의 터미널 A에서 실행한 채 둡니다.
 
 ```bash
 python scripts/workshop.py toolbox serve --version "검증한-Toolbox-version"
 ```
 
-터미널 B:
+새 터미널 B도 같은 루트에서 `.venv`를 활성화합니다.
 
 ```bash
-curl --fail http://127.0.0.1:8088/readiness
+python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8088/readiness', timeout=10).read().decode())"
 azd ai agent invoke --cwd "실제-Toolbox-Hosted-절대경로" --local --port 8088 --new-session --new-conversation --timeout 210 "2026년 9월 국내 출장에서 170000원 호텔의 사전 승인 조건은?"
 ```
 

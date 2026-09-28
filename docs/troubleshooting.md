@@ -2,7 +2,25 @@
 
 **현재 장, 마지막 성공, 실제 대상/버전, 오류 원문을 기록합니다.** 비밀번호·토큰·API key·회사 데이터는 기록하거나 공유하지 않습니다.
 
-현재 대상은 **리포 이름 변경 후 만든 새 North Central US 프로젝트**입니다. 새 Task Adherence는 6행·5 pass/1 fail이며 severity/flag 불일치로 최종 인수를 보류했습니다. 이전 NC의 5/5와 Prohibited Actions, Sweden 사례는 과거 기록입니다. [현재 실행 결과](validation-report.md)를 확인하고 원래 실패를 보존합니다.
+처음 시작하거나 다음 날 이어간다면 먼저 [명령 읽기·재개 방법](checkpoints.md)을 확인합니다. 아래에서 **실제로 발생한 증상 하나**를 찾습니다. 검증 보고서의 과거 실패를 모두 재현하거나 해결할 필요는 없습니다.
+
+## 처음 실행할 때 자주 막히는 곳
+
+| 증상 | 먼저 할 일 |
+|---|---|
+| `can't open file ... scripts/workshop.py` | README·scripts가 함께 있는 폴더를 열고 새 터미널에서 실행 |
+| `python`을 찾을 수 없거나 패키지를 못 찾음 | 00의 OS별 설치와 `.venv` 활성화 확인. PowerShell 정책을 낮추지 않음 |
+| `먼저 Lab 00의 configure` | `values`는 첫 설치 명령이 아님. 00의 프로젝트·배포·configure까지 완료 |
+| `YOUR-...`/`실제-...`를 거부함 | 자리표시자를 앞 단계의 실제 값으로 변경. Endpoint와 ARM ID 구분 |
+| 서버 명령 뒤 입력 프롬프트가 안 돌아옴 | 정상 대기일 수 있음. A를 둔 채 같은 환경의 터미널 B에서 상태 확인 |
+| Windows에서 `No module named 'fcntl'` | 05의 로컬 SDK 실험만 macOS/Linux 필요. 승인된 WSL/Linux 사용 또는 해당 절 미실행 기록 |
+| CI preflight가 식별자 누락을 보고함 | 14의 **정확한 `foundry-workshop` Environment → Variables**에 먼저 입력. Secret만 등록하면 안 됨 |
+| `azure.yaml` JSON 문법 오류 | 13의 `policies`를 실제 agent 서비스 안에 추가했는지, 쉼표·괄호와 JSON/YAML 혼합 여부 확인 |
+| native 점수 실패인데 예전 인수 결과는 `gate_passed: true` | 15의 `--require-native-pass` 포함 명령으로 저장 증거를 다시 검사. 관리형 red-team 감사는 별도 확인 |
+
+## Azure·모델·도구별 오류
+
+참고 검증의 새 Task Adherence는 6행·5 pass/1 fail이며 severity/flag 불일치로 인수 보류입니다. [현재 보고서](validation-report.md)와 과거 기록을 구분하고 본인의 원래 실패를 보존합니다.
 
 | 증상 | 먼저 확인할 것 | 다음 행동 |
 |---|---|---|

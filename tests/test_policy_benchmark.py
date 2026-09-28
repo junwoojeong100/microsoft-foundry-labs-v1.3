@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+import shlex
 import unittest
 from dataclasses import replace
 from unittest.mock import patch
@@ -246,6 +247,22 @@ class PolicyBenchmarkTests(unittest.TestCase):
             self.assertFalse(report["deployment_approved"])
             self.assertTrue((directory(root, "unopened") / "foundry-policy/release-verification.json").is_file())
             self.assertFalse((directory(root, "unopened") / "release-verification.json").exists())
+
+    def test_learner_acceptance_commands_require_passing_policy_scores(self):
+        for relative in ("docs/15-capstone-cleanup.md", "docs/en/15-capstone-cleanup.md"):
+            commands = [
+                line for line in (ROOT / relative).read_text(encoding="utf-8").splitlines()
+                if line.startswith("python scripts/workshop.py ") and " benchmark verify " in line
+            ]
+            self.assertTrue(commands, f"No Hosted acceptance commands in {relative}")
+            for command in commands:
+                with self.subTest(guide=relative, command=command):
+                    args = parser().parse_args(shlex.split(command)[2:])
+                    self.assertTrue(args.policy)
+                    self.assertTrue(args.require_native)
+                    self.assertTrue(args.require_native_pass)
+                    self.assertTrue(args.require_traces)
+                    self.assertTrue(args.calibration)
 
 
 class PolicyCitationRubricTests(unittest.TestCase):

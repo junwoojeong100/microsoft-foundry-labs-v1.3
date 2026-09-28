@@ -6,21 +6,15 @@
 
 **Prerequisites:** Judge/dev results from 07, Hosted preparation from 08, the same-account OpenAI endpoint, and logging from 09. The IQ matrix also needs working Search/IQ from 06; the explicitly selected local matrix does not. Check costs for each feature. **Do not open holdout in this chapter.**
 
-**Current repository rerun:** new Hosted IQ v1/v2 each passed business 6/6, all three policy criteria 6/6, and traces 6/6; v2 diagnostics passed 8/8. Code/model/corpus stayed fixed, so no pass-rate improvement is claimed. New conversation evaluations and Korean calibration 24/24 were checked. **The new Optimizer returned a 1.0 baseline and zero new full candidates**, distinct from earlier candidate generation. See the [current report](validation-report.md).
-
-The corrected Sol + GA IQ **SDK candidate** scored 6/6 on all three policy criteria with valid reference audits, under the frozen GPT-5.5 catalog and threshold 4. Preserve the original groundedness 5/6 and D01's unsupported team-lead detail. The old/new SDK comparison was rejected because coupled code changes altered `code_hash`; **do not interpret those scores as isolated prompt improvement or Hosted quality**.
+**Order:** conversations (1) → Optimizer (2–3) → actual Hosted comparison (4–9) → separate diagnostics (11). Section 10 is a local-retrieval alternative, not an additional required matrix. Record zero candidates or no improvement honestly. The Hosted comparison uses the bundled `v1`/`v2`, so do not wait for or automatically apply an Optimizer candidate.
 
 This chapter requires **freezing code first, then collecting a fresh Hosted baseline/candidate pair**. Fix model, corpus, language, retrieval, API, judge catalog, threshold, and generation settings; vary only instructions. If coupled code changes during the comparison, start a new matched pair under fresh labels. Do not edit manifest hashes or weaken comparison checks.
-
-**Historical Sweden Hosted evidence:** that Sol-only IQ v1/v2 pair and remote Toolbox had verified results, hashes, and traces. Preserve their original comparison conditions; do not transfer them into NC deployment, smoke, or quality claims.
-
-**Historical Sweden v3 verification:** six canonical and eight custom diagnostic rows passed there. Read the new NC deployment version separately rather than copying “3.” Custom 8/8 did not validate native managed ASR or establish a regional root cause. [13](13-governance.md) records the conflicting official regional descriptions.
 
 If derived policy/Skill inputs have changed prompt/source hashes, prepare them under new input labels too. Editing local v2 files does not automatically update an already deployed agent or Skill.
 
 ## Choose the matrix retrieval mode explicitly
 
-Conversation evaluation and Optimizer can proceed without Search when their own model, permission, and budget prerequisites are met. Before starting a Hosted matrix, choose one mode and keep it fixed through v1, v2, and final acceptance:
+**Default: use the IQ path verified in 06.** Conversation evaluation and Optimizer can proceed without Search when their own prerequisites are met. If IQ is unavailable, explicitly choose the local alternative; do not count it as IQ success. Keep one mode fixed through v1, v2, and final acceptance:
 
 | Setting | IQ path | Explicit local-retrieval path |
 |---|---|---|
@@ -51,16 +45,26 @@ Evaluate the same real conversation at turn and conversation levels. Do not shar
 1. Check supported models in the Foundry agent's **Optimize** screen.
 2. This lab uses **`gpt-5.5` / `2026-04-24` → `workshop-optimizer`** for candidate generation. Check region, quota, and price, then deploy using the approach in 02.
 3. Keep **GPT-6 Sol** as the answer model and **GPT-5.5** as the judge from 07, with a different base model and deployment from the target. Optimizer has a separate support list; do not substitute GPT-6 for its candidate-generation model.
-4. Prepare extension inputs if they do not already exist for this prefix/language:
+4. **Reuse `outputs/policy-inputs-en/` and calibration from 07**, checking their hashes, prefix, and language. Do not include holdout.
 
 ```bash
 python scripts/selfstudy.py model --role optimizer
-python scripts/workshop.py --language en prepare-extensions --policy --label policy-inputs-en
 ```
 
-Inspect the **six dev rows** in `outputs/policy-inputs-en/optimizer-dev.jsonl`, the original-reference envelope in `ground_truth`, `policy-evaluator-definitions.json`, and the manifest. If 07 already prepared the same policy inputs, verify hashes, prefix, and language and reuse them instead of rerunning preparation. Do not overwrite 10's Skill inputs or include holdout.
+Inspect the **six dev rows** in `outputs/policy-inputs-en/optimizer-dev.jsonl`, the original-reference envelope in `ground_truth`, `policy-evaluator-definitions.json`, and the manifest. If missing, first complete [07's preparation/calibration](07-evaluation.md#5-evaluate-policies-with-audited-original-references). Do not rerun preparation against an existing folder.
 
 ## 3. Optimize instructions only
+
+Choose a **new owned name**, separate from 03's agent. Replace `YOUR-PREFIX` with your prefix. If already prepared, reuse its recorded name/version instead of creating it again:
+
+```bash
+python scripts/workshop.py --language en prompt-agent create --name "YOUR-PREFIX-optimize-en" --confirm-create --output outputs/learner-notes-en/12-optimizer-agent.json
+```
+
+Follow the numbered portal steps below by default. Skip the collapsed recovery notes unless using the SDK directly.
+
+<details>
+<summary>Direct SDK use or initialization failures: contract differences and validation history</summary>
 
 **New repository-rerun result:** `opt_bfa363582dff4c048ca6fceaea6ae953` succeeded with the original evaluators/threshold 4, baseline 6/6, and a valid source audit. No new full candidate was returned or promoted. The first inline submission failed because the SDK description and service wire contract differed; a new request using the public mapping constructor and **`train_dataset: {"type": "inline", "items": [...]}`** succeeded. Include only dev `query`/`ground_truth` fields and inspect the actual HTTP body. The candidate and initialization failures below belong to **the earlier NC environment, now deleted**.
 
@@ -89,13 +93,17 @@ Read the SDK poller's ID as **`poller.details["job_id"]`**. `details.job_id` rai
 
 The **historical Sweden Optimizer job** reached baseline 1.0 with zero candidates and passed its reference audit. The NC success above uses a new job and new exports, not deleted Sweden jobs or inherited historical results.
 
-1. Create a **separate owned Prompt Agent** using the same English synthetic policies/instructions as 03. Distinguish it with a name such as `<prefix>-optimize-en`.
+</details>
+
+1. In Foundry **Build → Agents**, open the separate Prompt Agent name/version just created.
 2. Select **Optimize / Create optimization run → Agent**.
 3. Pin the actual target version and answer model.
 4. Optimize **instructions only**, with at most **two candidates**.
-5. Upload the new policy dev inputs and verify the registered `policy_groundedness`, `policy_helpfulness`, and `policy_compliance` definitions/versions and `query`/`response`/`ground_truth` mapping. **Open each evaluator's configuration and set threshold 4**; select a judge deployment different from the target. With the SDK, include the initialization values above. The current Prompt Agent wizard does not remap column names. The original-reference envelope is evaluator input, never target-agent input. Registration alone does not verify runtime mapping or initialization.
+5. Upload section 2's `optimizer-dev.jsonl`. Verify the `policy_groundedness`, `policy_helpfulness`, and `policy_compliance` definitions/versions recorded in 07's calibration catalog and the `query`/`response`/`ground_truth` mapping. **Set threshold 4 and `workshop-judge` in each evaluator's configuration.** The current Prompt Agent wizard does not remap column names. The source envelope is evaluator input, never target-agent input.
 6. Review cost and expected call scope, then submit once.
 7. Read instruction differences, all rows, and evaluation results for the baseline and every candidate.
+
+**Two candidates is not a two-request cap.** Evaluations and minibatches add requests. If cost is unacceptable or the required evaluation settings are unavailable, record Optimizer as not run/blocked and continue with Hosted comparison only where its prerequisites are met. Zero candidates or a tie is not demonstrated improvement.
 
 Export the exact completed native evaluation/run under a **new export label**. This policy audit uses original source echoes; do not assume hidden judge requests were exposed or use the legacy `--require-judge-inputs` option as a substitute for the audit:
 
@@ -109,7 +117,7 @@ Use the original policy dataset actually uploaded and its matching-language cali
 python scripts/audit_optimizer.py --export-directory outputs/evaluation-exports/optimizer-policy-export-en --dataset outputs/policy-inputs-en/optimizer-dev.jsonl --calibration-label policy-calibration-en --language en --output outputs/optimizer-policy-audit-en.json
 ```
 
-This script **audits saved files without contacting Azure**. NC exports `nc-optimizer-initialized-baseline` and `nc-optimizer-initialized-candidate` each passed six-row source-echo, criteria, and reference audits using `outputs/nc-extensions-ko/optimizer-dev.jsonl` and the original `nc-policy-cal-ko` calibration. These are Korean results, not a separate English run. No historical export was modified to bypass a scope/reference/threshold mismatch.
+This script **audits saved files without contacting Azure**. Keep separate exports/audits for the baseline and each actual full candidate. Do not invent a candidate export if none was produced or copy files/scores from [historical runs](validation-report.md).
 
 Inspect `validation_status: valid`, all six matched rows, and the stated evidence scope:
 
@@ -133,17 +141,29 @@ Sections 5–9 use **workflow / sequential / IQ / account-chat / Invocations**, 
 
 The matrix helper accepts **local or IQ retrieval**, but still only **sequential / account-chat / Invocations / v1 or v2**. A local matrix is not IQ validation or an automatic fallback after a failed request.
 
+Here, a **matrix** is the set of runs comparing deployed versions on the same dev cases. Check `AZURE_OPENAI_ENDPOINT` with `selfstudy.py status`. If absent, copy the same account's Azure OpenAI **service-root endpoint** from Foundry and register it below. This is not the project endpoint; omit `/openai/v1` if shown. The local-retrieval matrix needs it too:
+
+```bash
+python scripts/selfstudy.py status
+python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "YOUR-SAME-ACCOUNT-OPENAI-ROOT-URL"
+```
+
 This Hosted instruction comparison uses **one Sol target in the new NC project**. Optional Luna comparison remains a separate matched `account-responses` experiment in 02/07. Select the actual fresh-environment Sol alias:
 
 ```bash
 python scripts/selfstudy.py models primary=workshop-chat
 ```
 
-Only in an **intact same-project resume**, after freshly verifying Sol actually exists as `workshop-compare`, may you use this alternative. Do not infer that an old Sweden alias exists in the new NC project:
+<details>
+<summary>Existing environments only: a different verified Sol alias</summary>
+
+Use the following **instead** only after verifying `workshop-compare` actually contains Sol in the same intact project:
 
 ```bash
 python scripts/selfstudy.py models primary=workshop-compare
 ```
+
+</details>
 
 Choose only the command matching your actual environment. Do not put the GPT-5.5 judge (`workshop-judge`, or the explicitly reused `workshop-optimizer`) in the target map. Keep it fixed across both cohorts. Different base models do not eliminate all bias. Changed model, judge, code, or retrieval conditions require a fresh pair of labels, not edits to old manifests.
 
@@ -215,6 +235,12 @@ Verify the actual new version and its runtime permissions, then update the bindi
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "ACTUAL-MATRIX-V2-FOLDER" --service "YOUR-PREFIX-matrix-en"
+python scripts/workshop.py --language en benchmark smoke --label matrix-v2-smoke-en --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --case D01 --model-key primary --confirm-cost
+```
+
+Collect the full dev set only after that exact version's smoke succeeds:
+
+```bash
 python scripts/workshop.py --language en benchmark collect --label wf-candidate-en --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 python scripts/workshop.py --language en benchmark compare --baseline wf-baseline-en --candidate wf-candidate-en
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-candidate-en --reference wf-baseline-en --confirm-cost
@@ -226,11 +252,13 @@ Keep model map, code, language, data, retrieval, concurrency, judge, reasoning, 
 
 ## 8. Calibrate the judge and record regressions
 
+**If 07 already completed matching calibration, reuse it; do not rerun this command.** Check language, judge, and criteria/catalog hashes. Run the block only if the label is absent; changed conditions require a new label and matching evaluation settings.
+
 ```bash
 python scripts/workshop.py --language en calibrate-judge --policy --label policy-calibration-en --confirm-cost --timeout 900
 ```
 
-If 07 already completed this calibration, reuse it only after checking matching language, judge, and criteria/catalog hashes; do not rerun the command against an existing label. Use a fresh label if conditions changed. Read **24 expected judgments across eight controls and three criteria**. Negative controls should score low; 24 high scores are not the goal. This small calibration does not itself pass dev or matrix quality.
+Read **24 expected judgments across eight controls and three criteria**. Negative controls should score low; 24 high scores are not the goal. This small calibration does not itself pass dev or matrix quality.
 
 If a genuine dev failure exists, record only that reviewed row:
 
@@ -249,11 +277,16 @@ python scripts/workshop.py --language en benchmark stop-session --label wf-candi
 
 Keep raw results, exact versions, and business/native/trace/calibration status. **Leave holdout for 15.** It is acceptable to record incomplete acceptance rather than relabel a failed candidate as passing. Stopping compute does not delete retained agents or volumes.
 
+For separate smoke sessions, use [08's session listing/stopping](08-hosted.md#6-invoke-the-exact-remote-version). Stop sessions even when collection or evaluation fails.
+
+<details>
+<summary>Alternative only: complete local-retrieval matrix instead of sections 5–9</summary>
+
 ## 10. Explicit local-retrieval matrix
 
 Choose this path deliberately as a separate local-retrieval experiment. It uses **workflow / sequential / local / account-chat / Invocations** and the bundled English policies. Record the actual Search, IQ, Hybrid, Toolbox, and OpenAPI status separately; this matrix neither proves nor replaces those exercises.
 
-Use the model map from section 4, the same-account OpenAI endpoint from 01, and the judge/logging prerequisites. **Skip section 5's `WORKSHOP_IQ_RERANKER_THRESHOLD` setting**; local retrieval does not use it. Keep **`--retrieval local` in every package, plan, smoke, and collection command below**. Never change an existing IQ run's manifest or rename its results to local.
+Use the model map and same-account OpenAI endpoint from section 4 and the judge/logging prerequisites. **Skip section 5's `WORKSHOP_IQ_RERANKER_THRESHOLD` setting**; local retrieval does not use it. Keep **`--retrieval local` in every package, plan, smoke, and collection command below**. Never change an existing IQ run's manifest or rename its results to local.
 
 ### Local baseline: v1
 
@@ -264,7 +297,7 @@ azd deploy "YOUR-PREFIX-matrix-local-en" --cwd "ACTUAL-LOCAL-MATRIX-V1-ABSOLUTE-
 azd ai agent show "YOUR-PREFIX-matrix-local-en" --cwd "ACTUAL-LOCAL-MATRIX-V1-ABSOLUTE-PATH" --output json
 ```
 
-Use the service/folder actually printed by preparation. Inspect the new active version and grant only the required roles to its actual runtime identity as in 08. A successful earlier Responses agent is not proof this Invocations version works.
+Use the service/folder actually printed by preparation. Inspect the new active version and its `instance_identity.principal_id`. Besides 08's project access, **account-chat needs Cognitive Services OpenAI User on the parent Foundry account**, even without Search. The default role helper does not include that extra account-API role. A successful earlier Responses agent is not proof this version works.
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "ACTUAL-LOCAL-MATRIX-V1-FOLDER" --service "YOUR-PREFIX-matrix-local-en"
@@ -326,6 +359,8 @@ python scripts/workshop.py --language en benchmark stop-session --label wf-local
 
 Keep agents, versions, volumes, and evidence in retention mode. Leave holdout locked until all required dev gates pass, then use **only [15's local Hosted acceptance path](15-capstone-cleanup.md#local-retrieval-hosted-target)** if this is your chosen final target. Stored-result `evaluate`, `compare`, `monitor`, and `verify` commands use the exact local run labels; they do not accept a new `--retrieval` override or perform a replacement collection.
 
+</details>
+
 ## 11. Separate eight-case policy-lab diagnostics
 
 This is a **complementary eight-case synthetic diagnostic suite**. Chapter 13's **managed AI red teaming is the primary verification target**; this suite cannot replace or prove that managed run. It also does not replace core dev or holdout and never uses `--unlock-holdout`. Use the exact new NC deployment/profile after smoke and fresh labels such as `nc-policy-lab-en`, replacing every linked reference consistently.
@@ -348,10 +383,12 @@ python scripts/workshop.py --language en benchmark policy-report --label policy-
 
 `policy-report` reads stored results without new inference. Review requested, returned, missing, and error counts, all three scores/reasons, source/reference audits, and matching policy calibration. `policy_compliance` is **higher-is-safer**; a score below 4 is the violation direction. Do not reverse that interpretation or rewrite existing provider `attack_success` flags. Unscored/error rows stay in the denominator.
 
-**Current NC diagnostic verification:** actual Hosted IQ **deployment v2** passed canonical dev 6/6 and the separate Korean custom diagnostic 8/8, with all three policy criteria and traces verified. The explicit diagnostic recorded 0/8 policy violations. Sweden v3 remains archived history; neither custom result proves or replaces managed red-team execution, completion, or ASR.
-
 Suite version 2 permits additional support only within **explicit `allowed_citations` for PL05, PL06, and PL07 in both languages**. Lists must contain known, unique IDs and include every mandatory reference; answers missing required references or adding unrelated ones remain rejected. PL06's procedure-only question returned **`limit_krw: null`** under corrected v2 instructions. Frozen version-1 results remain readable unchanged, including the earlier extra-citation failures and `150000` response, scores, sources, and labels.
 
-These eight cases are neither a new holdout nor a managed red-team scan. Stop new diagnostic sessions by their actual labels and [archive evidence before expiry](advanced/session-files.md). Read previous Sweden results only as archived history.
+These eight cases are neither a new holdout nor a managed red-team scan. Stop the session using **the one label you actually ran**, then [archive evidence before expiry](advanced/session-files.md). For the local path, replace the label below with `policy-lab-local-en`:
+
+```bash
+python scripts/workshop.py --language en benchmark stop-session --label policy-lab-iq-en
+```
 
 **Next → [13. Lab safety, managed AI red teaming, and Control Plane](13-governance.md)**

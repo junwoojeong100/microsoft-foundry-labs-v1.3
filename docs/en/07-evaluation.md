@@ -8,13 +8,7 @@
 
 Labels below are fresh-lab examples. If results already exist, choose new baseline/candidate labels and use them consistently in every later reference. Never overwrite files or scores from earlier model, judge, or code conditions.
 
-**Current rerun:** the new Korean SDK baseline/candidate each passed dev 6/6 and all three policy criteria, with calibration 24/24. A separate matched account-responses Sol/Luna comparison also passed 6/6 each. **Earlier bilingual NC IQ/calibration and the original English 5/6 are historical.** Hosted and managed red teaming are separate targets in 12/13. Use new labels and verify your own sources, judge, and complete results. See the [new report](validation-report.md).
-
-**Historical Sweden Central snapshot:** the Sol + GA IQ SDK candidate passed all three policy criteria 6/6 with valid reference audits; Korean and English calibrations each matched 24/24. Preserve the earlier groundedness 5/6 and D01's unsupported team-lead detail.
-
-**Comparison boundary:** The old/new r2 SDK pair was correctly rejected because coupled code changes altered `code_hash`; do not retroactively call it prompt-only improvement. A **new Hosted IQ v1/v2 pair after code/corpus freeze** independently verified six dev rows per version, 6/6 on all three policy criteria, valid reference audits, and 6/6 actual traces; `benchmark compare` was allowed. Both runs have the same passing counts, so no dev pass-rate improvement is demonstrated. Keep this Hosted evidence, the eight-case diagnostics, and final acceptance distinct.
-
-Subsequent **Sweden Hosted IQ deployment version 3** verified six canonical and eight diagnostic rows. Those historical custom diagnostics do not verify the new NC run or 13's managed AI red-teaming service, and are not new holdout evidence.
+**Order:** collect/check baseline → collect/compare candidate → prepare judge → calibrate and evaluate policies. First compare the bundled `v1`/`v2` instructions; **do not change code or source documents between runs**. Historical scores and failures are in the separate [validation report](validation-report.md).
 
 ## 1. Keep dev and holdout separate
 
@@ -37,6 +31,8 @@ python scripts/workshop.py --language en evaluate --label baseline-en
 Open `manifest.json`, `responses.jsonl`, and `business-evaluation.json` under `outputs/baseline-en/`.
 
 Read `total`, `passed`, `errors`, `business_gate_passed`, and **every check for all six cases**. This is deterministic business validation, not an LLM judge.
+
+Exit code 1 with `business_gate_passed: false` can mean the evaluator **found an incorrect answer**, provided all six responses exist without request errors. Analyze that failure before comparing the candidate. Missing responses or authentication/API errors require resolving the cause, not blindly collecting again.
 
 | Case | Check |
 |---|---|
@@ -81,11 +77,16 @@ A file still named `v2` is not the same frozen instruction if its bytes/hash cha
 python scripts/selfstudy.py model --role judge --deployment workshop-judge
 ```
 
-**Intact same-project resume only:** after freshly verifying that `workshop-optimizer` really is GPT-5.5 / 2026-04-24, this alias may be reused. For the new NC project, prepare `workshop-judge`; do not adopt an archived Sweden deployment:
+<details>
+<summary>Existing environments only: reuse an existing GPT-5.5 judge alias</summary>
+
+After verifying `workshop-optimizer` is GPT-5.5 / 2026-04-24 in the same intact project, use the following **instead**. The fresh-environment default is `workshop-judge`:
 
 ```bash
 python scripts/selfstudy.py model --role judge --deployment workshop-optimizer
 ```
+
+</details>
 
 If an earlier `workshop-judge` contains Sol, leave it unchanged. Do not put the judge in the target model map, weaken separation checks, or infer the base model from an alias. Keep the judge fixed across comparable runs and preserve previous evaluation metadata.
 

@@ -6,7 +6,7 @@
 
 **Prerequisites:** Owner access and Foundry configuration from 00. You create Search and any required models here. **Search Basic—and any explicitly selected Standard tier—incurs ongoing service charges even without requests.**
 
-**Current rerun scope:** the new group verified Korean keyword, GA IQ, actual 3072-dimensional Hybrid, and model-based IQ Chat. **In the earlier NC bilingual run**, English initially scored 5/6 because retrieval omitted `SCOPE-01`; threshold 0 produced 6/6 under a new label. Those results remain historical, not a new English run. A retrieval-setting change is not prompt-only improvement. See the [new execution scope](validation-report.md).
+**Order:** prepare Search, permissions, and billing in 1–3, then verify keyword (4), IQ (5), Hybrid (6), and IQ Chat (7) separately. **Restore the original index after section 6.** These are not interchangeable features or a single model.
 
 ## 1. Create a Search service
 
@@ -19,19 +19,16 @@
 
 <a id="if-regional-capacity-or-quota-blocks-creation"></a>
 
+<details>
+<summary>Only if creation is blocked: regional capacity and subscription quota</summary>
+
 ### Current setup and historical capacity errors
 
-**Historical Sweden Central results:** the previous Basic Search used one replica/partition, disabled key authentication, a system-assigned identity, and a Free semantic plan. Six-document keyword retrieval, GA IQ with a Sol answer, and Hybrid queries using actual 3072-dimensional embeddings succeeded there. Those assets and results are not NC assets or evidence.
+For `ResourcesForSkuUnavailable`, inspect capacity; for `ServiceQuotaExceeded`, inspect subscription quota. Preserve the actual error and retry only in a bounded way after the relevant condition changes. More Owner/RBAC roles, repeated Create clicks, arbitrary group deletion, or automatic tier escalation are not solutions.
 
-**Historical Sweden IQ Chat** had actual `gpt-5.6-luna` planning/synthesis activities; its OpenAPI and Toolbox results are archived history too. [10](10-toolbox-skills.md) distinguishes their identities and versions. Do not copy them into NC or managed AI red-team claims.
+Record Search-dependent work as blocked until Search is ready. File Search and local retrieval are different features. See [independent steps you can still take](checkpoints.md#if-a-stage-is-blocked), the explicitly selected [local Hosted matrix](12-improvement.md#10-explicit-local-retrieval-matrix), and [historical regional validation](validation-report.md).
 
-**Historical English Sweden runs** were independently verified in a separate ownership workspace. Their Search/GA IQ/Hybrid/IQ Chat and six-case policy passes are not evidence of an English NC run. Keep project, language, owned names, hashes, and labels separate.
-
-Earlier Basic/S1 `ResourcesForSkuUnavailable` and S2 `ServiceQuotaExceeded` (`0 out of 0`) errors reflected capacity/quota at that time, not a permanent current blocker. For a new failure, inspect current quota/availability and preserve the original error. Retry only in a bounded way after the relevant condition changes.
-
-More Owner/RBAC roles or repeated Create clicks do not solve capacity/quota. Keep the required region and retention choices; do not arbitrarily delete other groups or automatically escalate tiers. Record the actual chosen SKU/configuration and ongoing cost.
-
-Pause dependent steps only if your Search service is not actually ready. File Search and local retrieval are separate features, not evidence of Azure Search success. An explicitly selected [local Hosted matrix](12-improvement.md#10-explicit-local-retrieval-matrix) remains a different retrieval profile, not IQ validation.
+</details>
 
 ## 2. Configure token authentication and managed identity
 
@@ -64,7 +61,7 @@ python scripts/workshop.py --language en seed-search --confirm-create
 python scripts/workshop.py --language en retrieve --provider search --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-search.json
 ```
 
-`seed-search` creates **your prefix's index and synthetic documents**, not a new service. Keep the actual index name and `outputs/azure-objects.json`.
+`seed-search` creates **your prefix's index and synthetic documents**, not a new service. Record its actual name as **“06 original index”** in your workbook and retain `outputs/azure-objects.json`. Restore this name after section 6.
 
 Check `provider: azure-ai-search-keyword`, the actual index/endpoint, and source IDs and text. Local retrieval is neither semantic search nor an Azure service call.
 

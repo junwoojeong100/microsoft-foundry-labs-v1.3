@@ -4,7 +4,7 @@
 
 **시작 조건:** 00의 Owner·Foundry 설정. 이 장에서 Search와 필요 모델을 직접 만듭니다. **Search Basic은 요청하지 않아도 서비스 비용이 발생**합니다.
 
-**현재 재실행 범위:** 새 그룹에서 한국어 keyword·GA IQ·실제 3072차원 embedding/Hybrid·모델 기반 IQ Chat을 확인했습니다. **이전 NC의 별도 한·영 검증**에서는 영어 첫 dev가 `SCOPE-01` 누락으로 5/6이었고, 검색 문턱 0을 명시한 새 label에서 6/6이었습니다. 그 결과를 새 영어 실행으로 옮기지 않으며 검색 변경을 지침만의 개선으로 부르지 않습니다. [새 실행 범위](validation-report.md).
+**순서:** 1~3절에서 Search 서비스·권한·과금을 준비한 뒤, 4절 keyword → 5절 IQ → 6절 Hybrid → 7절 IQ Chat을 각각 확인합니다. **6절 뒤에는 원래 index로 복귀**합니다. 모든 방식이 같은 기능이거나 같은 모델을 사용하는 것은 아닙니다.
 
 ## 1. Search 서비스 직접 생성
 
@@ -15,15 +15,14 @@
 5. 가격을 확인한 뒤 생성하고 완료 상태를 기다립니다.
 6. Overview의 **URL**, JSON View의 **전체 리소스 ID**, 실제 SKU·replica·partition과 지속 비용을 기록합니다.
 
-**역사적 Sweden Central 결과:** 이전 Basic Search는 replica/partition 1개씩, key 인증 비활성화, system-assigned identity, Free semantic plan을 사용했습니다. 6개 문서의 keyword 조회, GA IQ와 Sol 답변, 실제 3072차원 embedding의 Hybrid 조회가 성공했습니다. 이 자산과 결과는 NC 자산이 아닙니다.
+<details>
+<summary>생성이 막힐 때만: 리전 용량과 구독 quota</summary>
 
-**이전 Sweden IQ Chat**의 실제 `gpt-5.6-luna` planning/synthesis와 OpenAPI·Toolbox 결과도 보관한 역사적 증거입니다. 자세한 주체·버전은 [10](10-toolbox-skills.md)에서 구분하며, 이를 새 NC나 관리형 AI red-team 결과로 복사하지 않습니다.
+`ResourcesForSkuUnavailable`은 용량, `ServiceQuotaExceeded`는 구독 quota를 먼저 확인합니다. 현재 가용성과 실패 원문을 기록하고 조건이 바뀐 뒤에만 제한적으로 재시도합니다. Owner/RBAC 추가·같은 Create 반복으로 해결하지 않으며 다른 그룹 삭제나 자동 SKU 상향으로 우회하지 않습니다.
 
-**이전 Sweden의 영문 실행**도 별도 소유권 workspace에서 검증했습니다. English Search·GA IQ·Hybrid·IQ Chat과 Sol dev 6문항의 과거 통과는 NC 영문 실행의 증거가 아닙니다. 각 프로젝트·언어의 소유 이름·hash·label을 분리합니다.
+Search가 준비되지 않았다면 Search 의존 단계를 차단으로 남깁니다. File Search와 로컬 검색은 별도 기능입니다. [독립적으로 진행 가능한 단계](checkpoints.md#막힌-단계가-있을-때)와 [지역별 과거 검증](validation-report.md)을 구분합니다.
 
-**과거 오류와 새 재시도:** 앞선 Basic/S1의 `ResourcesForSkuUnavailable`과 S2의 `ServiceQuotaExceeded`(`0 out of 0`)는 당시의 용량·구독 quota 오류입니다. 현재의 영구 차단 상태로 해석하지 않습니다. 새 오류가 나면 현재 quota/가용성과 실패 원문을 확인하고 조건이 바뀐 뒤에만 제한적으로 재시도합니다. Owner/RBAC 추가나 같은 Create 반복으로 해결하지 않으며, 고정 리전과 보존 방침을 유지합니다. 다른 그룹을 임의로 삭제하거나 SKU를 자동으로 올리지 않습니다.
-
-Search가 실제로 준비되지 않은 경우에만 해당 의존 단계를 멈춥니다. File Search와 로컬 검색은 별도 기능이며 Search 성공 증거가 아닙니다.
+</details>
 
 ## 2. 토큰 인증과 관리 ID
 
@@ -54,7 +53,7 @@ python scripts/workshop.py seed-search --confirm-create
 python scripts/workshop.py retrieve --provider search --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-search.json
 ```
 
-`seed-search`는 새 서비스가 아니라 **내 Prefix의 index와 합성 문서**를 생성합니다. 실제 index 이름과 `outputs/azure-objects.json`을 보관합니다.
+`seed-search`는 새 서비스가 아니라 **내 Prefix의 index와 합성 문서**를 생성합니다. 실제 index 이름을 워크북에 **“06 원래 index”**로 적고 `outputs/azure-objects.json`을 보관합니다. 6절 후 이 이름으로 복귀합니다.
 
 `provider: azure-ai-search-keyword`, 실제 index/Endpoint, 원문 ID와 내용을 확인합니다. 로컬 검색은 의미 검색이나 Azure 서비스 호출이 아닙니다.
 

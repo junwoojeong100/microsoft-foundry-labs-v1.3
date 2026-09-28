@@ -4,6 +4,8 @@
 
 **시작 조건:** 04의 MAF 함수 실행, 00의 프로젝트·ARM ID·location, 실제 모델. **배포 권한은 내 구독 Owner로 준비**하며, 런타임 데이터 접근은 별도로 부여합니다.
 
+**순서:** 패키지 만들기 → 별도 배포 폴더 준비 → 로컬 응답 확인 → 원격 배포 → 런타임 역할 → 같은 버전 호출·세션 중지입니다. 패키지 경로, 배포 폴더, 서비스 이름은 서로 다르므로 출력값을 그대로 기록합니다.
+
 ## 1. azd Foundry 명령 준비
 
 ```bash
@@ -47,7 +49,7 @@ python scripts/selfstudy.py prepare-hosted --kind runtime --package "실제-패�
 
 생성된 `azure.yaml`에는 기존 프로젝트 연결과 의도한 Hosted 서비스 하나만 있어야 합니다. 모델 배포 목록을 새로 추가하거나 소스 전체를 서비스로 만들지 않습니다. 별도 Foundry 프로젝트를 또 provision할 필요가 없는 경로입니다.
 
-이 `--kind runtime` 준비 폴더는 실제 프로젝트 ARM ID가 필요한 첫 App Insights CLI 연결에도 사용했습니다. [09의 native logging 조건](09-operations.md#첫-cli-연결과-native-sdk의-실제-요구-조건)을 확인하며, ARM context를 준비했다는 이유만으로 Hosted 배포/추론을 완료로 표시하지 않습니다.
+`prepare-hosted`는 로컬 manifest/azd 환경만 준비하며 아직 배포하거나 모델을 호출하지 않습니다. 같은 준비 폴더가 이미 있으면 덮어쓰지 말고 기존 경로를 재사용합니다. 새 준비가 필요한 경우만 `--run second`처럼 새 이름을 지정합니다.
 
 영문 패키지를 준비할 때는 `prepare-hosted`에도 **`--language en`**을 명시합니다. 패키지의 언어와 준비 단계의 언어가 다르면 중단하며 한국어 프로필로 자동 변경하지 않습니다.
 
@@ -57,16 +59,16 @@ python scripts/selfstudy.py prepare-hosted --kind runtime --package "실제-패�
 
 ## 4. 로컬 실제 호출
 
-터미널 A, v1.5 루트:
+터미널 A, v1.5 루트에서 실행한 채 둡니다. [두 터미널 사용법](checkpoints.md#두-터미널을-사용하는-장).
 
 ```bash
 python scripts/workshop.py serve
 ```
 
-터미널 B:
+새 터미널 B도 같은 루트에서 `.venv`를 활성화합니다. 아래 Python 상태 확인은 macOS/Linux와 PowerShell 모두 사용할 수 있습니다.
 
 ```bash
-curl --fail http://127.0.0.1:8088/readiness
+python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8088/readiness', timeout=10).read().decode())"
 azd ai agent invoke --cwd "실제-Hosted-절대경로" --local --port 8088 --new-session --new-conversation --timeout 120 "2026년 9월 국내 출장 숙박비 한도와 근거를 알려주세요."
 ```
 
@@ -120,7 +122,19 @@ stop은 실행 compute를 중지하지만 persistent volume까지 삭제하지 �
 python scripts/workshop.py --script package-hosted --kind workflow --pattern sequential --retrieval local --prompt v2 --api project-responses --protocol responses
 ```
 
-출력된 **새 프로필의 패키지 경로**를 사용해 3~6절을 반복합니다. 이름은 `<prefix>-workflow`, 폴더도 별도로 만듭니다. 단일-agent 패키지나 과거 버전을 대신 사용하지 않습니다.
+출력된 **새 프로필의 패키지 경로**로 별도 서비스/폴더를 준비합니다.
+
+```bash
+python scripts/selfstudy.py prepare-hosted --kind runtime --package "실제-workflow-패키지-경로" --name workflow
+```
+
+4~6절을 반복하되 **터미널 A의 로컬 서버도 workflow 프로필로** 실행합니다. 기본 `serve`는 단일-agent이므로 이 요청의 검증을 대신하지 않습니다.
+
+```bash
+python scripts/workshop.py serve --kind workflow --pattern sequential --retrieval local --prompt v2 --api project-responses --protocol responses
+```
+
+터미널 B의 상태 확인·로컬 호출·배포에는 방금 출력된 **workflow 서비스 이름과 폴더**를 사용합니다. 이전 서버는 먼저 `Ctrl+C`로 중지하며, 단일-agent 패키지나 과거 버전을 대신 사용하지 않습니다.
 
 **완료:** 패키지 생성 / 로컬 추론 / 원격 배포·응답을 각각 확인했습니다. 새 Hosted 폴더·정확한 버전·세션 정리 상태를 보관합니다.
 

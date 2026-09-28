@@ -6,11 +6,9 @@
 
 **Prerequisites:** The policy context from 03 and Python environment from 00. The required MAF, MCP, and Hosted packages are installed in that same environment.
 
-**North Central US preflight:** the official [Agent Service regional tool table](https://learn.microsoft.com/azure/foundry/agents/concepts/limits-quotas-regions#tool-support-by-region-and-model) lists **Function as no** here. That is service availability for the surface documented by the table. Local Python execution and model-API tool-call support are different layers; the table alone is not a test of this local MAF path.
+**Order:** MAF without tools → local function → MCP → boundary questions → Code Interpreter. Your Python coordinates the first three stages and calls an Azure model; Code Interpreter is a separate managed execution.
 
-**Actual NC result:** this lab's `FoundryChatClient` model + local MAF path **really called `lookup_policy` and returned valid tool results**. MCP also made an actual tool call and returned the correct historical **KRW 120000** answer. The local model/function path therefore worked here; it is **not a blanket guarantee for every managed Function tool** in the table.
-
-For new runs, check **bare model → local function → MCP** in order and retain actual responses, `tool_calls`, and `tool_execution_verified`. Do not infer success from local code existence or a different layer's availability table.
+Distinguish Function availability in the [managed-tool regional table](https://learn.microsoft.com/azure/foundry/agents/concepts/limits-quotas-regions#tool-support-by-region-and-model) from this **local function path**. The [validation report](validation-report.md) records its NC history; verify your own actual calls below.
 
 ## 1. Run a MAF agent
 
@@ -59,8 +57,6 @@ python scripts/workshop.py --language en maf --tools --question "My hotel in Sep
 The first answer should ask for the date. The second must not perform or claim approval. Record deviations as real failures, and distinguish instruction, tool-result, and final-answer problems.
 
 ## 5. Generate an actual file with Code Interpreter
-
-The NC run used actual Python execution to **produce a six-row CSV with file/hash verification**. This is artifact evidence, not merely an “I created a file” statement, and does not establish other tool or managed red-team completion.
 
 First verify regional/model support and session pricing in the portal. Once you accept creation and cost in your dedicated lab:
 

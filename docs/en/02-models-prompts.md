@@ -4,7 +4,7 @@
 
 **Outcome:** Experience the difference between instructions and knowledge, and compare model choices under fixed conditions.
 
-**Prerequisites:** A real model response from 01. You can add a second model and Router here after checking availability and costs.
+**Prerequisites:** A real model response from 01. **Sections 1–2 are the core exercise; 3–4 are optional comparisons.** If not comparing, complete the checklist after section 2 and continue to 03. Check availability and cost before adding either optional deployment.
 
 ## 1. Change only the prompt
 
@@ -80,7 +80,9 @@ Keep instructions, question, language, and local evidence identical. `--model-de
 
 Use the same reasoning setting and output cap. Luna's lower product price and its accuracy on your task are separate considerations.
 
-## 4. Explore Router
+<a id="4-explore-router"></a>
+
+## 4. Optionally explore Router
 
 1. Find **Model Router** in the catalog.
 2. Read its models/modes, supported regions, APIs, deployment types, and prices.

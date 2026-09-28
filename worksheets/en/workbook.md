@@ -2,9 +2,21 @@
 
 **English** | [한국어](../workbook.md) · [Course home](../../README.md)
 
-Save a private copy, for example under `.selfstudy/`. Record only actual identifiers and observations. Do not include tokens, passwords, API keys, or real company documents.
+In 00, use **Save As** to create `.selfstudy/workbook-en.md`. Record only actual identifiers and observations. Do not include tokens, passwords, API keys, or real company documents.
 
-Use this copy for the **new North Central US run**. Record initial Sol, Prompt Agent, local function/MCP checks, and early logging preparation without inferring other steps or managed red-team completion. Do not copy Sweden completion states.
+**Do not fill every section at once.** Record values as each chapter introduces them and leave later fields blank. If you have no previous environment, mark archive/old-asset fields `not applicable`. Do not copy IDs, scores, or completion states from validation reports.
+
+## Where I stopped today
+
+| Item | My record |
+|---|---|
+| Absolute workshop folder / language | |
+| Last verified chapter/section and result file | |
+| Next command or action | |
+| Unresolved error / blocked feature | |
+| Servers/schedules/sessions stopped; remaining costs and next review date | |
+
+Follow [resume instructions](../../docs/en/checkpoints.md#resume-on-another-day) next time. Do not begin by recreating existing names.
 
 ## Starting point
 
@@ -16,8 +28,8 @@ Use this copy for the **new North Central US run**. Record initial Sol, Prompt A
 | Source of project endpoint / ARM ID | |
 | Dedicated resource group and actual region | |
 | New default region: North Central US / actual new project ID | |
-| Previous state, CI identity, outputs/build archive and hash verification | |
-| Exact scope of the explicitly deleted old group / assets retained | |
+| Only for an earlier environment: state, CI identity, outputs/build archive and hashes | |
+| Only if separately choosing deletion: exact group scope / retained assets | |
 | New NC prefix, language-specific ownership, unused result labels | |
 | Source commit / actual local modifications | |
 | Python, SDK, azd/extension versions | |
@@ -129,8 +141,8 @@ Stopped/retained/deleted state:
 | Trace/calibration and unverified areas | |
 | Whether the small acceptance gate passed, and why | |
 | Incomplete items in this synthetic lab | |
-| NC combined native job: six rows, original five pass/one fail, Prohibited Actions limitation | |
-| Separate Task Adherence-only job/label, returned rows, score/flags, and redacted inputs | |
+| My managed red-team job/label, actual returned/failed counts, and verdict consistency | |
+| Task Adherence / Prohibited Actions if run: scores, flags, redactions, and limits | |
 
 Use holdout for only the chosen final target, after the dev gates. Do not reuse previously seen cases as a new unseen test.
 

@@ -4,6 +4,8 @@
 
 Complete the basic run in 05 first. These are **synthetic tasks and simulated decisions**, with no Azure calls or real business authorization.
 
+As in 05 section 5, use **macOS/Linux, including approved WSL**. Windows Python does not support this runner's `fcntl` locking. Both terminals must use the same OS, source folder, and virtual environment.
+
 ## Resume the same interrupted task
 
 Choose a new `run-id`. Terminal A:

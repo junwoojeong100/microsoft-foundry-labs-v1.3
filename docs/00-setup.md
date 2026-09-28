@@ -4,9 +4,9 @@
 
 출발점은 **Microsoft Entra ID 계정 + Azure 구독 + 활성 구독 Owner**입니다. 이 장에서 다른 사람이 준비한 Endpoint나 Search를 받지 않습니다. 새 리소스와 모델 호출에는 비용이 발생할 수 있습니다.
 
-**현재 대상은 리포 이름 변경 후 만든 North Central US(`northcentralus`)의 새 프로젝트입니다.** 그룹 `rg-mflabs15-jw-0928`에서 기반 자원, Sol project Responses, Prompt Agent, MAF 함수/MCP부터 뒤의 실습까지 재실행했습니다. 이미 생성한 자원은 중복 생성하지 않습니다.
+**기본 순서:** 권한 확인 → 파일·도구 설치 → 로그인 → 전용 그룹·프로젝트·Sol 배포 → 데이터 역할 → 설정 확인입니다. Azure 자원은 **North Central US(`northcentralus`)**에 준비합니다. 처음에는 아래의 **포털 경로**를 사용하고, 접힌 CLI 대안은 실행하지 않아도 됩니다.
 
-새 결과에는 한·영 File Search 6파일, 실제 6행 CSV, 한국어 Search/GA IQ/Hybrid/IQ Chat, Hosted IQ v1/v2 dev 6/6과 실제 예약 응답이 포함됩니다. **새 관리형 Task Adherence는 6행·5 pass/1 fail이며 severity/flag가 불일치하여 최종 인수를 보류**했습니다. 이전 환경의 5/5나 영어 검색 결과를 인수하지 않습니다. [현재 결과와 제한](validation-report.md)을 구분해 읽습니다.
+문서의 이름은 예시입니다. 검증 보고서의 리소스 그룹·ID를 내 설정으로 복사하지 않습니다. 기존 환경을 재개한다면 [재개 방법](checkpoints.md#다음-날-재개하기)부터 확인합니다.
 
 ## 1. 내 권한 확인
 
@@ -20,7 +20,23 @@
 
 ## 2. 실습 파일과 개발 도구
 
-받은 **실습 ZIP을 압축 해제**하거나, 접근 권한이 있는 이 저장소를 복제합니다. 코드와 데이터가 모두 포함되어 있으므로 추가 저장소를 받지 않습니다. ZIP으로 시작하면 GitHub 계정과 Git 설치는 필수가 아닙니다.
+1. 받은 **실습 ZIP**을 압축 해제합니다. ZIP이 없다면 [이 저장소](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5)의 **Code → Download ZIP**을 사용합니다. 비공개 저장소라면 접근 권한이 필요합니다.
+2. 압축을 푼 폴더 중 **`README.md`, `scripts/`, `curriculum.json`이 함께 있는 폴더**를 찾습니다. 압축파일 안이나 그 상위 폴더에서 실행하지 않습니다.
+3. 편집기의 **File → Open Folder**로 그 폴더 전체를 엽니다. VS Code라면 **Terminal → New Terminal**로 명령 입력 창을 엽니다.
+
+코드와 데이터가 모두 포함되어 있으므로 추가 저장소는 필요하지 않습니다. 전달받은 ZIP으로 시작하면 GitHub 계정과 Git도 필요하지 않습니다.
+
+<details>
+<summary>선택: Git이 이미 설치되어 있다면 ZIP 대신 복제</summary>
+
+```bash
+git clone https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5.git
+cd microsoft-foundry-labs-v1.5
+```
+
+복제한 폴더를 편집기에서 엽니다. ZIP 경로와 둘 다 수행할 필요는 없습니다.
+
+</details>
 
 PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owner로 해결되지 않으므로 승인된 개발 환경을 사용하세요.
 
@@ -31,21 +47,27 @@ PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owne
 | Azure Developer CLI | [azd 설치](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) 후 `azd version` |
 | 편집기 | VS Code 등으로 **v1.5 폴더 전체** 열기 |
 
-터미널의 현재 폴더에 `README.md`, `scripts/`, `curriculum.json`이 보여야 합니다.
+**Windows의 실행 범위:** PowerShell로 준비할 수 있지만 **05장 5절의 로컬 SDK 중단·재개와 그 추가 실험은 macOS/Linux(승인된 WSL 포함)에서만 실행**합니다. 현재 실행기가 POSIX `fcntl` 잠금을 사용하므로 Windows Python에서는 동작하지 않습니다. 해당 절도 수행하려면 승인된 WSL/Linux의 별도 소스 사본에서 아래 Linux Python 설치와 doctor까지만 준비합니다. 그 로컬 실험에는 Azure 설정·로그인이 필요하지 않습니다. Windows의 `.venv`나 개인 Azure 상태를 복사하지 않습니다.
+
+터미널에서 macOS/Linux는 `pwd`와 `ls`, PowerShell은 `Get-Location`과 `Get-ChildItem`으로 현재 폴더와 파일을 확인할 수 있습니다. 코드 상자의 `bash`/`powershell` 표시는 입력할 명령이 아닙니다. **한 줄씩 실행하고 오류가 나면 다음 줄로 넘어가지 않습니다.**
 
 이미 다른 Python으로 만든 `.venv`나 개인 실습 상태가 있다면 덮어쓰지 않습니다. 기존 폴더를 보관하고 **새 폴더에 ZIP을 풀어 시작**하세요.
 
+**처음 시작한다면 다음 접힌 절은 건너뛰고, 본인 OS의 설치 명령 한 묶음만 실행합니다.**
+
+<details>
+<summary>이전 환경이 있을 때만: 다른 프로젝트로 새로 시작하기</summary>
+
 ### 새 프로젝트에서 이전 상태를 인수하지 않기
 
-1. 이전 프로젝트의 `.env`, `.selfstudy` 설정/소유 기록, CI identity 정보, `outputs/`, `.build/`를 승인된 **비공개 보관 위치**에 원본 hash와 함께 보존합니다. 원시 녹화도 그대로 둡니다.
-2. 이번 리포 재실행에서는 이전 NC 전용 `rg-mf15-jw-nc-0928` 하나만 삭제하고 부재를 확인했습니다. 로컬 상태 3,428개 파일과 이전 영상은 hash와 함께 비공개 보관했습니다. 그 안의 Sweden 보관 이력도 유지합니다. 이것은 다른 그룹·CI ID·기록의 추가 삭제 지시가 아닙니다.
-3. 새 소스 사본/workspace와 새 터미널을 사용합니다. 이전 `.env`, 활성 `.selfstudy`, 결과 폴더나 azd 환경을 새 프로젝트의 활성 상태로 복사하지 않습니다. 같은 checkout을 재사용한다면 보관본/hash를 먼저 확인하고 지원되는 설정 절차로 새 활성 상태만 준비합니다.
-4. 새 NC prefix와 결과 label을 정합니다. 예: `lab-yourname-nc-0928`, `nc-baseline-ko`, `nc-candidate-ko`. 명령의 예시 label을 바꿀 때는 collect/evaluate/compare/verify의 모든 참조도 함께 바꿉니다.
-5. `.env`나 소유권 ledger를 삭제·수정해 프로젝트 혼합 검사를 우회하지 않습니다. 이전 CI ID를 보존한 것만으로 새 프로젝트의 역할·접근이 준비되는 것은 아닙니다.
+1. 이전 환경은 [15의 중지·보관 절차](15-capstone-cleanup.md#4-먼저-실행-중인-것을-멈추기)를 적용합니다. `.env`, `.selfstudy`, `outputs/`, `.build/`와 소유 기록은 비공개로 보존합니다.
+2. **새 폴더에 소스만** 압축 해제하거나 복제하고 새 터미널을 엽니다. 이전 설정·결과·azd 환경을 새 프로젝트의 활성 상태로 복사하지 않습니다.
+3. 새 프로젝트·접두사와 사용하지 않은 결과 label을 정합니다. label을 바꾸면 collect/evaluate/compare/verify의 참조도 모두 맞춥니다.
+4. 기존 자원 삭제는 별도의 결정입니다. 보고서의 삭제 이력을 따라 다른 그룹을 삭제하거나, 소유권 파일을 편집해 프로젝트 혼합 검사를 우회하지 않습니다.
 
 **같은 checkout의 `configure`, `set`, `models`, `resource`, `bind-matrix`는 한 번에 하나씩 실행합니다.** 동시에 쓰면 설정 파일 갱신이 충돌할 수 있습니다. 병렬 실험은 별도 workspace와 소유권 기록을 사용하세요.
 
-이하 명령은 **새 workspace와 새 NC 자원**을 대상으로 합니다. 이전 Sweden 응답·trace·평가·배포 버전을 새 결과로 인수하지 않습니다.
+</details>
 
 ### macOS / Linux
 
@@ -53,6 +75,7 @@ PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owne
 python3.13 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+python -m pip check
 ```
 
 ### Windows PowerShell
@@ -61,6 +84,7 @@ python -m pip install -r requirements.txt
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
+python -m pip check
 ```
 
 PowerShell 활성화가 차단되면 시스템 정책을 낮추지 않습니다. 이후 모든 `python ...`을 `.\.venv\Scripts\python.exe ...`로 실행할 수 있습니다.
@@ -71,9 +95,11 @@ PowerShell 활성화가 차단되면 시스템 정책을 낮추지 않습니다.
 python scripts/workshop.py doctor
 ```
 
-`documents: 6`, `dev_cases: 6`, `holdout_cases: 4`, `azure_tested: false`, `result: PASS`를 확인합니다. 아직 Azure 연결 시험은 아닙니다.
+설치 검사의 `No broken requirements found.`와 doctor의 `documents: 6`, `dev_cases: 6`, `holdout_cases: 4`, `azure_tested: false`, `result: PASS`를 확인합니다. 아직 Azure 연결 시험은 아닙니다. holdout은 개수만 확인하며 문항·정답 파일은 15장까지 열지 않습니다.
 
 **새 터미널마다 `.venv`를 활성화**합니다. 이후 모든 명령은 README.md가 있는 폴더에서 실행합니다.
+
+편집기에서 `.selfstudy` 폴더를 만들고 `worksheets/workbook.md`를 **다른 이름으로 저장**하여 `.selfstudy/workbook-ko.md` 사본을 준비합니다. 이후 값·완료 상태는 이 개인 사본에 기록합니다. 원본 진행표를 채워 저장소에 올리지 않습니다.
 
 ## 3. 로그인과 이름 계획
 
@@ -102,16 +128,21 @@ azd auth login
 1. Azure 포털 **Resource groups → Create**.
 2. 내 Owner 구독과 새 그룹 이름을 선택합니다.
 3. **North Central US**를 선택합니다. 프로젝트 생성 가능 여부와 모든 모델·도구의 실제 성공은 별개입니다.
-4. [Foundry 리전](https://learn.microsoft.com/azure/foundry/reference/region-support)과 [Search 리전](https://learn.microsoft.com/azure/search/search-region-support)을 확인합니다. 관리형 AI red teaming은 [리전 표](https://learn.microsoft.com/azure/foundry/concepts/evaluation-regions-limits-virtual-network#supported-regions-for-ai-red-teaming)와 [개념 개요](https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent#agentic-risks)의 목록이 다르지만 **North Central US는 두 문서에 모두 포함**됩니다. 이 리전을 유지하되, 문서 불일치만으로 Sweden 미지원이나 ASR 오류의 원인을 단정하지 않습니다.
+4. [Foundry 리전](https://learn.microsoft.com/azure/foundry/reference/region-support)과 [Search 리전](https://learn.microsoft.com/azure/search/search-region-support)을 확인합니다. 뒤의 관리형 AI red teaming에 관한 두 공식 목록에도 North Central US가 공통으로 포함됩니다. [목록 차이와 해석은 13장](13-governance.md#5-관리형-ai-red-teaming--기본-검증-대상)에서 다룹니다.
 5. `workshop=foundry-v1.5` 같은 비밀 아닌 태그를 달고 생성합니다.
 
 이 그룹에는 실습 자원만 넣습니다. 기존 업무용 그룹을 사용하면 마지막에 그룹 전체를 삭제할 수 없습니다.
 
-CLI로 만들려면 아래의 구독 ID와 이름을 본인 값으로 바꿉니다. 포털에서 이미 만든 그룹은 다시 만들 필요가 없습니다.
+<details>
+<summary>선택: 포털 대신 CLI로 그룹 만들기 — 둘 중 하나만 실행</summary>
+
+구독 ID와 이름을 본인 값으로 바꿉니다. 포털에서 이미 만든 그룹은 다시 만들지 않습니다.
 
 ```bash
-az group create --subscription "내-구독-ID" --name "rg-mf15-nc-my-lab" --location northcentralus --tags workshop=foundry-v1.5 lifecycle=retain
+az group create --subscription "내-구독-ID" --name "rg-mf15-yourname-nc-0928" --location northcentralus --tags workshop=foundry-v1.5 lifecycle=retain
 ```
+
+</details>
 
 `lifecycle=retain`은 보존 의사를 기록하는 태그이지 삭제 방지 잠금은 아닙니다. 자원을 남길 경우 [보존 모드](15-capstone-cleanup.md#보존-모드로-진행할-때)를 적용합니다.
 
@@ -136,16 +167,21 @@ Azure 포털에서 **프로젝트 리소스 → JSON View**를 열고 `id`도 �
 
 부모 Foundry 계정 ID가 아니라 **`/projects/...`까지 포함한 ID**입니다.
 
+<details>
+<summary>선택: 포털 대신 CLI로 Foundry 프로젝트 만들기</summary>
+
 ### 같은 준비를 CLI로 할 때
 
 포털 경로 대신 사용할 수 있습니다. `--assign-identity`와 `--allow-project-management true`를 빠뜨리지 않습니다. 이름은 전역에서 고유해야 하며 모든 명령에 같은 구독·그룹·리전을 지정합니다.
 
 ```bash
-az cognitiveservices account create --subscription "내-구독-ID" --resource-group "rg-mf15-nc-my-lab" --name "내-고유-foundry-이름" --custom-domain "내-고유-foundry-이름" --kind AIServices --sku S0 --location northcentralus --assign-identity --allow-project-management true
-az cognitiveservices account project create --subscription "내-구독-ID" --resource-group "rg-mf15-nc-my-lab" --name "내-고유-foundry-이름" --project-name "mf15-nc-project" --location northcentralus
+az cognitiveservices account create --subscription "내-구독-ID" --resource-group "rg-mf15-yourname-nc-0928" --name "내-고유-foundry-이름" --custom-domain "내-고유-foundry-이름" --kind AIServices --sku S0 --location northcentralus --assign-identity --allow-project-management true
+az cognitiveservices account project create --subscription "내-구독-ID" --resource-group "rg-mf15-yourname-nc-0928" --name "내-고유-foundry-이름" --project-name "mf15-nc-project" --location northcentralus
 ```
 
 CLI 생성은 사용자·프로젝트의 **Foundry User 역할을 자동으로 보장하지 않습니다.** 7절에서 두 주체의 역할을 반드시 확인합니다.
+
+</details>
 
 ## 6. 첫 모델 배포
 
@@ -178,19 +214,31 @@ Azure 포털의 **실제 Foundry 리소스 → IAM → Role assignments**를 봅
 
 ## 8. 실제 값으로 설정 자동 수집
 
-따옴표 안 세 곳과 접두사를 본인의 값으로 바꿉니다.
+아래 값의 출처를 먼저 확인하고 따옴표 안 자리표시자를 바꿉니다. 따옴표는 남깁니다.
+
+| 명령 인자 | 넣을 값 |
+|---|---|
+| `--project-id` | 5절 JSON View에서 복사한 `/projects/...`까지의 ID |
+| `--endpoint` | 5절 프로젝트 홈의 Project endpoint |
+| `--deployment` | 6절에서 만든 Sol의 배포 이름. 기본은 `workshop-chat` |
+| `--prefix` | 3절에서 정한 내 `lab-` 접두사 |
 
 ```bash
 python scripts/selfstudy.py configure --project-id "실제-새-NC-프로젝트-ARM-ID" --endpoint "실제-새-NC-프로젝트-Endpoint" --deployment "workshop-chat" --expected-model gpt-6-sol --prefix "lab-yourname-nc-0928"
 ```
 
-**삭제되지 않은 같은 프로젝트를 재개할 때만:** `workshop-compare`가 실제로 Sol인지 새로 확인했다면 같은 프로젝트·Endpoint·prefix로 아래 별칭을 재사용할 수 있습니다. **새 NC 재구축에는 이 예외를 적용하지 않으며**, 삭제된 Sweden 프로젝트나 보관본의 별칭을 새 자원으로 인수하지 않습니다.
+<details>
+<summary>이전 환경이 있을 때만: 다른 이름의 기존 Sol 배포 사용</summary>
+
+삭제되지 않은 같은 프로젝트에서 `workshop-compare`가 실제 Sol인지 확인했다면 같은 프로젝트·Endpoint·prefix로 아래 별칭을 사용할 수 있습니다. 새 환경의 기본 명령과 둘 다 실행하지 않습니다.
 
 ```bash
 python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" --endpoint "실제-프로젝트-Endpoint" --deployment workshop-compare --expected-model gpt-6-sol --prefix "기존-lab-접두사"
 ```
 
 예전에 사용한 결과 label·파일·agent 버전은 그대로 보관합니다. 새로운 모델/평가 조건에는 새 이름과 label을 사용합니다. [기존 별칭 안내](model-selection.md#기존-배포를-그대로-재사용하기).
+
+</details>
 
 이 도구는 Azure CLI로 **구독·프로젝트·계정·배포를 읽기만** 합니다. ID/Endpoint 일치와 배포 상태를 확인한 뒤 다음을 기록합니다.
 
@@ -215,9 +263,7 @@ python scripts/workshop.py doctor --cloud
 
 **다음 장에서 Sol의 첫 실제 요청을 통과한 뒤 agent를 만듭니다.** 모델 배포의 `Succeeded`만으로 모든 도구와 API 경로가 지원된다고 판단하지 않습니다. 오류는 [문제 해결](troubleshooting.md)에서 원래 응답과 함께 확인합니다.
 
-추가 의존 자원을 만들기 전에 [04의 bare MAF 모델 → 로컬 함수 순서](04-tools.md#1-maf-에이전트)도 일찍 확인합니다. 지역별 Function 표와 로컬 Python 실행은 같은 검증 계층이 아니므로 실제 두 호출을 구분해 기록합니다.
-
-최초 요청부터 trace가 필요한 리전별 검증에서는 **선택적으로 [09의 로그 생성·연결](09-operations.md#1-로그-환경-생성연결)을 먼저 준비**할 수 있습니다. 이번 NC 검증도 이를 위해 로그 자원을 일찍 만들었습니다. 일반 학습 순서는 09장에서 그대로 다루며, 연결 전 응답이 소급 수집됐다고 가정하지 않습니다.
+**처음에는 장을 건너뛰지 않아도 됩니다.** MAF는 04장, 로그는 09장에서 준비합니다. 최초 요청부터 trace가 꼭 필요한 별도 검증에만 [09의 로그 연결](09-operations.md#1-로그-환경-생성연결)을 먼저 적용합니다. 연결 전 응답이 소급 수집되지는 않습니다.
 
 ## 9. 역할의 실제 명령이 필요할 때
 

@@ -4,8 +4,6 @@
 
 **시작 조건:** 04의 MAF 실행. 여러 역할만큼 모델 호출이 늘 수 있습니다.
 
-**NC 실행 기록:** sequential·concurrent·group-chat 세 패턴을 실제 실행했습니다. Group Chat의 최대 3라운드 종료는 제한된 실행의 완료일 뿐, 업무 답변의 수렴·합의나 품질 통과를 뜻하지 않습니다.
-
 ## 1. 순차 실행
 
 ```bash
@@ -42,6 +40,8 @@ python scripts/workshop.py workflow-agent --pattern sequential --retrieval local
 
 ## 5. 실제 SDK의 중단·재개 실험
 
+**OS 확인:** 이 절은 macOS/Linux 전용입니다. Windows Python의 `fcntl` 오류는 패키지 재설치로 해결되지 않습니다. [00의 승인된 WSL/Linux 준비](00-setup.md#2-실습-파일과-개발-도구)를 사용하거나 이 절을 차단/미실행으로 기록하고 06장으로 갑니다. 1~4절의 모델 워크플로와는 별개입니다.
+
 이 부분은 **모델·Azure 호출 없이 미리 작성한 합성 작업**으로 로컬 SDK의 모의 승인 게이트와 checkpoint를 배웁니다. 이 결과는 실제 사람의 업무 승인이나 외부 업무 실행이 아닙니다.
 
 먼저 고정 SDK를 확인합니다.
@@ -52,13 +52,13 @@ python scripts/workshop.py --script resilience check
 
 `azure-ai-agentserver-core: 2.1.0`, `azure-ai-agentserver-responses: 2.2.0b1`, `azure_requests_sent: false`를 확인합니다. 실행기는 이 보조 프로세스에서만 외부 계측/Foundry 환경을 제거합니다. 현재 셸이나 `.env`는 바꾸지 않습니다.
 
-터미널 A, v1.5 루트:
+터미널 A, v1.5 루트에서 서버를 시작합니다. 이 터미널은 실행한 채 둡니다. [두 터미널 사용법](checkpoints.md#두-터미널을-사용하는-장).
 
 ```bash
 python scripts/workshop.py --script resilience --language ko --run-id first-pass serve
 ```
 
-터미널 B도 같은 폴더/가상 환경에서:
+A의 서버 시작 로그를 확인한 뒤 **새 터미널 B**를 엽니다. B도 같은 폴더에서 `.venv`를 활성화한 후 실행합니다.
 
 ```bash
 python scripts/workshop.py --script resilience --language ko --run-id first-pass start

@@ -4,9 +4,13 @@
 
 중도에 실습을 멈추는 경우에도 **아래 중지·목록 확인·보관 결정을 지금 수행**합니다. 품질 실패 때문에 비용 자원을 방치하지 않습니다. 삭제는 별도로 선택하는 작업입니다.
 
-**현재 리포 재실행 경계:** 이전 NC 그룹 `rg-mf15-jw-nc-0928`만 삭제하고 새 `rg-mflabs15-jw-0928`은 보존합니다. **새 Task Adherence 6행·5 pass/1 fail의 severity/flag 불일치로 최종 인수는 보류**했으며 holdout을 새로 열지 않았습니다. 확인한 Hosted 세션 13개 모두 idle, timer·continuous·Insights 예약은 disabled/paused입니다. 원격 증거 파일 8개도 보관했습니다. [새 결과와 보존 비용](validation-report.md).
+| 지금 내 상태 | 진행할 곳 |
+|---|---|
+| 중도 종료, 선행 평가 실패 또는 차단 | **holdout을 열지 않고 [4절 중지](#4-먼저-실행-중인-것을-멈추기) → 5~7절 자산·비용 확인** |
+| 후보를 고정했고 모든 선행 기준을 충족 | 1절 확인 → 2절에서 **선택한 대상 하나만** 평가 → 3~7절 |
+| 다음에 재사용하려고 자원을 남김 | 아래 보존 모드 + 4·5·7절. 삭제 명령과 6절은 생략 |
 
-아래의 Sweden 및 앞선 NC 5/5·알려진 4문항·Optimizer 후보는 과거 실행 이력입니다. 이를 새 인수로 옮기거나 이미 본 holdout을 다시 미공개라고 주장하지 않습니다. **실습 실행 완료와 최종 품질 인수는 서로 다른 상태**입니다.
+**참고 검증은 최종 인수 보류 상태입니다.** 새 관리형 Task Adherence의 6행·5 pass/1 fail에 severity/flag 불일치가 있어 새 holdout을 열지 않았습니다. [보고서의 결과·정리 이력](validation-report.md)은 본인의 완료나 삭제 지시가 아닙니다. **실습 실행과 최종 품질 인수는 별개**입니다.
 
 ## 보존 모드로 진행할 때
 
@@ -14,7 +18,7 @@
 
 - `--confirm-delete`, Memory `forget`/`cleanup`, `azd down`, 리소스 그룹 삭제를 모두 생략합니다.
 - 03의 File Search는 처음 만들 때 `--retain`을 사용해 vector store 자동 만료도 설정하지 않습니다.
-- 11의 Memory는 언어별 새 store를 명시하고 **`memory create --ttl-seconds 0 --confirm-create`**로 항목의 자동 만료 없이 생성합니다. 기존 1시간 store는 삭제하거나 변경하지 않습니다.
+- 11의 Memory는 언어별 새 store를 명시하고 **`memory create --ttl-seconds 0 --confirm-create`**로 항목의 자동 만료 없이 생성합니다. 이전 store가 있다면 그 TTL을 임의로 변경하지 않습니다.
 - 로컬 서버는 중지하고 Routines·반복 평가는 disabled/paused로 둡니다. 필요 없는 Hosted 실행 세션은 **stop만** 하며 agent·버전·volume은 삭제하지 않습니다.
 - `.env`, `.selfstudy/azure.json`, `outputs/`의 실제 ID와 소유권 기록을 개인의 승인된 위치에 보관합니다. 공개 저장소에 올리지 않습니다.
 - Search Basic, 파일/volume, 로그 등 남는 비용과 다음 확인 일자를 기록합니다. `lifecycle=retain` 태그는 관리용 표시일 뿐 삭제 방지 잠금이나 비용 상한이 아닙니다.
@@ -36,21 +40,15 @@ holdout 실행 전 다음을 확인합니다.
 - 13의 **관리형 실행과 전체 행/버전/방향 감사**를 기록하고 Prohibited Actions 한계를 공개함. 새 Task Adherence-only 결과는 그 native 범위로만 판단하며 기존 6행 필터나 custom `policy-lab`로 대체하지 않음.
 - 실패를 보고 기준을 낮추거나 원시 결과를 수정하지 않음.
 
-**역사적 Sweden 결과:** 이전 Hosted IQ v1/v2, 두 언어 calibration, SDK groundedness 5/6과 거부된 비교를 원래 조건 그대로 보존합니다. 이는 새 NC 실행·평가·관리형 red teaming이 완료됐다는 뜻이 아닙니다.
-
-**이전 Sweden v3의 canonical 6행/custom 8행 성공**은 역사적 보완 증거입니다. Sweden native ASR은 검증되지 않았고 공식 리전 문서도 서로 다르므로, 리전 미지원이 입증된 원인이라고 하지 않습니다. Custom 결과나 리전 변경은 새 NC 관리형 검증·지표 방향 확인·holdout을 대신하지 않습니다.
-
-**이전 Sweden Optimizer와 감사, NC의 초기화 실패**는 보존합니다. 12의 후속 NC job은 원래 평가기 버전과 필수 `pass_threshold: 4`를 명시적으로 전달해 성공했고, baseline·후보 각각 6행 원문 참조 감사를 통과했습니다. 둘 다 1.0으로 동점이며 승격하지 않았습니다. 이 결과는 새 job의 증거이지 과거 실패의 덮어쓰기나 holdout/운영 승인 대체물이 아닙니다.
-
 충족하지 못하면 **holdout을 열지 말고 인수 미완료**로 기록합니다. 추가 기능이 미지원이라 Hosted matrix를 수행하지 않았다면 07의 SDK candidate를 별도 최종 대상으로 선택할 수 있지만, 이를 Hosted 인수라고 표현하지 않습니다.
 
 **holdout은 한 실험의 선택한 최종 대상에만 사용합니다.** SDK에서 이미 본 문항을 Hosted의 “처음 보는 시험”으로 다시 주장하지 않습니다.
 
-이번 NC의 `nc-known-final-ko`는 이전에 사용한 4문항을 같은 고정 v2에서 **알려진 사례의 회귀 확인**으로 실행해 4/4·policy·trace gate를 확인했습니다. 새 미공개 holdout이나 운영 승인이 아니며 원래 `split: holdout` 기록도 수정하지 않습니다.
+이미 본 4문항을 다시 실행했다면 **알려진 사례의 회귀 확인**으로 기록합니다. 파일에 `split: holdout`이 있어도 새로운 미공개 시험이나 운영 승인이 되지 않습니다.
 
 ## 2. Hosted 최종 확인
 
-12의 모든 게이트를 통과한 경우에만:
+**1절의 선행 기준을 모두 충족한 경우에만** 실행합니다. `--unlock-holdout`은 미완료 평가를 무시해도 된다는 옵션이 아닙니다.
 
 12에서 로컬 검색 경로를 명시적으로 선택했다면 아래 수집 명령의 **`--retrieval iq`를 `--retrieval local`로 바꾸고**, 같은 고정 matrix-local 버전을 사용합니다. 평가/trace/인수 기준은 낮추지 않습니다. 결과는 로컬 검색을 사용하는 Hosted의 인수이며 IQ 인수가 아닙니다.
 
@@ -58,17 +56,19 @@ holdout 실행 전 다음을 확인합니다.
 python scripts/workshop.py benchmark collect --split holdout --label wf-final --candidate wf-candidate --unlock-holdout --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 python scripts/workshop.py benchmark evaluate --policy --label wf-final --reference wf-baseline --confirm-cost
 python scripts/workshop.py benchmark monitor --label wf-final
-python scripts/workshop.py benchmark verify --policy --baseline wf-baseline --candidate wf-candidate --holdout wf-final --require-native --require-traces --calibration policy-calibration-ko
+python scripts/workshop.py benchmark verify --policy --baseline wf-baseline --candidate wf-candidate --holdout wf-final --require-native --require-native-pass --require-traces --calibration policy-calibration-ko
 ```
 
-각 단계의 전체 행과 오류를 확인한 다음 계속합니다. Sol 대상 한 개의 기본 holdout은 **4행**입니다. 결과의 `gate_passed`, native 품질, 권고와 `deployment_approved: false`를 함께 봅니다.
+각 단계의 전체 행과 오류를 확인한 다음 계속합니다. Sol 대상 한 개의 기본 holdout은 **4행**입니다. `gate_passed`, `native_quality_passed`, `native_quality_required: true`와 `deployment_approved: false`를 함께 봅니다.
+
+**`--require-native`는 Foundry policy 평가의 증거를 요구하고, `--require-native-pass`가 candidate/holdout의 실제 점수 통과까지 요구합니다.** 둘을 혼동하지 않습니다. 이 명령이 13의 관리형 red-team 감사를 대신 확인하지는 않으므로, 1절에서 그 결과도 별도로 확인해야 합니다.
 
 **SDK 대상만 선택한 경우**에는 Hosted 명령을 실행하지 않고 다음을 사용합니다. 먼저 07의 `candidate`가 6/6·오류 0·고정 비교 조건을 충족해야 합니다.
 
 ```bash
 python scripts/workshop.py collect --split holdout --label final-holdout --prompt v2 --retrieval local --candidate candidate --unlock-holdout
 python scripts/workshop.py evaluate --label final-holdout
-python scripts/workshop.py cloud-evaluate --policy --label final-holdout --confirm-cost --timeout 900
+python scripts/workshop.py cloud-evaluate --policy --label final-holdout --reference baseline --confirm-cost --timeout 900
 python scripts/workshop.py accept --candidate candidate --holdout final-holdout
 ```
 
@@ -94,7 +94,7 @@ Prompt Agent, 로컬 MAF, Hosted는 ______가 다르다.
 
 1. 내가 실행한 로컬 `serve`/복구 서버는 해당 터미널에서 `Ctrl+C`로 종료합니다.
 2. Routines와 반복 평가를 **disabled/paused**로 확인합니다.
-3. Hosted matrix를 실행했다면 존재하는 label의 세션을 중지합니다.
+3. Hosted matrix를 실행했다면 **존재하는 label의 세션만** 중지합니다. holdout을 실행하지 않았다면 아래 `wf-final` 줄은 생략합니다.
 
 ```bash
 python scripts/workshop.py benchmark stop-session --label wf-baseline

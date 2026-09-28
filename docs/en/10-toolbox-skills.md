@@ -6,7 +6,7 @@
 
 **Prerequisites:** The original Search index and successful retrieval from 06, the project managed identity from 00, and the azd Foundry extension from 08. No preprovisioned service is needed.
 
-**Current NC status:** Korean Toolbox v1 and Skill-connected v3 produced actual tool/model calls; v3 also reported `skill_load_verified: true`. OpenAPI and the independent Hosted Toolbox call have separate NC records. Observations explicitly labelled **Sweden** below remain historical; matching version numbers do not establish new-resource ownership or execution.
+**Order:** Search connection → standard Toolbox → tool discovery → Skill upload/binding → OpenAPI → Hosted Toolbox. **Skill, Toolbox, and Hosted agent versions are different values.** Record the version returned by each command.
 
 These steps require the working keyword index from 06. Keyword retrieval alone does not verify Toolbox, OpenAPI, or Hosted Toolbox; check each actual call below. If a prerequisite is missing in your environment, pause that dependent step rather than substituting File Search.
 
@@ -25,10 +25,10 @@ Search Service Contributor is not read-only. Here it provides the schema access 
 
 ## 2. Create a keyless project connection
 
-Use the actual Search/project endpoints and your unique connection name:
+Use the actual Search/project endpoints and your unique connection name. For `--cwd`, use **the folder printed by `prepare-hosted` in 08** so the command has the same project's ARM context, not the repository root or `.build` package:
 
 ```bash
-azd ai connection create "YOUR-PREFIX-search-en" --kind cognitive-search --target "YOUR-SEARCH-ENDPOINT" --auth-type project-managed-identity --audience https://search.azure.com --project-endpoint "YOUR-PROJECT-ENDPOINT"
+azd ai connection create "YOUR-PREFIX-search-en" --kind cognitive-search --target "YOUR-SEARCH-ENDPOINT" --auth-type project-managed-identity --audience https://search.azure.com --project-endpoint "YOUR-PROJECT-ENDPOINT" --cwd "YOUR-08-HOSTED-ABSOLUTE-PATH"
 python scripts/selfstudy.py set TOOLBOX_SEARCH_CONNECTION_NAME "YOUR-PREFIX-search-en"
 ```
 
@@ -59,11 +59,9 @@ python scripts/workshop.py --language en toolbox ask --version "ACTUAL-VERSION" 
 
 A successful tool listing does not prove downstream Search permissions. For a query 403, preserve the error, identify the actual calling identity, and correct only that identity's Search roles.
 
-**Historical Sweden scope:** Toolbox v1 probe/query/ask passed with `ProjectManagedIdentity`. The same version number does not establish ownership or success in NC. Use new labels for new requests and preserve prior failures.
-
 ## 4. Tool Search and pinned tools
 
-Standard v1 success does not verify Tool Search or Skills. NC's separate discovery/Skill path was exercised with its own versions and records. **The previous Sweden run** verified v2's `tool_search`, `call_tool`, and `policy_search` listing; retain that as a separate historical observation.
+Standard Toolbox success does not verify Tool Search or Skills. Create a new Toolbox version and verify the additional capabilities separately.
 
 Check feature availability/Preview status and CLI support:
 
@@ -106,6 +104,11 @@ python scripts/selfstudy.py compare-files outputs/extensions-en/policy-review/SK
 
 If bytes differ, investigate. Do not edit the downloaded file to force a match.
 
+**If this is your first Skill and readback matches, continue directly to section 6.** The following procedure applies only when changing instructions in an existing Skill.
+
+<details>
+<summary>Only when instructions change: create a new Skill version</summary>
+
 ### Update an existing Skill non-destructively
 
 The strengthened v2 limits **the facts in the answer, not just citation IDs**, to actual evidence. Do not edit an old input folder. Prepare a new label and inspect the new `SKILL.md`:
@@ -121,7 +124,7 @@ azd ai skill update "EXISTING-OWNED-SKILL-NAME" --file outputs/skill-update-inpu
 azd ai skill show "EXISTING-OWNED-SKILL-NAME" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 ```
 
-**The historical Sweden update** returned version 2 and retained version 1. Do not copy “2” into NC assumptions; use the actual newly returned version:
+Keep the previous version and use the actual newly returned version rather than guessing its number:
 
 ```bash
 azd ai skill download "EXISTING-OWNED-SKILL-NAME" --version "RETURNED-NEW-SKILL-VERSION" --output-dir .selfstudy/skill-readback-v2-en --project-endpoint "YOUR-PROJECT-ENDPOINT"
@@ -129,6 +132,8 @@ python scripts/selfstudy.py compare-files outputs/skill-update-inputs-en/policy-
 ```
 
 Never overwrite an existing input label or readback directory. Explicitly bind the new Skill version into a **new Toolbox version** in section 6, then verify new calls. Updating a Skill does not rewrite an older Toolbox's pinned version or its previous execution evidence.
+
+</details>
 
 ## 6. Attach the exact Skill version
 
@@ -140,8 +145,6 @@ python scripts/workshop.py --language en toolbox ask --version "NEW-TOOLBOX-VERS
 ```
 
 Check `skill_load_verified`, actual calls, and policy results. Registration alone does not prove the Skill was read. This example does not execute arbitrary Skill scripts.
-
-**Historical Sweden v3 execution** verified `load_skill`, `tool_search`, `call_tool`, Search evidence, and Sol JSON. Check the new NC version, calls, and sources separately.
 
 ## 7. Use OpenAPI against the same Search service
 
@@ -159,11 +162,7 @@ python scripts/workshop.py --language en openapi invoke --label openapi-policy-e
 
 Verify the actual OpenAPI tool call and returned source text. Explain how `lookup_policy`, MCP, OpenAPI, and Code Interpreter are different execution mechanisms.
 
-**The previous Sweden OpenAPI run** returned six original documents and a Sol answer. That is not NC validation. Distinguish the new account identity from Toolbox's project identity and recheck actual calls, documents, and answers.
-
 ## 8. Host the same Toolbox
-
-**Historical Sweden remote execution:** Hosted agent version 1 matched its package, calls, session, and source hash. This is not verification of the new NC Hosted runtime, another version, or managed AI red teaming.
 
 Start with a verified **standard Toolbox version**. If selecting a Skill-enabled version, add `--with-skill` to both packaging and serving; keep that choice consistent.
 
@@ -174,16 +173,16 @@ python scripts/selfstudy.py prepare-hosted --language en --kind toolbox --packag
 
 As in 08, inspect the manifest and actual project, and use the exact printed service/folder. `prepare-hosted` defaults to Korean; keep its explicit `--language en` matched to the package.
 
-Local terminal A:
+Stop any earlier local server. Leave terminal A running in the repository root:
 
 ```bash
 python scripts/workshop.py --language en toolbox serve --version "VERIFIED-TOOLBOX-VERSION"
 ```
 
-Terminal B:
+Open terminal B in the same root and activate `.venv` there too:
 
 ```bash
-curl --fail http://127.0.0.1:8088/readiness
+python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8088/readiness', timeout=10).read().decode())"
 azd ai agent invoke --cwd "YOUR-TOOLBOX-HOSTED-ABSOLUTE-PATH" --local --port 8088 --new-session --new-conversation --timeout 210 "What advance approval is required for a KRW 170000 hotel on a domestic business trip in September 2026?"
 ```
 

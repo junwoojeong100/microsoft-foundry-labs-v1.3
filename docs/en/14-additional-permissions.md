@@ -2,97 +2,92 @@
 
 **English** | [한국어](../14-additional-permissions.md) · [Course home](../../README.md)
 
-**Outcome:** Run the included GitHub Actions workflow using an OIDC managed identity and verify this lab's exact Hosted version and smoke/dev results.
+**Outcome:** Run the included GitHub Actions workflow using an OIDC managed identity and verify the exact Hosted version's six-case dev business checks and artifacts.
 
 **Prerequisites:** Hosted preparation from 08, Actions/Environment permissions in your own GitHub repository, and the lab's Azure resources and roles. Without the required GitHub access, record CI as not run and continue to 15.
 
-In this repository rerun, **the previous NC group and its CI identity were deleted together**. New group `rg-mflabs15-jw-0928` has a dedicated identity with project-scoped Foundry Project Manager, account Reader, and the **exact current immutable repository/Environment subject**. Main-only protection is unchanged. On code `7b7ca26`, new OIDC authentication and Korean CI v1/English CI v2 each passed all six dev cases. See the [actual runs/artifacts](validation-report.md).
+**Order:** repository/Environment → CI identity → variables → federation → authentication-only check → manual release. **Do not run a workflow before its variables exist.**
 
-The `cc816de` rename recovery below is **history from when the previous identity still existed**. Archived client/principal IDs and old authentication success are not evidence for the new release.
+OIDC lets GitHub Actions sign in to Azure using short-lived identity evidence rather than a stored client secret. Your local `az login` or subscription Owner access is not automatically inherited by GitHub's runner.
 
-## 1. Prepare the repository and lab identity
+## 1. Prepare the repository and Environment
 
-1. Put the complete workshop in a repository you administer. Exclude `.env`, `.selfstudy/`, `outputs/`, and credentials.
-2. Verify the included [local-check workflow](../../.github/workflows/check.yml) passes on the exact commit.
-3. Create a **user-assigned managed identity** in the lab group, or use an existing identity whose ownership and lab scope are verified. Record its actual client ID and principal ID.
-4. Grant only workflow-required roles, such as **Foundry Project Manager at project scope** and **Reader** for account metadata. The Hosted runtime's **Foundry User** role is separate.
-5. Configure a protected GitHub **Environment**, such as `foundry-workshop`, with the lab's branch/approval rules.
+1. Put this source on `main` in a repository you administer. Include `.github/workflows/` and `.gitignore`; exclude `.env`, `.selfstudy/`, `.build/`, `outputs/`, and credentials.
+2. Under **Actions → Workshop checks**, verify the [included checks](../../.github/workflows/check.yml) pass on that exact commit.
+3. Open **Settings → Environments → New environment** and use the exact name **`foundry-workshop`**. Both workflows require this fixed name; it is not an interchangeable example.
+4. Apply the `main` deployment-branch restriction and approval rules required by your organization. If menus, permissions, or plan support are missing, record this chapter blocked/not run rather than weakening protections.
 
-Do not give the deployment identity subscription Owner or a client secret. Keep organizational protections in place.
+## 2. Prepare the Azure CI identity
 
-## 2. Configure OIDC federation
+In the Azure portal, create a **user-assigned managed identity** in the lab group, or verify an existing lab-owned identity. Record **Client ID** and **Object (principal) ID** separately from Overview.
 
-In the managed identity's **Federated credentials**, configure the GitHub issuer, actual repository/Environment subject, and audience.
+| Identity | Role | Scope |
+|---|---|---|
+| This CI managed identity | Foundry Project Manager | The actual Foundry project from 00 |
+| The same CI identity | Reader | Its parent Foundry account |
 
-- Issuer: `https://token.actions.githubusercontent.com`
-- Audience: `api://AzureADTokenExchange`
-- Subject: Must match the repository's current policy; do not guess it from names alone.
+Use each resource's **IAM → Add role assignment** and select your CI identity. Add only missing roles, not subscription Owner or a client secret. The deployed **Hosted runtime's Foundry User** is a separate assignment, applied at project scope by the later explicitly approved workflow step.
 
-The following read-only query requires [GitHub CLI](https://cli.github.com/) and normal sign-in with your repository account:
+## 3. Register Environment variables before execution
+
+Under GitHub **Settings → Environments → foundry-workshop → Environment variables → Add variable**, register each value as a **Variable**. The workflows read `vars.*`; putting a value only in a Secret will not satisfy them.
+
+| Variable | Source |
+|---|---|
+| `AZURE_CLIENT_ID` | Section 2's CI identity **Client ID**, not principal ID |
+| `AZURE_TENANT_ID` | The subscription's tenant ID |
+| `AZURE_SUBSCRIPTION_ID` | Your lab subscription ID from 00 |
+| `AZURE_RESOURCE_GROUP` | Lab resource-group name |
+| `AZURE_AI_ACCOUNT_NAME` | Parent Foundry resource name, not project name |
+| `AZURE_AI_PROJECT_ENDPOINT` | Project endpoint from 00 |
+| `AZURE_AI_PROJECT_ID` | Full project ARM ID through `/projects/...` |
+| `AZURE_AI_MODEL_DEPLOYMENT_NAME` | Actual Sol alias; default `workshop-chat` |
+| `WORKSHOP_PREFIX` | Your fixed `lab-` prefix from 00 |
+| `WORKSHOP_HOSTED_AGENT_NAME` | A new CI-only name under that prefix, such as `<your-prefix>-ci-hosted-en` |
+
+Use a different CI agent from 08's manual agent and 12's frozen matrix. These are identifiers, not API keys or tokens; never paste the entire `.env`. The first three values are also prerequisites for the authentication workflow.
+
+## 4. Configure OIDC federation
+
+Under the CI identity's **Federated credentials → Add credential**, prepare a GitHub Actions connection for your repository and **Environment `foundry-workshop`**.
+
+| Field | Value |
+|---|---|
+| Issuer | `https://token.actions.githubusercontent.com` |
+| Audience | `api://AzureADTokenExchange` |
+| Subject | An Environment subject **exactly matching your repository's current OIDC policy** |
+
+To inspect that policy, install [GitHub CLI](https://cli.github.com/) and sign in normally with your repository account. Replace `YOUR-OWNER/YOUR-REPOSITORY`:
 
 ```bash
 gh auth login
-```
-
-```bash
 gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
 ```
 
-Match the actual subject policy with issuer/subject/audience reported by `azure/login`. Immutable-ID subjects may apply. Do not bypass errors with wildcard trust or a client secret.
+Default name-based subjects can differ from immutable-ID/custom subjects. Compare this policy with the **issuer, subject, and audience** reported by `azure/login` in the next step. Review only the exact trust configuration on mismatch; do not use wildcard trust or client secrets. Recheck after changing repositories or renaming one. Do not copy a subject from the [validation report](validation-report.md).
 
-**September 28, 2026 rename recovery:** GitHub's `sub_claim_prefix` changed, so after the user's
-approval only the repository name in the existing NC `github-foundry-workshop` federation subject
-was corrected. Readback preserved the numeric repository ID, managed identity, credential ID,
-Environment, issuer, audience, both existing roles, and main-only protection. The actual subject is:
+## 5. Check authentication without deploying
 
-```text
-repo:junwoojeong100@6407492/microsoft-foundry-labs-v1.5@1390444066:environment:foundry-workshop
-```
+**After preparing section 3's variables and section 4's federation**, select **Actions → Verify Azure OIDC authentication → Run workflow → main**. Follow normal Environment approval if requested.
 
-The [authentication-only OIDC run](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404614530) and
-[repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404559521) passed on the same commit, `cc816de`.
-The actual issuer, subject, audience, and authenticated client/tenant/subscription were checked;
-configuration readback alone was not treated as success. No new deployment, role grant, or model
-request was performed. This is not a new release or model-quality result.
+The [authentication workflow](../../.github/workflows/verify-azure-oidc.yml) checks three identifiers, authenticates with `azure/login`, and compares the signed-in client/tenant/subscription. Missing or mismatched values fail explicitly.
 
-### Check authentication without deploying
+**Expected result:** a successful run with `authenticated` in the log. `deployment_verified: false` is expected: no deployment, role change, or model call has occurred. On failure, fix configuration/identity/federation before releasing. Do not record raw tokens.
 
-Manually run [Verify Azure OIDC authentication](../../.github/workflows/verify-azure-oidc.yml) through
-**Actions -> Verify Azure OIDC authentication -> Run workflow -> main**.
-It reuses the existing `foundry-workshop` Environment and its protection rules.
+## 6. Release manually and inspect the exact version
 
-`scripts/verify_ci_auth.py --preflight` checks only the three required identifiers.
-Then `azure/login` performs real OIDC authentication, and `scripts/verify_ci_auth.py` matches the
-authenticated service principal's client, tenant, and subscription to the configuration.
-Missing values, mismatches, and CLI errors fail explicitly. The workflow creates no resources,
-deployments, role assignments, or model requests and prints no raw tokens.
-Retain the `authenticated` result, run URL, and commit while preserving its `deployment_verified: false` boundary.
+1. Read [Approved hosted lab release](../../.github/workflows/hosted-lab-release.yml) and review its actual target, creation, role assignment, and model costs.
+2. Select **Actions → Approved hosted lab release → Run workflow**, then branch **`main`**. Verify its current commit matches the checked commit; if it changed, complete checks for the new commit first.
+3. Choose **language `en`**, then check **acknowledge_cost** only if you agree to those actions and costs. Do not dispatch duplicates while a run is active.
+4. Follow package → new deployment version → runtime role → **six dev rows on that version** → stop that run's session.
+5. Download **Artifacts → `foundry-lab-en-<run-id>`** at the bottom of the run page. Inspect `ci-binding.json`, `ci-runtime-role.json`, and `benchmarks/ci-dev/` for actual version, all six rows, errors, and business checks. The default artifact retention is 14 days; privately preserve needed evidence before expiry.
 
-## 3. Configure the included manual release
+The workflow deploys `workflow / sequential / local / v2 / project-responses / invocations`, not 12's IQ/account-chat matrix. **It does not run a separate smoke command, LLM policy judge, managed red teaming, or holdout.** Passing CI business checks is not final quality acceptance or production approval.
 
-Read the [manual release workflow](../../.github/workflows/hosted-lab-release.yml) and register its **nonsecret identifiers** in the GitHub Environment:
-
-```text
-AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
-AZURE_RESOURCE_GROUP, AZURE_AI_ACCOUNT_NAME
-AZURE_AI_PROJECT_ENDPOINT, AZURE_AI_PROJECT_ID
-AZURE_AI_MODEL_DEPLOYMENT_NAME, WORKSHOP_PREFIX, WORKSHOP_HOSTED_AGENT_NAME
-```
-
-Use the actual project, managed identity, and Sol deployment from 00/08. If your existing Sol alias is `workshop-compare`, specify that name unchanged. Do not paste an entire `.env` or access token into variables/logs.
-
-## 4. Verify the same deployed version
-
-1. Verify prerequisite checks passed for the exact commit.
-2. Confirm **language `en`**, target, and deployment/role/inference-cost consent, then **dispatch manually**.
-3. Verify package → actual new deployment version → smoke/dev gate on **that same version** → result artifacts.
-4. On failure, stop further releases and preserve the previous version and failure artifacts.
-5. Record the exact target and a separate decision when returning to a reviewed earlier version.
-
-This workflow manually releases to lab resources; it does not deploy on every push. See [official Hosted CI/CD guidance](https://learn.microsoft.com/azure/foundry/agents/quickstarts/set-up-cicd-hosted-agent).
+Release is manual, not triggered by every push. On failure, stop further releases and preserve the earlier version/failure artifacts. Check the session-stop step too; if it fails, follow [15's stopping instructions](15-capstone-cleanup.md#4-stop-running-work-first). See [official Hosted CI/CD guidance](https://learn.microsoft.com/azure/foundry/agents/quickstarts/set-up-cicd-hosted-agent).
 
 ## Completion check
 
-Record the actual commit, workflow run, OIDC identity, deployment version, smoke/dev results, and artifacts. Stop sessions when no longer needed. In retention mode, do not delete identities, federation, agents, or volumes.
+Record the actual commit, workflow run, OIDC identity, deployment version, dev results, and artifacts. In retention mode, do not delete identities, federation, agents, or volumes.
 
 **Next → [15. Final acceptance and resource lifecycle](15-capstone-cleanup.md)**

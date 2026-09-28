@@ -4,7 +4,7 @@
 
 **시작 조건:** 00~02의 설정과 응답 모델. 사용할 데이터는 아래 **한빛기술 6문서만**입니다.
 
-**NC에서 확인한 범위:** 새 Prompt Agent 생성/호출과 별도로 **한국어·영어 File Search 각각 6파일 인덱싱 및 실제 파일 인용**을 확인했습니다. 한국어의 현행 150000원·과거 120000원·Tokyo 근거 부족 응답도 기록했습니다. 인라인 agent와 File Search는 서로 다른 실행이며 실제 언어·버전·파일 ID별 기록을 보존합니다.
+**이번 장에서는 에이전트 두 개를 만듭니다.** 먼저 문서를 지침에 넣은 agent, 다음으로 파일을 실제 검색하는 agent입니다. 이름과 버전은 도구가 구분하므로 기본 명령을 그대로 따라가면 됩니다.
 
 ## 1. 원문부터 읽기
 
@@ -43,6 +43,8 @@ Foundry **Build → Agents**에서 같은 이름·버전·모델·지침을 확�
 
 포털의 업로드 버튼 위치/노출에 의존하지 않고 **포함된 SDK 명령**으로 진행합니다. 01에서 프로젝트 호출을 확인한 실제 Sol 배포를 사용하고, 인라인 agent와 다른 이름을 자동으로 생성합니다.
 
+**생성 명령은 하나만 선택합니다.** 아래 기본값은 마지막 활동 후 7일 만료입니다. 더 오래 보존하려면 아래 접힌 절의 `--retain` 명령을 **대신** 실행합니다. 나중에 두 생성 명령을 연달아 실행해 보존 설정을 바꾸지 않습니다.
+
 ```bash
 python scripts/workshop.py file-search create --confirm-create
 ```
@@ -53,17 +55,27 @@ python scripts/workshop.py file-search create --confirm-create
 
 저장소는 **마지막 활동 후 7일 만료**로 생성합니다. 이는 과정 시간 제한이 아니라 보관/비용 설정입니다. 만료 후 재개하거나 새 모델 설정으로 다시 실행할 때는 기존 자원을 확인하고 새 소유 이름으로 시작합니다.
 
-**자원을 보존하는 실습**에서는 처음 만들 때 다음 명령을 대신 사용합니다. `--retain`은 vector store의 자동 만료를 설정하지 않습니다. 소유 기록의 `retention: retain`을 확인하고, 재개할 때도 같은 옵션을 사용합니다. 파일 저장 비용은 계속 발생할 수 있습니다.
+<details>
+<summary>선택: 자동 만료 없이 보존 — 기본 create 대신 실행</summary>
+
+`--retain`은 vector store의 자동 만료를 설정하지 않습니다. 소유 기록의 `retention: retain`을 확인하고, 재개할 때도 같은 옵션을 사용합니다. 파일 저장 비용은 계속 발생할 수 있습니다.
 
 ```bash
 python scripts/workshop.py file-search create --confirm-create --retain
 ```
 
+</details>
+
 모델 카탈로그의 File Search 지원과 실제 내 배포의 성공은 별개입니다. SDK에서도 지원/권한 오류가 나면 해당 원인을 해결합니다. **인라인 답변이나 다른 모델로 몰래 대체하지 않습니다.**
+
+<details>
+<summary>직접 코드를 수정하거나 자체 Storage를 사용하는 경우</summary>
 
 Reasoning은 생성 시 **agent definition**에 저장합니다. 이후 `agent_reference`로 호출할 때 같은 `reasoning`을 요청 본문에 다시 넣으면 `Not allowed when agent is specified` 오류가 납니다. 포함된 실행기는 저장 버전의 설정을 상속하고 출력 상한만 요청에 전달합니다.
 
 자체 Storage를 연결한 환경은 사용자/서비스 관리 ID의 **Storage Blob Data Contributor** 같은 추가 접근이 필요할 수 있습니다. Basic/Standard setup과 실제 저장소를 [공식 File Search 문서](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search)에서 확인하고 **본인 저장소 범위에만** 부여합니다.
+
+</details>
 
 ## 4. 세 질문으로 구분
 

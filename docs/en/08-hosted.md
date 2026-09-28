@@ -6,6 +6,8 @@
 
 **Prerequisites:** The MAF function exercise from 04, project ARM ID/location from 00, and a working model. **Subscription Owner prepares deployment permissions**; runtime data permissions are separate.
 
+**Order:** package → isolated deployment folder → local response → remote deployment → runtime roles → same-version request and session stop. The package path, deployment folder, and service name are different values; record the actual output of each step.
+
 ## 1. Prepare azd Foundry commands
 
 ```bash
@@ -55,22 +57,20 @@ The helper reuses the saved project ID/location, derives the owned service name 
 
 The generated `azure.yaml` must contain the existing project binding and only the intended Hosted agent service. Do not add new model deployments or turn the whole source repository into a service. There is no need to provision another Foundry project.
 
-This `--kind runtime` folder also supplied actual project ARM context for the first App Insights CLI connection. See [09's native logging requirements](09-operations.md#first-cli-connection-and-actual-native-sdk-requirements); preparing context is not Hosted deployment or inference success.
-
 Record the exact service name and absolute folder path. Check `main.py`, Python 3.13, the Responses protocol, actual endpoint/model, and remote `managed-identity` authentication. Use this same service and folder in subsequent commands.
 
 ## 4. Make a real local request
 
-Terminal A, in the v1.5 root:
+Leave terminal A running in the v1.5 root. See [using two terminals](checkpoints.md#chapters-with-two-terminals).
 
 ```bash
 python scripts/workshop.py --language en serve
 ```
 
-Terminal B:
+Open terminal B in the same root and activate `.venv` there too. The Python readiness check works on macOS/Linux and PowerShell:
 
 ```bash
-curl --fail http://127.0.0.1:8088/readiness
+python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8088/readiness', timeout=10).read().decode())"
 azd ai agent invoke --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --local --port 8088 --new-session --new-conversation --timeout 120 "What is the domestic business-trip lodging limit for September 2026, and what is the source?"
 ```
 
@@ -137,6 +137,8 @@ For the matching local workflow profile, use this instead of the plain `serve` c
 ```bash
 python scripts/workshop.py --language en serve --kind workflow --pattern sequential --retrieval local --prompt v2 --api project-responses --protocol responses
 ```
+
+Stop the earlier server with `Ctrl+C` first. Terminal B must use the newly printed **workflow service and folder**, not the single-agent service.
 
 **Complete only after verifying each stage:** packaging, local inference, remote deployment, and the remote response. Preserve the Hosted folder, exact version, and session stop/retention status.
 

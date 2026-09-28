@@ -4,7 +4,25 @@
 
 **Record the current chapter, last success, actual target/version, and original error.** Do not record or share passwords, tokens, API keys, or company data.
 
-The current target is the **new North Central US project created after the repository rename**. Its Task Adherence job returned six rows/five pass/one fail; inconsistent severity/flags hold final acceptance. Earlier NC 5/5, Prohibited Actions, and Sweden examples are historical. Preserve original failures and consult the [current results](validation-report.md).
+For first-time setup or returning to the lab, start with [command/resume guidance](checkpoints.md). Then find **the symptom you actually encountered** below. You do not need to reproduce or fix every historical failure in the validation report.
+
+## Common first-run blockers
+
+| Symptom | First action |
+|---|---|
+| `can't open file ... scripts/workshop.py` | Open the folder containing both README and scripts, then use a terminal there |
+| Missing `python` or packages | Follow 00's OS-specific installation and `.venv` activation; do not weaken PowerShell policy |
+| Asked to run Lab 00's configure | `values` is not an installation command; complete project/deployment/configure in 00 |
+| Rejected `YOUR-...` / `ACTUAL-...` | Replace placeholders with preceding steps' actual values; distinguish endpoint and ARM ID |
+| No prompt after a server command | This can be normal; leave A running and use B in the same environment for checks |
+| Windows: `No module named 'fcntl'` | 05's local SDK experiment needs macOS/Linux; use approved WSL/Linux or record that section not run |
+| CI preflight reports missing identifiers | First populate **the exact `foundry-workshop` Environment → Variables** in 14, not only Secrets |
+| JSON syntax error in `azure.yaml` | Put 13's `policies` inside the actual agent service; check commas/braces and do not mix YAML into JSON |
+| Failed native score but an old acceptance report says `gate_passed: true` | Recheck saved evidence using 15's command with `--require-native-pass`; managed red-team audit remains separate |
+
+## Azure, model, and tool errors
+
+The reference validation's new Task Adherence run returned six rows/five pass/one fail; inconsistent severity/flags hold acceptance. Distinguish the [current report](validation-report.md) from history and preserve your own failures.
 
 | Symptom | Check first | Next action |
 |---|---|---|

@@ -6,9 +6,7 @@
 
 **Prerequisites:** A Prompt Agent from 03 or Hosted Agent from 08. You prepare Application Insights and Log Analytics here.
 
-The new NC project **created logging resources early**, before this chapter, to trace original requests for region-specific checks. Register its actual resources rather than copying Sweden workspace/customer IDs, project IDs, or traces. Resource creation/connection is separate from verified trace queries or Insights results.
-
-**Optional early preparation:** after project/model setup in 00, perform this section's logging setup/connection before the first request you need to trace. The normal course sequence still introduces it in 09. If already prepared, verify the actual connection/roles instead of creating duplicates.
+**Order:** create/connect logs → send a new request → locate its trace → inspect Insights, costs, and recurring evaluation. Earlier responses are not collected retroactively. If logging was prepared early, verify that connection and its roles instead of creating duplicates.
 
 ## 1. Create and connect logging resources
 
@@ -17,6 +15,9 @@ The new NC project **created logging resources early**, before this chapter, to 
 3. Record each resource's **JSON View → id**. Check for resources automatically created in a different group.
 4. In Foundry, open **Agents → Traces → Connect** and select your new Application Insights resource.
 5. If Connect is absent, use **Manage → Project details → Connected resources → Add connection → Application Insights**.
+
+<details>
+<summary>If connection setup fails or chapter 13 reports ResourceId/credential errors</summary>
 
 ### First CLI connection and actual native-SDK requirements
 
@@ -34,6 +35,8 @@ Here `APIKey` is **the telemetry credential class required by the installed SDK 
 
 The current CLI supports repeated `--metadata KEY=VALUE` plus `--auth-type api-key`/`--key` for this credential. **Treat the actual connection string as private configuration; never expose it in recordings, source control, or shared logs.** After correcting metadata/credentials, a new native run returned six rows. Preserve the failed zero-row attempt.
 
+</details>
+
 A connection does not itself grant permission to read logs. Verify your access:
 
 ```bash
@@ -46,7 +49,7 @@ python scripts/selfstudy.py roles --user-object-id "YOUR-USER-OBJECT-ID"
 
 Verify or grant **Log Analytics Reader** at the needed scope. Organizations with protected tables may also require Privileged Monitoring Data Reader. Do not put tokens or connection strings into shared logs or environment examples.
 
-**Insights has an additional caller:** verify Monitoring Reader for the user/project identity and scoped Privileged Monitoring Data Reader when protected content is needed. The dependency 403 observed in the **previous Sweden run** is historical troubleshooting, not NC permission verification. Check only the roles needed on the new lab's logging resources.
+**Insights has an additional caller:** verify Monitoring Reader for the user/project identity and scoped Privileged Monitoring Data Reader when protected content is needed. Check only the roles needed on this lab's logging resources.
 
 ## 2. Send a new request after connecting
 
@@ -75,8 +78,6 @@ Record your trace ID, linked response ID, and one observed step. A local JSON fi
 For Hosted, also create **a new request after connecting logs**. Server-side traces do not necessarily show every internal Python function; add client-side OpenTelemetry instrumentation separately when needed.
 
 ## 4. Agent Insights
-
-**Current rerun:** an on-demand scan analyzed **three traces in a one-hour window and returned no new findings**, with scheduling disabled. The previous NC scan's 16 traces/one finding remain historical. A finding is a suggestion, not ground truth or an automatically applied runtime change. See the [current report](validation-report.md).
 
 If available, run one **Insights** scan against a limited time range of your agent's existing synthetic traces.
 

@@ -6,8 +6,6 @@
 
 **Prerequisites:** Successful MAF execution in 04. Multiple roles can mean additional model calls.
 
-**NC execution record:** sequential, concurrent, and group-chat patterns all ran. Ending Group Chat at its maximum three rounds demonstrates bounded execution—not business convergence, consensus, or a quality pass.
-
 ## 1. Sequential execution
 
 ```bash
@@ -44,6 +42,8 @@ This path uses real MAF orchestration, a validated business answer, and call lin
 
 ## 5. Pause and resume with the actual SDK
 
+**Check your OS:** this section requires macOS/Linux. Reinstalling packages will not fix Windows Python's missing `fcntl`. Use [00's approved WSL/Linux preparation](00-setup.md#2-get-the-files-and-development-tools), or record this section blocked/not run and continue to 06. The model workflows in sections 1–4 are separate.
+
 This section uses **prewritten synthetic work without model or Azure calls** to teach local SDK simulated approval gates and checkpoints. It neither grants real business approval nor executes external business actions.
 
 Check the pinned SDK:
@@ -54,13 +54,13 @@ python scripts/workshop.py --script resilience --language en check
 
 Verify `azure-ai-agentserver-core: 2.1.0`, `azure-ai-agentserver-responses: 2.2.0b1`, and `azure_requests_sent: false`. The wrapper removes external telemetry/Foundry settings only from this helper process; it does not modify your shell or `.env`.
 
-Terminal A, in the v1.5 root:
+Start the server in terminal A in the v1.5 root and leave it running. See [using two terminals](checkpoints.md#chapters-with-two-terminals).
 
 ```bash
 python scripts/workshop.py --script resilience --language en --run-id first-pass-en serve
 ```
 
-Terminal B, in the same folder and virtual environment:
+After A shows the server's startup log, open a **new terminal B** in the same folder and activate `.venv` there before running:
 
 ```bash
 python scripts/workshop.py --script resilience --language en --run-id first-pass-en start
