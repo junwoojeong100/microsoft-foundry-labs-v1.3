@@ -36,6 +36,32 @@ gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
 
 실제 subject 정책과 `azure/login`이 보고하는 issuer/subject/audience를 대조합니다. immutable ID 기반 subject가 사용될 수 있습니다. 오류를 wildcard trust나 client secret으로 우회하지 않습니다.
 
+**2026-09-28 저장소 이름 변경 복구:** GitHub의 `sub_claim_prefix`가 바뀌어 사용자 승인 후
+기존 NC `github-foundry-workshop` federation의 subject에서 저장소 이름만 수정했습니다.
+숫자 repository ID·관리 ID·credential ID·Environment·issuer·audience·기존 역할 두 개와
+main-only 보호는 유지하고 다시 조회해 대조했습니다. 실제 subject는 다음과 같습니다.
+
+```text
+repo:junwoojeong100@6407492/microsoft-foundry-labs-v1.5@1390444066:environment:foundry-workshop
+```
+
+같은 commit `cc816de`에서 [인증 전용 OIDC 실행](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404614530)과
+[저장소 검사](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404559521)가 성공했습니다.
+설정 조회만으로 성공을 판단하지 않고 실제 issuer·subject·audience와 로그인한 client·tenant·구독을 확인했습니다.
+새 배포·권한 부여·모델 호출은 하지 않았으며, 이것을 새 릴리스나 모델 품질 검증으로 해석하지 않습니다.
+
+### 배포 없이 인증만 확인
+
+[Verify Azure OIDC authentication workflow](../.github/workflows/verify-azure-oidc.yml)를
+**Actions → Verify Azure OIDC authentication → Run workflow → main**에서 수동 실행합니다.
+기존 `foundry-workshop` Environment와 그 보호 규칙을 그대로 사용합니다.
+
+`scripts/verify_ci_auth.py --preflight`는 필수 식별자 세 개의 설정만 검사합니다.
+그 뒤 `azure/login`이 실제 OIDC 인증을 수행하고, `scripts/verify_ci_auth.py`가 로그인한
+service principal의 client·tenant·구독을 설정값과 대조합니다. 누락·불일치·CLI 오류는 실패로 끝납니다.
+workflow는 자원을 만들거나 배포·역할 변경·모델 호출을 하지 않고 raw token도 출력하지 않습니다.
+로그의 `authenticated`와 run URL·commit을 남기되, `deployment_verified: false`라는 범위를 유지합니다.
+
 ## 3. 포함된 수동 릴리스 설정
 
 [수동 릴리스 workflow](../.github/workflows/hosted-lab-release.yml)를 읽고 GitHub Environment에 **비밀 아닌 식별자**를 등록합니다.

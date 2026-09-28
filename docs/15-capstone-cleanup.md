@@ -38,7 +38,7 @@ holdout 실행 전 다음을 확인합니다.
 
 **이전 Sweden v3의 canonical 6행/custom 8행 성공**은 역사적 보완 증거입니다. Sweden native ASR은 검증되지 않았고 공식 리전 문서도 서로 다르므로, 리전 미지원이 입증된 원인이라고 하지 않습니다. Custom 결과나 리전 변경은 새 NC 관리형 검증·지표 방향 확인·holdout을 대신하지 않습니다.
 
-**이전 Sweden Optimizer와 감사**는 보관본으로 남깁니다. 새 NC SDK Optimizer는 필수 `pass_threshold` 초기화 누락으로 실패했으며 12에 기록했습니다. 새 모델/trace/평가 결과와 이 실패를 각각 보존하고 과거 성공을 인수하지 않습니다.
+**이전 Sweden Optimizer와 감사, NC의 초기화 실패**는 보존합니다. 12의 후속 NC job은 원래 평가기 버전과 필수 `pass_threshold: 4`를 명시적으로 전달해 성공했고, baseline·후보 각각 6행 원문 참조 감사를 통과했습니다. 둘 다 1.0으로 동점이며 승격하지 않았습니다. 이 결과는 새 job의 증거이지 과거 실패의 덮어쓰기나 holdout/운영 승인 대체물이 아닙니다.
 
 충족하지 못하면 **holdout을 열지 말고 인수 미완료**로 기록합니다. 추가 기능이 미지원이라 Hosted matrix를 수행하지 않았다면 07의 SDK candidate를 별도 최종 대상으로 선택할 수 있지만, 이를 Hosted 인수라고 표현하지 않습니다.
 

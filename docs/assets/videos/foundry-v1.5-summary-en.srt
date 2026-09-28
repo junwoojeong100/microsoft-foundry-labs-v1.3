@@ -1,12 +1,12 @@
 1
 00:00:00,000 --> 00:00:06,000
-Real NC CLI captures and explicitly read-only evidence reviews.
-No model responses or provider results were reconstructed.
+Fresh authenticated NC portal capture, recorded headlessly.
+Portal reviews and real CLI sources remain distinct; responses are not rewritten.
 
 2
 00:00:06,000 --> 00:00:12,000
-Shown: four known policy-regression cases, not managed red-team ASR.
-Portal recapture needs renewed sign-in; this edition contains CLI only.
+Optimizer initialization is fixed; the new candidate ties the baseline.
+Prohibited Actions remains inconsistent. No candidate was promoted.
 
 3
 00:00:12,000 --> 00:00:20,000
@@ -15,8 +15,8 @@ Only the explicitly selected old Sweden group was archived, then deleted.
 
 4
 00:00:20,000 --> 00:00:28,000
-Primary answers use GPT-6 Sol / workshop-chat.
-Comparison Luna, GPT-5.5 judging, and IQ Chat have separate roles.
+GPT-6 Sol answers; a different base model, GPT-5.5, judges.
+Read model names and versions; keep comparison and embedding roles separate.
 
 5
 00:00:28,000 --> 00:00:36,000
@@ -75,60 +75,75 @@ Not fresh holdout or Microsoft's managed red-team ASR.
 
 16
 00:01:56,000 --> 00:02:02,000
-A new Task Adherence-only managed job returned five passing rows.
-Severity 0, threshold 3, and attack_success=false were consistent.
+The portal displays the original Task Adherence-only managed job.
+All five returned rows passed: native severity 0, threshold 3.
 
 17
 00:02:02,000 --> 00:02:08,000
-num_turns=1 means depth, not five predetermined test questions.
-Provider-redacted inputs and unavailable response IDs remain explicit.
+This is a read-only review, not a new run or a Prohibited Actions fix.
+num_turns is depth. Provider-redacted inputs are not reconstructed.
 
 18
-00:02:08,000 --> 00:02:16,000
-The earlier mixed job retains six rows, five pass, and one fail.
-No failed row was removed and no native flag was inverted.
+00:02:08,000 --> 00:02:20,000
+A separate v5 row says Safe (No Defect), yet shows Fail and ASR 100%.
+The original six-row mixed job remains intact; no flags or ASR were corrected.
 
 19
-00:02:16,000 --> 00:02:24,000
+00:02:20,000 --> 00:02:28,000
 Separate Hosted v2 retains all eleven DefaultV2 filter settings.
 It refused false approval; this is not proof of a platform filter block.
 
 20
-00:02:24,000 --> 00:02:32,000
+00:02:28,000 --> 00:02:36,000
 Original items were read back from Korean/English TTL-zero stores.
 Not automatic extraction or a real-user authorization-boundary test.
 
 21
-00:02:32,000 --> 00:02:40,000
+00:02:36,000 --> 00:02:44,000
 Native history recovered real IDs hidden by an empty CLI list.
 Original-answer verification retained Finished/cancelled and Killed attempts.
 
 22
-00:02:40,000 --> 00:02:48,000
+00:02:44,000 --> 00:02:52,000
 One on-demand scan analyzed 16 traces and returned one finding.
 Suggestions are not ground truth; no automatic fix or active schedule.
 
 23
-00:02:48,000 --> 00:02:56,000
+00:02:52,000 --> 00:03:00,000
 The v1 initialization/zero-row failure remains; v13 was verified.
 Same judge/threshold: one original response scored 5/pass; both rules paused.
 
 24
-00:02:56,000 --> 00:03:04,000
-The native job failed at required pass_threshold initialization.
-No evaluator weakening, claimed improvement, or promotion.
+00:03:00,000 --> 00:03:06,000
+This is the original SDK job's actual pre-fix failure.
+Missing pass_threshold is not a zero model-quality score.
 
 25
-00:03:04,000 --> 00:03:12,000
+00:03:06,000 --> 00:03:16,000
+Explicit initialization preserved the original evaluator versions.
+One new candidate and baseline tie at 1.0. Best remains baseline; no promotion.
+
+26
+00:03:16,000 --> 00:03:22,000
+All six baseline rows passed all three policy criteria.
+This successful new run is distinct from the preserved initialization failure.
+
+27
+00:03:22,000 --> 00:03:28,000
+Both Korean baseline and candidate passed 6/6 and all policy criteria.
+Intermediate minibatch failures remain. A tied score is not improvement.
+
+28
+00:03:28,000 --> 00:03:36,000
 Eight JSON files from the exact session were retained and hash-checked.
 Readback is not new inference; remote files and volumes remain.
 
-26
-00:03:12,000 --> 00:03:20,000
+29
+00:03:36,000 --> 00:03:44,000
 CI used the new NC identity and exact repository/environment trust.
 Its English 6/6 uses local retrieval, separate from the IQ validation above.
 
-27
-00:03:20,000 --> 00:03:28,000
+30
+00:03:44,000 --> 00:03:52,000
 New NC resources remain; unused compute and schedules are stopped.
 Search, files, and logs can still cost money. Lab gates are not approval.

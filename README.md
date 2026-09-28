@@ -14,6 +14,8 @@ Already started? → [Your workbook](worksheets/en/workbook.md)
 
 The primary red-team target is the **managed AI red-teaming service** in chapter 13. The custom eight-case policy diagnostic is complementary, not a replacement or evidence that managed red teaming works.
 
+**The follow-up resolved Optimizer's missing required initialization.** A new job retained the original evaluator versions and threshold 4; baseline and candidate each passed all six rows and their source-reference audits. Both scored 1.0; neither improvement nor promotion is claimed. Prohibited Actions remained inconsistent in a separate pinned-v5 run.
+
 North Central US appears in **both official regional sources**, although their wider lists currently conflict. [Chapter 13 records that discrepancy](docs/en/13-governance.md#5-managed-ai-red-teaming--the-primary-verification-target). Do not infer that Sweden caused the old ASR problem or that changing regions fixes metric direction.
 
 ## What will you build?
@@ -77,15 +79,15 @@ Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/`
 
 <a id="portal-and-cli-summary-videos"></a>
 
-## North Central US CLI summary videos
+## North Central US portal and CLI summary videos
 
-**NC edition: 3:28 each, silent with captions.** Fresh real CLI captures and explicitly read-only reviews of original evidence—not simulated model answers. **Authenticated portal re-recording still requires renewed sign-in; this edition is CLI-only.**
+**NC edition: 3:52 each, silent with captions.** Eight fresh **authenticated Playwright Headless portal scenes** accompany preserved real CLI captures. The original Optimizer failure, successful fix, tied baseline/candidate, and unresolved Prohibited Actions inconsistency remain distinct. Login screens and credentials are excluded from the edit; the temporary login profile was removed.
 
 | English | 한국어 |
 |---|---|
 | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) |
 | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) |
 
-[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). These links now show the **NC CLI edition**. Historical Sweden footage remains in revision `0a8ab50`; it was not relabelled as a new-region run.
+[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). These links now show the **NC portal and CLI edition**. The prior NC CLI edit remains in revision `1d53a68`, and Sweden footage in `0a8ab50`; original results and scores were not rewritten.
 
 **Help:** [Troubleshooting](docs/en/troubleshooting.md) · [Feature map](docs/en/feature-map.md) · [Checkpoints](docs/en/checkpoints.md) · [Code reading](docs/en/code-reading.md) · [Official sources](docs/en/sources.md) · [Next steps](docs/en/next-steps.md)

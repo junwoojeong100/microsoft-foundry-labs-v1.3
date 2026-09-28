@@ -65,17 +65,36 @@ python scripts/workshop.py prepare-extensions --policy --label policy-inputs-ko
 
 ## 3. 지침만 최적화
 
-**현재 NC Optimizer는 차단된 결과입니다.** 실제 SDK job `opt_3aa677fe825a4b3ea433904433b57e53`은 세 custom evaluator에 필요한 `pass_threshold`가 전달되지 않아 `OptimizationFailed / MissingRequiredParameter`로 실패했습니다. SDK 2.6.1의 `AgentOptimizationEvaluatorRef`는 이름/버전만 노출합니다. 같은 rubric·문턱 4를 유지했으며 required 필드를 없애거나 기본 평가기로 바꿔 성공을 만들지 않았습니다. 설치된 azd 경로도 문서의 명시적 instruction/metadata 설정을 읽지 못하는 사전 검사에서 멈췄습니다. 이 실패를 모델 품질 0점으로 해석하거나 승격하지 않습니다.
+**NC Optimizer의 필수 초기화 누락을 해결했습니다.** 원래 실패 `opt_3aa677fe825a4b3ea433904433b57e53`은 보존하고, 새 SDK job `opt_6f23f99c0f2d49f7b930c7b25629543f`에서 **원래 세 평가기의 이름·버전 1, judge, required `pass_threshold: 4`**를 그대로 사용했습니다. Baseline·새 후보 각각 dev 6/6, 세 policy 기준 각각 6/6, 원문 참조 감사 `valid`입니다. 두 점수는 1.0으로 동점이며 `best`는 baseline입니다. 후보는 생성됐지만 개선이나 승격은 주장하지 않습니다.
+
+원인은 평가기 이름을 잘못 고른 것이 아니라 **Optimizer 참조에서 필수 초기화 인자를 생략한 것**입니다. 인증된 포털의 요청에서 evaluator별 `initialization_parameters`를 확인했습니다. SDK 2.6.1은 이를 named field로 노출하지 않지만, 공개 mapping 생성자 `AgentOptimizationEvaluatorRef(mapping)`는 보존합니다. `optimizer_evaluator_references(catalog, judge)`는 검증된 calibration catalog의 이름·버전·초기화 값을 함께 묶습니다. 이를 `AgentOptimizationJobInputs.evaluators`에 전달하고 직렬화된 **실제 HTTP body**에서도 값이 남는지 확인합니다. 기존 평가기를 교체하거나 required 필드를 삭제하지 않습니다.
+
+기존 평가기 한 개의 참조는 다음 형태이며 **세 평가기 모두** 필요합니다. `name`과 `version`은 실제 calibration 값으로 채웁니다.
+
+```json
+{
+  "name": "<calibrated-evaluator-name>",
+  "version": "<calibrated-version>",
+  "initialization_parameters": {
+    "model": "workshop-judge",
+    "pass_threshold": 4
+  }
+}
+```
+
+별도 `deployment_name`·required `threshold` 정의도 문턱 4에서 control 24/24를 통과했지만, 이름/버전만 보낸 Optimizer는 다시 `threshold` 누락으로 실패했습니다. 따라서 **필드 이름 변경이나 schema의 `default`만으로 해결되지 않습니다.** 선택한 catalog의 필수 인자를 명시적으로 전달해야 합니다. 이 대조 실패도 보존했습니다. 설치된 azd의 standalone instruction/metadata 사전 검사 문제까지 고쳤다는 의미는 아닙니다.
+
+`max_candidates: 2`는 전체 호출 수 제한이 아닙니다. 이번 job은 baseline·후보의 전체 평가 2회와 3행짜리 minibatch 11회를 실행했고, 서비스는 agent 호출 45회를 보고했습니다. Minibatch 3의 실패 3행도 보존했습니다. 전체 검증 없이 minibatch만 보고 후보를 승인하지 않습니다.
 
 SDK poller의 ID는 **`poller.details["job_id"]`**로 읽습니다. `details.job_id`는 이 버전에서 로컬 오류를 내지만 이미 서버 job이 생성됐을 수 있으므로 기존 target의 job 목록에서 ID를 확인하고 같은 job을 조회합니다. 생성 명령부터 반복하지 않습니다.
 
-**역사적 Sweden Optimizer job**의 baseline 1.0·후보 0개·참조 감사 성공은 보관본입니다. 아래 정상 절차는 새 환경에서 필수 evaluator 초기화가 지원/검증될 때 수행하며, 삭제된 Sweden job이나 옛 export를 NC 결과로 채택하지 않습니다.
+**역사적 Sweden Optimizer job**의 baseline 1.0·후보 0개·참조 감사 성공은 보관본입니다. 위 NC 성공은 새 job과 새 export로 확인했으며, 삭제된 Sweden job이나 옛 export를 인수하지 않았습니다.
 
 1. 03과 같은 합성 정책·지침을 쓰는 **별도 소유 Prompt Agent**를 만듭니다. 이름은 `<prefix>-optimize`처럼 구분합니다.
 2. **Optimize / Create optimization run → Agent**를 선택합니다.
 3. 실제 target 버전·답변 모델을 고정합니다.
 4. 최적화 대상은 **Instruction만**, 최대 후보 **2**를 선택합니다.
-5. 새 policy dev를 업로드하고 실제 등록된 `policy_groundedness`·`policy_helpfulness`·`policy_compliance` 정의/버전과 `query`/`response`/`ground_truth` 매핑을 확인합니다. 현재 Prompt Agent wizard는 열 이름 재매핑을 지원하지 않습니다. 원문 참조 envelope는 evaluator 입력이며 target agent 입력에 넣지 않습니다. 정의가 등록됐다는 이유만으로 Optimizer 실행의 매핑이 검증됐다고 하지 않습니다.
+5. 새 policy dev를 업로드하고 실제 등록된 `policy_groundedness`·`policy_helpfulness`·`policy_compliance` 정의/버전과 `query`/`response`/`ground_truth` 매핑을 확인합니다. **각 evaluator의 설정을 열어 문턱 4를 지정**하고 judge는 대상과 다른 배포로 선택합니다. SDK에서는 위 참조의 초기화 값도 전달합니다. 현재 Prompt Agent wizard는 열 이름 재매핑을 지원하지 않습니다. 원문 참조 envelope는 evaluator 입력이며 target agent 입력에 넣지 않습니다. 정의 등록만으로 실행의 매핑이나 초기화가 검증됐다고 하지 않습니다.
 6. 비용·예상 호출 범위를 확인한 뒤 한 번 제출합니다.
 7. baseline과 모든 후보의 지침 차이·전체 행·평가 결과를 읽습니다.
 
@@ -91,7 +110,7 @@ python scripts/workshop.py --script export-evaluation --language ko --evaluation
 python scripts/audit_optimizer.py --export-directory outputs/evaluation-exports/optimizer-policy-export-ko --dataset outputs/policy-inputs-ko/optimizer-dev.jsonl --calibration-label policy-calibration-ko --language ko --output outputs/optimizer-policy-audit-ko.json
 ```
 
-이 스크립트는 **Azure 호출 없이 저장된 파일을 읽는 감사**입니다. 이전 Sweden 감사의 6/6 source echo·세 기준·참조 검증은 보관한 과거 결과입니다. NC에서는 새 원본 입력·job·calibration으로 수행해야 하며, 잘못된 scope/ref/기준점을 고치려고 과거 export를 수정하지 않습니다.
+이 스크립트는 **Azure 호출 없이 저장된 파일을 읽는 감사**입니다. NC의 `nc-optimizer-initialized-baseline`·`nc-optimizer-initialized-candidate` export는 각각 6/6 source echo·세 기준·참조 감사를 통과했습니다. `outputs/nc-extensions-ko/optimizer-dev.jsonl`과 원래 `nc-policy-cal-ko` calibration을 사용했으며, 잘못된 scope/ref/기준점을 고치려고 과거 export를 수정하지 않았습니다.
 
 `validation_status: valid`, 6/6 matched와 다음 증거 범위를 읽습니다.
 

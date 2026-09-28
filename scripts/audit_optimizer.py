@@ -118,13 +118,14 @@ def check_criteria(
             raise ValueError("Optimizer evaluator names/versions differ from the frozen calibrated catalog.")
         seen.add(name)
         parameters = criterion.get("initialization_parameters")
+        required_parameters = calibrated["parameters"]
+        allowed_parameters = set(required_parameters) | {"model", "deployment_name"}
         if (
             not isinstance(parameters, dict)
-            or not {"model", "pass_threshold"} <= set(parameters) <= {"model", "pass_threshold", "deployment_name"}
-            or parameters["model"] != judge
+            or not set(required_parameters) <= set(parameters) <= allowed_parameters
+            or any(parameters.get(key) != value for key, value in required_parameters.items())
+            or parameters.get("model", judge) != judge
             or parameters.get("deployment_name", judge) != judge
-            or type(parameters["pass_threshold"]) not in {int, float}
-            or parameters["pass_threshold"] != PASS_THRESHOLD
         ):
             raise ValueError("Optimizer judge/threshold differs from calibration; threshold must remain 4.")
         mapping = criterion.get("data_mapping")

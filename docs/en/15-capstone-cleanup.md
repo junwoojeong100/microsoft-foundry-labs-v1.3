@@ -42,7 +42,7 @@ Before unlocking holdout, verify:
 
 **The old Sweden v3 canonical-six/custom-eight passes** are historical complementary evidence. Its native ASR remained unvalidated, and official regional descriptions conflict; unsupported region is not a proven cause. Custom results or a region change cannot replace actual NC managed verification, metric-direction checks, or holdout.
 
-Preserve **the old Sweden Optimizer and audit** in the archive. The new NC SDK Optimizer failed because required `pass_threshold` initialization was missing, as recorded in 12. Retain new model/trace/evaluation evidence and that failure separately; do not inherit the old success.
+Preserve **the old Sweden Optimizer/audit and NC initialization failure**. Chapter 12's follow-up NC job succeeded by explicitly binding the original evaluator versions and required `pass_threshold: 4`; baseline and candidate each passed their six-row source-reference audits. Both scored 1.0, and neither was promoted. This new-job evidence does not overwrite a failure or replace holdout/production approval.
 
 If not satisfied, **do not open holdout; record incomplete acceptance**. If unavailable features prevented the Hosted matrix, you may instead select 07's SDK candidate as a separate final target. Do not call that Hosted acceptance.
 

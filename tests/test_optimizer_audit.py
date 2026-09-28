@@ -289,6 +289,28 @@ class OptimizerAuditTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     self.audit()
 
+    def test_prompt_protocol_optimizer_requires_the_calibrated_threshold_and_judge(self):
+        catalog = policy_catalog(prompt_protocol=True)
+        definition = copy.deepcopy(self.definition)
+        for criterion, evaluator in zip(definition["testing_criteria"], catalog, strict=True):
+            criterion["initialization_parameters"] = dict(evaluator["parameters"])
+        expected = {item["evaluator_name"]: item for item in catalog}
+        self.assertEqual(module.check_criteria(definition, catalog, "unit-judge"), expected)
+        for change in ("threshold", "missing-threshold", "conflicting-model", "legacy-alias"):
+            with self.subTest(change=change):
+                changed = copy.deepcopy(definition)
+                parameters = changed["testing_criteria"][0]["initialization_parameters"]
+                if change == "threshold":
+                    parameters["threshold"] = 3
+                elif change == "missing-threshold":
+                    parameters.pop("threshold")
+                elif change == "conflicting-model":
+                    parameters["model"] = "other"
+                else:
+                    parameters["pass_threshold"] = parameters.pop("threshold")
+                with self.assertRaises(ValueError):
+                    module.check_criteria(changed, catalog, "unit-judge")
+
     def test_malformed_scores_thresholds_pass_direction_or_reason_ids_never_pass(self):
         original = copy.deepcopy(self.outputs)
         changes = [

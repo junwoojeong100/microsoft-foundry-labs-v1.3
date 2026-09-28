@@ -42,7 +42,7 @@
 | benchmark/SDK 비교의 `code_hash` 불일치 | 지침 외에 결합된 코드가 바뀌었는가 | 실제 r2 SDK 전후 쌍도 이 이유로 올바르게 거부됨. 개별 candidate 점수와 지침만의 개선 주장을 구분하고 코드 동결 후 새 전후 쌍을 수집. hash 편집·검사 완화 금지 |
 | judge/Optimizer 결과 누락 | evaluator 목록·전체 행·실제 입력 | 부분 결과로 통과 처리하지 않음 |
 | Continuous Coherence v1의 `is_reasoning_model` 초기화 오류 | 실제 catalog 버전과 서비스 evaluator ABI | NC에서는 같은 judge/문턱을 유지한 별도 v13 실행이 1/1 통과. v1의 0행 실패와 원래 응답은 보존하고 두 rule 모두 pause. 다른 evaluator 버전까지 일괄 변경하지 않음 |
-| NC Optimizer의 `MissingRequiredParameter: pass_threshold` | SDK job의 evaluator 초기화 계약 | 12의 실제 실패를 보존. Required 필드 삭제·rubric/문턱 완화·다른 evaluator로 교체해 성공을 만들지 않음 |
+| NC Optimizer의 `MissingRequiredParameter: pass_threshold` | 이름/버전만 보내고 evaluator별 초기화를 생략 | Calibration catalog의 `initialization_parameters`까지 참조에 포함하고 SDK mapping 생성자로 보존. 원래 버전·문턱 4의 새 job과 baseline/후보 6행 감사를 12에서 확인. 원래 실패는 유지 |
 | Optimizer의 `details.job_id` 로컬 오류 | `poller.details`는 mapping인가 | SDK 2.6.1은 `details["job_id"]`. 서버 job이 이미 존재할 수 있으므로 기존 target/job ID를 조회하고 생성부터 반복하지 않음 |
 | 이전 legacy Groundedness Optimizer가 baseline 1.0에서 종료 | 그 이전 실행의 judge `context`가 원문인가 | `context=response`였던 과거 실패를 보존. 현재 policy 기준은 1~5·4 이상 통과이며, 이 legacy 경고를 새 job 결과로 옮기지 않음 |
 | 관리형 AI red teaming의 리전 설명 불일치 | 공식 리전 표와 개념 개요를 둘 다 확인 | 표는 East US 2/NC, 개요는 France/Sweden/Switzerland West도 포함. NC는 공통이지만 Sweden 미지원이나 ASR의 리전 원인은 확정하지 않음. [13](13-governance.md) 참조 |

@@ -62,17 +62,36 @@ Inspect the **six dev rows** in `outputs/policy-inputs-en/optimizer-dev.jsonl`, 
 
 ## 3. Optimize instructions only
 
-**The current NC Optimizer result is blocked.** Actual SDK job `opt_3aa677fe825a4b3ea433904433b57e53` failed with `OptimizationFailed / MissingRequiredParameter`: the three custom evaluators did not receive required `pass_threshold`. SDK 2.6.1's `AgentOptimizationEvaluatorRef` exposes only name/version. The rubric and threshold 4 were preserved; required fields were not removed and built-ins were not substituted to manufacture success. The installed azd path also stopped at instruction/metadata preflight despite explicit documented configuration. This is not a model-quality score of zero or a promotion.
+**The NC Optimizer's missing required initialization is resolved.** Original failure `opt_3aa677fe825a4b3ea433904433b57e53` remains intact. New SDK job `opt_6f23f99c0f2d49f7b930c7b25629543f` retained **all three original evaluator names/version 1, the judge, and required `pass_threshold: 4`**. Baseline and a new candidate each passed six dev rows, all three policy criteria 6/6, and their source-reference audits. Both scored 1.0; `best` remains the baseline. A candidate was generated, but no improvement or promotion is claimed.
+
+The cause was **omitting required initialization from Optimizer evaluator references**, not selecting the wrong evaluator. The authenticated portal request includes per-evaluator `initialization_parameters`. SDK 2.6.1 does not expose that named field, but its public mapping constructor, `AgentOptimizationEvaluatorRef(mapping)`, preserves it. `optimizer_evaluator_references(catalog, judge)` binds the verified calibration catalog's names, versions, and initialization values together. Supply those references to `AgentOptimizationJobInputs.evaluators` and verify that the serialized **actual HTTP body** retains the values. Do not replace existing evaluators or remove required fields.
+
+One original evaluator reference has the following shape; **all three** are required. Use the actual calibrated name and version.
+
+```json
+{
+  "name": "<calibrated-evaluator-name>",
+  "version": "<calibrated-version>",
+  "initialization_parameters": {
+    "model": "workshop-judge",
+    "pass_threshold": 4
+  }
+}
+```
+
+A separate `deployment_name`/required-`threshold` definition passed all 24 controls at threshold 4, but name/version-only optimization again failed with missing `threshold`. Therefore **renaming the field or declaring a schema `default` is not sufficient**: explicitly send the selected catalog's required initialization. That counterexperiment is preserved too. This does not claim to fix the installed azd standalone instruction/metadata preflight limitation.
+
+`max_candidates: 2` is not a total request cap. This job performed two full evaluations, eleven three-row minibatches, and 45 agent calls according to service telemetry. Minibatch 3's three failures remain intact. A minibatch alone is not full candidate validation.
 
 Read the SDK poller's ID as **`poller.details["job_id"]`**. `details.job_id` raises locally in this version, but a server job may already exist. Reconcile its ID from the exact target's job list and retrieve that job instead of repeating creation.
 
-The **historical Sweden Optimizer job** reached baseline 1.0 with zero candidates and passed its reference audit. The normal procedure below requires supported/verified evaluator initialization in the new environment. Do not query deleted Sweden jobs or adopt archived exports as NC results.
+The **historical Sweden Optimizer job** reached baseline 1.0 with zero candidates and passed its reference audit. The NC success above uses a new job and new exports, not deleted Sweden jobs or inherited historical results.
 
 1. Create a **separate owned Prompt Agent** using the same English synthetic policies/instructions as 03. Distinguish it with a name such as `<prefix>-optimize-en`.
 2. Select **Optimize / Create optimization run → Agent**.
 3. Pin the actual target version and answer model.
 4. Optimize **instructions only**, with at most **two candidates**.
-5. Upload the new policy dev inputs and verify the actual registered `policy_groundedness`, `policy_helpfulness`, and `policy_compliance` definitions/versions and `query`/`response`/`ground_truth` mapping. The current Prompt Agent wizard does not remap column names. The original-reference envelope is evaluator input, never target-agent input. Registration alone does not prove the Optimizer run used the correct mapping.
+5. Upload the new policy dev inputs and verify the registered `policy_groundedness`, `policy_helpfulness`, and `policy_compliance` definitions/versions and `query`/`response`/`ground_truth` mapping. **Open each evaluator's configuration and set threshold 4**; select a judge deployment different from the target. With the SDK, include the initialization values above. The current Prompt Agent wizard does not remap column names. The original-reference envelope is evaluator input, never target-agent input. Registration alone does not verify runtime mapping or initialization.
 6. Review cost and expected call scope, then submit once.
 7. Read instruction differences, all rows, and evaluation results for the baseline and every candidate.
 
@@ -88,7 +107,7 @@ Use the original policy dataset actually uploaded and its matching-language cali
 python scripts/audit_optimizer.py --export-directory outputs/evaluation-exports/optimizer-policy-export-en --dataset outputs/policy-inputs-en/optimizer-dev.jsonl --calibration-label policy-calibration-en --language en --output outputs/optimizer-policy-audit-en.json
 ```
 
-This script **audits saved files without contacting Azure**. Sweden's 6/6 source-echo/criteria/reference audit is archived history. NC requires its own new inputs, job, and calibration; do not modify old exports to bypass a scope/reference/threshold mismatch.
+This script **audits saved files without contacting Azure**. NC exports `nc-optimizer-initialized-baseline` and `nc-optimizer-initialized-candidate` each passed six-row source-echo, criteria, and reference audits using `outputs/nc-extensions-ko/optimizer-dev.jsonl` and the original `nc-policy-cal-ko` calibration. These are Korean results, not a separate English run. No historical export was modified to bypass a scope/reference/threshold mismatch.
 
 Inspect `validation_status: valid`, all six matched rows, and the stated evidence scope:
 

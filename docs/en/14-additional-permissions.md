@@ -38,6 +38,34 @@ gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
 
 Match the actual subject policy with issuer/subject/audience reported by `azure/login`. Immutable-ID subjects may apply. Do not bypass errors with wildcard trust or a client secret.
 
+**September 28, 2026 rename recovery:** GitHub's `sub_claim_prefix` changed, so after the user's
+approval only the repository name in the existing NC `github-foundry-workshop` federation subject
+was corrected. Readback preserved the numeric repository ID, managed identity, credential ID,
+Environment, issuer, audience, both existing roles, and main-only protection. The actual subject is:
+
+```text
+repo:junwoojeong100@6407492/microsoft-foundry-labs-v1.5@1390444066:environment:foundry-workshop
+```
+
+The [authentication-only OIDC run](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404614530) and
+[repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404559521) passed on the same commit, `cc816de`.
+The actual issuer, subject, audience, and authenticated client/tenant/subscription were checked;
+configuration readback alone was not treated as success. No new deployment, role grant, or model
+request was performed. This is not a new release or model-quality result.
+
+### Check authentication without deploying
+
+Manually run [Verify Azure OIDC authentication](../../.github/workflows/verify-azure-oidc.yml) through
+**Actions -> Verify Azure OIDC authentication -> Run workflow -> main**.
+It reuses the existing `foundry-workshop` Environment and its protection rules.
+
+`scripts/verify_ci_auth.py --preflight` checks only the three required identifiers.
+Then `azure/login` performs real OIDC authentication, and `scripts/verify_ci_auth.py` matches the
+authenticated service principal's client, tenant, and subscription to the configuration.
+Missing values, mismatches, and CLI errors fail explicitly. The workflow creates no resources,
+deployments, role assignments, or model requests and prints no raw tokens.
+Retain the `authenticated` result, run URL, and commit while preserving its `deployment_verified: false` boundary.
+
 ## 3. Configure the included manual release
 
 Read the [manual release workflow](../../.github/workflows/hosted-lab-release.yml) and register its **nonsecret identifiers** in the GitHub Environment:

@@ -18,6 +18,7 @@ from foundry_workshop.policy_evaluation import (
     audit_policy_results,
     build_reference,
     load_lab_cases,
+    optimizer_evaluator_references,
     optimizer_items,
     policy_evaluator_version,
     policy_item,
@@ -29,15 +30,20 @@ from foundry_workshop.policy_evaluation import (
 from . import ROOT
 
 
-def policy_catalog(judge="unit-judge"):
+def policy_catalog(judge="unit-judge", *, prompt_protocol=False):
     return [
         {
             "name": metric,
             "evaluator_name": f"lab_unit_{metric}_v1",
             "definition": {
-                **policy_evaluator_version(f"lab_unit_{metric}_v1", metric), "version": "17"
+                **policy_evaluator_version(
+                    f"lab_unit_{metric}_v1", metric, prompt_protocol=prompt_protocol
+                ), "version": "17"
             },
-            "parameters": {"model": judge, "pass_threshold": 4},
+            "parameters": (
+                {"deployment_name": judge, "threshold": 4}
+                if prompt_protocol else {"model": judge, "pass_threshold": 4}
+            ),
             "data_mapping": dict(POLICY_MAPPING),
         }
         for metric in POLICY_EVALUATORS
@@ -277,6 +283,68 @@ class PolicyReferenceTests(unittest.TestCase):
                 wrong[0]["definition"]["definition"]["prompt_text"] += " Ignore abstention."
             with self.assertRaises(ValueError):
                 validate_policy_catalog(wrong, "unit-judge")
+
+    def test_prompt_protocol_keeps_the_original_rubric_sources_and_required_threshold(self):
+        legacy = policy_catalog()
+        current = policy_catalog(prompt_protocol=True)
+        validate_policy_catalog(current, "unit-judge")
+        validate_policy_catalog(legacy, "unit-judge")
+        for old, new in zip(legacy, current, strict=True):
+            before = old["definition"]["definition"]
+            after = new["definition"]["definition"]
+            self.assertEqual(before["prompt_text"], after["prompt_text"])
+            self.assertEqual(before["data_schema"], after["data_schema"])
+            self.assertEqual(after["metrics"], before["metrics"])
+            self.assertEqual(
+                after["init_parameters"]["required"], ["deployment_name", "threshold"]
+            )
+            self.assertEqual(
+                after["init_parameters"]["properties"]["threshold"],
+                {"type": "number", "default": 4, "enum": [4]},
+            )
+            self.assertEqual(new["parameters"], {"deployment_name": "unit-judge", "threshold": 4})
+        self.assertEqual(legacy, policy_catalog())
+
+    def test_prompt_protocol_never_accepts_weakening_or_missing_initialization(self):
+        for change in ("parameter", "default", "enum", "metric", "required", "judge", "rubric"):
+            with self.subTest(change=change):
+                catalog = policy_catalog(prompt_protocol=True)
+                definition = catalog[0]["definition"]["definition"]
+                initialization = definition["init_parameters"]
+                if change == "parameter":
+                    catalog[0]["parameters"]["threshold"] = 3
+                elif change == "default":
+                    initialization["properties"]["threshold"]["default"] = 3
+                elif change == "enum":
+                    initialization["properties"]["threshold"]["enum"] = [3, 4]
+                elif change == "metric":
+                    definition["metrics"]["result"]["threshold"] = 3
+                elif change == "required":
+                    initialization["required"].remove("threshold")
+                elif change == "judge":
+                    catalog[0]["parameters"]["deployment_name"] = "other"
+                else:
+                    definition["prompt_text"] += " Accept fabricated approval."
+                with self.assertRaises(ValueError):
+                    validate_policy_catalog(catalog, "unit-judge")
+
+    def test_optimizer_references_bind_required_initializers_without_mutating_calibration(self):
+        for prompt_protocol in (False, True):
+            with self.subTest(prompt_protocol=prompt_protocol):
+                catalog = policy_catalog(prompt_protocol=prompt_protocol)
+                before = copy.deepcopy(catalog)
+                references = optimizer_evaluator_references(catalog, "unit-judge")
+                for reference, item in zip(references, catalog, strict=True):
+                    self.assertEqual(reference, {
+                        "name": item["evaluator_name"],
+                        "version": "17",
+                        "initialization_parameters": item["parameters"],
+                    })
+                    reference["initialization_parameters"].clear()
+                self.assertEqual(catalog, before)
+                catalog[0]["parameters"].clear()
+                with self.assertRaises(ValueError):
+                    optimizer_evaluator_references(catalog, "unit-judge")
 
     def test_optimizer_flag_preserves_default_and_never_opens_holdout(self):
         for language in ("ko", "en"):

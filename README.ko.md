@@ -14,6 +14,8 @@
 
 13장의 기본 red-team 검증 대상은 **관리형 AI red-teaming 서비스**입니다. 사용자 지정 8문항 policy 진단은 보완 자료이며 관리형 서비스의 실행 증거를 대신하지 않습니다.
 
+**후속 재검증에서 Optimizer의 필수 초기화 누락을 해결했습니다.** 원래 평가기 버전과 문턱 4를 유지한 새 job에서 baseline·후보 각각 6/6과 원문 참조 감사를 확인했습니다. 둘 다 1.0으로 동점이며 승격하지 않았습니다. Prohibited Actions는 별도 v5 실행에서도 판정 불일치가 남습니다.
+
 North Central US는 **두 공식 리전 문서에 모두 포함**되지만 전체 목록은 현재 서로 다릅니다. [13장의 문서 불일치](docs/13-governance.md#5-관리형-ai-red-teaming--기본-검증-대상)를 확인하며, 이전 ASR 문제의 원인이 Sweden이거나 리전 변경이 지표 방향을 고친다고 단정하지 않습니다.
 
 ## 무엇을 만드나요?
@@ -82,15 +84,15 @@ Owner 역할이 있어도 모델 할당량·지역·제한 제공 기능을 자�
 
 <a id="포털cli-요약-영상"></a>
 
-## North Central US CLI 요약 영상
+## North Central US 포털·CLI 요약 영상
 
-**NC 개정판: 각 3분 28초, 음성 없이 자막으로 설명합니다.** 새 실제 CLI 실행과 원본 증거의 읽기 전용 조회를 편집했으며 모델 응답을 시뮬레이션하지 않았습니다. **인증된 포털 재녹화는 새 로그인이 필요해 보류했으며, 이번 영상은 CLI 전용입니다.**
+**NC 개정판: 각 3분 52초, 음성 없이 자막으로 설명합니다.** 인증된 **Playwright Headless 포털 8개 장면**과 보존한 실제 CLI 실행을 함께 담았습니다. 원래 Optimizer 실패와 수정 후 성공, baseline·후보 동점, Prohibited Actions의 남은 불일치를 구분합니다. 로그인 화면·인증 정보는 편집본에 넣지 않았고 임시 로그인 프로필은 삭제했습니다.
 
 | 한국어 | English |
 |---|---|
 | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) |
 | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) |
 
-[녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). 현재 링크는 **새 NC CLI 편집본**입니다. 이전 Sweden 영상은 `0a8ab50` revision에 보존하며 새 리전의 실행으로 바꿔 표시하지 않았습니다.
+[녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). 현재 링크는 **NC 포털·CLI 개정판**입니다. 이전 NC CLI 영상은 revision `1d53a68`, Sweden 영상은 `0a8ab50`에 보존하며 원래 결과나 점수를 수정하지 않았습니다.
 
 **도움말:** [문제 해결](docs/troubleshooting.md) · [기능 찾기](docs/feature-map.md) · [코드 읽기](docs/code-reading.md) · [공식 자료](docs/sources.md)

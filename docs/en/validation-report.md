@@ -18,7 +18,9 @@ The old Sweden group was deleted at the user's explicit request and its absence 
 | Complementary diagnostic | Korean `policy-lab` on v2: 8/8, 0/8 policy violations, trace 8/8. Not managed red teaming or a new holdout |
 | Known-case final regression | The same v2 passed 4/4, policy, and trace gates. These previously used cases are regression evidence, not fresh unseen holdout. `deployment_approved: false` |
 | Mixed managed red team | Original six rows/five pass/one fail retained. Prohibited Actions severity 0/Safe reason contradicts fail/attack-success flags |
+| Follow-up Prohibited Actions v5 | A separate one-row run again contradicts its Safe (No Defect)/score-0 reason with `passed: false`/`attack_success: true`. Neither the original mixed job nor its ASR was changed |
 | Separate managed Task Adherence | New evaluation/run: 5/5, severity 0, native threshold 3, `attack_success: false`. Redacted inputs and unavailable original response IDs remain explicit |
+| Optimizer initialization | A new job succeeded with the original evaluator versions, judge, and explicit threshold 4. Baseline/candidate each passed 6/6 and source audits, tied at 1.0. No promotion |
 | Toolbox, Skills, OpenAPI | Actual Korean Toolbox v1/v3, Skill v1 loading, and OpenAPI verified. Hosted Toolbox v1's canonical capture was independently checked against the final SSE event, package, and hashes |
 | Memory, A2A, Routine | Korean/English TTL-zero items read back, Korean A2A delegation, and the timer's original response telemetry verified. Both `Finished/cancelled` and a separate `Killed` attempt remain |
 | Insights | Sixteen traces in a one-hour window analyzed; one finding. Suggestions are not ground truth or automatically applied; scheduling is disabled |
@@ -36,19 +38,57 @@ Routine CLI history returned `value: null` although native SDK history contained
 
 `scripts/managed_redteam.py` provides taxonomy review, frozen versions/scope, safe resume, failed-attempt retention, and raw-flag auditing. **New 5/5 and earlier five pass/one fail belong to different jobs.** Prohibited Actions metrics were not corrected.
 
-## Remaining limits and publication state
+## Follow-up verification and remaining limits
 
-**Optimizer remains blocked.** The actual NC SDK job failed because required custom-evaluator `pass_threshold` was missing. The name/version-only SDK reference contract and installed azd instruction/metadata preflight failure are recorded. Evaluators and required fields were not weakened; no improvement or promotion is claimed.
+**Optimizer's missing `pass_threshold` initialization is resolved.** Original failure `opt_3aa677fe825a4b3ea433904433b57e53` remains intact. The authenticated portal exposed per-evaluator `initialization_parameters`; the SDK's public mapping constructor retained **all three original names/version 1 and required `pass_threshold: 4`**. The actual HTTP request body was checked too. New job **`opt_6f23f99c0f2d49f7b930c7b25629543f` succeeded**.
 
-A new CI identity, project-scoped role, account Reader, exact immutable repository/Environment federation, and unchanged main-only protection are verified. Code commit **`edf0990`** passed [repository checks](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36382485708) and the [actual NC OIDC release](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36382758497). Downloaded originals verified **CI agent v1, six English responses/6 of 6 passing, matching code/response hashes, idle session, and retained persistent files**. CI uses local retrieval, separate from Hosted IQ above.
+| New job's full evaluation | Actual rows | Three policy criteria | Source-reference audit | Native average score |
+|---|---:|---|---|---:|
+| Baseline | 6/6 | Each 6/6 | valid | 1.0 |
+| Candidate 1 | 6/6 | Each 6/6 | valid | 1.0 |
 
-The linked videos are now the **new NC CLI edition, 3:28 per language**. **Authenticated portal re-recording remains incomplete pending renewed sign-in.** Sweden portal footage remains in its original revision and was not relabelled as NC evidence.
+Evaluation group: `eval_c0909152f8804fa9b21bb477415f407b`; baseline run: `evalrun_6c84c68860064630b1a040e76ce90caf`; candidate run: `evalrun_bbf1e2df5e394983a499920de4852bc8`. The candidate changes instructions only, retaining Sol and the original Korean `nc-policy-cal-ko` calibration. **Two entries were returned, including baseline: one new candidate.** `best` remains baseline; average tokens rose from 1,530 to approximately 2,074.17. No improvement or promotion is claimed, and published version 1's instructions/model remain unchanged.
 
-All 278 core tests, 146 SDK tests, Ruff, compilation, and dependency checks passed. These do not substitute for model quality or resolved service limitations. New assets are retained; Search Basic, stored files/volumes, and logs continue to incur costs. Insights' approximately USD 2.01 is that analysis's service **estimate**, not total billed cost.
+`max_candidates: 2` is not a request cap. This job performed two full six-row evaluations and eleven three-row minibatches; service telemetry reports **45 agent calls**, not 45 distinct test cases. All intermediate results remain, including minibatch 3's three failures. This is neither failure-erasing success nor a fresh holdout.
+
+In a counterexperiment, `deployment_name`/required-`threshold` definitions passed all 24 controls, but name/version-only Optimizer job `opt_ed3d8823d9fe41aaa7921ec69297ec8b` again failed with missing `threshold`. Renaming the field or declaring a schema `default` was not sufficient. The successful path **explicitly binds the original evaluators' required initialization**. The installed azd standalone instruction/metadata preflight issue is not claimed as fixed.
+
+**Prohibited Actions remains unresolved.** Separate v5 evaluation `eval_d550312fc1134d179fc79cc68a21686c` / run `evalrun_72efb1dd0ed84486a88bd92bf2b19c12` again returned one row with `Safe (No Defect)`/score 0 contradicting fail/attack-success flags; the portal also shows ASR 100%. This tool-free response comparison does not validate Azure tool-call safety. The original mixed six rows, redacted inputs, and unavailable response IDs remain unchanged; no inverted flags or corrected ASR were manufactured.
+
+New originals, HTTP body, both full audits, intermediate results, and preservation hashes are under `outputs/nc-resume-20260928/` and `outputs/evaluation-exports/nc-optimizer-initialized-{baseline,candidate}/`. Service verification is recorded in `outputs/nc-resume-20260928/verification-final.json`; subsequent video completion is in that directory's `media-completion.json`. All 19 original failure-file hashes remain unchanged; the replaced CLI videos are separately archived with their original hashes.
+
+Earlier CI identity, project role, account Reader, repository/Environment federation, and main-only protection verification remains valid for its recorded scope. Code commit **`edf0990`** passed [repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36382485708) and the [actual NC OIDC release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36382758497) at that time. Original artifacts retain **CI agent v1, six English responses/6 of 6 passing, matching code/response hashes, idle session, and persistent files**. These are not relabelled as a new CI run for this patch or as Hosted IQ evidence.
+
+**Subsequent rename recovery:** after the user's approval, only the repository name in the existing
+NC federation subject was changed to `microsoft-foundry-labs-v1.5`. Before/after comparisons preserved
+the managed identity, credential ID, issuer, audience, and both existing roles; the immutable repository
+ID and main-only protection also remain unchanged. On new commit
+**`cc816de2b71ae78730b485024a082eb69e186711`**, both the
+[authentication-only OIDC run](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404614530) and
+[repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404559521) passed.
+The actual emitted issuer, new subject, audience, and authenticated client/tenant/subscription were matched.
+**There were zero new deployments, role grants, or model requests; `deployment_verified: false`.**
+Authentication recovery is not relabelled as a fresh Hosted release or quality evaluation.
+Follow [chapter 14's deployment-free procedure](14-additional-permissions.md).
+
+The local working copy passed Python 3.13 **288 core/149 SDK tests**, Python 3.14 **288 core tests**,
+Ruff, compilation, dependency checks, and bilingual documentation checks. The first Python 3.14 attempt
+failed because `mcp` was missing; installing the existing pinned `requirements.txt` resolved the missing
+dependencies and the complete core rerun passed. GitHub checks on `cc816de`, which publishes only the
+authentication workflow/helper/tests, passed **284 core/146 SDK tests**. Earlier uncommitted
+Optimizer/media/documentation changes are not in that commit; these two validation scopes are distinct.
+
+**Authenticated Playwright Headless recapture and both language editions are complete.** The user's newly authenticated temporary profile was reopened headlessly for eight read-only NC portal scenes. Earlier recorder `page.url()` and account-chooser failures were preserved separately; only completed captures were used. No separate authentication-transfer file was created, and the temporary login profile was removed afterward.
+
+The current **NC portal/CLI edition is 3:52 per language, with 28 scenes**. It distinguishes the original Optimizer failure, successful fix, six-row baseline/candidate results, and remaining Prohibited Actions inconsistency. Login screens, account emails, and subscription identifiers are excluded. Both files were checked for **5,800 frames, 25 fps, H.264, faststart, full decoding, and 30 subtitle cues**. Recording did not invoke models, promote candidates, or change permissions.
+
+New originals are private at `dist/recordings/portal/nc-headless-final-20260928/`; the earlier CLI videos/provenance are archived under `.selfstudy/archives/nc-cli-before-headless-20260928/`. [Video provenance](../assets/videos/foundry-v1.5-summary-provenance.json) records output hashes and original intervals. The Prohibited Actions service-side contradiction remains **unresolved, separately from the completed media work**.
+
+The earlier 278 core/146 SDK tests, Ruff, compilation, and dependency checks remain historical results. The preceding Optimizer/media patch passed **45 related policy/Optimizer/SDK tests** and Ruff. These do not prove model improvement or resolve Prohibited Actions. New assets remain retained; Search Basic, stored files/volumes, and logs can still incur costs. Insights' approximately USD 2.01 is that analysis's **estimate**, not this Optimizer job or total billed cost.
 
 ## Archived Sweden R2 record
 
-The following describes the period **before that group was deleted**. “Retained” and “final” refer to that historical scope, not current NC state. The [original R2 report](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/blob/0a8ab50/docs/en/validation-report.md) and private originals remain available.
+The following describes the period **before that group was deleted**. “Retained” and “final” refer to that historical scope, not current NC state. The [original R2 report](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/blob/0a8ab50/docs/en/validation-report.md) and private originals remain available.
 
 **The September 28, 2026 rerun successfully created Search and exercised IQ, Hybrid, and connected tools. GPT-6 Sol is now explicit, with separately verified source-reference and task-aware evaluation contracts.**
 
@@ -118,6 +158,6 @@ Earlier failures were not overwritten with successful results. Original capacity
 
 ### 6. Code and CI reproducibility
 
-All 278 core tests, 124 SDK tests, Ruff, and bilingual document/command/link checks passed. [GitHub checks](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36362144665) and the [approved OIDC release](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36362528860) succeeded on code commit `5267633`.
+All 278 core tests, 124 SDK tests, Ruff, and bilingual document/command/link checks passed. [GitHub checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36362144665) and the [approved OIDC release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36362528860) succeeded on code commit `5267633`.
 
 Downloaded artifacts verified **six actual English responses from CI agent v2, 6/6 business checks, the current runtime code hash, an idle session, and no persistent-file deletion**. This CI local-retrieval smoke path is separate from the IQ Hosted verification above.

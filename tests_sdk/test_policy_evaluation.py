@@ -8,7 +8,11 @@ from urllib.parse import urlsplit
 
 import httpx
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
+from azure.ai.projects.models import (
+    AgentOptimizationEvaluatorRef,
+    AgentOptimizationJob,
+    TestingCriterionAzureAIEvaluator,
+)
 from azure.core.pipeline.transport import HttpResponse, HttpTransport
 
 from foundry_workshop.calibration import calibrate, verify_calibration
@@ -18,6 +22,7 @@ from foundry_workshop.policy_evaluation import (
     POLICY_EVALUATORS,
     POLICY_MAPPING,
     ensure_policy_evaluators,
+    optimizer_evaluator_references,
     policy_evaluator_version,
 )
 from tests import workspace
@@ -103,6 +108,27 @@ class PolicyNativeTests(unittest.TestCase):
                 self.assertEqual(item["data_mapping"], POLICY_MAPPING)
             self.assertEqual(scores[0]["results"], policy_outputs(self.items)[0]["results"])
             self.assertFalse(result["policy_reference_audit"]["judge_request_bodies_captured"])
+
+    def test_prompt_protocol_uses_the_full_policy_audit_without_weakening(self):
+        catalog = policy_catalog(prompt_protocol=True)
+        custom = {
+            item["name"]: {key: value for key, value in item.items() if key != "name"}
+            for item in catalog
+        }
+        with workspace() as root:
+            result = self.evaluate(root / "native", custom_catalog=custom)
+            state, _ = verified_native(root / "native")
+            self.assertEqual(result["validation_status"], "valid")
+            self.assertEqual(state["evaluator_hash"], digest(catalog))
+            for criterion in self.create_calls[0]["testing_criteria"]:
+                self.assertEqual(
+                    criterion["initialization_parameters"],
+                    {"deployment_name": "unit-judge", "threshold": 4},
+                )
+                self.assertEqual(criterion["data_mapping"], POLICY_MAPPING)
+            self.assertEqual(
+                read_json(root / "native/policy-reference-audit.json")["status"], "valid"
+            )
 
     def test_ga_iq_projections_survive_native_submission_and_reference_audit_unchanged(self):
         from foundry_workshop.knowledge import evidence
@@ -392,6 +418,45 @@ class EvaluatorTransport(HttpTransport):
 
 
 class PolicySDKContractTests(unittest.TestCase):
+    def test_sdk_mapping_constructor_keeps_optimizer_initialization_parameters(self):
+        for prompt_protocol in (False, True):
+            references = optimizer_evaluator_references(
+                policy_catalog(prompt_protocol=prompt_protocol), "unit-judge"
+            )
+            models = [AgentOptimizationEvaluatorRef(reference) for reference in references]
+            self.assertEqual([model.as_dict() for model in models], references)
+            job = AgentOptimizationJob({
+                "inputs": {
+                    "agent": {"agent_name": "lab-unit-policy", "agent_version": "1"},
+                    "train_dataset": {"type": "reference", "name": "lab-unit-dev", "version": "1"},
+                    "evaluators": references,
+                    "options": {"max_candidates": 2, "eval_model": "unit-judge"},
+                }
+            })
+            self.assertEqual(job.as_dict()["inputs"]["evaluators"], references)
+
+    def test_sdk_preserves_prompt_protocol_required_threshold_and_default(self):
+        transport = EvaluatorTransport()
+        with AIProjectClient(
+            endpoint=settings().project_endpoint, credential=DummyCredential(), transport=transport
+        ) as project:
+            catalog = ensure_policy_evaluators(
+                project, "lab-unit", "unit-judge", prompt_protocol=True
+            )
+            self.assertEqual(
+                catalog,
+                ensure_policy_evaluators(project, "lab-unit", "unit-judge", prompt_protocol=True),
+            )
+        self.assertEqual(sum(r.method == "POST" for r in transport.requests), 3)
+        for metric, entry in catalog.items():
+            self.assertEqual(
+                entry["definition"]["definition"],
+                policy_evaluator_version(
+                    entry["evaluator_name"], metric, prompt_protocol=True
+                )["definition"],
+            )
+            self.assertEqual(entry["parameters"], {"deployment_name": "unit-judge", "threshold": 4})
+
     def test_real_sdk_preserves_custom_definition_and_ground_truth_mapping(self):
         transport = EvaluatorTransport()
         serialized = []

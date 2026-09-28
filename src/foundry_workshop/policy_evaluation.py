@@ -110,10 +110,12 @@ CRITERIA = {
 }
 
 
-def policy_evaluator_version(name: str, metric: str) -> dict[str, Any]:
+def policy_evaluator_version(
+    name: str, metric: str, *, prompt_protocol: bool = False
+) -> dict[str, Any]:
     if metric not in POLICY_EVALUATORS:
         raise ValueError("Unknown policy criterion.")
-    return {
+    version = {
         "name": name,
         "evaluator_type": "custom",
         "categories": ["quality"],
@@ -144,6 +146,18 @@ def policy_evaluator_version(name: str, metric: str) -> dict[str, Any]:
             },
         },
     }
+    if prompt_protocol:
+        version["definition"]["init_parameters"] = {
+            "type": "object",
+            "properties": {
+                "deployment_name": {"type": "string"},
+                "threshold": {
+                    "type": "number", "default": PASS_THRESHOLD, "enum": [PASS_THRESHOLD],
+                },
+            },
+            "required": ["deployment_name", "threshold"],
+        }
+    return version
 
 
 def criteria_hash() -> str:
@@ -157,13 +171,15 @@ def owned_evaluator_name(prefix: str, metric: str) -> str:
     return f"{prefix.replace('-', '_')}_{metric}_v1"
 
 
-def ensure_policy_evaluators(project: Any, prefix: str, judge: str) -> dict[str, dict[str, Any]]:
+def ensure_policy_evaluators(
+    project: Any, prefix: str, judge: str, *, prompt_protocol: bool = False
+) -> dict[str, dict[str, Any]]:
     from azure.core.exceptions import ResourceNotFoundError
 
     catalog = {}
     for metric in POLICY_EVALUATORS:
         name = owned_evaluator_name(prefix, metric)
-        wanted = policy_evaluator_version(name, metric)
+        wanted = policy_evaluator_version(name, metric, prompt_protocol=prompt_protocol)
         try:
             versions = [item.as_dict() for item in project.beta.evaluators.list_versions(name=name)]
         except ResourceNotFoundError:
@@ -187,7 +203,10 @@ def ensure_policy_evaluators(project: Any, prefix: str, judge: str) -> dict[str,
         catalog[metric] = {
             "evaluator_name": name,
             "definition": matched,
-            "parameters": {"model": judge, "pass_threshold": PASS_THRESHOLD},
+            "parameters": (
+                {"deployment_name": judge, "threshold": PASS_THRESHOLD}
+                if prompt_protocol else {"model": judge, "pass_threshold": PASS_THRESHOLD}
+            ),
             "data_mapping": dict(POLICY_MAPPING),
         }
     return catalog
@@ -200,15 +219,36 @@ def validate_policy_catalog(catalog: list[dict[str, Any]], judge: str) -> None:
         raise ValueError("Policy mode requires exactly all three frozen policy criteria.")
     for item in catalog:
         definition = item.get("definition", {})
+        prompt_parameters = {"deployment_name": judge, "threshold": PASS_THRESHOLD}
+        prompt_protocol = item.get("parameters") == prompt_parameters
         if (
             not item.get("evaluator_name")
             or not definition.get("version")
             or definition.get("definition")
-            != policy_evaluator_version(item["evaluator_name"], item["name"])["definition"]
-            or item.get("parameters") != {"model": judge, "pass_threshold": PASS_THRESHOLD}
+            != policy_evaluator_version(
+                item["evaluator_name"], item["name"], prompt_protocol=prompt_protocol
+            )["definition"]
+            or item.get("parameters") != (
+                prompt_parameters
+                if prompt_protocol else {"model": judge, "pass_threshold": PASS_THRESHOLD}
+            )
             or item.get("data_mapping") != POLICY_MAPPING
         ):
             raise ValueError("Policy evaluator definition/version, mapping, judge or threshold changed.")
+
+
+def optimizer_evaluator_references(
+    catalog: list[dict[str, Any]], judge: str
+) -> list[dict[str, Any]]:
+    validate_policy_catalog(catalog, judge)
+    return [
+        {
+            "name": item["evaluator_name"],
+            "version": item["definition"]["version"],
+            "initialization_parameters": dict(item["parameters"]),
+        }
+        for item in catalog
+    ]
 
 
 def build_reference(
