@@ -6,7 +6,7 @@
 
 **Prerequisites:** Judge/dev results from 07, Hosted preparation from 08, the same-account OpenAI endpoint, and logging from 09. The IQ matrix also needs working Search/IQ from 06; the explicitly selected local matrix does not. Check costs for each feature. **Do not open holdout in this chapter.**
 
-**Current North Central US scope:** actual Hosted IQ v1/v2 each passed dev business 6/6 and all three policy criteria 6/6, with traces verified. This prompt comparison kept code/model/data fixed; both passed, so no pass-rate improvement is claimed. Version 2 also passed the separate Korean eight-case diagnostic. Turn/conversation evaluations and Korean/English calibration 24/24 are separate evidence; **the Optimizer failure is recorded below**.
+**Current repository rerun:** new Hosted IQ v1/v2 each passed business 6/6, all three policy criteria 6/6, and traces 6/6; v2 diagnostics passed 8/8. Code/model/corpus stayed fixed, so no pass-rate improvement is claimed. New conversation evaluations and Korean calibration 24/24 were checked. **The new Optimizer returned a 1.0 baseline and zero new full candidates**, distinct from earlier candidate generation. See the [current report](validation-report.md).
 
 The corrected Sol + GA IQ **SDK candidate** scored 6/6 on all three policy criteria with valid reference audits, under the frozen GPT-5.5 catalog and threshold 4. Preserve the original groundedness 5/6 and D01's unsupported team-lead detail. The old/new SDK comparison was rejected because coupled code changes altered `code_hash`; **do not interpret those scores as isolated prompt improvement or Hosted quality**.
 
@@ -62,7 +62,9 @@ Inspect the **six dev rows** in `outputs/policy-inputs-en/optimizer-dev.jsonl`, 
 
 ## 3. Optimize instructions only
 
-**The NC Optimizer's missing required initialization is resolved.** Original failure `opt_3aa677fe825a4b3ea433904433b57e53` remains intact. New SDK job `opt_6f23f99c0f2d49f7b930c7b25629543f` retained **all three original evaluator names/version 1, the judge, and required `pass_threshold: 4`**. Baseline and a new candidate each passed six dev rows, all three policy criteria 6/6, and their source-reference audits. Both scored 1.0; `best` remains the baseline. A candidate was generated, but no improvement or promotion is claimed.
+**New repository-rerun result:** `opt_bfa363582dff4c048ca6fceaea6ae953` succeeded with the original evaluators/threshold 4, baseline 6/6, and a valid source audit. No new full candidate was returned or promoted. The first inline submission failed because the SDK description and service wire contract differed; a new request using the public mapping constructor and **`train_dataset: {"type": "inline", "items": [...]}`** succeeded. Include only dev `query`/`ground_truth` fields and inspect the actual HTTP body. The candidate and initialization failures below belong to **the earlier NC environment, now deleted**.
+
+**The earlier NC Optimizer's missing required initialization was resolved.** Original failure `opt_3aa677fe825a4b3ea433904433b57e53` remains intact. SDK job `opt_6f23f99c0f2d49f7b930c7b25629543f` retained **all three original evaluator names/version 1, the judge, and required `pass_threshold: 4`**. Baseline and a new candidate each passed six dev rows, all three policy criteria 6/6, and their source-reference audits. Both scored 1.0; `best` remained the baseline. A candidate was generated, but no improvement or promotion was claimed.
 
 The cause was **omitting required initialization from Optimizer evaluator references**, not selecting the wrong evaluator. The authenticated portal request includes per-evaluator `initialization_parameters`. SDK 2.6.1 does not expose that named field, but its public mapping constructor, `AgentOptimizationEvaluatorRef(mapping)`, preserves it. `optimizer_evaluator_references(catalog, judge)` binds the verified calibration catalog's names, versions, and initialization values together. Supply those references to `AgentOptimizationJobInputs.evaluators` and verify that the serialized **actual HTTP body** retains the values. Do not replace existing evaluators or remove required fields.
 
@@ -167,7 +169,11 @@ azd deploy "YOUR-PREFIX-matrix-en" --cwd "ACTUAL-MATRIX-V1-ABSOLUTE-PATH"
 azd ai agent show "YOUR-PREFIX-matrix-en" --cwd "ACTUAL-MATRIX-V1-ABSOLUTE-PATH" --output json
 ```
 
-Verify the real runtime identity and roles as in 08. Use that exact service/folder to **read and save the active version and actual Invocations endpoint**:
+Verify the real runtime identity and roles as in 08. **This `account-chat` profile calls the parent Foundry account's OpenAI API; project-scoped Foundry User alone is insufficient.** Verify/grant **Cognitive Services OpenAI User on this lab account** (role ID `5e0bd9bd-7b93-4f28-af87-19fc36ad61bd`) to the exact `instance_identity.principal_id` returned by `show`. IQ also requires Search Index Data Reader on this Search service. The default `selfstudy.py roles` Hosted plan covers project access, not this extra account-API role. Do not widen permissions to the subscription or assign them to the wrong user/project identity.
+
+In the rerun, Search returned HTTP 200 while account-chat returned 401 for the missing data action, surfaced as an outer Hosted 500. Original logs/session were preserved; only the exact runtime/account role was added, then **the same version was tested with a fresh smoke label**. No model/API/provider fallback was used.
+
+Use that exact service/folder to **read and save the active version and actual Invocations endpoint**:
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "ACTUAL-MATRIX-V1-FOLDER" --service "YOUR-PREFIX-matrix-en"

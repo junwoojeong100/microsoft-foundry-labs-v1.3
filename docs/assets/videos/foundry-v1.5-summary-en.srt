@@ -1,149 +1,123 @@
 1
-00:00:00,000 --> 00:00:06,000
-Fresh authenticated NC portal capture, recorded headlessly.
-Portal reviews and real CLI sources remain distinct; responses are not rewritten.
+00:00:00,000 --> 00:00:12,000
+Chapters 00-15 were rerun in a new Azure group. These are new real recordings, including the limits that prevent final acceptance.
 
 2
-00:00:06,000 --> 00:00:12,000
-Optimizer initialization is fixed; the new candidate ties the baseline.
-Prohibited Actions remains inconsistent. No candidate was promoted.
+00:00:12,000 --> 00:00:20,000
+The previous NC lab group was deleted and its absence verified. The new group is rg-mflabs15-jw-0928 in North Central US.
 
 3
-00:00:12,000 --> 00:00:20,000
-A new dedicated lab group was created in North Central US.
-Only the explicitly selected old Sweden group was archived, then deleted.
+00:00:20,000 --> 00:00:28,000
+GPT-6 Sol answers, GPT-6 Luna is the comparison, and GPT-5.5 judges. Embedding, IQ Chat, and optimization keep separate roles.
 
 4
-00:00:20,000 --> 00:00:28,000
-GPT-6 Sol answers; a different base model, GPT-5.5, judges.
-Read model names and versions; keep comparison and embedding roles separate.
+00:00:28,000 --> 00:00:38,000
+Web search was removed before asking Sol for a three-line checklist. This is a model-only response, not company-policy retrieval.
 
 5
-00:00:28,000 --> 00:00:36,000
-Six synthetic Hanbit policies were connected to actual File Search.
-No real company documents, booking, or payment authority.
+00:00:38,000 --> 00:00:46,000
+A newly saved agent explains the KRW 150,000 limit and advance approval for a KRW 170,000 hotel. It does not grant approval.
 
 6
-00:00:36,000 --> 00:00:44,000
-Local MAF function/MCP paths differ from managed agent tools.
-Verify actual calls and results, not just configured tool names.
+00:00:46,000 --> 00:00:54,000
+Six synthetic documents were uploaded and indexed. Current, historical, and missing-policy questions were checked with real file citations.
 
 7
-00:00:44,000 --> 00:00:52,000
-Code Interpreter generated a CSV; its rows and hash were checked.
-File verification is not overall policy-answer certification.
+00:00:54,000 --> 00:01:02,000
+Readback of this run: the function verified KRW 150,000 today, while MCP verified the historical KRW 120,000 limit.
 
 8
-00:00:52,000 --> 00:01:00,000
-Sequential, concurrent, and group-chat execution remain distinct.
-A group chat stopping at its round limit does not prove agreement.
+00:01:02,000 --> 00:01:10,000
+Code Interpreter produced an actual six-row CSV. The downloaded content and file hashes were checked; a claim alone was not accepted.
 
 9
-00:01:00,000 --> 00:01:08,000
-NC Basic Search uses separate Korean/English ownership records.
-Free feature allowances do not make the Basic service free.
+00:01:10,000 --> 00:01:18,000
+All three patterns and the structured workflow ran. Ending at the three-round group-chat limit is not consensus or a quality pass.
 
 10
-00:01:08,000 --> 00:01:16,000
-Actual embeddings and text-plus-vector retrieval were verified.
-No zero vectors or renamed keyword results were substituted.
+00:01:18,000 --> 00:01:26,000
+The local SDK preserved the original request and output IDs. This prewritten simulation is not an Azure call or real human authorization.
 
 11
-00:01:16,000 --> 00:01:24,000
-A real Sol answer used separate English sources, index, and ledger.
-The distinct IQ Chat planning/synthesis model is gpt-5.6-luna.
+00:01:26,000 --> 00:01:34,000
+Basic Search uses one replica, one partition, managed identity, and disabled key authentication. Standing service costs remain.
 
 12
-00:01:24,000 --> 00:01:32,000
-English dev first scored 5/6 after retrieval omitted SCOPE-01.
-A new threshold-zero run passed 6/6; calibration matched 24/24.
+00:01:34,000 --> 00:01:44,000
+Real six-document retrieval and 3,072-dimensional embeddings were verified. GA IQ retrieval is distinct from model-based IQ Chat.
 
 13
-00:01:32,000 --> 00:01:40,000
-NC Toolbox v3 and Skill v1 actually loaded and ran.
-Separate Hosted v1 was checked against final SSE, package, and source hashes.
+00:01:44,000 --> 00:01:52,000
+SDK baseline and candidate each passed 6/6 and all three policy criteria. Calibration matched 24/24 judgments; improvement is not claimed.
 
 14
-00:01:40,000 --> 00:01:48,000
-Both Korean Hosted versions passed dev 6/6 with code/model/corpus fixed.
-Policy criteria and traces passed; no pass-rate improvement is claimed.
+00:01:52,000 --> 00:02:00,000
+The package and local response were checked before remote deployment and invocation. The actual runtime identity received scoped data access.
 
 15
-00:01:48,000 --> 00:01:56,000
-The separate Korean v2 diagnostic passed 8/8 with 0/8 violations.
-Not fresh holdout or Microsoft's managed red-team ASR.
+00:02:00,000 --> 00:02:08,000
+Insights analyzed three traces and returned no findings. Coherence v13 scored the original response 5/pass; its rule is paused.
 
 16
-00:01:56,000 --> 00:02:02,000
-The portal displays the original Task Adherence-only managed job.
-All five returned rows passed: native severity 0, threshold 3.
+00:02:08,000 --> 00:02:16,000
+After actual v1 queries and answers, v2 exposed tool_search, call_tool, and policy_search. Tool discovery is not document retrieval.
 
 17
-00:02:02,000 --> 00:02:08,000
-This is a read-only review, not a new run or a Prohibited Actions fix.
-num_turns is depth. Provider-redacted inputs are not reconstructed.
+00:02:16,000 --> 00:02:24,000
+Uploaded Skill v1 matched its downloaded bytes and hash. Toolbox v3 also demonstrated an actual load_skill call.
 
 18
-00:02:08,000 --> 00:02:20,000
-A separate v5 row says Safe (No Defect), yet shows Fail and ASR 100%.
-The original six-row mixed job remains intact; no flags or ASR were corrected.
+00:02:24,000 --> 00:02:32,000
+The original SSE was checked against package, version, Skill, and tool evidence. Eight files from that same session were archived.
 
 19
-00:02:20,000 --> 00:02:28,000
-Separate Hosted v2 retains all eleven DefaultV2 filter settings.
-It refused false approval; this is not proof of a platform filter block.
+00:02:32,000 --> 00:02:40,000
+A new TTL-zero store returned the real item in alpha and none in beta. The same item was updated; this is not a real-user authorization test.
 
 20
-00:02:28,000 --> 00:02:36,000
-Original items were read back from Korean/English TTL-zero stores.
-Not automatic extraction or a real-user authorization-boundary test.
+00:02:40,000 --> 00:02:48,000
+The initial post-creation 400 was preserved. After propagation, the same connection and pinned caller/target verified A2A 1.0 JSON-RPC.
 
 21
-00:02:36,000 --> 00:02:44,000
-Native history recovered real IDs hidden by an empty CLI list.
-Original-answer verification retained Finished/cancelled and Killed attempts.
+00:02:48,000 --> 00:02:58,000
+Telemetry linked the original scheduled response and trace. Finished/cancelled and a separate Killed attempt remain; the timer is disabled.
 
 22
-00:02:44,000 --> 00:02:52,000
-One on-demand scan analyzed 16 traces and returned one finding.
-Suggestions are not ground truth; no automatic fix or active schedule.
+00:02:58,000 --> 00:03:06,000
+Two conversations with six turns were newly collected. Turn-level 6/6 and whole-conversation 2/2 grounding/coherence remain separate evidence.
 
 23
-00:02:52,000 --> 00:03:00,000
-The v1 initialization/zero-row failure remains; v13 was verified.
-Same judge/threshold: one original response scored 5/pass; both rules paused.
+00:03:06,000 --> 00:03:16,000
+Original evaluators and threshold 4 yielded an audited 6/6 baseline at 1.0. No new full candidate was returned, and nothing was promoted.
 
 24
-00:03:00,000 --> 00:03:06,000
-This is the original SDK job's actual pre-fix failure.
-Missing pass_threshold is not a zero model-quality score.
+00:03:16,000 --> 00:03:24,000
+The remote path is sequential/IQ/account-chat/Invocations. Each version passed dev 6/6 and every source-bound policy criterion.
 
 25
-00:03:06,000 --> 00:03:16,000
-Explicit initialization preserved the original evaluator versions.
-One new candidate and baseline tie at 1.0. Best remains baseline; no promotion.
+00:03:24,000 --> 00:03:32,000
+The first 401 lacked account-API access. Scoped OpenAI User access fixed the same runtime; both versions then verified all six exported traces.
 
 26
-00:03:16,000 --> 00:03:22,000
-All six baseline rows passed all three policy criteria.
-This successful new run is distinct from the preserved initialization failure.
+00:03:32,000 --> 00:03:40,000
+Fixed v2 passed all eight explicit business/policy diagnostics and trace checks. This does not replace managed red teaming or a new holdout.
 
 27
-00:03:22,000 --> 00:03:28,000
-Both Korean baseline and candidate passed 6/6 and all policy criteria.
-Intermediate minibatch failures remain. A tied score is not improvement.
+00:03:40,000 --> 00:03:52,000
+This new Task Adherence run returned six rows: five pass and one fail. The previous environment's 5/5 was not reused as a fresh success.
 
 28
-00:03:28,000 --> 00:03:36,000
-Eight JSON files from the exact session were retained and hash-checked.
-Readback is not new inference; remote files and volumes remain.
+00:03:52,000 --> 00:04:02,000
+The failing row reports severity 0 but passed=false and attack_success=true. Raw flags remain unchanged; holdout and safety approval are held.
 
 29
-00:03:36,000 --> 00:03:44,000
-CI used the new NC identity and exact repository/environment trust.
-Its English 6/6 uses local retrieval, separate from the IQ validation above.
+00:04:02,000 --> 00:04:10,000
+A separate Hosted v2 references all eleven preserved default protections. It refused false approval; this is not proof of a platform filter block.
 
 30
-00:03:44,000 --> 00:03:52,000
-New NC resources remain; unused compute and schedules are stopped.
-Search, files, and logs can still cost money. Lab gates are not approval.
+00:04:10,000 --> 00:04:20,000
+A new identity uses the exact immutable subject. Main-only protection stayed intact; Korean v1 and English v2 each passed six real dev cases.
+
+31
+00:04:20,000 --> 00:04:32,000
+The old group is absent and active owned Hosted sessions are zero. Schedules are off; retained-resource costs and the acceptance hold remain.

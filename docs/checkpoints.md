@@ -2,7 +2,7 @@
 
 한 번에 한 단계만 진행합니다. **명령 입력 → 결과 확인 → 기록 → 다음** 순서를 유지하세요.
 
-현재 리전은 North Central US입니다. 혼합 native job의 6행·5 pass/1 fail과 **별도 Task Adherence-only job의 5/5**를 기록했습니다. Prohibited Actions polarity 불일치는 여전히 남습니다. 각자의 job/label을 확인하며 이전 Sweden 완료 표나 custom 결과로 한계를 덮지 않습니다.
+현재 리전은 North Central US입니다. **리포 재실행의 새 Task Adherence는 6행·5 pass/1 fail이며 severity/flag 불일치로 최종 인수를 보류**했습니다. 이전 NC의 혼합 job과 별도 5/5는 과거 기록입니다. [현재 결과](validation-report.md)의 각 job/label을 확인하고, 이전 성공이나 custom 진단으로 새 한계를 덮지 않습니다.
 
 ## 매 장에서 확인할 네 가지
 

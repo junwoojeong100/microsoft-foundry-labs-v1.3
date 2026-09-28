@@ -2,7 +2,7 @@
 
 **현재 장, 마지막 성공, 실제 대상/버전, 오류 원문을 기록합니다.** 비밀번호·토큰·API key·회사 데이터는 기록하거나 공유하지 않습니다.
 
-현재 대상은 **새 North Central US 프로젝트**입니다. 혼합 native job의 6행·5 pass/1 fail과 별도 Task Adherence-only job의 5/5를 구분하며 Prohibited Actions 설명/flag 불일치는 남습니다. [현재 실행 결과](validation-report.md)와 역사적 Sweden 사례를 구분합니다.
+현재 대상은 **리포 이름 변경 후 만든 새 North Central US 프로젝트**입니다. 새 Task Adherence는 6행·5 pass/1 fail이며 severity/flag 불일치로 최종 인수를 보류했습니다. 이전 NC의 5/5와 Prohibited Actions, Sweden 사례는 과거 기록입니다. [현재 실행 결과](validation-report.md)를 확인하고 원래 실패를 보존합니다.
 
 | 증상 | 먼저 확인할 것 | 다음 행동 |
 |---|---|---|

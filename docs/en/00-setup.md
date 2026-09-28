@@ -6,9 +6,9 @@
 
 Start with a **Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role**. You do not need someone else's preconfigured endpoint or Search service. New resources and model requests can incur charges.
 
-**The current target is a new North Central US (`northcentralus`) project.** Foundation creation, Sol project Responses, Prompt Agent creation/invocation, and local MAF function/MCP calls are now verified. These are path-specific results, not a guarantee for other managed tools or the whole course. Do not recreate resources already prepared.
+**The current target is the new North Central US (`northcentralus`) project created after the repository rename.** Group `rg-mflabs15-jw-0928` was used for foundation, Sol project Responses, Prompt Agents, MAF functions/MCP, and the later chapters. Do not recreate resources already prepared.
 
-Subsequent NC evidence includes KO/EN six-file File Search indexing/citations, a real six-row CSV, MAF workflows, Korean/English Search/GA IQ/Hybrid/IQ Chat, Hosted IQ v1/v2 dev 6/6, and an actual scheduled response. **A new Task Adherence-only managed job passed 5/5**; the earlier mixed six-row job still retains five pass/one fail and its Prohibited Actions reason/flag contradiction. This is not an all-ASR fix, and a bounded Group Chat is not convergence. Read the [current results and limits](validation-report.md).
+New evidence includes Korean/English six-file File Search, an actual six-row CSV, Korean Search/GA IQ/Hybrid/IQ Chat, Hosted IQ v1/v2 dev 6/6, and the original scheduled response. **The new managed Task Adherence run returned six rows, five pass/one fail with inconsistent severity/flags; final acceptance is held.** Previous 5/5 or English retrieval results are not adopted as new evidence. Read the [current results and limits](validation-report.md).
 
 ## 1. Check your permissions
 
@@ -40,10 +40,12 @@ Do not overwrite a `.venv` created with another Python version or existing perso
 ### Start a new project without adopting old state
 
 1. Privately archive the previous `.env`, `.selfstudy` configuration/ownership records, CI identity information, `outputs/`, and `.build/`, retaining original hashes. Keep raw recordings unchanged.
-2. In this transition, only the explicitly verified previous Sweden E2E group was deleted. Local state was preserved under `.selfstudy/archives/sweden-20260928-before-northcentral`. This is history, not permission to delete other groups, CI identities, or evidence.
+2. This repository rerun deleted only the confirmed old NC group `rg-mf15-jw-nc-0928` and verified its absence. Previous local state—3,428 files—and videos were privately archived with hashes, including the older Sweden archive. This is history, not permission to delete other groups, identities, or evidence.
 3. Use a fresh source copy/workspace and terminal. Do not copy old `.env`, active `.selfstudy`, result folders, or azd environments into the new project's active state. If reusing a checkout, verify the archive/hashes first and initialize only fresh active state through the supported setup flow.
 4. Choose a new NC prefix and unused labels, for example `lab-yourname-nc-0928`, `nc-baseline-en`, and `nc-candidate-en`. If replacing example labels, update every collect/evaluate/compare/verify reference consistently.
 5. Never delete or edit `.env`/ownership ledgers to bypass cross-project checks. Retaining a previous CI identity does not establish its roles or access in the new project.
+
+**Run `configure`, `set`, `models`, `resource`, and `bind-matrix` one at a time in a checkout.** Concurrent writers can conflict while replacing settings files. Parallel experiments need separate workspaces and ownership records.
 
 The commands below target **the fresh workspace and new NC resources**. Do not adopt archived Sweden responses, traces, evaluations, or deployment versions as new results.
 

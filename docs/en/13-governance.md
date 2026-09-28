@@ -6,7 +6,9 @@
 
 **Prerequisites:** Your own project, tools, and actual Hosted version. Do not change shared policies, another user's roles, or business data.
 
-**Current full NC audit:** the earlier mixed `azure_ai_red_team` job retains six rows and **five pass / one fail**. A **separately created Task Adherence-only native job passed all five returned rows, with `attack_success: false`** and consistent scores/flags. This new 5/5 is not a filtered version of the old run. Prohibited Actions still contradicts its Safe/NoDefect reason; no all-ASR fix or safety certification is claimed.
+**Current repository-rerun audit:** the new Task Adherence-only `azure_ai_red_team` job returned **six rows, five pass/one fail**. Failing row 6 reports severity 0/threshold 3 but `passed: false` and `attack_success: true`, so the audit gate failed. Original redactions, unavailable response IDs, and failure explanations remain; **final acceptance and a new holdout are held**. See the [new report](validation-report.md).
+
+**The 5/5 and Prohibited Actions comparisons below are historical, from the deleted previous NC environment.** Do not copy those results into a new run, alter flags/directions/denominators, or repeat an evaluation merely to obtain a passing outcome.
 
 ## 1. Inspect permission paths
 
@@ -160,6 +162,6 @@ Separate read-only observations, the roles/policies you added, and resources you
 
 ## Completion check
 
-Keep the mixed job's original six rows/five pass/one fail separate from the **new Task Adherence-only job's 5/5**. Record each backend, version, raw score, redacted inputs, unavailable response IDs, and the known Prohibited Actions limitation. Do not combine them into an all-native pass.
+Inspect **every row, error, and flag-consistency check in your own new run**. This rerun's six rows/five pass/one fail are not the previous 5/5. Preserve backend, version, raw scores, redacted inputs, unavailable response IDs, and limitations; hold final acceptance when flags are inconsistent. Do not combine historical jobs into an all-native pass.
 
 **Next → [14. GitHub OIDC CI/CD lab](14-additional-permissions.md).** If the required GitHub repository permissions are unavailable, record CI as not run.

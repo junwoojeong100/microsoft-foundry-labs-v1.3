@@ -4,7 +4,9 @@
 
 **시작 조건:** 본인 프로젝트·도구·실제 Hosted 버전. 공유 정책·다른 사용자의 역할·업무 데이터를 변경하지 않습니다.
 
-**현재 NC 전체 감사:** 이전 혼합 `azure_ai_red_team` job의 6행·**5 pass / 1 fail**은 그대로 남습니다. 별도로 생성한 **Task Adherence-only native job은 5행 모두 pass, `attack_success: false`**이며 점수/판정이 일치합니다. 이 새 5/5는 기존 실패 행을 뺀 결과가 아닙니다. Prohibited Actions의 Safe/NoDefect 설명과 실패 flag의 모순은 미해결이며 전체 ASR 수정이나 안전 인증을 주장하지 않습니다.
+**현재 리포 재실행의 전체 감사:** 새 Task Adherence-only `azure_ai_red_team` job은 **6행·5 pass/1 fail**입니다. 실패 6번 행은 severity 0/문턱 3인데 `passed: false`, `attack_success: true`여서 감사 gate를 통과하지 못했습니다. 원래 입력 가림·미노출 response ID·실패 설명을 보존하며 **최종 인수와 새 holdout을 보류**합니다. [새 보고서](validation-report.md).
+
+**아래 5/5와 Prohibited Actions 비교는 삭제 전 NC의 과거 기록**입니다. 이전 Task Adherence의 5/5나 혼합 job의 5 pass/1 fail을 새 결과로 복사하지 않습니다. 새 결과를 정상화하려고 flag·방향·분모를 바꾸거나 같은 평가를 반복하지 않습니다.
 
 ## 1. 권한 경로 직접 확인
 
@@ -158,6 +160,6 @@ python scripts/managed_redteam.py audit --directory outputs/managed-task-adheren
 
 ## 완료 확인
 
-혼합 job의 원래 6행·5 pass/1 fail과 **별도 Task Adherence-only job의 5/5**를 구분합니다. 각 run의 backend·버전·원점수·입력 가림·노출되지 않은 response ID와 Prohibited Actions의 알려진 한계를 기록하며 전체 native 통과로 합치지 않습니다.
+**본인의 새 run**에서 반환된 모든 행·오류·판정 일관성을 확인합니다. 이번 재실행의 6행·5 pass/1 fail은 이전 5/5와 다른 결과입니다. Backend·버전·원점수·입력 가림·미노출 response ID와 한계를 기록하고, 불일치가 있으면 최종 인수를 보류합니다. 과거 job을 합쳐 전체 native 통과로 만들지 않습니다.
 
 **다음 → [14. GitHub OIDC CI/CD 실습](14-additional-permissions.md)**. 필요한 GitHub 저장소 권한이 없으면 CI를 미실행으로 기록합니다.

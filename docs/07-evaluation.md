@@ -6,7 +6,7 @@
 
 아래 label은 새 실습의 예시입니다. 기존 결과가 있다면 새로운 baseline/candidate label을 정하고 모든 후속 참조에 동일하게 사용합니다. 이전 모델·judge·코드 조건의 파일이나 점수를 덮어쓰지 않습니다.
 
-**현재 NC 상태:** 한·영 Sol + IQ SDK dev 6/6, 각 언어의 policy calibration 24/24를 확인했습니다. 영어는 첫 5/6 실패를 보존하고 06의 검색 문턱을 명시한 새 실행에서 6/6을 확인했습니다. Hosted v1/v2와 관리형 red team은 각각 12/13의 별도 대상입니다. 학습자는 새 label을 선택하고 자신의 원문·judge·전체 결과를 확인하며 기록된 점수를 인수하지 않습니다.
+**현재 재실행 상태:** 새 한국어 SDK baseline/candidate가 각각 dev 6/6·세 policy 기준 각각 6/6, calibration 24/24입니다. 동일 account-responses 조건의 별도 Sol/Luna 비교도 각각 6/6입니다. **이전 NC의 한·영 IQ SDK/calibration과 영어 최초 5/6은 과거 기록**입니다. Hosted와 관리형 red team은 12/13의 별도 대상이며, 학습자는 자신의 새 label·원문·judge·전체 결과를 확인합니다. [새 실행 보고서](validation-report.md).
 
 **역사적 Sweden Central 기록:** 당시 Sol + GA IQ SDK candidate는 세 policy 기준 각각 6/6과 valid 참조 감사를 확인했고, 한국어/영어 calibration은 각각 24/24였습니다. 이전 groundedness 5/6과 `APPROVAL-01` 없는 D01 팀장 정보 오류도 보관합니다.
 

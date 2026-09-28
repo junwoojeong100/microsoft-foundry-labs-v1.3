@@ -10,11 +10,11 @@
 
 이미 진행 중이라면 → [내 진행표](worksheets/workbook.md)
 
-**현재 기본 리전은 North Central US(`northcentralus`)입니다.** 한·영 Search·IQ·Hybrid·IQ Chat, Hosted IQ v1/v2의 dev 6/6, 실제 예약 응답을 확인했습니다. **새 Task Adherence-only 관리형 실행은 별도 job에서 5/5 통과**했고 원시 판정도 일치합니다. 이전 혼합 job의 5 pass/1 fail과 Prohibited Actions 불일치는 그대로 보존합니다. 전체 ASR 수정이나 운영 안전 인증은 아닙니다. [검증 결과와 남은 제한](docs/validation-report.md), [새 workspace/보관 경계](docs/00-setup.md#새-프로젝트에서-이전-상태를-인수하지-않기)를 확인하세요.
+**리포 이름 변경 후 새 그룹 `rg-mflabs15-jw-0928`에서 00~15장을 재실행했습니다.** 이전 실습 그룹은 삭제하고 부재를 확인했습니다. North Central US(`northcentralus`)의 실제 Search·IQ·Hybrid·도구·배포·운영과 한·영 OIDC 릴리스를 확인했습니다. **최종 품질 인수는 보류입니다:** 새 관리형 Task Adherence는 6행 중 5 pass/1 fail이며 실패 행의 severity와 판정 flag가 일치하지 않습니다. 이전 환경의 5/5를 재사용하거나 새 holdout을 열지 않았습니다. [새 실행 결과와 제한](docs/validation-report.md), [새 workspace/보관 경계](docs/00-setup.md#새-프로젝트에서-이전-상태를-인수하지-않기)를 확인하세요.
 
 13장의 기본 red-team 검증 대상은 **관리형 AI red-teaming 서비스**입니다. 사용자 지정 8문항 policy 진단은 보완 자료이며 관리형 서비스의 실행 증거를 대신하지 않습니다.
 
-**후속 재검증에서 Optimizer의 필수 초기화 누락을 해결했습니다.** 원래 평가기 버전과 문턱 4를 유지한 새 job에서 baseline·후보 각각 6/6과 원문 참조 감사를 확인했습니다. 둘 다 1.0으로 동점이며 승격하지 않았습니다. Prohibited Actions는 별도 v5 실행에서도 판정 불일치가 남습니다.
+새 SDK baseline·candidate와 Hosted IQ v1/v2는 각각 dev 6/6, 세 policy 기준 각각 6/6입니다. **새 Optimizer는 원래 평가기·문턱 4에서 baseline 1.0과 원문 참조 감사를 확인했지만 새 전체 후보는 0개**였습니다. 개선·승격은 주장하지 않습니다. 이전 Optimizer 후보와 Prohibited Actions 결과는 과거 기록으로 보존합니다.
 
 North Central US는 **두 공식 리전 문서에 모두 포함**되지만 전체 목록은 현재 서로 다릅니다. [13장의 문서 불일치](docs/13-governance.md#5-관리형-ai-red-teaming--기본-검증-대상)를 확인하며, 이전 ASR 문제의 원인이 Sweden이거나 리전 변경이 지표 방향을 고친다고 단정하지 않습니다.
 
@@ -86,13 +86,13 @@ Owner 역할이 있어도 모델 할당량·지역·제한 제공 기능을 자�
 
 ## North Central US 포털·CLI 요약 영상
 
-**NC 개정판: 각 3분 52초, 음성 없이 자막으로 설명합니다.** 인증된 **Playwright Headless 포털 8개 장면**과 보존한 실제 CLI 실행을 함께 담았습니다. 원래 Optimizer 실패와 수정 후 성공, baseline·후보 동점, Prohibited Actions의 남은 불일치를 구분합니다. 로그인 화면·인증 정보는 편집본에 넣지 않았고 임시 로그인 프로필은 삭제했습니다.
+**리포 재실행판: 각 4분 32초·31개 장면, 음성 없이 자막으로 설명합니다.** 이번 실행의 **인증된 포털 5개 장면**, 실제 CLI 녹화와 표시된 저장 증거 조회만 사용했습니다. 새 그룹 생성부터 평가·배포·중지까지 보여 주며, 관리형 판정 불일치와 최종 인수 보류도 그대로 담았습니다. 로그인·인증 정보는 편집본에서 제외했습니다.
 
 | 한국어 | English |
 |---|---|
 | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) |
 | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) |
 
-[녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). 현재 링크는 **NC 포털·CLI 개정판**입니다. 이전 NC CLI 영상은 revision `1d53a68`, Sweden 영상은 `0a8ab50`에 보존하며 원래 결과나 점수를 수정하지 않았습니다.
+[녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). 현재 파일은 **새 그룹의 포털·CLI 재실행판**입니다. 이전 NC 포털판은 revision `7b7ca26`, NC CLI판은 `1d53a68`, Sweden판은 `0a8ab50`에 보존합니다. 한·영 자막이 전체 실습을 두 언어로 각각 수행했다는 뜻은 아닙니다.
 
 **도움말:** [문제 해결](docs/troubleshooting.md) · [기능 찾기](docs/feature-map.md) · [코드 읽기](docs/code-reading.md) · [공식 자료](docs/sources.md)

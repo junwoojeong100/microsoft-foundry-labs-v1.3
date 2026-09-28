@@ -4,7 +4,7 @@
 
 **시작 조건:** 00의 프로젝트 관리 ID 역할, 06의 embedding 배포, 08의 azd Foundry 확장. 새 agent/Memory/예약과 호출 비용을 본인이 확인합니다.
 
-**현재 NC 상태:** 한·영 TTL 0 Memory의 원래 항목 재조회, 한국어 A2A 위임, 실제 timer 응답의 원본 telemetry 조회를 확인했습니다. Timer는 disabled이며 `Finished/cancelled`와 별도 `Killed/cancelled` 시도를 모두 보존합니다. CLI history가 빈 목록을 반환해도 실제 실행은 존재했으므로 아래 native history 조회를 함께 사용합니다. Sweden의 원격 자산은 그룹 삭제 후 존재한다고 가정하지 않습니다.
+**현재 재실행:** 새 한국어 TTL 0 Memory의 alpha 조회·빈 beta·동일 항목 갱신, 실제 A2A 1.0 위임, timer의 원래 응답 telemetry를 확인했습니다. Timer는 disabled이며 `Finished/cancelled`와 별도 `Killed/cancelled`를 보존합니다. 연결 직후 A2A 400은 같은 연결의 전파 후 새 label에서 통과했습니다. 이전 NC의 한·영 Memory는 과거 기록이며 새 영어 실행으로 인수하지 않습니다. [현재 보고서](validation-report.md).
 
 ## 1. Memory: 실제 저장과 새 요청에서의 조회
 

@@ -6,7 +6,9 @@
 
 **Prerequisites:** Hosted preparation from 08, Actions/Environment permissions in your own GitHub repository, and the lab's Azure resources and roles. Without the required GitHub access, record CI as not run and continue to 15.
 
-The old CI managed identity **was inside the deleted Sweden group and was deleted with it**. Archived client/principal IDs do not establish a usable identity. The NC group now has a dedicated identity with project-scoped Foundry Project Manager, account-scoped Reader, and the exact immutable repository/Environment subject. Existing main-only protection remains. Verify actual release success against the commit/run in the [validation report](validation-report.md); configured identity and variables are not deployment success.
+In this repository rerun, **the previous NC group and its CI identity were deleted together**. New group `rg-mflabs15-jw-0928` has a dedicated identity with project-scoped Foundry Project Manager, account Reader, and the **exact current immutable repository/Environment subject**. Main-only protection is unchanged. On code `7b7ca26`, new OIDC authentication and Korean CI v1/English CI v2 each passed all six dev cases. See the [actual runs/artifacts](validation-report.md).
+
+The `cc816de` rename recovery below is **history from when the previous identity still existed**. Archived client/principal IDs and old authentication success are not evidence for the new release.
 
 ## 1. Prepare the repository and lab identity
 

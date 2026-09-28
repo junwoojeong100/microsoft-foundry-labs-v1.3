@@ -4,7 +4,7 @@
 
 **Record the current chapter, last success, actual target/version, and original error.** Do not record or share passwords, tokens, API keys, or company data.
 
-The current target is a **new North Central US project**. Keep the mixed native job's six rows/five pass/one fail separate from the new Task Adherence-only job's 5/5; Prohibited Actions still has a reason/flag contradiction. Distinguish the [current results](validation-report.md) from historical Sweden cases.
+The current target is the **new North Central US project created after the repository rename**. Its Task Adherence job returned six rows/five pass/one fail; inconsistent severity/flags hold final acceptance. Earlier NC 5/5, Prohibited Actions, and Sweden examples are historical. Preserve original failures and consult the [current results](validation-report.md).
 
 | Symptom | Check first | Next action |
 |---|---|---|

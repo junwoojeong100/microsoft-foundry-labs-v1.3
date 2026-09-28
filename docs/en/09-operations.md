@@ -76,7 +76,7 @@ For Hosted, also create **a new request after connecting logs**. Server-side tra
 
 ## 4. Agent Insights
 
-**Current NC results:** an on-demand scan analyzed 16 traces in a one-hour window and returned one finding; scheduling remains disabled. A finding is an analysis suggestion, not ground truth or an automatically applied runtime change.
+**Current rerun:** an on-demand scan analyzed **three traces in a one-hour window and returned no new findings**, with scheduling disabled. The previous NC scan's 16 traces/one finding remain historical. A finding is a suggestion, not ground truth or an automatically applied runtime change. See the [current report](validation-report.md).
 
 If available, run one **Insights** scan against a limited time range of your agent's existing synthetic traces.
 
@@ -101,7 +101,7 @@ GPT-6 **reasoning tokens count toward output cost and the output cap**. Do not c
 
 ## 6. Bound recurring evaluation
 
-**Current NC version finding:** Coherence v1 failed with zero rows and `CoherenceEvaluator.__init__() got an unexpected keyword argument 'is_reasoning_model'`. After checking the actual catalog, a separate rule/evaluation pinned **v13**, retaining the same GPT-5.5 judge, threshold 3, and one-run/hour cap. It graded the original stored response as score 5/pass. Both rules are paused and the v1 failure remains. Do not change unrelated evaluator versions to v13.
+**Earlier NC version finding:** Coherence v1 failed with zero rows and `CoherenceEvaluator.__init__() got an unexpected keyword argument 'is_reasoning_model'`. A separate pinned-v13 rule succeeded. **This new rerun verified catalog v13 before creating its own rule**, retained GPT-5.5/threshold 3/one-run-hourly, graded one original stored response score 5/pass, then paused. Earlier failures remain archived; do not change unrelated evaluator versions to v13.
 
 If a trace evaluation for your agent has completed, open its recurring settings. First decide the end time and budget, then select a small sample, such as at most five traces per run, and a limited cadence such as hourly.
 

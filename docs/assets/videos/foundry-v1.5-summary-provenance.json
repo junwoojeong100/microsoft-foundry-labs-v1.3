@@ -1,1 +1,2212 @@
-{"schema_version":1,"description":"Bilingual NC summaries combining authenticated Headless portal reviews and preserved real CLI captures.","capture_date":"2026-09-28","path_base":"repository root","sources":{"nc-00-create-group":{"path":"dist/recordings/nc-00-create-group/capture.webm","sha256":"ece4b7994a8d3259814d5ee32577802291ed944a69db69f3274b6c2fbbccccde","duration_seconds":10.44,"type":"headless-browser-live-cli-output","language":"ko","transcript":"dist/recordings/nc-00-create-group/transcript.json","transcript_sha256":"543e52edf491f7eb5c9163ce7fbd17346faadda17af923a9c20e9a302e2604ce","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-03-file-search":{"path":"dist/recordings/nc-03-file-search/capture.webm","sha256":"21064a9b1608328ca9fed75b8ac3d06260d5642cc9879879702366d01785af71","duration_seconds":12.44,"type":"headless-browser-live-cli-output","language":"ko","transcript":"dist/recordings/nc-03-file-search/transcript.json","transcript_sha256":"9eeed8e4cdec3230d836878e608409a01525b1fc8bd000e7f93cd7115d467ba6","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-04-code-interpreter":{"path":"dist/recordings/nc-04-code-interpreter/capture.webm","sha256":"239c70cacec00554400b0c7b90a0df59f5968093545e2f26586ed6959aea0fa3","duration_seconds":24.68,"type":"headless-browser-live-cli-output","language":"ko","transcript":"dist/recordings/nc-04-code-interpreter/transcript.json","transcript_sha256":"b0a32038aa9b4253858b8710d47b9413589cb0967a3f864196682169669a6c0c","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-04-function-smoke":{"path":"dist/recordings/nc-04-function-smoke/capture.webm","sha256":"1902ebe5d381e616e9f530ab5ea4308938f021a9751eb1573922032b8d5cdb8c","duration_seconds":14.48,"type":"headless-browser-live-cli-output","language":"ko","transcript":"dist/recordings/nc-04-function-smoke/transcript.json","transcript_sha256":"c5035f8fe96fa7bd788de93a0e6815ffbb2e2c4de8aefe57b0e60fba82bcf8f8","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-05-workflow":{"path":"dist/recordings/nc-05-workflow/capture.webm","sha256":"f175b2c4ed2b315d3730527155575b042002fd29319b2231320c375380871c25","duration_seconds":15.52,"type":"headless-browser-live-cli-output","language":"ko","transcript":"dist/recordings/nc-05-workflow/transcript.json","transcript_sha256":"ba94cd9cfc3ec2bfd4df46787d36d67aad4dbcb1ea9ad91f109eeb4e9acbfbf0","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-06-create-search":{"path":"dist/recordings/nc-06-create-search/capture.webm","sha256":"834f5e92d2032f0a0e267805911bc7892a5ddddefbfc169526950898d558920c","duration_seconds":991.92,"type":"headless-browser-live-cli-output","language":"ko","transcript":"dist/recordings/nc-06-create-search/transcript.json","transcript_sha256":"ae00cb605bcce4fddb52d5c23ab7d720d1e8d68d6c8c7aa8a47d57fb5e36b258","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-06-english-iq":{"path":"dist/recordings/nc-06-english-iq/capture.webm","sha256":"e510c12862167a7fea1eeb945f34b59ac263b8628843f19ea3bb964459feadc8","duration_seconds":11.36,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-06-english-iq/transcript.json","transcript_sha256":"2f35bf131cc0b7945b29ed600226817d5c38d303d3d49788cb550d2a73ad58a4","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-06-hybrid":{"path":"dist/recordings/nc-06-hybrid/capture.webm","sha256":"848fcc71b646fb85172d4b7ddf1d7f82ce2612b25a8b12850b41483ab9f6697b","duration_seconds":9.08,"type":"headless-browser-live-cli-output","language":"ko","transcript":"dist/recordings/nc-06-hybrid/transcript.json","transcript_sha256":"3d9045142b1ae133b4567a4dde02977dd814b62fb6ebbb6095262c966f668bd7","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-10-skilled-toolbox":{"path":"dist/recordings/nc-10-skilled-toolbox/capture.webm","sha256":"33e033ac6e84b20abfe0d2697dcc16de507dd38dc55459e0e9736d9f74910590","duration_seconds":27.56,"type":"headless-browser-live-cli-output","language":"ko","transcript":"dist/recordings/nc-10-skilled-toolbox/transcript.json","transcript_sha256":"ae4b5e77905c31ae0165c4fa183672c9771f8e7586121ef24e331b6f8ad60cfe","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-11-memory-verified-en":{"path":"dist/recordings/nc-11-memory-verified-en/capture.webm","sha256":"e4a18e601835f97b62094ccaaf379170b2153a66dc55cd75c5f1924666d58339","duration_seconds":8.16,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-11-memory-verified-en/transcript.json","transcript_sha256":"552ca64bd6df8d9dbb2781f69df5d785292908be2421c6888f0bed02199fa5a1","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-11-memory-verified-ko":{"path":"dist/recordings/nc-11-memory-verified-ko/capture.webm","sha256":"234856f64e8139d44f94e00084c8cc8350c13231c16e4874f9736a343791c3fa","duration_seconds":7.88,"type":"headless-browser-live-cli-output","language":"ko","transcript":"dist/recordings/nc-11-memory-verified-ko/transcript.json","transcript_sha256":"2fcaf997d2779a09521fdaed3dd0c15fe921dc264d67d27c05403642f0ac7e1e","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-13-guarded-hosted":{"path":"dist/recordings/nc-13-guarded-hosted/capture.webm","sha256":"bf430cbb0192fea7d4264a0a245fe4ba1457e7a2c8ff55dffcee4479ccc79262","duration_seconds":20.68,"type":"headless-browser-live-cli-output","language":"ko","transcript":"dist/recordings/nc-13-guarded-hosted/transcript.json","transcript_sha256":"d86ba71a613efb229ce922de3aec2ae13285aea5130f26a44da882206a9c94e6","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-evidence-archive":{"path":"dist/recordings/nc-evidence-archive/capture.webm","sha256":"1d4317a0a38b3c2c96dd49bea6acbd7aef86cdb939ad8d5527377e69c71e6b57","duration_seconds":5.48,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-evidence-archive/transcript.json","transcript_sha256":"daa17e534940ff73bc5daec06b1dd49af15bc69d2d54122581abe86a30a77a32","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-evidence-ci":{"path":"dist/recordings/nc-evidence-ci/capture.webm","sha256":"4018b5cb607526e91d0a4bb1a4f5d149b981e8da4572e822ebde1af6fdac9143","duration_seconds":5.48,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-evidence-ci/transcript.json","transcript_sha256":"6c9a8422a0c511c0b14425876a90e26cb391b567190ba8cb1a4d1517dd67b2fb","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-evidence-continuous":{"path":"dist/recordings/nc-evidence-continuous/capture.webm","sha256":"65fb24719a29a77f9475b650adf95cdb0c5027e033a6c105c87cd3720dd2045d","duration_seconds":5.56,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-evidence-continuous/transcript.json","transcript_sha256":"d54ea362d42020515c7013118f9ce11a27a6a3b7111c524254c217ce1f1856c6","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-evidence-diagnostic":{"path":"dist/recordings/nc-evidence-diagnostic/capture.webm","sha256":"2d7fe4b2bd0c377398b385224c022c66d754ad5c06311715a2bb0bd22d74e1fd","duration_seconds":5.52,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-evidence-diagnostic/transcript.json","transcript_sha256":"5fe305472070484d1c94c95da015bc2fdb3054cac2a7261530adf1d878377695","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-evidence-english":{"path":"dist/recordings/nc-evidence-english/capture.webm","sha256":"11611f780a8b8d11ff5205a8aaaf15b7c4730972940a00cde3ffa2dfff7ffba8","duration_seconds":5.48,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-evidence-english/transcript.json","transcript_sha256":"510e894542ffee17678a52e34bce724cb9b5bd1ece49f8a3086f900104f9023d","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-evidence-hosted":{"path":"dist/recordings/nc-evidence-hosted/capture.webm","sha256":"b7b7f4a3333fbc9fbf750bab6b8d809b2c7bed84e05d5bcf184cc8981ec227bb","duration_seconds":5.48,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-evidence-hosted/transcript.json","transcript_sha256":"c59ff908242938d8f4e607fc5c7c966b8e41a89e499e998e81d1c01c86d8394d","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-evidence-insights":{"path":"dist/recordings/nc-evidence-insights/capture.webm","sha256":"d31df04678d5f68f6ec97e40846f094b87f84dbadbad692d47fd10e3d1faed65","duration_seconds":5.48,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-evidence-insights/transcript.json","transcript_sha256":"d06bd824cce55b7cb16d29dac92f317d3dec7e6611fb2b46dea774e28e88aafd","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-evidence-timer":{"path":"dist/recordings/nc-evidence-timer/capture.webm","sha256":"2056f91020cf5e84dd8fc97dd1ee48d0de5f8dcec82c7f1e94a2fe7c1e66318b","duration_seconds":5.52,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-evidence-timer/transcript.json","transcript_sha256":"76f9b74cfaede74113ba2a7855575a50f645428b47d8651cfabc9642c29d022e","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"nc-retained-resources":{"path":"dist/recordings/nc-retained-resources/capture.webm","sha256":"996fa079fe03da1f071e68df7ad391eef1523d206b6c20d6ffdedcdcacf85daf","duration_seconds":7.24,"type":"headless-browser-live-cli-output","language":"en","transcript":"dist/recordings/nc-retained-resources/transcript.json","transcript_sha256":"019d206f2bff5df87593c28ce90b6006e96b26893e2b05240d719051336454ac","exit_code":0,"meaning":"command completed successfully; scope remains qualified"},"portal/nc-headless-final-20260928/agents-en":{"path":"dist/recordings/portal/nc-headless-final-20260928/agents-en.webm","sha256":"7c1a640772041bedba38399cb7614adc55f498dedd05855e34db2ee184bde4a2","duration_seconds":12.12,"type":"authenticated-headless-portal-recording","language":"en","meaning":"Read-only view of preserved real NC resources/results; not a new model request."},"portal/nc-headless-final-20260928/baseline-en":{"path":"dist/recordings/portal/nc-headless-final-20260928/baseline-en.webm","sha256":"385e7f079ff2ce95c9536f50825cd0243c200942c9dc391eeb674c133242f4a8","duration_seconds":15.88,"type":"authenticated-headless-portal-recording","language":"en","meaning":"Read-only view of preserved real NC resources/results; not a new model request."},"portal/nc-headless-final-20260928/candidate-en":{"path":"dist/recordings/portal/nc-headless-final-20260928/candidate-en.webm","sha256":"9a1c0ca3341cf25c13fdccabb4786c2a7bfffdeb9428776e1f1522f2353eda68","duration_seconds":16.92,"type":"authenticated-headless-portal-recording","language":"en","meaning":"Read-only view of preserved real NC resources/results; not a new model request."},"portal/nc-headless-final-20260928/models-en":{"path":"dist/recordings/portal/nc-headless-final-20260928/models-en.webm","sha256":"97837cc4222a0f8f4e00c52ea63f574b73edd3b883062ee04bbabbfdae78c308","duration_seconds":17.36,"type":"authenticated-headless-portal-recording","language":"en","meaning":"Read-only view of preserved real NC resources/results; not a new model request."},"portal/nc-headless-final-20260928/optimizer-fixed-en":{"path":"dist/recordings/portal/nc-headless-final-20260928/optimizer-fixed-en.webm","sha256":"a0879c132453a321945971a3a445506960a84ab7e3e1da9cedce9dcf8b4f7c1f","duration_seconds":18.32,"type":"authenticated-headless-portal-recording","language":"en","meaning":"Read-only view of preserved real NC resources/results; not a new model request."},"portal/nc-headless-final-20260928/optimizer-original-en":{"path":"dist/recordings/portal/nc-headless-final-20260928/optimizer-original-en.webm","sha256":"cf9c56b4fbb4c431ce510b479b1fc9dd8d109abe15f416b50b881f29a220318b","duration_seconds":20.88,"type":"authenticated-headless-portal-recording","language":"en","meaning":"Read-only view of preserved real NC resources/results; not a new model request."},"portal/nc-headless-final-20260928/prohibited-v5-en":{"path":"dist/recordings/portal/nc-headless-final-20260928/prohibited-v5-en.webm","sha256":"2af57e3da50c2c9a54500353608440bb56d3918e1444c81428cc1c043c17a1e3","duration_seconds":17.68,"type":"authenticated-headless-portal-recording","language":"en","meaning":"Read-only view of preserved real NC resources/results; not a new model request."},"portal/nc-headless-final-20260928/task-adherence-en":{"path":"dist/recordings/portal/nc-headless-final-20260928/task-adherence-en.webm","sha256":"7242f512e2a4968ace05ee71405189028cfb25efb3db2b13b6f35c009b45f962","duration_seconds":14.68,"type":"authenticated-headless-portal-recording","language":"en","meaning":"Read-only view of preserved real NC resources/results; not a new model request."}},"editing":{"software":"FFmpeg 8.0.1; Playwright 1.62.0 authenticated headless browser capture and offline editorial overlays","canvas":[1600,1000],"fps":25,"audio":"none","default_visible_source_xywh":[0,178,1600,652],"overlays":"Editorial chapter titles, captions and clearly labelled opaque redactions. No recorded command/result is rewritten.","timing":"Source intervals are seconds in each WebM, at normal speed. Waiting and recorder viewport-shrink tails are omitted; the last recorded frame is held as listed.","cli_capture_type":"Actual subprocess output captured live in a headless-browser panel; NOT native macOS Terminal screen recording.","raw_sources_modified":false},"scope_and_limits":["Fresh authenticated NC portal footage was captured with headless=true. Login screens, credentials and authentication state are not published.","Portal UI is English. Korean/English captions describe the same source footage, not separate agent evaluations. Optimizer full evaluations are Korean.","Portal scenes review existing results; original CLI scenes retain their distinct live-execution or read-only-evidence meanings. No model answers or native result text were rewritten.","The original Optimizer failure is preserved. Explicit per-evaluator initialization fixed the new job using original evaluator versions, judge and required threshold 4.","Baseline and one new instruction-only candidate each passed all six dev rows and source-reference audits at score 1.0. Best remains baseline; no improvement or promotion is claimed.","The Optimizer also performed eleven three-row minibatches, including three failed rows in minibatch 3. max_candidates is not an overall request cap.","A separate pinned Prohibited Actions v5 run returned one Safe (No Defect) row with score 0 but passed=false and attack_success=true. Portal ASR 100% is untrusted, not corrected. This tool-free comparison does not prove Azure tool-call safety.","The earlier mixed job retains six rows/five pass/one fail. The separate Task Adherence-only job passed five rows. Redacted inputs and unavailable response IDs remain explicit.","Hosted IQ, complementary policy diagnostics, known-case regression, and CI local-retrieval smoke remain separate evidence. No fresh holdout or production approval.","Account names, subscription identifiers and private paths are cropped or visibly masked. Raw original videos remain private and hash-checked.","Existing CLI-only and Sweden editions remain archived. NC resources, source results and published agent version 1 are retained; no deletions or access changes."],"outputs":{"ko":{"files":[{"path":"docs/assets/videos/foundry-v1.5-summary-ko.mp4","sha256":"2ba5434b94768aad8d3d11cf22a62a5f08fb103449e6906aedc9041217d9b8dd","bytes":13947949},{"path":"docs/assets/videos/foundry-v1.5-summary-ko-poster.png","sha256":"4c3ceb672234bd8da74b43b5769b9601fb14e86ccd1782859726d049b9cf11ca","bytes":459948},{"path":"docs/assets/videos/foundry-v1.5-summary-ko.srt","sha256":"9e2e9d7d77f6497f49eb6bb652b79e7cd42847fc290c34de6f0cbbd67b03b5f2","bytes":5625}],"verification":{"duration_seconds":232.0,"bytes":13947949,"decimal_megabytes":13.948,"codec":"h264","pixel_format":"yuv420p","width":1600,"height":1000,"frame_rate":"25/1","frames":5800,"faststart":true,"full_decode_to_null":"passed","audio":"none","chapters":28,"under_20_MB":true,"subtitles":{"cues":30,"first_cue_seconds":0,"last_cue_end_seconds":232.0,"utf8":true,"burned_caption_text_matches":true}},"segments":[{"chapter":"nc-opening","output_in":0.0,"output_out":12.0,"source":"portal/nc-headless-final-20260928/agents-en","source_in":8.84,"source_out":12.04,"speed":1,"end_frame_hold_seconds":8.8,"crop_xywh":[228,62,1356,706],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[1,2]},{"chapter":"nc-group","output_in":12.0,"output_out":20.0,"source":"nc-00-create-group","source_in":7.16,"source_out":10.36,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[3]},{"chapter":"nc-sol","output_in":20.0,"output_out":28.0,"source":"portal/nc-headless-final-20260928/models-en","source_in":14.08,"source_out":17.28,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[244,250,748,354],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[4]},{"chapter":"nc-files","output_in":28.0,"output_out":36.0,"source":"nc-03-file-search","source_in":9.16,"source_out":12.36,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[5]},{"chapter":"nc-function","output_in":36.0,"output_out":44.0,"source":"nc-04-function-smoke","source_in":11.2,"source_out":14.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[6]},{"chapter":"nc-code","output_in":44.0,"output_out":52.0,"source":"nc-04-code-interpreter","source_in":21.4,"source_out":24.6,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[7]},{"chapter":"nc-workflow","output_in":52.0,"output_out":60.0,"source":"nc-05-workflow","source_in":12.24,"source_out":13.4,"speed":1,"end_frame_hold_seconds":6.84,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[8]},{"chapter":"nc-search","output_in":60.0,"output_out":68.0,"source":"nc-06-create-search","source_in":988.64,"source_out":991.84,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[9]},{"chapter":"nc-hybrid","output_in":68.0,"output_out":76.0,"source":"nc-06-hybrid","source_in":5.8,"source_out":9.0,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[10]},{"chapter":"nc-english-iq","output_in":76.0,"output_out":84.0,"source":"nc-06-english-iq","source_in":8.08,"source_out":11.28,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[11]},{"chapter":"nc-english-fix","output_in":84.0,"output_out":92.0,"source":"nc-evidence-english","source_in":2.2,"source_out":5.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[12]},{"chapter":"nc-toolbox","output_in":92.0,"output_out":100.0,"source":"nc-10-skilled-toolbox","source_in":24.28,"source_out":25.4,"speed":1,"end_frame_hold_seconds":6.88,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[13]},{"chapter":"nc-hosted","output_in":100.0,"output_out":108.0,"source":"nc-evidence-hosted","source_in":2.2,"source_out":5.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[14]},{"chapter":"nc-diagnostic","output_in":108.0,"output_out":116.0,"source":"nc-evidence-diagnostic","source_in":2.24,"source_out":5.44,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[15]},{"chapter":"nc-native","output_in":116.0,"output_out":128.0,"source":"portal/nc-headless-final-20260928/task-adherence-en","source_in":11.4,"source_out":14.6,"speed":1,"end_frame_hold_seconds":8.8,"crop_xywh":[240,112,1336,640],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[16,17]},{"chapter":"nc-mixed","output_in":128.0,"output_out":140.0,"source":"portal/nc-headless-final-20260928/prohibited-v5-en","source_in":14.4,"source_out":17.6,"speed":1,"end_frame_hold_seconds":8.8,"crop_xywh":[240,112,1336,640],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[18]},{"chapter":"nc-guarded","output_in":140.0,"output_out":148.0,"source":"nc-13-guarded-hosted","source_in":17.4,"source_out":20.6,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[19]},{"chapter":"nc-memory","output_in":148.0,"output_out":156.0,"source":"nc-11-memory-verified-ko","source_in":4.6,"source_out":7.8,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[20]},{"chapter":"nc-timer","output_in":156.0,"output_out":164.0,"source":"nc-evidence-timer","source_in":2.24,"source_out":5.44,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[21]},{"chapter":"nc-observe","output_in":164.0,"output_out":172.0,"source":"nc-evidence-insights","source_in":2.2,"source_out":5.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[22]},{"chapter":"nc-continuous","output_in":172.0,"output_out":180.0,"source":"nc-evidence-continuous","source_in":2.28,"source_out":5.48,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[23]},{"chapter":"nc-optimizer-original","output_in":180.0,"output_out":186.0,"source":"portal/nc-headless-final-20260928/optimizer-original-en","source_in":17.6,"source_out":20.8,"speed":1,"end_frame_hold_seconds":2.8,"crop_xywh":[238,76,1340,440],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[24]},{"chapter":"nc-optimizer-fixed","output_in":186.0,"output_out":196.0,"source":"portal/nc-headless-final-20260928/optimizer-fixed-en","source_in":15.04,"source_out":18.24,"speed":1,"end_frame_hold_seconds":6.8,"crop_xywh":[240,62,1336,718],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[25]},{"chapter":"nc-optimizer-baseline","output_in":196.0,"output_out":202.0,"source":"portal/nc-headless-final-20260928/baseline-en","source_in":12.6,"source_out":15.8,"speed":1,"end_frame_hold_seconds":2.8,"crop_xywh":[240,112,1336,718],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[26]},{"chapter":"nc-optimizer-candidate","output_in":202.0,"output_out":208.0,"source":"portal/nc-headless-final-20260928/candidate-en","source_in":13.64,"source_out":16.84,"speed":1,"end_frame_hold_seconds":2.8,"crop_xywh":[240,112,1336,718],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[27]},{"chapter":"nc-archive","output_in":208.0,"output_out":216.0,"source":"nc-evidence-archive","source_in":2.2,"source_out":5.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[28]},{"chapter":"nc-ci","output_in":216.0,"output_out":224.0,"source":"nc-evidence-ci","source_in":2.2,"source_out":5.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[29]},{"chapter":"nc-close","output_in":224.0,"output_out":232.0,"source":"nc-retained-resources","source_in":3.96,"source_out":7.16,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[30]}]},"en":{"files":[{"path":"docs/assets/videos/foundry-v1.5-summary-en.mp4","sha256":"bc1625242a2dc1254b8308800491714929f96fc5f25d6e5c57cbfd126df6142f","bytes":14525081},{"path":"docs/assets/videos/foundry-v1.5-summary-en-poster.png","sha256":"4be940342cef69f3ca9c7220ebff669295f3b25d3861b7afa4b5a04142fe177b","bytes":470129},{"path":"docs/assets/videos/foundry-v1.5-summary-en.srt","sha256":"7ee939b4e83bf4eead23430204fd0d70da129d779a585af4b30c8f72ab632960","bytes":5051}],"verification":{"duration_seconds":232.0,"bytes":14525081,"decimal_megabytes":14.525,"codec":"h264","pixel_format":"yuv420p","width":1600,"height":1000,"frame_rate":"25/1","frames":5800,"faststart":true,"full_decode_to_null":"passed","audio":"none","chapters":28,"under_20_MB":true,"subtitles":{"cues":30,"first_cue_seconds":0,"last_cue_end_seconds":232.0,"utf8":true,"burned_caption_text_matches":true}},"segments":[{"chapter":"nc-opening","output_in":0.0,"output_out":12.0,"source":"portal/nc-headless-final-20260928/agents-en","source_in":8.84,"source_out":12.04,"speed":1,"end_frame_hold_seconds":8.8,"crop_xywh":[228,62,1356,706],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[1,2]},{"chapter":"nc-group","output_in":12.0,"output_out":20.0,"source":"nc-00-create-group","source_in":7.16,"source_out":10.36,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[3]},{"chapter":"nc-sol","output_in":20.0,"output_out":28.0,"source":"portal/nc-headless-final-20260928/models-en","source_in":14.08,"source_out":17.28,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[244,250,748,354],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[4]},{"chapter":"nc-files","output_in":28.0,"output_out":36.0,"source":"nc-03-file-search","source_in":9.16,"source_out":12.36,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[5]},{"chapter":"nc-function","output_in":36.0,"output_out":44.0,"source":"nc-04-function-smoke","source_in":11.2,"source_out":14.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[6]},{"chapter":"nc-code","output_in":44.0,"output_out":52.0,"source":"nc-04-code-interpreter","source_in":21.4,"source_out":24.6,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[7]},{"chapter":"nc-workflow","output_in":52.0,"output_out":60.0,"source":"nc-05-workflow","source_in":12.24,"source_out":13.4,"speed":1,"end_frame_hold_seconds":6.84,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[8]},{"chapter":"nc-search","output_in":60.0,"output_out":68.0,"source":"nc-06-create-search","source_in":988.64,"source_out":991.84,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[9]},{"chapter":"nc-hybrid","output_in":68.0,"output_out":76.0,"source":"nc-06-hybrid","source_in":5.8,"source_out":9.0,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[10]},{"chapter":"nc-english-iq","output_in":76.0,"output_out":84.0,"source":"nc-06-english-iq","source_in":8.08,"source_out":11.28,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[11]},{"chapter":"nc-english-fix","output_in":84.0,"output_out":92.0,"source":"nc-evidence-english","source_in":2.2,"source_out":5.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[12]},{"chapter":"nc-toolbox","output_in":92.0,"output_out":100.0,"source":"nc-10-skilled-toolbox","source_in":24.28,"source_out":25.4,"speed":1,"end_frame_hold_seconds":6.88,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[13]},{"chapter":"nc-hosted","output_in":100.0,"output_out":108.0,"source":"nc-evidence-hosted","source_in":2.2,"source_out":5.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[14]},{"chapter":"nc-diagnostic","output_in":108.0,"output_out":116.0,"source":"nc-evidence-diagnostic","source_in":2.24,"source_out":5.44,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[15]},{"chapter":"nc-native","output_in":116.0,"output_out":128.0,"source":"portal/nc-headless-final-20260928/task-adherence-en","source_in":11.4,"source_out":14.6,"speed":1,"end_frame_hold_seconds":8.8,"crop_xywh":[240,112,1336,640],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[16,17]},{"chapter":"nc-mixed","output_in":128.0,"output_out":140.0,"source":"portal/nc-headless-final-20260928/prohibited-v5-en","source_in":14.4,"source_out":17.6,"speed":1,"end_frame_hold_seconds":8.8,"crop_xywh":[240,112,1336,640],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[18]},{"chapter":"nc-guarded","output_in":140.0,"output_out":148.0,"source":"nc-13-guarded-hosted","source_in":17.4,"source_out":20.6,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[19]},{"chapter":"nc-memory","output_in":148.0,"output_out":156.0,"source":"nc-11-memory-verified-en","source_in":4.88,"source_out":8.08,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[20]},{"chapter":"nc-timer","output_in":156.0,"output_out":164.0,"source":"nc-evidence-timer","source_in":2.24,"source_out":5.44,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[21]},{"chapter":"nc-observe","output_in":164.0,"output_out":172.0,"source":"nc-evidence-insights","source_in":2.2,"source_out":5.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[22]},{"chapter":"nc-continuous","output_in":172.0,"output_out":180.0,"source":"nc-evidence-continuous","source_in":2.28,"source_out":5.48,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[23]},{"chapter":"nc-optimizer-original","output_in":180.0,"output_out":186.0,"source":"portal/nc-headless-final-20260928/optimizer-original-en","source_in":17.6,"source_out":20.8,"speed":1,"end_frame_hold_seconds":2.8,"crop_xywh":[238,76,1340,440],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[24]},{"chapter":"nc-optimizer-fixed","output_in":186.0,"output_out":196.0,"source":"portal/nc-headless-final-20260928/optimizer-fixed-en","source_in":15.04,"source_out":18.24,"speed":1,"end_frame_hold_seconds":6.8,"crop_xywh":[240,62,1336,718],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[25]},{"chapter":"nc-optimizer-baseline","output_in":196.0,"output_out":202.0,"source":"portal/nc-headless-final-20260928/baseline-en","source_in":12.6,"source_out":15.8,"speed":1,"end_frame_hold_seconds":2.8,"crop_xywh":[240,112,1336,718],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[26]},{"chapter":"nc-optimizer-candidate","output_in":202.0,"output_out":208.0,"source":"portal/nc-headless-final-20260928/candidate-en","source_in":13.64,"source_out":16.84,"speed":1,"end_frame_hold_seconds":2.8,"crop_xywh":[240,112,1336,718],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[27]},{"chapter":"nc-archive","output_in":208.0,"output_out":216.0,"source":"nc-evidence-archive","source_in":2.2,"source_out":5.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[28]},{"chapter":"nc-ci","output_in":216.0,"output_out":224.0,"source":"nc-evidence-ci","source_in":2.2,"source_out":5.4,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[29]},{"chapter":"nc-close","output_in":224.0,"output_out":232.0,"source":"nc-retained-resources","source_in":3.96,"source_out":7.16,"speed":1,"end_frame_hold_seconds":4.8,"crop_xywh":[44,244,1512,644],"scaled_into_xywh":[44,178,1512,652],"subtitle_cues":[30]}]}},"region":"northcentralus","authenticated_portal_recapture":"completed-playwright-headless","historical_video_commit":"0a8ab50","ci":{"workflow_run":36382758497,"url":"https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36382758497","head_sha":"edf0990ec8cb14ee8f2a3a30957c0de405a872ac","conclusion":"success","agent":"lab-jw-nc-0928-ci","agent_version":"1","language":"en","retrieval":"local","actual_rows":6,"business_passed":6,"runtime_code_hash":"2109744d9b91214e51629ea900f32649ea8cd181cfeca3ef2b93d79d257e5074","session_status":"idle","persistent_files_deleted":false},"prior_nc_cli_commit":"1d53a68","prior_nc_cli_archive":{"prior_git_revision":"1d53a68","prior_provenance_sha256":"d033d9393a0228265342828d2a97ed6b4c09a4d76619039bac4d15614576b89f","files":[{"name":"foundry-v1.5-summary-ko.mp4","sha256":"db963a6fe266bb0d9770d8609596d18fcfc22db21bd5c49c5811a5bf64826769"},{"name":"foundry-v1.5-summary-ko-poster.png","sha256":"bc1bb76baea867a28d42ed3372b167ae8fcaf1b3f6e250a0678d293fa1a1afde"},{"name":"foundry-v1.5-summary-ko.srt","sha256":"7208f6563d12cf848a7ea554acb8240f7a5366a34753454c5f056d226eefa085"},{"name":"foundry-v1.5-summary-en.mp4","sha256":"d48bf8eb6512d0bd38c25468b010653734b707ea76dd1d8747faa6be9cf68cb4"},{"name":"foundry-v1.5-summary-en-poster.png","sha256":"2e3102aa6e53e5bc37fd85b4db9054de7957969e86c876693655bb99aa718a85"},{"name":"foundry-v1.5-summary-en.srt","sha256":"a18b5bbdd0a22e90248c9c932951b8e140ee3fe21bd8240c74c095472306d315"}]},"authentication":{"mode":"user-login-then-headless-on-the-same-temporary-profile","login_screens_recorded":false,"storage_state_exported":false,"temporary_profile_removed":true}}
+{
+  "schema_version": 1,
+  "description": "Bilingual summaries of the fresh renamed-repository lab, not reused old NC footage.",
+  "capture_date": "2026-09-28",
+  "path_base": "repository root",
+  "repository": "junwoojeong100/microsoft-foundry-labs-v1.5",
+  "source_code_revision": "7b7ca26f4be381e8065ed97573fbd8cdf1928487",
+  "sources": {
+    "portal-agents": {
+      "path": "dist/recordings/rename-20260928/portal-agents/capture.webm",
+      "sha256": "99b149a533925d40083e0400d8a0e1726ad70a15465e76eaf45c26f831f49926",
+      "duration_seconds": 13.6,
+      "final_screenshot": "dist/recordings/rename-20260928/portal-agents/result.png",
+      "final_screenshot_sha256": "1bdfabeaccc71682e107bf9ba7d987a8185353f5992ab1a235229e2e62d9f74a",
+      "type": "authenticated-browser-recording",
+      "language": "mixed",
+      "ui_language": "en",
+      "meaning": "Read-only view of this new run's original results; not a new inference."
+    },
+    "00-create-group": {
+      "path": "dist/recordings/rename-20260928/00-create-group/capture.webm",
+      "sha256": "5aaf946209b3312d980275b232d226b9702fe0a3110701ae9ef6595727e8ca74",
+      "duration_seconds": 12.48,
+      "final_screenshot": "dist/recordings/rename-20260928/00-create-group/result.png",
+      "final_screenshot_sha256": "0cf03f735fccee07612f806e1d657ca531853781929b59369ca317fe1eb76217",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/00-create-group/transcript.json",
+      "transcript_sha256": "cfdc53207dc903a2786730d7500019248e26bb14bbf0c60e0d417e7eacc34e8e",
+      "exit_code": 0
+    },
+    "portal-models": {
+      "path": "dist/recordings/rename-20260928/portal-models/capture.webm",
+      "sha256": "2222566ea875fed985573c2f5c4f60f55ccd366741ba505a68ce3e4813208551",
+      "duration_seconds": 12.64,
+      "final_screenshot": "dist/recordings/rename-20260928/portal-models/result.png",
+      "final_screenshot_sha256": "568e52fff3de3fbfaf81d225cf3adecdcc77a11d1e46e9dcb3bb94858e459575",
+      "type": "authenticated-browser-recording",
+      "language": "mixed",
+      "ui_language": "en",
+      "meaning": "Read-only view of this new run's original results; not a new inference."
+    },
+    "portal-first-model": {
+      "path": "dist/recordings/rename-20260928/portal-first-model/capture.webm",
+      "sha256": "767ead652112d62414d71d967bb8cff7caaf96807dcff9f8646d08c8db76c6e9",
+      "duration_seconds": 66.76,
+      "final_screenshot": "dist/recordings/rename-20260928/portal-first-model/result.png",
+      "final_screenshot_sha256": "ece039f4cde691dc72a79c500d478c284555ef37a2ba282e637b2775699c4156",
+      "type": "authenticated-browser-recording",
+      "language": "mixed",
+      "ui_language": "en",
+      "meaning": "Live new Playground request, with Web search removed."
+    },
+    "03-prompt-agent-invoke": {
+      "path": "dist/recordings/rename-20260928/03-prompt-agent-invoke/capture.webm",
+      "sha256": "06846e8e2c567ef2d71b9cd58effcf25ee05a145e549ff62bb92c64443cd8693",
+      "duration_seconds": 12.52,
+      "final_screenshot": "dist/recordings/rename-20260928/03-prompt-agent-invoke/result.png",
+      "final_screenshot_sha256": "d1043b09323aecab3e95f0364275924c268e4315cf7d06ede4a950cf8de631b5",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/03-prompt-agent-invoke/transcript.json",
+      "transcript_sha256": "1c526433080fc4790b8340a646218e0e3651c7b208a70a3bd0be5cf3ed655bbd",
+      "exit_code": 0
+    },
+    "03-files-create": {
+      "path": "dist/recordings/rename-20260928/03-files-create/capture.webm",
+      "sha256": "e3230b26f5e539e6b5460c8ef3b9b9c0cb84e099b37c9f4ccb5e6b150d400895",
+      "duration_seconds": 49.56,
+      "final_screenshot": "dist/recordings/rename-20260928/03-files-create/result.png",
+      "final_screenshot_sha256": "c86cbf255d36b6d6ad20c4e02e4529e6f521f7e711cff72e0ae0f447251bfeef",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/03-files-create/transcript.json",
+      "transcript_sha256": "85c38500a355cccbd4438f6eaa92fbac75c45dc197ea12879b57bc1c4beec866",
+      "exit_code": 0
+    },
+    "review-tools-settled": {
+      "path": "dist/recordings/rename-20260928/review-tools-settled/capture.webm",
+      "sha256": "cb81b4f92707d828412214b7b1641e5627f8bceba04de9f088fded7191907934",
+      "duration_seconds": 5.04,
+      "final_screenshot": "dist/recordings/rename-20260928/review-tools-settled/result.png",
+      "final_screenshot_sha256": "b71b4a75fadd049debc09368c69567d343883c3dbeb9bc0726fd862c7cced051",
+      "type": "read-only-saved-new-run-evidence",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Read-only view of this new run's original results; not a new inference.",
+      "transcript": "dist/recordings/rename-20260928/review-tools-settled/transcript.json",
+      "transcript_sha256": "a48f14fa3137dc042c17a65f2272f5e80478c64f11edc6de90ea804e3285ad89",
+      "exit_code": 0
+    },
+    "04-code-interpreter": {
+      "path": "dist/recordings/rename-20260928/04-code-interpreter/capture.webm",
+      "sha256": "1e61b320c6a9fe7fa0f6144f8c1af2a4a279171f6d3602ffc5c1f9d87dfb00d3",
+      "duration_seconds": 22.52,
+      "final_screenshot": "dist/recordings/rename-20260928/04-code-interpreter/result.png",
+      "final_screenshot_sha256": "48ad9c14daf3d0446d627b52be82cdeb74870295d5af252c5e947858e85d044c",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/04-code-interpreter/transcript.json",
+      "transcript_sha256": "b07cb5504aba5ab6c3e834046a1be48d9aa4792743233858047fc71e7a9f0fd3",
+      "exit_code": 0
+    },
+    "05-workflow-agent": {
+      "path": "dist/recordings/rename-20260928/05-workflow-agent/capture.webm",
+      "sha256": "e879e79f92a85744b27af46efd6f26affd73735792055cc51cac4b173a49dd80",
+      "duration_seconds": 16.12,
+      "final_screenshot": "dist/recordings/rename-20260928/05-workflow-agent/result.png",
+      "final_screenshot_sha256": "6feba742a105bfa59d956d3a75f49f6c238522002baed5ed0731f152e0c26c90",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/05-workflow-agent/transcript.json",
+      "transcript_sha256": "9680e9cb065c52752627ed0c97fdc62f7e64e7980e14951f08af48fe454c4dde",
+      "exit_code": 0
+    },
+    "05-checkpoint-complete": {
+      "path": "dist/recordings/rename-20260928/05-checkpoint-complete/capture.webm",
+      "sha256": "4e6a5e69cfceb791acc14fae2ec49a133a608189bbd9f6734099ecac694a9b48",
+      "duration_seconds": 4.88,
+      "final_screenshot": "dist/recordings/rename-20260928/05-checkpoint-complete/result.png",
+      "final_screenshot_sha256": "7268ac55aec9d490ad6dc8f98c04d609a11057d8aeacbde56ba9a91f0ad0de3e",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/05-checkpoint-complete/transcript.json",
+      "transcript_sha256": "d4e40e1118a3dcc722523fe48ecfe93b23c52290c9917501584876dbcd444985",
+      "exit_code": 0
+    },
+    "06-create-search": {
+      "path": "dist/recordings/rename-20260928/06-create-search/capture.webm",
+      "sha256": "ed6cf75c18402b9ef3442aa19a5632bbf346ec4ec8de5637b94f125dd4fb388d",
+      "duration_seconds": 534.0,
+      "final_screenshot": "dist/recordings/rename-20260928/06-create-search/result.png",
+      "final_screenshot_sha256": "081688431bf37cd4d55bdfc04ab1ba5a0c62a1902ec6540c76f305d30ecc5805",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/06-create-search/transcript.json",
+      "transcript_sha256": "afc56981744475c7ead23e92b28275da7e7e2bbc5a56e7b35717fde795abc29a",
+      "exit_code": 0
+    },
+    "review-retrieval-settled": {
+      "path": "dist/recordings/rename-20260928/review-retrieval-settled/capture.webm",
+      "sha256": "d846de30dfb4dd934876149fdb71132fd2be3cce3b8f3b17c8d5ad19d0917fc0",
+      "duration_seconds": 5.92,
+      "final_screenshot": "dist/recordings/rename-20260928/review-retrieval-settled/result.png",
+      "final_screenshot_sha256": "8e7932d3062a113883c4677b866418ca72e928aec2354df312a82636226564ce",
+      "type": "read-only-saved-new-run-evidence",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Read-only view of this new run's original results; not a new inference.",
+      "transcript": "dist/recordings/rename-20260928/review-retrieval-settled/transcript.json",
+      "transcript_sha256": "d69b845286d748557091b1f46e6ede78599e2cac85b21918761c33e826d9b11d",
+      "exit_code": 0
+    },
+    "review-evaluation-settled": {
+      "path": "dist/recordings/rename-20260928/review-evaluation-settled/capture.webm",
+      "sha256": "2e29eda470decc74b00cde33b0d8715dbfe263915e961981b72533fb63ce2fb0",
+      "duration_seconds": 4.24,
+      "final_screenshot": "dist/recordings/rename-20260928/review-evaluation-settled/result.png",
+      "final_screenshot_sha256": "5050ad73802589622432e73062b05b6a21d8f694128f616d44925aea030fb514",
+      "type": "read-only-saved-new-run-evidence",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Read-only view of this new run's original results; not a new inference.",
+      "transcript": "dist/recordings/rename-20260928/review-evaluation-settled/transcript.json",
+      "transcript_sha256": "2c30d6612363033c91ba08a1c09e73ef02b42cda5e5361f92da214be92a6b6bc",
+      "exit_code": 0
+    },
+    "08-remote-hosted": {
+      "path": "dist/recordings/rename-20260928/08-remote-hosted/capture.webm",
+      "sha256": "91bcc2df34602372b30684e7d49b81ed2cac704ceea851d78a8a92b91fce98a7",
+      "duration_seconds": 19.48,
+      "final_screenshot": "dist/recordings/rename-20260928/08-remote-hosted/result.png",
+      "final_screenshot_sha256": "586f105de19e283fa5522a367580a94519ded1b3982969362e0c26f3fd45474d",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/08-remote-hosted/transcript.json",
+      "transcript_sha256": "c2d616131bc57b0f5cc3b958d892053fcf25d74eb8866896a413c0bfcba8bae6",
+      "exit_code": 0
+    },
+    "review-operations-settled": {
+      "path": "dist/recordings/rename-20260928/review-operations-settled/capture.webm",
+      "sha256": "359061b5ef5b8f0e7527578ca02ba942fe286955051291dfdb15a7fbc88eb587",
+      "duration_seconds": 4.92,
+      "final_screenshot": "dist/recordings/rename-20260928/review-operations-settled/result.png",
+      "final_screenshot_sha256": "848f098d5cbb168405c79b07d860df6a60d81c86300f3b13a4c535747b552b24",
+      "type": "read-only-saved-new-run-evidence",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Read-only view of this new run's original results; not a new inference.",
+      "transcript": "dist/recordings/rename-20260928/review-operations-settled/transcript.json",
+      "transcript_sha256": "5086bc4952611046192d3295f2076ef425a969a734be61c613c3241d9f5f432c",
+      "exit_code": 0
+    },
+    "10-discovery-probe": {
+      "path": "dist/recordings/rename-20260928/10-discovery-probe/capture.webm",
+      "sha256": "e077618a3cb5aa5f3e8a9078c35c05f4a646ad142d160952dd031e2d3180d238",
+      "duration_seconds": 11.36,
+      "final_screenshot": "dist/recordings/rename-20260928/10-discovery-probe/result.png",
+      "final_screenshot_sha256": "d8277dd3563a7c2bb37492eae614567430f91e21274ceba21cd65650465da038",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/10-discovery-probe/transcript.json",
+      "transcript_sha256": "fc9a8a893f91b7c39f721d1f227b0902aa9230f3747462dd3b521da9ae919079",
+      "exit_code": 0
+    },
+    "10-skill-readback": {
+      "path": "dist/recordings/rename-20260928/10-skill-readback/capture.webm",
+      "sha256": "b541258a0e9492cff2dec6b67d425af2edb0a84756328ff48764a14dd6249dfd",
+      "duration_seconds": 4.64,
+      "final_screenshot": "dist/recordings/rename-20260928/10-skill-readback/result.png",
+      "final_screenshot_sha256": "d7e6141b52aba60f698e3d17813d2131e4814d38a0578c00e2e246df3a10e903",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/10-skill-readback/transcript.json",
+      "transcript_sha256": "1d8926d92690375391b2332d54184b86bac89c57473eb959e9b34669ca2aa11e",
+      "exit_code": 0
+    },
+    "10-toolbox-remote-verify": {
+      "path": "dist/recordings/rename-20260928/10-toolbox-remote-verify/capture.webm",
+      "sha256": "34aa8ed4945ea4d84c669a4d94f9eb62555b0eddcea6ae271c93b5279087e403",
+      "duration_seconds": 4.92,
+      "final_screenshot": "dist/recordings/rename-20260928/10-toolbox-remote-verify/result.png",
+      "final_screenshot_sha256": "47d96266881b09bf8b483841ff968828660b5822d6041eb1efc787cff475f6c4",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/10-toolbox-remote-verify/transcript.json",
+      "transcript_sha256": "ebc25081795196b4b10001420b5d244c6d148e738c25acff1a069d61c9e7543c",
+      "exit_code": 0
+    },
+    "11-memory-recall-alpha": {
+      "path": "dist/recordings/rename-20260928/11-memory-recall-alpha/capture.webm",
+      "sha256": "431390eb06d56c29f28831624bdd1e14804c25cd565acfb4606ab49cf2481655",
+      "duration_seconds": 14.04,
+      "final_screenshot": "dist/recordings/rename-20260928/11-memory-recall-alpha/result.png",
+      "final_screenshot_sha256": "c92bcf6e4f87640b8ed26937803e0eb23d24b12fb17f9224e21fe9399887321b",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/11-memory-recall-alpha/transcript.json",
+      "transcript_sha256": "73a65d58d1cd9364f1d5fdd4b3d4839951229e94adb95b84306e3b7850e9fa71",
+      "exit_code": 0
+    },
+    "11-a2a-propagated": {
+      "path": "dist/recordings/rename-20260928/11-a2a-propagated/capture.webm",
+      "sha256": "943c5ab89f8f766bb5d0e41ffc28aca194ddc2d4e5f895f08f759e0fae420fd0",
+      "duration_seconds": 16.44,
+      "final_screenshot": "dist/recordings/rename-20260928/11-a2a-propagated/result.png",
+      "final_screenshot_sha256": "64ec36ace0ceb99b17b8018181a58d4f36c73c945af5085d2faa27ac4b9d741b",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/11-a2a-propagated/transcript.json",
+      "transcript_sha256": "5fbde8bf7282c5a14b35f1e300d2ebc4ad0d1baffd8289bbb0ca84413baa40e0",
+      "exit_code": 0
+    },
+    "review-timer-settled": {
+      "path": "dist/recordings/rename-20260928/review-timer-settled/capture.webm",
+      "sha256": "601abbbcde50208b717d071b906eb10bbf67c86b7127ef5c8117b5e2cb096e0b",
+      "duration_seconds": 4.96,
+      "final_screenshot": "dist/recordings/rename-20260928/review-timer-settled/result.png",
+      "final_screenshot_sha256": "cac59520ac9f7afeb94ca4c9a7e674ae9c8880e877dd694b2a3830996708fcda",
+      "type": "read-only-saved-new-run-evidence",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Read-only view of this new run's original results; not a new inference.",
+      "transcript": "dist/recordings/rename-20260928/review-timer-settled/transcript.json",
+      "transcript_sha256": "7c1360bdbc162796c940c071a5ab29c3afedf9842417bd105c9c68e4b54462b8",
+      "exit_code": 0
+    },
+    "12-conversations-full": {
+      "path": "dist/recordings/rename-20260928/12-conversations-full/capture.webm",
+      "sha256": "9556401e20603cde07d975432bc82a0cdfd604898e0773f1cb1b3851efe8e15b",
+      "duration_seconds": 41.72,
+      "final_screenshot": "dist/recordings/rename-20260928/12-conversations-full/result.png",
+      "final_screenshot_sha256": "6e354666b13810fc5cc812481b605c77d341173054f050c79924484cd3f8536c",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/12-conversations-full/transcript.json",
+      "transcript_sha256": "3999d5ed461a2ff1320c8b0b2dcbfe6726771b48e84017d194f3ca62e084dcbc",
+      "exit_code": 0
+    },
+    "review-optimizer-settled": {
+      "path": "dist/recordings/rename-20260928/review-optimizer-settled/capture.webm",
+      "sha256": "0db8e15824c289678a653d79f1715431b9c6e94d7e325103abc584bdecc08e05",
+      "duration_seconds": 5.92,
+      "final_screenshot": "dist/recordings/rename-20260928/review-optimizer-settled/result.png",
+      "final_screenshot_sha256": "25b8e3d6375c48deb6e76532916e09d9d6d2ba8d084e12c893b9031c8b9494c4",
+      "type": "read-only-saved-new-run-evidence",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Read-only view of this new run's original results; not a new inference.",
+      "transcript": "dist/recordings/rename-20260928/review-optimizer-settled/transcript.json",
+      "transcript_sha256": "abb91ff1f234febd46f567c30ed30e2f7a35d0b493edc3e3284ee662aa194a9d",
+      "exit_code": 0
+    },
+    "portal-hosted-evaluation": {
+      "path": "dist/recordings/rename-20260928/portal-hosted-evaluation/capture.webm",
+      "sha256": "f59405d6660b99ae2c2ae8a568a4e978a3c1e24089cd347efd3784751fc6c9f0",
+      "duration_seconds": 15.44,
+      "final_screenshot": "dist/recordings/rename-20260928/portal-hosted-evaluation/result.png",
+      "final_screenshot_sha256": "60308676e22c55c3fc77da663f2ce7ffcd680b2cda2dc0fbbfaacb2dfb4a7307",
+      "type": "authenticated-browser-recording",
+      "language": "mixed",
+      "ui_language": "en",
+      "meaning": "Read-only view of this new run's original results; not a new inference."
+    },
+    "review-hosted-settled": {
+      "path": "dist/recordings/rename-20260928/review-hosted-settled/capture.webm",
+      "sha256": "c0ed0b2b395012f67fce3495ae5261afcffe6ccf232e483078f5f7e12882f98f",
+      "duration_seconds": 6.04,
+      "final_screenshot": "dist/recordings/rename-20260928/review-hosted-settled/result.png",
+      "final_screenshot_sha256": "0f19fffdfaaa0f7013f342a28a99ae948173f09806e73bacc2159a674056e406",
+      "type": "read-only-saved-new-run-evidence",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Read-only view of this new run's original results; not a new inference.",
+      "transcript": "dist/recordings/rename-20260928/review-hosted-settled/transcript.json",
+      "transcript_sha256": "907ec469f4132b1c5b0c8060c62361b565be4adc7927946620fdf2cedb7920e9",
+      "exit_code": 0
+    },
+    "12-policy-diagnostic-evaluation": {
+      "path": "dist/recordings/rename-20260928/12-policy-diagnostic-evaluation/capture.webm",
+      "sha256": "45162b6dbde6c940b5a319cd5da5c8b7ab642524d30530c0e3fe9d85f27f9542",
+      "duration_seconds": 33.52,
+      "final_screenshot": "dist/recordings/rename-20260928/12-policy-diagnostic-evaluation/result.png",
+      "final_screenshot_sha256": "8c1727f982e40c6a2f4c4d629d5abdf6c2ea0e3dfb48fb3d0f987418a7a13b0c",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/12-policy-diagnostic-evaluation/transcript.json",
+      "transcript_sha256": "9a75be1cbdddce4c367b41cdace872c5f183b0080f973ddac2555ca097e4c753",
+      "exit_code": 0
+    },
+    "portal-native-audit": {
+      "path": "dist/recordings/rename-20260928/portal-native-audit/capture.webm",
+      "sha256": "b28e06ecc7de0697156c29e6da6a64a4ea63bf944df1ffc19e256ec62395e387",
+      "duration_seconds": 15.92,
+      "final_screenshot": "dist/recordings/rename-20260928/portal-native-audit/result.png",
+      "final_screenshot_sha256": "4718c8fe6655d483c542b9b9fa0dbf2d710cafa8650feab0e8183b2a7a715a3d",
+      "type": "authenticated-browser-recording",
+      "language": "mixed",
+      "ui_language": "en",
+      "meaning": "Read-only view of this new run's original results; not a new inference."
+    },
+    "review-native-settled": {
+      "path": "dist/recordings/rename-20260928/review-native-settled/capture.webm",
+      "sha256": "df5fe0267c853781ab9b3d4b1bb1c3db2c9f6694a82f89c863f26ff909fbbc01",
+      "duration_seconds": 5.12,
+      "final_screenshot": "dist/recordings/rename-20260928/review-native-settled/result.png",
+      "final_screenshot_sha256": "ef9183b7a0d6b30063d10cf1920b1a4006ac4db95b5db42735ecdae95112421a",
+      "type": "read-only-saved-new-run-evidence",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Read-only view of this new run's original results; not a new inference.",
+      "transcript": "dist/recordings/rename-20260928/review-native-settled/transcript.json",
+      "transcript_sha256": "ff2db01bfe038c6e4d7f5ead4157c0f6a591089937777edb6c31972ca0916aa2",
+      "exit_code": 0
+    },
+    "13-guarded-boundary": {
+      "path": "dist/recordings/rename-20260928/13-guarded-boundary/capture.webm",
+      "sha256": "105722b79d3025900ee25efad40ff9f7d64dfc496f7b005704a8db12697e63a5",
+      "duration_seconds": 21.64,
+      "final_screenshot": "dist/recordings/rename-20260928/13-guarded-boundary/result.png",
+      "final_screenshot_sha256": "2a8f46a9a8fcdc7fc4754058d55cbdeb38bf124fe015a544c0303c122b76c8fb",
+      "type": "headless-browser-live-cli-output",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Actual command executed during this new lab run; consult the caption for its scope.",
+      "transcript": "dist/recordings/rename-20260928/13-guarded-boundary/transcript.json",
+      "transcript_sha256": "bcd39eee0ee2c23097a322a750cce6cd377a3e9878f8625e442188925b4885f4",
+      "exit_code": 0
+    },
+    "review-ci-settled": {
+      "path": "dist/recordings/rename-20260928/review-ci-settled/capture.webm",
+      "sha256": "573280c427c1ab3c193603568e4700370e61650348d9250919512a4898e2bffb",
+      "duration_seconds": 4.96,
+      "final_screenshot": "dist/recordings/rename-20260928/review-ci-settled/result.png",
+      "final_screenshot_sha256": "a60bddcd41717fa84ab8fa780d2d4e35b61b19d20e3461b80ea95a1a20960939",
+      "type": "read-only-saved-new-run-evidence",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Read-only view of this new run's original results; not a new inference.",
+      "transcript": "dist/recordings/rename-20260928/review-ci-settled/transcript.json",
+      "transcript_sha256": "916373a26fd410d52d7bceea49f3f41918ecfcb6de935a6950a4854e96c213c2",
+      "exit_code": 0
+    },
+    "review-retention-settled": {
+      "path": "dist/recordings/rename-20260928/review-retention-settled/capture.webm",
+      "sha256": "301ca2ee5c7ad26804734d4666988f57b6730826ceaf507a668c9c3e47ba1639",
+      "duration_seconds": 5.92,
+      "final_screenshot": "dist/recordings/rename-20260928/review-retention-settled/result.png",
+      "final_screenshot_sha256": "b515cdb743d3374c52b313a6d94c45305767ac1def3bac39794acab8f55e1e91",
+      "type": "read-only-saved-new-run-evidence",
+      "language": "mixed",
+      "ui_language": "mixed",
+      "meaning": "Read-only view of this new run's original results; not a new inference.",
+      "transcript": "dist/recordings/rename-20260928/review-retention-settled/transcript.json",
+      "transcript_sha256": "84169277fb9e24ef524ea814c62ebd045e71a4065a585fbdc853bfcf1729bd37",
+      "exit_code": 0
+    }
+  },
+  "editing": {
+    "software": "FFmpeg 8.0.1; Playwright/Chrome capture and local editorial overlays",
+    "canvas": [
+      1600,
+      1000
+    ],
+    "fps": 25,
+    "audio": "none",
+    "overlays": "Editorial titles/captions only. Portal account/creator columns and private headers are excluded by documented crops.",
+    "timing": "Normal-speed original video intervals, followed by a hold of the same capture's original result screenshot. No response text is synthesized; screenshot paths/hashes and hold durations are listed.",
+    "raw_sources_modified": false,
+    "cli_capture_type": "Real subprocess output in a headless-browser panel, not native macOS Terminal video."
+  },
+  "scope_and_limits": [
+    "All selected footage belongs to the fresh rg-mflabs15-jw-0928 run. Old NC and Sweden footage/results remain archived.",
+    "Portal recording used the existing authorized browser session in memory. No authentication-state file was exported; temporary recording contexts were closed.",
+    "The first-model portal scene is an actual new request without Web search. Other portal scenes and review-* sources read existing results only.",
+    "The Korean main guide was run; English File Search, the managed target and both language CI releases are separately identified. Bilingual captions are not two complete language reruns.",
+    "Managed Task Adherence returned six rows, five pass and one fail. Row 6 severity 0 contradicts native failure/attack-success flags; original flags and service-redacted inputs remain unchanged.",
+    "Native inconsistency holds final acceptance. No new holdout was unlocked, no corrected ASR or production safety certification is claimed.",
+    "Optimizer succeeded with an audited six-row baseline at 1.0 and no new full candidate. No improvement or promotion is claimed.",
+    "Hosted IQ versions 1/2 and CI local-retrieval versions 1/2 are distinct targets. Basic RAI attachment does not prove a platform block.",
+    "The original account-API 401, A2A propagation failure, setup errors and raw native audit remain preserved.",
+    "Old group absence and 13 idle owned sessions were verified. Retained Search, files/volumes and logs can continue to incur costs."
+  ],
+  "outputs": {
+    "ko": {
+      "files": [
+        {
+          "path": "docs/assets/videos/foundry-v1.5-summary-ko.mp4",
+          "sha256": "10893e4acb16f42f232c71edca367b3f9911e7696d90ad666e2d18d699c48acf",
+          "bytes": 2990848
+        },
+        {
+          "path": "docs/assets/videos/foundry-v1.5-summary-ko-poster.png",
+          "sha256": "ff32b11e0bbbefa3a07d1ff6ea82e724db9619ae2b2195a678c1dc67a3b550aa",
+          "bytes": 339079
+        },
+        {
+          "path": "docs/assets/videos/foundry-v1.5-summary-ko.srt",
+          "sha256": "90a5e44e070192b3d89bc97c485a7d82dd9f80699a51c3b8539f01827022ef96",
+          "bytes": 5836
+        }
+      ],
+      "verification": {
+        "duration_seconds": 272,
+        "codec": "h264",
+        "pixel_format": "yuv420p",
+        "width": 1600,
+        "height": 1000,
+        "frame_rate": "25/1",
+        "frames": 6800,
+        "faststart": true,
+        "full_decode_to_null": "passed",
+        "audio": "none",
+        "chapters": 31,
+        "under_20_MB": true,
+        "subtitles": {
+          "cues": 31,
+          "last_cue_end_seconds": 272,
+          "utf8": true,
+          "burned_caption_text_matches": true
+        }
+      },
+      "segments": [
+        {
+          "chapter": "새 리포에서 처음부터 다시 실행",
+          "source": "portal-agents",
+          "output_in": 0,
+          "output_out": 12,
+          "source_in": 7.45,
+          "source_out": 13.05,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 6.4,
+          "final_screenshot": "dist/recordings/rename-20260928/portal-agents/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.997466,
+          "crop_xywh": [
+            240,
+            72,
+            1000,
+            520
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            1
+          ]
+        },
+        {
+          "chapter": "00 · 이전 그룹 삭제, 새 그룹 생성",
+          "source": "00-create-group",
+          "output_in": 12,
+          "output_out": 20,
+          "source_in": 6.33,
+          "source_out": 11.93,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/00-create-group/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.998065,
+          "crop_xywh": [
+            44,
+            304,
+            1512,
+            628
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            2
+          ]
+        },
+        {
+          "chapter": "00 · 할당량 확인 후 모델 배포",
+          "source": "portal-models",
+          "output_in": 20,
+          "output_out": 28,
+          "source_in": 6.49,
+          "source_out": 12.09,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/portal-models/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.99399,
+          "crop_xywh": [
+            242,
+            248,
+            750,
+            314
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            3
+          ]
+        },
+        {
+          "chapter": "01 · 포털에서 첫 실제 응답",
+          "source": "portal-first-model",
+          "output_in": 28,
+          "output_out": 38,
+          "source_in": 60.61,
+          "source_out": 66.21,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 4.4,
+          "final_screenshot": "dist/recordings/rename-20260928/portal-first-model/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.997501,
+          "crop_xywh": [
+            734,
+            199,
+            850,
+            320
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            4
+          ]
+        },
+        {
+          "chapter": "03 · 정확한 Prompt Agent 버전 호출",
+          "source": "03-prompt-agent-invoke",
+          "output_in": 38,
+          "output_out": 46,
+          "source_in": 6.37,
+          "source_out": 11.97,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/03-prompt-agent-invoke/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.993856,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            5
+          ]
+        },
+        {
+          "chapter": "03 · 실제 File Search",
+          "source": "03-files-create",
+          "output_in": 46,
+          "output_out": 54,
+          "source_in": 43.41,
+          "source_out": 49.01,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/03-files-create/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.997827,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            6
+          ]
+        },
+        {
+          "chapter": "04 · 함수와 MCP의 실제 실행",
+          "source": "review-tools-settled",
+          "output_in": 54,
+          "output_out": 62,
+          "source_in": 0.1,
+          "source_out": 4.49,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 3.61,
+          "final_screenshot": "dist/recordings/rename-20260928/review-tools-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995998,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            7
+          ]
+        },
+        {
+          "chapter": "04 · 파일 생성도 산출물로 확인",
+          "source": "04-code-interpreter",
+          "output_in": 62,
+          "output_out": 70,
+          "source_in": 16.37,
+          "source_out": 21.97,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/04-code-interpreter/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994916,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            8
+          ]
+        },
+        {
+          "chapter": "05 · 순차·병렬·Group Chat",
+          "source": "05-workflow-agent",
+          "output_in": 70,
+          "output_out": 78,
+          "source_in": 9.97,
+          "source_out": 15.57,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/05-workflow-agent/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.996069,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            9
+          ]
+        },
+        {
+          "chapter": "05 · 중단·재개와 모의 승인",
+          "source": "05-checkpoint-complete",
+          "output_in": 78,
+          "output_out": 86,
+          "source_in": 0.1,
+          "source_out": 4.33,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 3.77,
+          "final_screenshot": "dist/recordings/rename-20260928/05-checkpoint-complete/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994456,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            10
+          ]
+        },
+        {
+          "chapter": "06 · 내 전용 Search 생성",
+          "source": "06-create-search",
+          "output_in": 86,
+          "output_out": 94,
+          "source_in": 527.85,
+          "source_out": 533.45,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/06-create-search/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995783,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            11
+          ]
+        },
+        {
+          "chapter": "06 · Search·IQ·Hybrid·IQ Chat",
+          "source": "review-retrieval-settled",
+          "output_in": 94,
+          "output_out": 104,
+          "source_in": 0.1,
+          "source_out": 5.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 4.73,
+          "final_screenshot": "dist/recordings/rename-20260928/review-retrieval-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995903,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            12
+          ]
+        },
+        {
+          "chapter": "07 · 같은 조건의 전후 평가",
+          "source": "review-evaluation-settled",
+          "output_in": 104,
+          "output_out": 112,
+          "source_in": 0.1,
+          "source_out": 3.69,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 4.41,
+          "final_screenshot": "dist/recordings/rename-20260928/review-evaluation-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.996016,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            13
+          ]
+        },
+        {
+          "chapter": "08 · 로컬 확인 후 실제 원격 배포",
+          "source": "08-remote-hosted",
+          "output_in": 112,
+          "output_out": 120,
+          "source_in": 13.33,
+          "source_out": 18.93,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/08-remote-hosted/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994045,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            14
+          ]
+        },
+        {
+          "chapter": "09 · 운영 확인 후 반복 작업 중지",
+          "source": "review-operations-settled",
+          "output_in": 120,
+          "output_out": 128,
+          "source_in": 0.1,
+          "source_out": 4.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 3.73,
+          "final_screenshot": "dist/recordings/rename-20260928/review-operations-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.99653,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            15
+          ]
+        },
+        {
+          "chapter": "10 · Tool Search는 도구를 찾습니다",
+          "source": "10-discovery-probe",
+          "output_in": 128,
+          "output_out": 136,
+          "source_in": 5.21,
+          "source_out": 10.81,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/10-discovery-probe/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.99506,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            16
+          ]
+        },
+        {
+          "chapter": "10 · Skill 버전을 원본과 대조",
+          "source": "10-skill-readback",
+          "output_in": 136,
+          "output_out": 144,
+          "source_in": 0.1,
+          "source_out": 4.09,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 4.01,
+          "final_screenshot": "dist/recordings/rename-20260928/10-skill-readback/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.998229,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            17
+          ]
+        },
+        {
+          "chapter": "10 · 원격 Toolbox를 재호출 없이 검증",
+          "source": "10-toolbox-remote-verify",
+          "output_in": 144,
+          "output_out": 152,
+          "source_in": 0.1,
+          "source_out": 4.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 3.73,
+          "final_screenshot": "dist/recordings/rename-20260928/10-toolbox-remote-verify/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.991783,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            18
+          ]
+        },
+        {
+          "chapter": "11 · Memory 저장·분리·갱신",
+          "source": "11-memory-recall-alpha",
+          "output_in": 152,
+          "output_out": 160,
+          "source_in": 7.89,
+          "source_out": 13.49,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/11-memory-recall-alpha/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.9941,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            19
+          ]
+        },
+        {
+          "chapter": "11 · 실제 A2A 1.0 위임",
+          "source": "11-a2a-propagated",
+          "output_in": 160,
+          "output_out": 168,
+          "source_in": 10.29,
+          "source_out": 15.89,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/11-a2a-propagated/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994197,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            20
+          ]
+        },
+        {
+          "chapter": "11 · 실제 timer의 원래 응답 확인",
+          "source": "review-timer-settled",
+          "output_in": 168,
+          "output_out": 178,
+          "source_in": 0.1,
+          "source_out": 4.41,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 5.69,
+          "final_screenshot": "dist/recordings/rename-20260928/review-timer-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.996093,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            21
+          ]
+        },
+        {
+          "chapter": "12 · 턴과 전체 대화를 따로 평가",
+          "source": "12-conversations-full",
+          "output_in": 178,
+          "output_out": 186,
+          "source_in": 35.57,
+          "source_out": 41.17,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/12-conversations-full/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994479,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            22
+          ]
+        },
+        {
+          "chapter": "12 · Optimizer 성공과 개선은 다릅니다",
+          "source": "review-optimizer-settled",
+          "output_in": 186,
+          "output_out": 196,
+          "source_in": 0.1,
+          "source_out": 5.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 4.73,
+          "final_screenshot": "dist/recordings/rename-20260928/review-optimizer-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995751,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            23
+          ]
+        },
+        {
+          "chapter": "12 · 실제 Hosted IQ v1·v2 평가",
+          "source": "portal-hosted-evaluation",
+          "output_in": 196,
+          "output_out": 204,
+          "source_in": 9.29,
+          "source_out": 14.89,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/portal-hosted-evaluation/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.992274,
+          "crop_xywh": [
+            240,
+            168,
+            1336,
+            560
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            24
+          ]
+        },
+        {
+          "chapter": "12 · 권한과 trace도 실제로 확인",
+          "source": "review-hosted-settled",
+          "output_in": 204,
+          "output_out": 212,
+          "source_in": 0.1,
+          "source_out": 5.49,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.61,
+          "final_screenshot": "dist/recordings/rename-20260928/review-hosted-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994975,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            25
+          ]
+        },
+        {
+          "chapter": "12 · 보완 진단 8/8은 별도 증거",
+          "source": "12-policy-diagnostic-evaluation",
+          "output_in": 212,
+          "output_out": 220,
+          "source_in": 27.37,
+          "source_out": 32.97,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/12-policy-diagnostic-evaluation/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.997678,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            26
+          ]
+        },
+        {
+          "chapter": "13 · 관리형 결과의 실패도 그대로 남깁니다",
+          "source": "portal-native-audit",
+          "output_in": 220,
+          "output_out": 232,
+          "source_in": 9.77,
+          "source_out": 15.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 6.4,
+          "final_screenshot": "dist/recordings/rename-20260928/portal-native-audit/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.996811,
+          "crop_xywh": [
+            240,
+            168,
+            1016,
+            478
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            27
+          ]
+        },
+        {
+          "chapter": "13 · 지표 불일치로 최종 인수 보류",
+          "source": "review-native-settled",
+          "output_in": 232,
+          "output_out": 242,
+          "source_in": 0.1,
+          "source_out": 4.57,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 5.53,
+          "final_screenshot": "dist/recordings/rename-20260928/review-native-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995877,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            28
+          ]
+        },
+        {
+          "chapter": "13 · 전용 guardrail과 승인 경계",
+          "source": "13-guarded-boundary",
+          "output_in": 242,
+          "output_out": 250,
+          "source_in": 15.49,
+          "source_out": 21.09,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/13-guarded-boundary/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.993638,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            29
+          ]
+        },
+        {
+          "chapter": "14 · 변경된 리포의 실제 OIDC 릴리스",
+          "source": "review-ci-settled",
+          "output_in": 250,
+          "output_out": 260,
+          "source_in": 0.1,
+          "source_out": 4.41,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 5.69,
+          "final_screenshot": "dist/recordings/rename-20260928/review-ci-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995488,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            30
+          ]
+        },
+        {
+          "chapter": "15 · 실행은 정리하고 증거는 보존",
+          "source": "review-retention-settled",
+          "output_in": 260,
+          "output_out": 272,
+          "source_in": 0.1,
+          "source_out": 5.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 6.73,
+          "final_screenshot": "dist/recordings/rename-20260928/review-retention-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.997414,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            31
+          ]
+        }
+      ]
+    },
+    "en": {
+      "files": [
+        {
+          "path": "docs/assets/videos/foundry-v1.5-summary-en.mp4",
+          "sha256": "1ba1ce3033d64bbb00784f502d883e385f6af63708c3ccf03445ab7ccd8bfb9e",
+          "bytes": 3177224
+        },
+        {
+          "path": "docs/assets/videos/foundry-v1.5-summary-en-poster.png",
+          "sha256": "e591f4815ddade2bb6bed1f26ef62fe3910d6d8543d31e953f2eb1eedb264393",
+          "bytes": 371619
+        },
+        {
+          "path": "docs/assets/videos/foundry-v1.5-summary-en.srt",
+          "sha256": "f42fccb6c249a8977a798290b4c342fcb4bc8eb45734f47e0d49d7ce2a4b7cc0",
+          "bytes": 5205
+        }
+      ],
+      "verification": {
+        "duration_seconds": 272,
+        "codec": "h264",
+        "pixel_format": "yuv420p",
+        "width": 1600,
+        "height": 1000,
+        "frame_rate": "25/1",
+        "frames": 6800,
+        "faststart": true,
+        "full_decode_to_null": "passed",
+        "audio": "none",
+        "chapters": 31,
+        "under_20_MB": true,
+        "subtitles": {
+          "cues": 31,
+          "last_cue_end_seconds": 272,
+          "utf8": true,
+          "burned_caption_text_matches": true
+        }
+      },
+      "segments": [
+        {
+          "chapter": "A fresh run for the renamed repository",
+          "source": "portal-agents",
+          "output_in": 0,
+          "output_out": 12,
+          "source_in": 7.45,
+          "source_out": 13.05,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 6.4,
+          "final_screenshot": "dist/recordings/rename-20260928/portal-agents/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.997466,
+          "crop_xywh": [
+            240,
+            72,
+            1000,
+            520
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            1
+          ]
+        },
+        {
+          "chapter": "00 / Replace only the old lab group",
+          "source": "00-create-group",
+          "output_in": 12,
+          "output_out": 20,
+          "source_in": 6.33,
+          "source_out": 11.93,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/00-create-group/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.998065,
+          "crop_xywh": [
+            44,
+            304,
+            1512,
+            628
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            2
+          ]
+        },
+        {
+          "chapter": "00 / Deploy verified model roles",
+          "source": "portal-models",
+          "output_in": 20,
+          "output_out": 28,
+          "source_in": 6.49,
+          "source_out": 12.09,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/portal-models/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.99399,
+          "crop_xywh": [
+            242,
+            248,
+            750,
+            314
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            3
+          ]
+        },
+        {
+          "chapter": "01 / A real first Playground response",
+          "source": "portal-first-model",
+          "output_in": 28,
+          "output_out": 38,
+          "source_in": 60.61,
+          "source_out": 66.21,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 4.4,
+          "final_screenshot": "dist/recordings/rename-20260928/portal-first-model/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.997501,
+          "crop_xywh": [
+            734,
+            199,
+            850,
+            320
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            4
+          ]
+        },
+        {
+          "chapter": "03 / Invoke the exact Prompt Agent version",
+          "source": "03-prompt-agent-invoke",
+          "output_in": 38,
+          "output_out": 46,
+          "source_in": 6.37,
+          "source_out": 11.97,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/03-prompt-agent-invoke/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.993856,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            5
+          ]
+        },
+        {
+          "chapter": "03 / Actual File Search",
+          "source": "03-files-create",
+          "output_in": 46,
+          "output_out": 54,
+          "source_in": 43.41,
+          "source_out": 49.01,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/03-files-create/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.997827,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            6
+          ]
+        },
+        {
+          "chapter": "04 / Real function and MCP execution",
+          "source": "review-tools-settled",
+          "output_in": 54,
+          "output_out": 62,
+          "source_in": 0.1,
+          "source_out": 4.49,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 3.61,
+          "final_screenshot": "dist/recordings/rename-20260928/review-tools-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995998,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            7
+          ]
+        },
+        {
+          "chapter": "04 / Verify the generated file itself",
+          "source": "04-code-interpreter",
+          "output_in": 62,
+          "output_out": 70,
+          "source_in": 16.37,
+          "source_out": 21.97,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/04-code-interpreter/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994916,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            8
+          ]
+        },
+        {
+          "chapter": "05 / Sequential, concurrent, and group chat",
+          "source": "05-workflow-agent",
+          "output_in": 70,
+          "output_out": 78,
+          "source_in": 9.97,
+          "source_out": 15.57,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/05-workflow-agent/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.996069,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            9
+          ]
+        },
+        {
+          "chapter": "05 / Resume an explicitly simulated gate",
+          "source": "05-checkpoint-complete",
+          "output_in": 78,
+          "output_out": 86,
+          "source_in": 0.1,
+          "source_out": 4.33,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 3.77,
+          "final_screenshot": "dist/recordings/rename-20260928/05-checkpoint-complete/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994456,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            10
+          ]
+        },
+        {
+          "chapter": "06 / A dedicated keyless Search service",
+          "source": "06-create-search",
+          "output_in": 86,
+          "output_out": 94,
+          "source_in": 527.85,
+          "source_out": 533.45,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/06-create-search/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995783,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            11
+          ]
+        },
+        {
+          "chapter": "06 / Search, IQ, Hybrid, and IQ Chat",
+          "source": "review-retrieval-settled",
+          "output_in": 94,
+          "output_out": 104,
+          "source_in": 0.1,
+          "source_out": 5.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 4.73,
+          "final_screenshot": "dist/recordings/rename-20260928/review-retrieval-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995903,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            12
+          ]
+        },
+        {
+          "chapter": "07 / Compare under fixed conditions",
+          "source": "review-evaluation-settled",
+          "output_in": 104,
+          "output_out": 112,
+          "source_in": 0.1,
+          "source_out": 3.69,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 4.41,
+          "final_screenshot": "dist/recordings/rename-20260928/review-evaluation-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.996016,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            13
+          ]
+        },
+        {
+          "chapter": "08 / Local checks, then a real remote version",
+          "source": "08-remote-hosted",
+          "output_in": 112,
+          "output_out": 120,
+          "source_in": 13.33,
+          "source_out": 18.93,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/08-remote-hosted/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994045,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            14
+          ]
+        },
+        {
+          "chapter": "09 / Observe, then disable recurring work",
+          "source": "review-operations-settled",
+          "output_in": 120,
+          "output_out": 128,
+          "source_in": 0.1,
+          "source_out": 4.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 3.73,
+          "final_screenshot": "dist/recordings/rename-20260928/review-operations-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.996532,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            15
+          ]
+        },
+        {
+          "chapter": "10 / Tool Search discovers tools",
+          "source": "10-discovery-probe",
+          "output_in": 128,
+          "output_out": 136,
+          "source_in": 5.21,
+          "source_out": 10.81,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/10-discovery-probe/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.99506,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            16
+          ]
+        },
+        {
+          "chapter": "10 / Read back the exact Skill version",
+          "source": "10-skill-readback",
+          "output_in": 136,
+          "output_out": 144,
+          "source_in": 0.1,
+          "source_out": 4.09,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 4.01,
+          "final_screenshot": "dist/recordings/rename-20260928/10-skill-readback/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.998229,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            17
+          ]
+        },
+        {
+          "chapter": "10 / Verify remote Toolbox without replay",
+          "source": "10-toolbox-remote-verify",
+          "output_in": 144,
+          "output_out": 152,
+          "source_in": 0.1,
+          "source_out": 4.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 3.73,
+          "final_screenshot": "dist/recordings/rename-20260928/10-toolbox-remote-verify/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.991778,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            18
+          ]
+        },
+        {
+          "chapter": "11 / Persist, partition, and update Memory",
+          "source": "11-memory-recall-alpha",
+          "output_in": 152,
+          "output_out": 160,
+          "source_in": 7.89,
+          "source_out": 13.49,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/11-memory-recall-alpha/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.9941,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            19
+          ]
+        },
+        {
+          "chapter": "11 / Actual A2A 1.0 delegation",
+          "source": "11-a2a-propagated",
+          "output_in": 160,
+          "output_out": 168,
+          "source_in": 10.29,
+          "source_out": 15.89,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/11-a2a-propagated/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994197,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            20
+          ]
+        },
+        {
+          "chapter": "11 / Verify the timer's original response",
+          "source": "review-timer-settled",
+          "output_in": 168,
+          "output_out": 178,
+          "source_in": 0.1,
+          "source_out": 4.41,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 5.69,
+          "final_screenshot": "dist/recordings/rename-20260928/review-timer-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.996093,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            21
+          ]
+        },
+        {
+          "chapter": "12 / Separate turn and conversation evaluation",
+          "source": "12-conversations-full",
+          "output_in": 178,
+          "output_out": 186,
+          "source_in": 35.57,
+          "source_out": 41.17,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/12-conversations-full/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994479,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            22
+          ]
+        },
+        {
+          "chapter": "12 / Optimizer completion is not improvement",
+          "source": "review-optimizer-settled",
+          "output_in": 186,
+          "output_out": 196,
+          "source_in": 0.1,
+          "source_out": 5.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 4.73,
+          "final_screenshot": "dist/recordings/rename-20260928/review-optimizer-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995751,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            23
+          ]
+        },
+        {
+          "chapter": "12 / Evaluate actual Hosted IQ v1 and v2",
+          "source": "portal-hosted-evaluation",
+          "output_in": 196,
+          "output_out": 204,
+          "source_in": 9.29,
+          "source_out": 14.89,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/portal-hosted-evaluation/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.992274,
+          "crop_xywh": [
+            240,
+            168,
+            1336,
+            560
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            24
+          ]
+        },
+        {
+          "chapter": "12 / Verify permissions and exported traces",
+          "source": "review-hosted-settled",
+          "output_in": 204,
+          "output_out": 212,
+          "source_in": 0.1,
+          "source_out": 5.49,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.61,
+          "final_screenshot": "dist/recordings/rename-20260928/review-hosted-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.994975,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            25
+          ]
+        },
+        {
+          "chapter": "12 / Eight diagnostics are separate evidence",
+          "source": "12-policy-diagnostic-evaluation",
+          "output_in": 212,
+          "output_out": 220,
+          "source_in": 27.37,
+          "source_out": 32.97,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/12-policy-diagnostic-evaluation/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.997678,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            26
+          ]
+        },
+        {
+          "chapter": "13 / Preserve the actual managed failure",
+          "source": "portal-native-audit",
+          "output_in": 220,
+          "output_out": 232,
+          "source_in": 9.77,
+          "source_out": 15.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 6.4,
+          "final_screenshot": "dist/recordings/rename-20260928/portal-native-audit/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.996811,
+          "crop_xywh": [
+            240,
+            168,
+            1016,
+            478
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            27
+          ]
+        },
+        {
+          "chapter": "13 / Inconsistent flags hold final acceptance",
+          "source": "review-native-settled",
+          "output_in": 232,
+          "output_out": 242,
+          "source_in": 0.1,
+          "source_out": 4.57,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 5.53,
+          "final_screenshot": "dist/recordings/rename-20260928/review-native-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995877,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            28
+          ]
+        },
+        {
+          "chapter": "13 / A lab-only guardrail and authority boundary",
+          "source": "13-guarded-boundary",
+          "output_in": 242,
+          "output_out": 250,
+          "source_in": 15.49,
+          "source_out": 21.09,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 2.4,
+          "final_screenshot": "dist/recordings/rename-20260928/13-guarded-boundary/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.993638,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            29
+          ]
+        },
+        {
+          "chapter": "14 / Real OIDC releases for the renamed repository",
+          "source": "review-ci-settled",
+          "output_in": 250,
+          "output_out": 260,
+          "source_in": 0.1,
+          "source_out": 4.41,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 5.69,
+          "final_screenshot": "dist/recordings/rename-20260928/review-ci-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.995488,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            30
+          ]
+        },
+        {
+          "chapter": "15 / Stop compute and preserve the evidence",
+          "source": "review-retention-settled",
+          "output_in": 260,
+          "output_out": 272,
+          "source_in": 0.1,
+          "source_out": 5.37,
+          "speed": 1,
+          "final_screenshot_hold_seconds": 6.73,
+          "final_screenshot": "dist/recordings/rename-20260928/review-retention-settled/result.png",
+          "final_frame_ssim_to_original_screenshot": 0.997415,
+          "crop_xywh": [
+            44,
+            256,
+            1512,
+            630
+          ],
+          "scaled_into_xywh": [
+            44,
+            186,
+            1512,
+            640
+          ],
+          "subtitle_cues": [
+            31
+          ]
+        }
+      ]
+    }
+  }
+}

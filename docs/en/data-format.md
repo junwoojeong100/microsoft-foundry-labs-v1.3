@@ -29,7 +29,7 @@ The current lab targets a **new North Central US project**. Keep Sweden `.env`, 
 
 Example new labels are `nc-baseline-en`, `nc-candidate-en`, `nc-policy-calibration-en`, and `nc-policy-lab-en`; use `-ko` for Korean. When replacing chapter examples, update every preparation, collection, evaluation, compare, report, and verify reference consistently. Never copy old results into new labels or rewrite their hashes.
 
-Sweden records below are historical. NC's mixed native job retains its original six rows/**five pass/one fail**; a separate Task Adherence-only job passed **5/5**. No failed row was removed and no custom diagnostic was substituted. Preserve each run's raw evidence, redacted inputs, actual returned counts, and flag direction. Neither job is holdout evidence.
+Sweden and earlier NC mixed/5-of-5 records below are historical. **The current repository-rerun Task Adherence job returned six rows/five pass/one fail, with inconsistent severity/flags.** No failed row is removed or replaced by custom diagnostics. Preserve raw evidence, redacted inputs, actual row counts, and flag direction; no new holdout was unlocked. See the [current report](validation-report.md).
 
 ## Prompt revision provenance
 

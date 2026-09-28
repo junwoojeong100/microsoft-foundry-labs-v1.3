@@ -6,7 +6,7 @@
 
 새 NC 프로젝트에서는 리전별 검증의 원래 요청을 추적하기 위해 **로그 자원을 이 장보다 일찍 생성**했습니다. 이전 Sweden workspace/customerId·projectId·trace를 복사하지 않고 새 실제 자원을 등록합니다. 자원 생성/연결과 실제 trace 조회·Insights 성공은 별도 확인입니다.
 
-**현재 NC 결과:** Hosted의 dev/진단/알려진 최종 사례 trace를 확인했고, on-demand Insights는 1시간 창의 16개 trace를 분석해 finding 1개를 반환했습니다. 예약은 disabled입니다. Continuous도 Coherence v13의 실제 1행 score 5/pass와 원래 응답 연결을 확인한 뒤 pause했습니다. 아래의 버전별 실패도 보존합니다.
+**현재 재실행 결과:** Hosted v1/v2 dev와 진단 trace를 확인했습니다. On-demand Insights는 1시간 창의 **3개 trace·새 finding 0개**, 예약 disabled입니다. Coherence v13은 원래 저장 응답 **1행 score 5/pass**를 확인한 뒤 pause했습니다. 이전 NC의 16개 trace·finding 1개와 버전별 실패는 과거 기록으로 보존합니다. 이번에는 최종 holdout을 열지 않았습니다. [현재 보고서](validation-report.md).
 
 **선택적 조기 준비:** 00의 프로젝트/모델 설정 후, 추적할 첫 요청을 보내기 전에 이 절의 로그 생성·연결을 먼저 수행할 수 있습니다. 일반 학습 순서는 09장에서 유지합니다. 이미 준비했다면 새 자원을 중복 생성하지 않고 실제 연결/권한을 확인합니다.
 

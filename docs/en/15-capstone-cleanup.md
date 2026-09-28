@@ -6,7 +6,9 @@
 
 Even when stopping early, **perform the stopping, inventory, and retention decisions below now**. Quality failures are not a reason to leave chargeable resources unattended. Deletion is a separate choice.
 
-**Current transition boundary:** only the explicitly selected old Sweden group was deleted; new NC resources are retained. Keep the mixed managed job's original six rows/**five pass/one fail** separate from the new Task Adherence-only job's **5/5**. Prohibited Actions polarity remains unresolved. Changing regions does not make previously used holdout cases unseen again; do not claim all-native pass, fixed ASR, or production acceptance.
+**Current repository-rerun boundary:** only old NC group `rg-mf15-jw-nc-0928` was deleted; new `rg-mflabs15-jw-0928` is retained. **New Task Adherence returned six rows/five pass/one fail with inconsistent severity/flags, so final acceptance is held and no new holdout was unlocked.** All 13 observed Hosted sessions are idle; timer/continuous/Insights schedules are disabled/paused. Eight remote evidence files were archived. See the [new results and retention costs](validation-report.md).
+
+Sweden and earlier NC 5/5, four-known-case, and Optimizer-candidate statements below describe historical runs. They do not grant new acceptance or make previously used holdout cases unseen. **Finishing the lab execution and passing final quality acceptance are different states.**
 
 ## Retention mode
 

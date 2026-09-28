@@ -4,7 +4,9 @@
 
 중도에 실습을 멈추는 경우에도 **아래 중지·목록 확인·보관 결정을 지금 수행**합니다. 품질 실패 때문에 비용 자원을 방치하지 않습니다. 삭제는 별도로 선택하는 작업입니다.
 
-**현재 전환 경계:** 삭제한 것은 명시적으로 지정된 이전 Sweden 그룹뿐이며 새 NC 자원은 보존합니다. 혼합 관리형 job의 원래 6행·**5 pass/1 fail**과 별도 Task Adherence-only job의 **5/5**를 구분합니다. Prohibited Actions polarity는 여전히 미해결입니다. 새 리전이라고 이미 사용한 holdout 문항이 다시 미공개가 되는 것은 아니며, 전체 native 통과·ASR 수정·운영 인수로 표시하지 않습니다.
+**현재 리포 재실행 경계:** 이전 NC 그룹 `rg-mf15-jw-nc-0928`만 삭제하고 새 `rg-mflabs15-jw-0928`은 보존합니다. **새 Task Adherence 6행·5 pass/1 fail의 severity/flag 불일치로 최종 인수는 보류**했으며 holdout을 새로 열지 않았습니다. 확인한 Hosted 세션 13개 모두 idle, timer·continuous·Insights 예약은 disabled/paused입니다. 원격 증거 파일 8개도 보관했습니다. [새 결과와 보존 비용](validation-report.md).
+
+아래의 Sweden 및 앞선 NC 5/5·알려진 4문항·Optimizer 후보는 과거 실행 이력입니다. 이를 새 인수로 옮기거나 이미 본 holdout을 다시 미공개라고 주장하지 않습니다. **실습 실행 완료와 최종 품질 인수는 서로 다른 상태**입니다.
 
 ## 보존 모드로 진행할 때
 

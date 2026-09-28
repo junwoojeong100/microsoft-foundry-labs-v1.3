@@ -6,7 +6,7 @@
 
 **Prerequisites:** Owner access and Foundry configuration from 00. You create Search and any required models here. **Search Basic—and any explicitly selected Standard tier—incurs ongoing service charges even without requests.**
 
-**Current NC scope:** separate Korean/English ownership workspaces verified keyword, GA IQ, actual 3072-dimensional embeddings/Hybrid, and model-based IQ Chat. The first English dev run scored 5/6 because retrieval omitted `SCOPE-01`; the explicit retrieval threshold below produced 6/6 under a new label. The original failure and Sweden history remain. A retrieval-setting change is not a prompt-only improvement.
+**Current rerun scope:** the new group verified Korean keyword, GA IQ, actual 3072-dimensional Hybrid, and model-based IQ Chat. **In the earlier NC bilingual run**, English initially scored 5/6 because retrieval omitted `SCOPE-01`; threshold 0 produced 6/6 under a new label. Those results remain historical, not a new English run. A retrieval-setting change is not prompt-only improvement. See the [new execution scope](validation-report.md).
 
 ## 1. Create a Search service
 

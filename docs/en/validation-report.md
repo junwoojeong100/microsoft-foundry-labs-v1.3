@@ -2,6 +2,46 @@
 
 **English** | [한국어](../validation-report.md) · [Course home](../../README.md)
 
+## Fresh run after the repository rename · 2026-09-28
+
+**Lab execution and recording are complete; final quality acceptance is held.** The new group is `rg-mflabs15-jw-0928`, account `mflabs15-jw-0928`, project `mf15-project`, and prefix `lab-jw-mfl15-0928`. Only the confirmed previous NC lab group `rg-mf15-jw-nc-0928` was deleted, with absence verified before creating the new group. Other lab and business groups were untouched.
+
+**3,428 files** from the previous `.env`, `.selfstudy`, `outputs`, and `.build` were privately archived with hashes before initializing fresh active state. Original recordings and published videos were retained. Execution used source revision **`7b7ca26f4be381e8065ed97573fbd8cdf1928487`** and the existing Python 3.13.15 environment. Only the initial local readiness check used Python 3.14.
+
+| Scope | Actual new-run result |
+|---|---|
+| Foundation/models | New group, Foundry/project, logs, Basic Search, and six model deployments with separate answer/comparison/judge/embedding/IQ/optimizer roles. Optional Router was inspected in the catalog, not invoked |
+| Responses/files/tools | Actual Sol Playground request with Web search removed; separate Korean/English Prompt Agents and six-file File Search agents. Korean current/historical/missing-policy citations, local functions/MCP, and an actual six-row CSV verified |
+| Workflows/recovery | Sequential, concurrent, group chat, structured workflow, and local SDK simulated approval/resume with preserved IDs. No real human approval or claim of group-chat consensus |
+| Search/IQ/Hybrid | Six Korean documents retrieved through keyword, GA IQ, actual 3,072-dimensional Hybrid, and GPT-5.6 Luna IQ Chat. Previous English retrieval was not adopted as a new run |
+| SDK/model comparison | Baseline/candidate each business 6/6, all three policy criteria 6/6, valid reference audits, Korean calibration 24/24. Separate matched account-responses Sol/Luna dev comparison: each 6/6 |
+| Hosted | Standalone Responses agent v1 and workflow v1 verified locally/remotely. IQ sequential/account-chat/Invocations v1/v2 each dev 6/6, all three policy criteria 6/6, and actual exported traces 6/6 |
+| Complementary diagnostics | Fixed IQ Hosted v2 `rename-policy-lab`: actual 8/8, three policy criteria 8/8, traces 8/8. Not managed red teaming or a fresh holdout |
+| Toolbox/Skill/OpenAPI | Plain v1, discovery v2, Skill-v1-enabled v3, actual load/search/answer/OpenAPI, and remote Toolbox v1 SSE/package/version/hash verification |
+| Memory/A2A/timer | New Korean TTL-zero store: alpha readback, empty beta, same-item update. Actual A2A 1.0 delegation. Timer's original answer/trace verified through telemetry, then disabled; `Killed` attempt retained |
+| Conversations | Two new conversations/six turns: Groundedness/Coherence each 6/6 at turn level and 2/2 at conversation level |
+| Optimizer | `opt_bfa363582dff4c048ca6fceaea6ae953` succeeded with the original three evaluator-v1 definitions, threshold 4, and judge. Baseline 1.0/6 of 6 with a valid source audit; **zero new full candidates**, no promotion |
+| Managed Task Adherence | `evalrun_a50eea6a7d124669938baa462423bdb7` completed: **six rows, five pass/one fail**. Failing row severity 0/threshold 3 contradicts `passed=false`, `attack_success=true`; audit gate failed |
+| Operations/protection | Insights: one hour, three traces, zero new findings, schedule disabled. Coherence v13: one original stored response, score 5/pass, then paused. Standalone Hosted v2 references eleven preserved DefaultV2 protections; refusing false approval is not proof of a platform filter block |
+| CI/CD | New identity, exact repository/Environment subject, unchanged main-only protection. Korean CI v1 and English CI v2 each six new responses/6 of 6, with stopped-session artifacts |
+| Final lifecycle | All 13 observed Hosted sessions idle, active zero. Timer/continuous/Insights schedules disabled or paused. Eight original remote Toolbox JSON files downloaded and checked against hashes, answer, tools, and model lineage |
+
+**The managed failure was not erased or retried into a pass.** Row 6's explanation criticizes a non-substantive response, while its severity is zero. Inputs are service-redacted and original response IDs unavailable, so no input was reconstructed or failure changed to success. This is not the previous NC 5/5 job. Following the guide's final gate, **no new holdout was unlocked and acceptance remains held**; the complementary 8/8 does not override it.
+
+Execution blockers remain recorded. The initial Hosted account-chat 401 occurred because project-scoped access does not authorize the parent account API. **Cognitive Services OpenAI User on this lab account, for the exact runtime principal**, fixed the same version. [Chapter 12's permission guidance](12-improvement.md#5-deploy-the-baseline-profile) now distinguishes these scopes. A2A's immediate post-creation 400 passed after the same connection propagated, under a new label. Parent-resource model-write conflicts were resolved by serializing writes. Do not run settings writers concurrently in one checkout.
+
+The first Optimizer inline submission was rejected for the `dataset_items` wire field. The SDK model description and service contract differed; a **new request using the public mapping constructor and `train_dataset.items`** succeeded. Required evaluator `initialization_parameters` and threshold 4 remained unchanged. Baseline evaluation `eval_14fc534255ff4927a1582ad18fe3e186` / `evalrun_b72615bcffe74ebfb3971ec004afeb2b` was audited against all six submitted dev rows and source references. Candidate generation and improvement remain separate, unclaimed outcomes.
+
+On the same source revision, [repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36405755604), [new OIDC authentication](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36409519229), [Korean release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36409523146), and [English release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36410260357) succeeded. CI local retrieval is distinct from the separate IQ Hosted matrix.
+
+New originals remain private in `outputs/rename-*`, `outputs/benchmarks/rename-*`, `.selfstudy/rename-*`, and `dist/recordings/rename-20260928/`. The [new summaries](videos.md) are **4:32/31 scenes per language**, with no old NC/Sweden footage mixed in. The Korean main-guide run and separate English file/agent/CI exercises are distinguished; bilingual captions do not imply a second complete English rerun.
+
+**New resources are retained.** Search Basic, files/volumes, and logs can keep incurring charges; the next cost review date is 2026-09-29. The new group's actual-cost query has no posted rows yet, so total cost is not established. This is not a zero-cost claim or a spending cap.
+
+## Archived NC record before the repository rerun
+
+“Current,” “new,” retention, 5/5, and candidate-generation statements below describe the **then-existing `rg-mf15-jw-nc-0928` environment, now deleted**. They are not adopted as the new run's results or remote assets.
+
 **The September 28, 2026 continuation verified a fresh North Central US environment.** The current group is `rg-mf15-jw-nc-0928`, account `mf15-jw-nc-0928`, and project `mf15-project`. The answer model is GPT-6 Sol / `workshop-chat`; the different-base judge is GPT-5.5 / `workshop-judge`.
 
 The old Sweden group was deleted at the user's explicit request and its absence confirmed. Configuration, original results, ownership, and deployments were archived with hashes in `.selfstudy/archives/sweden-20260928-before-northcentral/` first. **New NC resources are retained.** Every result below applies only to its actual run scope.

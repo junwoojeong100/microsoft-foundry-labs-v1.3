@@ -10,11 +10,11 @@ You need a **Microsoft Entra ID account, an Azure subscription, and an active su
 
 Already started? → [Your workbook](worksheets/en/workbook.md)
 
-**Current region: North Central US (`northcentralus`).** Korean/English Search, IQ, Hybrid, IQ Chat, Hosted IQ v1/v2 dev 6/6, and an actual scheduled response are verified. **A new Task Adherence-only managed job passed 5/5 with consistent native flags.** The earlier mixed job still retains five pass/one fail and the Prohibited Actions inconsistency. This is not an all-ASR fix or production safety certification. Read the [results and remaining limits](docs/en/validation-report.md) and keep the [fresh-workspace/archive boundary](docs/en/00-setup.md#start-a-new-project-without-adopting-old-state).
+**After the repository rename, chapters 00-15 were rerun in the new group `rg-mflabs15-jw-0928`.** The old lab group was deleted and its absence verified. Actual Search, IQ, Hybrid, tools, deployments, operations, and Korean/English OIDC releases were exercised in North Central US (`northcentralus`). **Final quality acceptance is held:** the new managed Task Adherence run returned six rows, five pass/one fail, with inconsistent severity and flags on the failing row. The previous environment's 5/5 was not reused, and no new holdout was unlocked. Read the [new results and limits](docs/en/validation-report.md) and preserve the [fresh-workspace boundary](docs/en/00-setup.md#start-a-new-project-without-adopting-old-state).
 
 The primary red-team target is the **managed AI red-teaming service** in chapter 13. The custom eight-case policy diagnostic is complementary, not a replacement or evidence that managed red teaming works.
 
-**The follow-up resolved Optimizer's missing required initialization.** A new job retained the original evaluator versions and threshold 4; baseline and candidate each passed all six rows and their source-reference audits. Both scored 1.0; neither improvement nor promotion is claimed. Prohibited Actions remained inconsistent in a separate pinned-v5 run.
+New SDK baseline/candidate and Hosted IQ v1/v2 each passed dev 6/6 and all three policy criteria. **The new Optimizer retained the original evaluator versions/threshold 4 and audited its 1.0 baseline, but returned no new full candidate.** Neither improvement nor promotion is claimed. Earlier Optimizer candidates and Prohibited Actions results remain historical evidence.
 
 North Central US appears in **both official regional sources**, although their wider lists currently conflict. [Chapter 13 records that discrepancy](docs/en/13-governance.md#5-managed-ai-red-teaming--the-primary-verification-target). Do not infer that Sweden caused the old ASR problem or that changing regions fixes metric direction.
 
@@ -81,13 +81,13 @@ Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/`
 
 ## North Central US portal and CLI summary videos
 
-**NC edition: 3:52 each, silent with captions.** Eight fresh **authenticated Playwright Headless portal scenes** accompany preserved real CLI captures. The original Optimizer failure, successful fix, tied baseline/candidate, and unresolved Prohibited Actions inconsistency remain distinct. Login screens and credentials are excluded from the edit; the temporary login profile was removed.
+**Renamed-repository rerun edition: 4:32 each, 31 scenes, silent with captions.** Five authenticated portal scenes accompany this run's actual CLI recordings and labelled saved-evidence reviews. The videos cover new-group creation through evaluation, deployment, and stopping compute, including the native inconsistency and acceptance hold. Login screens and credentials are excluded.
 
 | English | 한국어 |
 |---|---|
 | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) |
 | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) |
 
-[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). These links now show the **NC portal and CLI edition**. The prior NC CLI edit remains in revision `1d53a68`, and Sweden footage in `0a8ab50`; original results and scores were not rewritten.
+[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). These files show the **new group's portal/CLI rerun**. The previous NC portal edition remains in revision `7b7ca26`, NC CLI in `1d53a68`, and Sweden in `0a8ab50`. Bilingual captions do not imply two complete language-specific reruns.
 
 **Help:** [Troubleshooting](docs/en/troubleshooting.md) · [Feature map](docs/en/feature-map.md) · [Checkpoints](docs/en/checkpoints.md) · [Code reading](docs/en/code-reading.md) · [Official sources](docs/en/sources.md) · [Next steps](docs/en/next-steps.md)

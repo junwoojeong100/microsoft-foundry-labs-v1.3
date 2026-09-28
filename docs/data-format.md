@@ -22,7 +22,7 @@
 
 새 label의 예시는 `nc-baseline-ko`, `nc-candidate-ko`, `nc-policy-calibration-ko`, `nc-policy-lab-ko`이며 영어는 `-en`으로 구분합니다. 각 장의 예시를 바꿀 때 입력 준비·수집·평가·compare·report·verify의 모든 참조를 같은 이름으로 맞춥니다. 이전 결과 파일을 새 label로 복사하거나 hash를 바꾸지 않습니다.
 
-아래 Sweden 기록은 역사적 근거입니다. NC 혼합 관리형 job의 원래 6행은 **5 pass/1 fail**이며, 별도 Task Adherence-only job은 **5/5**입니다. 원래 실패 행을 빼거나 custom 진단으로 바꾸지 않습니다. 각 run의 원시 기록·입력 가림·실제 반환 수·판정 방향을 보존하며, 두 job 모두 holdout과 별개입니다.
+아래 Sweden 및 이전 NC 혼합/5/5 기록은 역사적 근거입니다. **현재 리포 재실행의 Task Adherence는 6행·5 pass/1 fail이고 severity/flag 불일치가 남습니다.** 실패 행을 빼거나 custom 진단으로 바꾸지 않습니다. 각 run의 원시 기록·입력 가림·실제 반환 수·판정 방향을 보존하며, 새 holdout은 열지 않았습니다. [현재 보고서](validation-report.md).
 
 정책이나 지침을 바꾸면 사용한 버전과 hash를 보관합니다. 원시 응답·평가 점수·holdout을 고쳐 통과시키지 않습니다.
 

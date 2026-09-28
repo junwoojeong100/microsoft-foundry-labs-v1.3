@@ -8,7 +8,7 @@
 
 Labels below are fresh-lab examples. If results already exist, choose new baseline/candidate labels and use them consistently in every later reference. Never overwrite files or scores from earlier model, judge, or code conditions.
 
-**Current NC status:** Korean/English Sol + IQ SDK dev passed 6/6, with policy calibration 24/24 for each language. The first English 5/6 failure remains; a new run passed after explicitly configuring chapter 06's retrieval threshold. Hosted v1/v2 and managed red teaming are separate targets in 12/13. Use fresh labels and verify your own sources, judge, and complete results rather than inheriting recorded scores.
+**Current rerun:** the new Korean SDK baseline/candidate each passed dev 6/6 and all three policy criteria, with calibration 24/24. A separate matched account-responses Sol/Luna comparison also passed 6/6 each. **Earlier bilingual NC IQ/calibration and the original English 5/6 are historical.** Hosted and managed red teaming are separate targets in 12/13. Use new labels and verify your own sources, judge, and complete results. See the [new report](validation-report.md).
 
 **Historical Sweden Central snapshot:** the Sol + GA IQ SDK candidate passed all three policy criteria 6/6 with valid reference audits; Korean and English calibrations each matched 24/24. Preserve the earlier groundedness 5/6 and D01's unsupported team-lead detail.
 

@@ -4,7 +4,7 @@
 
 Take one step at a time: **run → inspect → record → next**.
 
-The current region is North Central US. The mixed native job retains six rows/five pass/one fail; a **separate Task Adherence-only job passed 5/5**. Prohibited Actions polarity remains unresolved. Verify each job/label rather than covering the limitation with Sweden or custom results.
+The current region is North Central US. **The fresh repository-rerun Task Adherence job returned six rows/five pass/one fail; inconsistent severity/flags hold final acceptance.** Earlier NC mixed-job and separate 5/5 results are historical. Verify each job/label in the [current report](validation-report.md); old passes or custom diagnostics do not override new limitations.
 
 ## Four questions for every chapter
 

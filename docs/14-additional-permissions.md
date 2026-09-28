@@ -4,7 +4,9 @@
 
 **시작 조건:** 08의 Hosted 준비, 본인 GitHub 저장소의 Actions·Environment 설정 권한, 실습 Azure 자원과 역할. GitHub 권한이 없으면 CI를 미실행으로 기록하고 15로 진행합니다.
 
-NC 재구축에서는 **이전 CI 관리 ID도 삭제된 Sweden 그룹 안에 있었으므로 함께 없어졌습니다.** 보관된 client/principal ID가 유효하다고 가정하지 않습니다. 새 NC 그룹에 전용 관리 ID를 만들고 프로젝트 범위 Foundry Project Manager, 계정 범위 Reader, 실제 immutable 저장소/Environment subject를 연결했습니다. 기존 main-only 보호는 유지합니다. 실제 릴리스 성공은 [검증 보고서](validation-report.md)의 해당 commit/run으로 확인하며 설정 완료만으로 배포 성공을 주장하지 않습니다.
+이번 리포 재실행에서는 **이전 NC 그룹과 그 안의 CI ID가 함께 삭제**됐습니다. 새 `rg-mflabs15-jw-0928`에 전용 ID를 만들고 프로젝트 범위 Foundry Project Manager, 계정 범위 Reader와 **현재 이름의 정확한 immutable 저장소/Environment subject**를 연결했습니다. 기존 main-only 보호는 그대로입니다. 같은 코드 `7b7ca26`에서 새 OIDC 인증, 한국어 CI v1·영어 CI v2 각각 6/6을 확인했습니다. [실제 run과 artifact](validation-report.md).
+
+아래의 `cc816de` 이름 변경 복구는 **이전 ID가 아직 존재하던 당시 이력**입니다. 삭제된 ID의 client/principal 값이나 과거 인증 성공을 새 릴리스의 증거로 인수하지 않습니다.
 
 ## 1. 저장소와 실습 ID 준비
 

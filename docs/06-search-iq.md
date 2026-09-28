@@ -4,7 +4,7 @@
 
 **시작 조건:** 00의 Owner·Foundry 설정. 이 장에서 Search와 필요 모델을 직접 만듭니다. **Search Basic은 요청하지 않아도 서비스 비용이 발생**합니다.
 
-**현재 NC 범위:** 별도 한·영 소유권 workspace에서 keyword·GA IQ·실제 3072차원 embedding/Hybrid·모델 기반 IQ Chat을 확인했습니다. 영어 첫 dev는 검색에서 `SCOPE-01`이 누락되어 5/6이었고, 아래의 명시적 검색 문턱 0으로 새 label에서 6/6을 확인했습니다. 원래 실패와 Sweden 기록은 보존하며 검색 설정 변경을 지침만의 개선으로 부르지 않습니다.
+**현재 재실행 범위:** 새 그룹에서 한국어 keyword·GA IQ·실제 3072차원 embedding/Hybrid·모델 기반 IQ Chat을 확인했습니다. **이전 NC의 별도 한·영 검증**에서는 영어 첫 dev가 `SCOPE-01` 누락으로 5/6이었고, 검색 문턱 0을 명시한 새 label에서 6/6이었습니다. 그 결과를 새 영어 실행으로 옮기지 않으며 검색 변경을 지침만의 개선으로 부르지 않습니다. [새 실행 범위](validation-report.md).
 
 ## 1. Search 서비스 직접 생성
 

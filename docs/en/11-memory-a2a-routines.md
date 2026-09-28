@@ -6,7 +6,7 @@
 
 **Prerequisites:** Project identity roles from 00, the embedding deployment from 06, and the azd Foundry extension from 08. Review creation and request costs for each feature.
 
-**Current NC status:** original items were read back from Korean/English TTL-zero Memory stores; Korean A2A delegation and the timer's original response telemetry were verified. The timer is disabled, preserving both `Finished/cancelled` and a separate `Killed/cancelled` attempt. CLI history returned an empty list despite an actual run, so use the native-history readback below too. Do not assume Sweden resources remain after their group was deleted.
+**Current rerun:** a new Korean TTL-zero Memory store verified alpha, empty beta, and same-item update; actual A2A 1.0 and the timer's original telemetry response were checked. The timer is disabled, preserving `Finished/cancelled` and a separate `Killed/cancelled` attempt. An immediate A2A connection 400 passed after the same connection propagated, under a new label. Earlier bilingual NC Memory is historical, not new English evidence. See the [current report](validation-report.md).
 
 ## 1. Memory: persist an item and recall it in a new request
 

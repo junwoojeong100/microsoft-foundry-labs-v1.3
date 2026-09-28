@@ -2,6 +2,46 @@
 
 **한국어** | [English](en/validation-report.md) · [실습 홈](../README.ko.md)
 
+## 리포 이름 변경 후 새 실행 · 2026-09-28
+
+**실습 실행·녹화는 완료했으며 최종 품질 인수는 보류했습니다.** 새 그룹은 `rg-mflabs15-jw-0928`, 계정은 `mflabs15-jw-0928`, 프로젝트는 `mf15-project`, prefix는 `lab-jw-mfl15-0928`입니다. 이전 NC 전용 그룹 `rg-mf15-jw-nc-0928`만 삭제했고 새 그룹 생성 전에 부재를 확인했습니다. 다른 실습이나 업무 그룹은 삭제하지 않았습니다.
+
+이전 `.env`·`.selfstudy`·`outputs`·`.build`의 **3,428개 파일을 hash와 함께 비공개 보관**한 뒤 새 활성 상태를 만들었습니다. 원시 녹화와 이전 게시 영상도 보존했습니다. 새 실행은 코드 revision **`7b7ca26f4be381e8065ed97573fbd8cdf1928487`**과 기존 Python 3.13.15 환경을 사용했습니다. 처음의 로컬 준비 확인만 Python 3.14였고, 실제 실습은 3.13입니다.
+
+| 범위 | 새 실행의 실제 결과 |
+|---|---|
+| 기반 자원·모델 | 새 그룹·Foundry·프로젝트·로그·Basic Search와 6개 모델 배포. Sol·Luna 비교·GPT-5.5 judge·embedding·IQ Chat·Optimizer를 분리. 선택적 Router는 catalog 확인만 수행 |
+| 첫 응답·파일·도구 | 포털의 Web search를 제거한 Sol 실제 응답. 한·영 Prompt Agent/File Search 각각 6파일, 한국어 현행·과거·근거 부족 인용 확인. 로컬 함수·MCP·실제 6행 CSV 확인 |
+| Workflow·중단/재개 | sequential·concurrent·group-chat과 구조화 workflow 실행. 로컬 SDK의 모의 승인·동일 ID 재개 확인. 실제 사람의 승인이나 Group Chat 합의는 아님 |
+| Search·IQ·Hybrid | 한국어 원문 6개의 실제 keyword·GA IQ·3072차원 Hybrid·GPT-5.6 Luna IQ Chat 확인. 이전 영어 검색 결과를 새 실행으로 인수하지 않음 |
+| SDK 평가·모델 비교 | baseline/candidate 각각 업무 6/6·세 policy 기준 각각 6/6·참조 감사 valid, 한국어 calibration 24/24. 별도 account-responses Sol/Luna 비교 각각 6/6 |
+| Hosted | 별도 기본 Responses agent v1과 workflow v1의 로컬·원격 응답 확인. IQ sequential/account-chat/Invocations v1/v2 각각 dev 6/6·세 policy 기준 6/6·실제 trace 6/6 |
+| 보완 진단 | 고정 IQ Hosted v2의 `rename-policy-lab`: 실제 8/8, 세 기준 각각 8/8, trace 8/8. 관리형 red team·새 holdout의 대체물이 아님 |
+| Toolbox·Skill·OpenAPI | 일반 v1, discovery v2, Skill v1을 연결한 v3 확인. 실제 Skill load·검색·응답·OpenAPI 실행, 원격 Toolbox v1의 SSE/패키지/버전/hash 대조 |
+| Memory·A2A·Timer | 새 한국어 TTL 0 store의 alpha 조회·빈 beta·같은 항목 갱신. 실제 A2A 1.0 위임. timer의 원래 응답/trace를 telemetry로 확인하고 disable; `Killed` 시도도 보존 |
+| 대화 평가 | 새 2개 대화·6턴. Groundedness/Coherence가 턴 수준 각각 6/6, 전체 대화 수준 각각 2/2 |
+| Optimizer | `opt_bfa363582dff4c048ca6fceaea6ae953` succeeded. 원래 세 평가기 v1·문턱 4·judge 유지, baseline 1.0·6/6·참조 감사 valid. **새 전체 후보 0개**, 승격 없음 |
+| 관리형 Task Adherence | `evalrun_a50eea6a7d124669938baa462423bdb7` completed, **6행·5 pass/1 fail**. 실패 행 severity 0 / 문턱 3과 `passed=false`, `attack_success=true`가 불일치. 감사 gate 실패 |
+| 운영·보호 | Insights는 1시간/3 trace/새 finding 0, 예약 disabled. Coherence v13은 원래 저장 응답 1행 score 5/pass 후 paused. DefaultV2의 11개 보호를 별도 Hosted v2에 연결; 허위 승인 거절이 플랫폼 필터 차단의 증거는 아님 |
+| 실제 CI/CD | 새 ID·정확한 저장소/Environment subject·main-only 보호 유지. 한국어 CI v1, 영어 CI v2 각각 새 6행·6/6, 세션 중지 artifact 확인 |
+| 마지막 정리 | 확인한 Hosted 세션 13개 모두 idle, active 0. Timer/continuous/Insights 예약 disabled 또는 paused. 원격 Toolbox JSON 8개 다운로드·hash·원래 답변/도구/모델 계보 대조 |
+
+**관리형 실패는 지우거나 반복 실행으로 덮지 않았습니다.** 6번 행의 설명은 실질적 안내 부족을 지적하지만 severity는 0입니다. 입력은 서비스가 가렸고 원래 response ID를 노출하지 않았으므로 입력을 재구성하거나 실패를 정상으로 바꾸지 않습니다. 이전 NC의 5/5와는 다른 job입니다. 가이드의 최종 게이트에 따라 **새 holdout을 열지 않고 인수를 보류**했으며 보완 진단 8/8로 대신 통과시키지 않았습니다.
+
+실행 중 발견한 진행 장애도 보존했습니다. Hosted account-chat의 첫 401은 프로젝트 역할만으로 계정 API 권한이 생기지 않는 문제였으며, **정확한 런타임 ID에 이 실습 계정 범위의 Cognitive Services OpenAI User**를 추가한 뒤 같은 버전으로 확인했습니다. [12의 역할 안내](12-improvement.md#5-baseline-프로필-배포)를 보완했습니다. A2A 연결 직후 400은 같은 연결의 전파 후 새 label에서 통과했습니다. 모델 생성의 parent-resource 충돌은 생성 작업을 직렬화해 해결했습니다. 설정 수집기도 같은 checkout에서 동시에 실행하지 않습니다.
+
+Optimizer의 첫 inline 입력은 `dataset_items` wire field 때문에 제출이 거부됐습니다. SDK 모델이 설명하는 이름과 서비스 요구가 달랐으며, **공개 mapping 생성자로 `train_dataset.items`를 전달한 새 요청**이 성공했습니다. 원래 필수 `initialization_parameters`와 문턱 4는 유지했습니다. 성공한 baseline 평가 `eval_14fc534255ff4927a1582ad18fe3e186` / `evalrun_b72615bcffe74ebfb3971ec004afeb2b`는 제출한 dev 6행 전체와 원문 참조를 감사했습니다. 후보 생성·성능 개선은 별도이며 이번에는 주장하지 않습니다.
+
+같은 source revision의 [저장소 검사](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36405755604), [새 OIDC 인증](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36409519229), [한국어 릴리스](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36409523146), [영어 릴리스](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36410260357)가 성공했습니다. CI의 local 검색 프로필과 별도 IQ Hosted를 혼동하지 않습니다.
+
+새 원본은 `outputs/rename-*`, `outputs/benchmarks/rename-*`, `.selfstudy/rename-*`, `dist/recordings/rename-20260928/`에 비공개로 보관합니다. [새 요약 영상](videos.md)은 **한·영 각 4분 32초·31장면**이며 이전 NC/Sweden 영상을 섞지 않았습니다. 한국어 본 실습과 별도 영어 파일/agent/CI 수행을 구분하며 전체를 영어로도 재실행했다고 주장하지 않습니다.
+
+**새 자원은 보존합니다.** Search Basic·파일/volume·로그 비용은 남고 다음 비용 확인일은 2026-09-29입니다. 새 그룹의 실제 비용 조회는 아직 게시 행이 없어 총액을 확정하지 않았습니다. 0원이나 비용 상한 보장은 아닙니다.
+
+## 아래는 리포 재실행 전 NC 보관 기록
+
+아래의 “현재”, “새”, 자원 보존, 5/5와 후보 생성은 **삭제 전 `rg-mf15-jw-nc-0928`의 당시 기록**입니다. 위 새 실행의 결과·원격 자산으로 인수하지 않습니다.
+
 **2026-09-28, 새 North Central US 환경에서 실습을 이어서 검증했습니다.** 현재 그룹은 `rg-mf15-jw-nc-0928`, 계정은 `mf15-jw-nc-0928`, 프로젝트는 `mf15-project`입니다. 기본 답변은 GPT-6 Sol / `workshop-chat`, judge는 다른 기반 모델 GPT-5.5 / `workshop-judge`입니다.
 
 이전 Sweden 그룹은 사용자의 명시적 요청으로 삭제했고 부재를 확인했습니다. 삭제 전에 설정·원본 결과·소유권·배포 정보를 `.selfstudy/archives/sweden-20260928-before-northcentral/`에 hash와 함께 보관했습니다. **새 NC 자원은 삭제하지 않습니다.** 아래의 숫자는 해당 실제 실행 범위에만 적용됩니다.

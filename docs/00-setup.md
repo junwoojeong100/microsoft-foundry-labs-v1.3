@@ -4,9 +4,9 @@
 
 출발점은 **Microsoft Entra ID 계정 + Azure 구독 + 활성 구독 Owner**입니다. 이 장에서 다른 사람이 준비한 Endpoint나 Search를 받지 않습니다. 새 리소스와 모델 호출에는 비용이 발생할 수 있습니다.
 
-**현재 대상은 North Central US(`northcentralus`)의 새 프로젝트입니다.** 기반 자원에 이어 Sol project Responses, Prompt Agent 생성/호출, 로컬 MAF 함수와 MCP를 확인했습니다. 이는 이 경로들의 실제 결과이며 다른 관리형 도구나 전체 실습의 성공 보장은 아닙니다. 이미 생성한 자원은 중복 생성하지 않습니다.
+**현재 대상은 리포 이름 변경 후 만든 North Central US(`northcentralus`)의 새 프로젝트입니다.** 그룹 `rg-mflabs15-jw-0928`에서 기반 자원, Sol project Responses, Prompt Agent, MAF 함수/MCP부터 뒤의 실습까지 재실행했습니다. 이미 생성한 자원은 중복 생성하지 않습니다.
 
-후속 NC 확인에는 KO/EN File Search 6파일 인덱싱·인용, 실제 6행 CSV, MAF workflow, 한·영 Search/GA IQ/Hybrid/IQ Chat, Hosted IQ v1/v2 dev 6/6과 실제 예약 응답이 포함됩니다. **새 Task Adherence-only 관리형 job은 5/5 통과**했지만, 이전 혼합 6행의 5 pass/1 fail과 Prohibited Actions 설명/flag 불일치는 유지합니다. 전체 ASR 수정은 아니며 Group Chat의 3라운드 종료도 업무적 합의가 아닙니다. [현재 결과와 제한](validation-report.md)을 구분해 읽습니다.
+새 결과에는 한·영 File Search 6파일, 실제 6행 CSV, 한국어 Search/GA IQ/Hybrid/IQ Chat, Hosted IQ v1/v2 dev 6/6과 실제 예약 응답이 포함됩니다. **새 관리형 Task Adherence는 6행·5 pass/1 fail이며 severity/flag가 불일치하여 최종 인수를 보류**했습니다. 이전 환경의 5/5나 영어 검색 결과를 인수하지 않습니다. [현재 결과와 제한](validation-report.md)을 구분해 읽습니다.
 
 ## 1. 내 권한 확인
 
@@ -38,10 +38,12 @@ PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owne
 ### 새 프로젝트에서 이전 상태를 인수하지 않기
 
 1. 이전 프로젝트의 `.env`, `.selfstudy` 설정/소유 기록, CI identity 정보, `outputs/`, `.build/`를 승인된 **비공개 보관 위치**에 원본 hash와 함께 보존합니다. 원시 녹화도 그대로 둡니다.
-2. 이번 전환에서는 이전 Sweden 전용 E2E 그룹 하나만 명시적으로 확인해 삭제했고, 로컬 상태는 `.selfstudy/archives/sweden-20260928-before-northcentral`에 보관했습니다. 이것은 이력이며 다른 그룹·CI ID·기록의 추가 삭제 지시가 아닙니다.
+2. 이번 리포 재실행에서는 이전 NC 전용 `rg-mf15-jw-nc-0928` 하나만 삭제하고 부재를 확인했습니다. 로컬 상태 3,428개 파일과 이전 영상은 hash와 함께 비공개 보관했습니다. 그 안의 Sweden 보관 이력도 유지합니다. 이것은 다른 그룹·CI ID·기록의 추가 삭제 지시가 아닙니다.
 3. 새 소스 사본/workspace와 새 터미널을 사용합니다. 이전 `.env`, 활성 `.selfstudy`, 결과 폴더나 azd 환경을 새 프로젝트의 활성 상태로 복사하지 않습니다. 같은 checkout을 재사용한다면 보관본/hash를 먼저 확인하고 지원되는 설정 절차로 새 활성 상태만 준비합니다.
 4. 새 NC prefix와 결과 label을 정합니다. 예: `lab-yourname-nc-0928`, `nc-baseline-ko`, `nc-candidate-ko`. 명령의 예시 label을 바꿀 때는 collect/evaluate/compare/verify의 모든 참조도 함께 바꿉니다.
 5. `.env`나 소유권 ledger를 삭제·수정해 프로젝트 혼합 검사를 우회하지 않습니다. 이전 CI ID를 보존한 것만으로 새 프로젝트의 역할·접근이 준비되는 것은 아닙니다.
+
+**같은 checkout의 `configure`, `set`, `models`, `resource`, `bind-matrix`는 한 번에 하나씩 실행합니다.** 동시에 쓰면 설정 파일 갱신이 충돌할 수 있습니다. 병렬 실험은 별도 workspace와 소유권 기록을 사용하세요.
 
 이하 명령은 **새 workspace와 새 NC 자원**을 대상으로 합니다. 이전 Sweden 응답·trace·평가·배포 버전을 새 결과로 인수하지 않습니다.
 

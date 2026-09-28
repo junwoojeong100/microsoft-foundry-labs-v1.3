@@ -4,7 +4,7 @@
 
 **시작 조건:** 07의 judge와 dev 결과, 08의 Hosted 준비 방법, 06의 IQ/계정 OpenAI Endpoint, 09의 로그 연결. 수행하는 기능별 비용을 확인합니다. **holdout은 이 장에서도 열지 않습니다.**
 
-**현재 North Central US 범위:** 실제 Hosted IQ v1/v2의 dev는 각각 업무 6/6·세 policy 기준 각각 6/6이며 trace도 확인했습니다. 같은 코드/모델/데이터의 지침 비교이고 둘 다 통과했으므로 통과율 향상은 주장하지 않습니다. v2의 별도 한국어 진단도 8/8입니다. 대화의 turn/conversation 평가와 한·영 calibration 24/24는 별도 증거이며, **Optimizer의 실패는 아래에 분리**합니다.
+**현재 리포 재실행:** 새 Hosted IQ v1/v2는 각각 업무 6/6·세 policy 기준 6/6·trace 6/6, v2의 별도 진단은 8/8입니다. 같은 코드/모델/원문의 지침 비교이며 통과율 향상은 주장하지 않습니다. 새 대화 평가와 한국어 calibration 24/24도 확인했습니다. **새 Optimizer는 baseline 1.0·새 전체 후보 0개**이며 이전 후보 생성 결과와 구분합니다. [현재 보고서](validation-report.md).
 
 수정된 Sol + GA IQ **SDK candidate**는 고정 GPT-5.5 catalog·기준점 4에서 세 policy 기준이 각각 6/6이고 참조 감사도 valid입니다. 이전 groundedness 5/6과 `APPROVAL-01` 없이 팀장 정보를 덧붙인 D01 실패는 보관합니다. 그러나 이전/새 SDK 실행은 결합된 코드 변경으로 `code_hash`가 달라 비교가 거부됐으므로 **지침만의 개선이나 Hosted 품질로 해석하지 않습니다**.
 
@@ -64,6 +64,8 @@ python scripts/workshop.py prepare-extensions --policy --label policy-inputs-ko
 `outputs/policy-inputs-ko/optimizer-dev.jsonl`의 **dev 6행**, 원문 참조 envelope가 있는 `ground_truth`, `policy-evaluator-definitions.json`과 manifest를 확인합니다. 07에서 이미 같은 policy 입력을 만들었다면 hash·prefix·언어를 확인해 재사용하고 명령을 다시 실행하지 않습니다. 10의 기존 Skill 입력을 덮어쓰거나 holdout을 넣지 않습니다.
 
 ## 3. 지침만 최적화
+
+**리포 재실행의 새 결과:** `opt_bfa363582dff4c048ca6fceaea6ae953`은 원래 평가기/문턱 4로 succeeded이며 baseline 6/6·참조 감사 valid입니다. 새 전체 후보는 0개이고 승격하지 않았습니다. SDK의 inline dataset 설명과 실제 서비스 wire contract가 달라 첫 요청이 거부됐고, 공개 mapping 생성자로 **`train_dataset: {"type": "inline", "items": [...]}`**를 전달한 새 요청이 성공했습니다. `items`에는 dev의 `query`/`ground_truth`만 넣고 원시 HTTP body도 확인합니다. 아래의 후보 1개와 이전 초기화 실패는 **삭제 전 NC job의 보관 이력**입니다.
 
 **NC Optimizer의 필수 초기화 누락을 해결했습니다.** 원래 실패 `opt_3aa677fe825a4b3ea433904433b57e53`은 보존하고, 새 SDK job `opt_6f23f99c0f2d49f7b930c7b25629543f`에서 **원래 세 평가기의 이름·버전 1, judge, required `pass_threshold: 4`**를 그대로 사용했습니다. Baseline·새 후보 각각 dev 6/6, 세 policy 기준 각각 6/6, 원문 참조 감사 `valid`입니다. 두 점수는 1.0으로 동점이며 `best`는 baseline입니다. 후보는 생성됐지만 개선이나 승격은 주장하지 않습니다.
 
@@ -166,7 +168,11 @@ azd deploy "내-prefix-matrix" --cwd "실제-matrix-v1-절대경로"
 azd ai agent show "내-prefix-matrix" --cwd "실제-matrix-v1-절대경로" --output json
 ```
 
-08과 같은 방식으로 실제 런타임 ID와 역할을 확인합니다. 준비 단계가 출력한 서비스/폴더를 사용해 **실제 활성 버전과 Invocations Endpoint를 자동으로 읽어 저장**합니다.
+08과 같은 방식으로 실제 런타임 ID와 역할을 확인합니다. **이 프로필의 `account-chat`은 부모 Foundry 계정의 OpenAI API를 호출하므로 프로젝트 범위 Foundry User만으로 충분하지 않습니다.** `show`가 반환한 정확한 `instance_identity.principal_id`에 **이 실습 Foundry 계정 범위의 Cognitive Services OpenAI User**(역할 ID `5e0bd9bd-7b93-4f28-af87-19fc36ad61bd`)를 확인/부여합니다. IQ에는 별도로 이 Search의 Search Index Data Reader가 필요합니다. `selfstudy.py roles`의 기본 Hosted 계획은 프로젝트 역할이므로 계정 API 역할을 자동으로 포함한다고 가정하지 않습니다. 사용자·프로젝트 ID나 구독 전체에 권한을 넓히지 않습니다.
+
+실제 재실행에서 Search는 HTTP 200이었지만 account-chat은 해당 data action 부족으로 401, 외부 Hosted 요청은 500이었습니다. 원래 로그와 실패 세션을 보존하고 해당 런타임/계정 역할만 추가한 뒤 **같은 버전·새 smoke label**로 확인했습니다. 모델/API/provider를 바꾸지 않습니다.
+
+준비 단계가 출력한 서비스/폴더를 사용해 **실제 활성 버전과 Invocations Endpoint를 자동으로 읽어 저장**합니다.
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "실제-matrix-v1-폴더" --service "실제-matrix-서비스-이름"
