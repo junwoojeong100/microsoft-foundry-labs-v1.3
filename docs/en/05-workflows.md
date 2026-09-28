@@ -45,7 +45,9 @@ python scripts/workshop.py --language en workflow --pattern group-chat --output 
 
 **Check:** read the role conversation in its configured order. This implementation has a three-round maximum and an execution timeout. These are **code safeguards against runaway execution, not course time limits**. A round-limit message is not a business answer.
 
-Across all three results, compare the actual question, number and meaning of outputs, missing evidence, usage, and latency. Adding participants does not necessarily improve quality.
+Across all three JSON files, compare `pattern`, `outputs`, and missing or conflicting evidence. Verify `approval_status: pending-human-review` and `external_actions_performed: false`.
+
+These results do not include aggregate token usage or latency. Do not infer cost or speed from the number of outputs. Adding participants does not necessarily improve quality.
 
 ## 4. Validated output suitable for deployment
 
@@ -125,7 +127,7 @@ Continue restart, rejection, and steering exercises with [the same recovery exam
 
 ## Completion check
 
-- [ ] I compared outputs, calls, evidence, and usage across the three workflows.
+- [ ] I compared the three workflows' outputs, evidence, and approval states without assuming usage or latency fields exist.
 - [ ] I did not interpret `pending-human-review` or a simulated decision as business approval.
 - [ ] I verified pause/resume IDs or recorded the OS limitation, and stopped the local server I started.
 

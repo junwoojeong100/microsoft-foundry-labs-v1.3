@@ -2,30 +2,19 @@
 
 [English](en/15-capstone-cleanup.md) | **한국어** · [전체 과정](../README.ko.md#진행-순서) · [진행 도움말](checkpoints.md)
 
-**완료 목표:** 고정한 대상의 새 문항 결과를 확인하고, 본인이 만든 모든 비용 자원을 정리하거나 명시적으로 보관합니다.
+**완료 목표:** 조건을 충족한 후보만 최종 평가하고, 만든 자원을 중지·보관·삭제합니다.
 
-**시작 조건:** 최종 평가는 선행 품질 기준을 모두 충족한 경우에만 수행합니다. **중지·비용 확인은 이전 장을 끝내지 못했어도 지금 수행합니다.**
+**시작 조건:** 최종 평가는 선행 품질 기준을 충족해야 합니다. **중지·비용 확인은 이전 장을 못 끝냈어도 수행**합니다.
 
 **실행 위치:** 터미널에서 평가·세션·소유 기록 확인, Azure 포털에서 실제 자원·비용 확인.
 
-> [!WARNING]
-> **중지와 삭제는 다릅니다.** 품질 실패 때문에 비용 자원을 방치하지 않습니다. 실행을 멈춘 뒤 보관·삭제를 별도로 결정하세요.
-
-| 지금 내 상태 | 진행할 곳 |
+| 현재 상태 | 진행 순서 |
 |---|---|
-| 중도 종료, 선행 평가 실패 또는 차단 | **holdout을 열지 않고 [4절 중지](#4-먼저-실행-중인-것을-멈추기) → 5~7절 자산·비용 확인** |
-| 후보를 고정했고 모든 선행 기준을 충족 | 1절 확인 → 2절에서 **선택한 대상 하나만** 평가 → 3~7절 |
-| 다음에 재사용하려고 자원을 남김 | 아래 보존 모드 + 4·5·7절. 삭제 명령과 6절은 생략 |
+| 중도 종료·평가 실패·기능 차단 | **holdout을 열지 않고 [4절](#4-먼저-실행-중인-것을-멈추기) → 5~7절** |
+| 후보 고정·선행 기준 충족 | 1절 → 2절의 대상 하나 → 3~7절 |
+| 다음 실습을 위해 자원 보존 | [보존 모드](#보존-모드로-진행할-때)와 4·5·7절. 삭제 생략 |
 
-**00장의 `configure` 전에 멈췄어도 정리할 수 있습니다.** 00에서 사용한 구독과 실습 그룹을 Azure 포털에서 직접 확인하세요.
-
-- 만들지 않은 agent·label의 명령은 생략합니다.
-- `.selfstudy/azure.json`이 없으면 `selfstudy.py status`도 생략합니다.
-- 로컬 설정이 없어도 Azure 자원은 남아 있을 수 있습니다.
-
-**참고 검증은 최종 인수 보류 상태입니다.** 새 관리형 Task Adherence의 6행·5 pass/1 fail에 severity/flag 불일치가 있어 새 holdout을 열지 않았습니다.
-
-[보고서의 결과·정리 이력](validation-report.md)은 본인의 완료나 삭제 지시가 아닙니다. **실습 실행과 최종 품질 인수는 별개**입니다.
+최종 인수는 **정한 실습 품질 기준의 통과**입니다. 운영 배포 승인이 아닙니다. 참고 [검증 보고서](validation-report.md)는 관리형 판정 불일치로 인수 보류이며, 본인의 완료 결과를 대신하지 않습니다.
 
 <a id="chapter-map"></a>
 
@@ -33,96 +22,80 @@
 
 | 단계 | 확인할 결과 |
 |---|---|
-| [자원을 남길 때: 보존 모드](#보존-모드로-진행할-때) | 삭제하지 않을 자산·만료·비용 |
-| [1. 최종 대상 고정](#1-무엇을-최종-평가할지-고정) | holdout을 열 수 있는 선행 기준 |
-| [2. 선택한 대상 평가](#2-hosted-최종-확인) | 고정 대상 하나의 새 4문항 |
-| [3. 결과 해석](#3-결과-해석) | 실제 품질과 미완료 범위 |
-| [4. 먼저 중지](#4-먼저-실행-중인-것을-멈추기) | 로컬 서버·예약·세션의 중지 상태 |
-| [5. 소유 자산 대조](#5-소유-자산-목록-대조) | 실제 포털과 내 소유 기록 |
-| [6. 그룹 삭제 — 선택](#6-실습-전용-그룹-삭제) | 삭제를 결정한 전용 자원의 부재 |
-| [7. 최종 확인](#7-최종-확인) | 보존·삭제·남은 비용·증거 |
+| [보존 모드](#보존-모드로-진행할-때) | 남길 자원·만료·비용 |
+| [1. 대상 고정](#1-무엇을-최종-평가할지-고정) | 최종 평가 선행 기준 |
+| [2. 최종 평가](#2-hosted-최종-확인) | 선택한 대상의 새 4문항 |
+| [3. 결과 해석](#3-결과-해석) | 실제 통과·실패·미완료 |
+| [4. 실행 중지](#4-먼저-실행-중인-것을-멈추기) | 서버·예약·세션 중지 |
+| [5. 자산 확인](#5-소유-자산-목록-대조) | 실제 자원과 소유 기록 |
+| [6. 그룹 삭제 — 선택](#6-실습-전용-그룹-삭제) | 전용 자원의 삭제 확인 |
+| [7. 최종 확인](#7-최종-확인) | 남은 비용과 보관 결과 |
 
 ## 보존 모드로 진행할 때
 
 > [!CAUTION]
-> 보존 모드에서는 **삭제 명령을 실행하지 않습니다.** `--confirm-delete`, Memory `forget`/`cleanup`, `azd down`, 리소스 그룹 삭제를 모두 생략하세요.
+> **보존 모드에서는 삭제하지 않습니다.** `--confirm-delete`, Memory `forget`/`cleanup`, `azd down`, 리소스 그룹 삭제를 실행하지 않습니다.
 
-### 멈출 것과 남길 것
-
-| 대상 | 보존 모드에서 할 일 |
+| 대상 | 할 일 |
 |---|---|
-| 로컬 서버 | 중지 |
-| Routines·반복 평가 | `disabled` / `paused`로 확인 |
-| 필요 없는 Hosted 실행 세션 | **stop만** 실행. Agent·버전·volume은 보관 |
+| 로컬 서버 | 종료 |
+| Routine·반복 평가 | `disabled` / `paused` 확인 |
+| Hosted 세션 | 필요 없는 실행만 stop. 에이전트·버전·저장 볼륨 유지 |
+| `.env`, `.selfstudy/`, `.build/`, `outputs/` | 승인된 개인 위치에 비공개 보관 |
+| Search·파일·볼륨·로그 | 남는 비용과 다음 확인 일자 기록 |
 
-### 보관할 파일과 소유 기록
+**보존해도 자동 만료 설정은 그대로**입니다.
 
-`.env`, `.selfstudy/` 전체, `.build/`, `outputs/`를 개인의 승인된 위치에 보관합니다. 실제 ID·배포 준비·소유권 기록을 포함하며 **공개 저장소에 올리지 않습니다**.
-
-소유 store 전체의 이름·TTL·ID와 기록도 보관합니다. 새 설정으로 이전 자산을 몰래 변경하거나 인수하지 않습니다.
-
-### 자동 만료와 남은 비용
-
-| 자산과 생성 조건 | 만료 동작 |
+| 생성 조건 | 만료 |
 |---|---|
-| 03의 File Search, `--retain` 사용 | 자동 만료 없음 |
-| 03의 File Search, 기본 명령 사용 | 마지막 활동 후 **7일 만료 유지** |
-| 11의 새 Memory, `--ttl-seconds 0` 사용 | 항목 자동 만료 없음 |
-| 이전 Memory store | 기록된 원래 TTL 유지 |
+| 03장의 기본 File Search | 마지막 활동 후 7일 |
+| File Search `--retain` | 자동 만료 없음 |
+| 11장의 Memory `--ttl-seconds 0` | 항목 자동 만료 없음 |
+| 기존 Memory·관리형 세션 | 해당 자원의 원래 TTL·서비스 만료 정책 |
 
-보존 설정을 바꾸려고 File Search의 create를 다시 실행하지 않습니다. 이전 Memory store의 TTL도 임의로 변경하지 않습니다.
-
-11에서는 **언어별 새 store를 명시**하고 `memory create --ttl-seconds 0 --confirm-create`로 만듭니다. 새 기본값 `default_ttl_seconds=0`은 항목 자동 만료 없음이며, 양수 TTL은 최대 365일입니다. 관리형 세션의 자체 만료와 Memory 항목 TTL은 별개입니다.
-
-**언어별 선택값:** `WORKSHOP_MEMORY_STORE_NAME`은 전역 설정입니다. 실행 전에 한국어 `<prefix>-memory-retained-ko`와 영어 `<prefix>-memory-retained-en`을 구분하세요. [11의 보존용 store 절차](11-memory-a2a-routines.md#1-memory-실제-저장과-새-요청에서의-조회)를 따릅니다.
-
-Search Basic, 파일/volume, 로그 등 **남는 비용과 다음 확인 일자**를 기록합니다. `lifecycle=retain`은 관리용 태그이지 삭제 방지 잠금이나 비용 상한이 아닙니다.
-
-읽기 전용 `status`와 `cleanup-plan`은 목록 확인에 사용할 수 있습니다. 아래 삭제 절은 참고로만 읽고, 최종 확인에는 **“삭제하지 않고 보존”**을 기록합니다.
+새 생성 명령으로 기존 만료 설정을 바꾸지 않습니다. `lifecycle=retain` 태그도 삭제 방지 잠금이나 비용 상한이 아닙니다.
 
 ## 1. 무엇을 최종 평가할지 고정
 
-기본 권장 대상은 12의 **실제 Hosted 후보**인 `wf-candidate`입니다. model map, 코드·지침·원문·retrieval·API·동시성·judge·버전을 고정합니다.
+기본 대상은 12장의 Hosted 후보 `wf-candidate`입니다. 모델·코드·지침·원문·검색·API·동시성·judge·배포 버전을 고정합니다.
 
-holdout 실행 전 다음을 확인합니다. **하나라도 충족하지 못하면 4절로 이동해 중지·비용 정리부터 합니다.**
+**다음 중 하나라도 미충족이면 holdout을 열지 않고 4절로 갑니다.**
 
-- [ ] dev matrix의 기대 행 수가 모두 있음. 이 가이드의 Sol 대상 한 개는 기본 6행.
-- [ ] 오류/누락/중복이 없음.
-- [ ] 미리 정한 업무 기준과 세 policy 기준이 통과했고 source/reference 감사 및 native 한계를 검토함.
-- [ ] trace 확인과 calibration이 필요한 기준이면 모두 충족.
-- [ ] 13의 **관리형 실행과 전체 행/버전/방향 감사**를 기록하고 Prohibited Actions 한계를 공개함. 새 Task Adherence-only 결과는 그 native 범위로만 판단하며 기존 6행 필터나 custom `policy-lab`로 대체하지 않음.
+- [ ] 후보 dev **6행**, 오류·누락·중복 0개.
+- [ ] 업무 검사와 세 policy 기준 통과. policy 점수는 각 4 이상.
+- [ ] 원문 참조 검사와 같은 조건의 calibration 확인.
+- [ ] 필요한 실제 trace 조회 완료.
+- [ ] 13장의 관리형 실행 전체 행·평가 버전·점수 방향을 검토했고, 판정 불일치가 없음.
 - [ ] 실패를 보고 기준을 낮추거나 원시 결과를 수정하지 않음.
 
-충족하지 못하면 **holdout을 열지 말고 인수 미완료**로 기록합니다.
+관리형 Task Adherence의 제한된 범위와 Prohibited Actions의 알려진 한계도 남깁니다. 자체 `policy-lab` 결과로 관리형 검증을 대신하지 않습니다.
 
-추가 기능이 미지원이라 Hosted matrix를 수행하지 않았다면 07의 SDK candidate를 별도 최종 대상으로 선택할 수 있습니다. 이를 Hosted 인수라고 표현하지 않습니다.
+Hosted를 수행하지 못했다면 07장의 **SDK candidate**를 별도 최종 대상으로 선택할 수 있습니다. 이때도 해당 대상의 선행 품질 기준과 13장의 검증을 확인하며, Hosted 인수라고 표현하지 않습니다.
 
-**holdout은 한 실험의 선택한 최종 대상에만 사용합니다.** SDK에서 이미 본 문항을 Hosted의 “처음 보는 시험”으로 다시 주장하지 않습니다.
-
-이미 본 4문항을 다시 실행했다면 **알려진 사례의 회귀 확인**으로 기록합니다. 파일에 `split: holdout`이 있어도 새로운 미공개 시험이나 운영 승인이 되지 않습니다.
+**holdout은 선택한 대상 하나에만 사용합니다.** 이미 본 문항을 다른 배포의 새로운 시험으로 다시 사용하지 않습니다. 재실행은 알려진 사례의 회귀 확인입니다.
 
 ## 2. Hosted 최종 확인
 
 > [!IMPORTANT]
-> **1절의 선행 기준을 모두 충족한 경우에만** 실행합니다. `--unlock-holdout`은 미완료 평가를 무시해도 된다는 옵션이 아닙니다.
+> `--unlock-holdout`은 잠금 해제 옵션입니다. **1절의 미완료 기준을 면제하지 않습니다.**
 
-12에서 로컬 검색 경로를 선택했다면 수집 명령의 **`--retrieval iq`를 `--retrieval local`로 바꾸고**, 같은 고정 matrix-local 버전을 사용합니다.
+12장에서 local을 선택했다면 아래 수집의 `--retrieval iq`를 `local`로 바꾸고 같은 고정 버전을 사용합니다.
 
-평가·trace·인수 기준은 낮추지 않습니다. 로컬 검색 Hosted의 인수이지 IQ 인수가 아닙니다.
-
-**1. 선택한 Hosted 버전의 새 4문항 수집**
+**1. 고정한 후보의 4문항 수집**
 
 ```bash
 python scripts/workshop.py benchmark collect --split holdout --label wf-final --candidate wf-candidate --unlock-holdout --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 ```
 
-**2. 저장된 응답을 policy judge로 평가 · `wf-final`**
+**확인:** 실제 4행과 오류·누락 여부를 확인합니다. 요청 오류가 있으면 의존 평가를 멈춥니다.
+
+**2. 저장된 응답의 policy 평가**
 
 ```bash
 python scripts/workshop.py benchmark evaluate --policy --label wf-final --reference wf-baseline --confirm-cost
 ```
 
-**3. 실제 trace 조회 · `wf-final`**
+**3. 실제 trace 조회**
 
 ```bash
 python scripts/workshop.py benchmark monitor --label wf-final
@@ -134,185 +107,167 @@ python scripts/workshop.py benchmark monitor --label wf-final
 python scripts/workshop.py benchmark verify --policy --baseline wf-baseline --candidate wf-candidate --holdout wf-final --require-native --require-native-pass --require-traces --calibration policy-calibration-ko
 ```
 
-각 단계의 전체 행과 오류를 확인한 다음 계속합니다. Sol 대상 한 개의 기본 holdout은 **4행**입니다.
-
-| 결과 필드 | 읽을 내용 |
+| 필드 | 뜻 |
 |---|---|
-| `gate_passed` | 이 명령이 검사한 인수 기준의 통과 여부 |
-| `native_quality_passed` | 실제 Foundry policy 점수의 통과 여부 |
-| `native_quality_required: true` | 점수 통과가 필수 조건인지 |
-| `deployment_approved: false` | 운영 배포 승인으로 해석하지 않음 |
+| `gate_passed` | 이 명령의 인수 기준 통과 여부 |
+| `native_quality_passed` | Foundry policy 점수 통과 여부 |
+| `native_quality_required: true` | 실제 점수 통과가 필수 |
+| `deployment_approved: false` | 운영 배포 승인이 아님 |
 
-**두 옵션의 차이**
-
-- `--require-native`: Foundry policy 평가 **증거**를 요구합니다.
-- `--require-native-pass`: candidate/holdout의 실제 **점수 통과**까지 요구합니다.
-
-이 명령이 13의 관리형 red-team 감사를 대신 확인하지는 않습니다. 1절에서 그 결과도 별도로 확인해야 합니다.
+`--require-native`는 Foundry policy 평가 **증거**, `--require-native-pass`는 **점수 통과**를 요구합니다. 어느 옵션도 13장의 관리형 red-team 감사를 대신하지 않습니다.
 
 <details>
-<summary>SDK 대상만 선택했을 때: 위 Hosted 최종 확인 대신 실행</summary>
+<summary>SDK 대상만 선택했다면: 위 Hosted 명령 대신 실행</summary>
 
-**SDK 대상만 선택한 경우**에는 Hosted 명령을 실행하지 않고 다음을 사용합니다. 먼저 07의 `candidate`가 6/6·오류 0·고정 비교 조건을 충족해야 합니다.
+07장의 `candidate`가 dev 6/6·오류 0과 고정 비교 조건을 충족해야 합니다. 아래와 Hosted 최종 평가는 **둘 다 실행하지 않습니다**.
+
+**4문항 수집**
 
 ```bash
 python scripts/workshop.py collect --split holdout --label final-holdout --prompt v2 --retrieval local --candidate candidate --unlock-holdout
 ```
 
-**저장된 응답의 업무 검사 · `final-holdout`**
+**업무 검사**
 
 ```bash
 python scripts/workshop.py evaluate --label final-holdout
 ```
 
-**저장된 응답을 policy judge로 평가 · `final-holdout`**
+**policy 평가**
 
 ```bash
 python scripts/workshop.py cloud-evaluate --policy --label final-holdout --reference baseline --confirm-cost --timeout 900
 ```
 
-**최종 업무 검사 확인**
+**업무 인수 검사**
 
 ```bash
 python scripts/workshop.py accept --candidate candidate --holdout final-holdout
 ```
 
-`accept`의 업무 검사만으로 policy grading·참조 감사가 확인되는 것은 아닙니다. 해당 실제 결과와 일치하는 policy calibration도 별도로 검토합니다. 기존 legacy calibration이나 점수를 이름만 바꿔 대체하지 않습니다.
+`accept`만으로 policy 점수·참조·calibration이 검증되지는 않습니다. 4행의 실제 결과를 각각 확인합니다.
 
 </details>
 
-둘 중 **선택한 하나만** 수행합니다. holdout 실패를 보고 수정했다면 새 최종 데이터가 필요합니다.
-
 ## 3. 결과 해석
 
-2절에서 확인한 실제 대상·버전·전체 행·업무/policy 판정과 남은 오류를 함께 봅니다. 07의 SDK와 12의 Hosted는 다른 대상이며, 전후 조건이 다른 점수로 개선을 주장하지 않습니다.
+실제 대상·버전·전체 행·오류·업무 검사·policy 점수를 함께 읽습니다. SDK와 Hosted, 서로 다른 조건의 점수를 섞지 않습니다.
 
-학습 수행과 작은 실습 품질 기준 통과는 다른 상태입니다. 별도 보고서를 작성하지 않아도 되지만, 원시 결과와 실패는 그대로 보관하고 미실행 단계를 성공으로 판단하지 않습니다.
+실패나 미실행은 그대로 남깁니다. **실습 수행, 품질 통과, 운영 승인은 다른 상태**입니다.
+
+holdout 결과를 보고 후보를 고쳤다면 새로운 최종 평가 데이터가 필요합니다. 기존 4문항 결과를 편집하거나 반복해 새로운 통과처럼 표시하지 않습니다.
 
 ## 4. 먼저 실행 중인 것을 멈추기
 
-1. 내가 실행한 로컬 `serve`/복구 서버는 해당 터미널에서 `Ctrl+C`로 종료합니다.
-2. 생성한 Routines와 반복 평가만 **disabled/paused**로 확인합니다. 만들지 않았다면 이 항목은 해당 없음입니다.
-3. Hosted matrix를 실행했다면 **존재하는 label의 세션만** 중지합니다. holdout을 실행하지 않았다면 아래 `wf-final` 줄은 생략합니다.
+1. 내 로컬 서버의 터미널에서 `Ctrl+C`를 누릅니다. 프롬프트가 돌아오는지 확인합니다.
+2. [11장의 Routine](11-memory-a2a-routines.md#4-실제-timer-전달을-확인한-뒤-비활성화)은 `enabled: false`, [09장의 반복 평가](09-operations.md#6-제한된-반복-평가)는 `paused`인지 확인합니다.
+3. Hosted를 실행했다면 **실제로 존재하는 label의 세션만** 중지합니다.
+
+**baseline 세션**
 
 ```bash
 python scripts/workshop.py benchmark stop-session --label wf-baseline
 ```
 
-**해당 실행의 세션 중지 · `wf-candidate`**
+**candidate 세션**
 
 ```bash
 python scripts/workshop.py benchmark stop-session --label wf-candidate
 ```
 
-**holdout을 실제로 실행한 경우에만 · `wf-final` 세션 중지**
+**holdout을 실행했을 때만**
 
 ```bash
 python scripts/workshop.py benchmark stop-session --label wf-final
 ```
 
-존재하지 않는 실험 label을 억지로 만들지 않습니다. 별도 smoke/수동 호출 세션은 해당 Hosted 폴더의 `azd ai agent sessions list`로 식별한 뒤 본인 세션만 중지합니다.
+만들지 않은 label은 생략합니다. smoke·수동 호출·보완 진단 세션도 [08장의 목록·중지](08-hosted.md#6-정확한-원격-버전-호출)로 확인합니다. 다른 사람의 프로세스·세션은 종료하지 않습니다.
 
-**세션/파일 만료 전에 증거를 보관**합니다. 중지된 세션에서도 파일이 남아 있으면 회수할 수 있습니다.
-
-[세션 파일 안내](advanced/session-files.md)에 따라 `--target-path`에 **절대 경로**를 사용합니다. 원래 요청·버전·도구 결과와 hash를 대조하세요. Stop이나 자원 보존이 무기한 파일 보관을 뜻하지는 않습니다.
+**세션 파일은 만료 전에 보관**합니다. [파일 회수 안내](advanced/session-files.md)에서 절대 `--target-path`를 사용하고 요청·버전·hash를 대조합니다.
 
 > [!WARNING]
-> **stop은 volume 삭제와 다릅니다.** 보존 모드에서는 volume을 남깁니다. 더 보관할 필요가 없다고 별도로 결정한 경우에만 현재 세션 삭제 UI/CLI를 확인해 정리하세요.
-
-다른 사람 프로세스를 이름으로 일괄 종료하지 않습니다.
+> **stop은 저장 볼륨 삭제가 아닙니다.** 보존하면 비용이 남을 수 있습니다. 더 필요 없다고 결정했을 때만 해당 세션의 삭제 기능을 별도로 확인합니다.
 
 ## 5. 소유 자산 목록 대조
 
-**저장한 설정 확인 — 00의 `configure`를 마쳤을 때만**
+**00장의 `configure` 전에도 Azure 자원은 남을 수 있습니다.** 설정 파일이 없으면 아래 `status`를 생략하고 포털에서 사용한 구독·그룹을 직접 확인합니다.
 
-아직 설정하지 않았다면 아래 상자를 건너뛰고 Azure 포털에서 실제 실습 그룹과 생성한 자원을 확인합니다.
+**저장된 설정 — configure를 마쳤을 때만**
 
 ```bash
 python scripts/selfstudy.py status
 ```
 
-**소유 자산의 정리 계획 조회**
-
-Python 설치를 마쳤다면 아래 명령으로 로컬 기록을 읽습니다. **Azure 전체 자산을 자동 탐색하지는 않습니다.** Python 설치 전이라면 이 명령도 생략하고 포털에서 확인합니다.
+**소유 기록 — Python 설치를 마쳤을 때만**
 
 ```bash
 python scripts/workshop.py cleanup-plan
 ```
 
-둘 다 **삭제하지 않습니다**. 출력된 자산을 실제 포털과 `outputs/`의 소유권 기록에 대조합니다.
+두 명령은 삭제하지 않습니다. `cleanup-plan`은 **로컬 기록만** 읽으며 Azure 전체를 탐색하지 않습니다.
 
-아래 정리 순서는 **삭제를 별도로 선택한 경우만** 적용합니다. 보존 모드에서는 목록 확인에만 사용합니다.
+포털의 실제 목록과 대조합니다. 삭제를 선택한 경우에만 아래 순서를 적용합니다.
 
-| 자산 | 확인/정리 |
+| 자산 | 확인·정리 순서 |
 |---|---|
-| Routines·반복 평가 | 비활성화 후 본인 일정 제거 |
-| Memory | inspect → 개별 forget → 비어 있는 본인 store cleanup |
-| Toolbox·Skills | 참조하는 agent/Toolbox를 먼저 정리하고 본인 Skill 제거 |
-| A2A | caller → 연결 → target |
-| Prompt/Hosted agent | 정확한 본인 이름·버전·세션 확인 후 제거 |
-| File Search | vector store와 업로드 파일을 각각 확인 |
-| Search | 원래 index·hybrid index·source/base·서비스 |
-| 평가·Optimizer | 보관할 결과/데이터/임시 target을 구분 |
-| 로그 | Application Insights·Log Analytics의 실제 그룹·보관 정책 |
-| 모델/Foundry | 더 필요한 호출자가 없는지 확인 |
-| 역할·관리 ID·federation | 직접 추가한 scope/assignment만 확인 |
+| Routine·반복 평가 | 비활성화 확인 → 내 일정 삭제 |
+| Memory | 항목 확인 → 개별 삭제 → 빈 소유 저장소 삭제 |
+| Toolbox·Skill | 참조하는 에이전트·Toolbox → Skill |
+| A2A | 요청자 → 연결 → 위임 대상 |
+| Prompt·Hosted | 내 이름·버전·세션·볼륨 확인 |
+| File Search | 검색 저장소와 업로드 파일 각각 확인 |
+| Search | 원래·Hybrid 인덱스, IQ 자산, 서비스 |
+| 평가·Optimizer | 결과 보관 → 불필요한 데이터·임시 대상 |
+| 로그 | Application Insights·Log Analytics의 그룹·보관 기간 |
+| 모델·Foundry | 사용하는 대상이 더 없는지 확인 |
+| 역할·관리 ID·federation | 직접 추가한 것만 확인 |
 
-주요 소유권 기록은 `outputs/` 아래에 있습니다. 지우면 정리가 쉬워지는 것이 아니라 어떤 자산이 내 것인지 확인하기 어려워집니다.
-
-**File Search 삭제를 선택한 경우에만** 다음 절을 펼칩니다. 만들지 않았거나 보존 모드라면 두 cleanup 명령을 모두 생략합니다.
+소유 기록을 먼저 지우면 정리할 대상을 찾기 어렵습니다. 결과와 ID를 보관한 뒤 정리합니다.
 
 <details>
-<summary>삭제를 선택했고 03의 SDK File Search 소유 기록이 있을 때만</summary>
+<summary>삭제를 선택했고 03장의 File Search 소유 기록이 있을 때만</summary>
 
-부분 실패로 파일/저장소만 남았다면 소유 기록과 포털을 먼저 대조합니다.
-
-**1. 삭제 전 계획만 확인**
+**삭제 계획 조회**
 
 ```bash
 python scripts/workshop.py file-search cleanup
 ```
 
-**2. 실제 삭제 — 소유권과 참조 확인 후에만**
+이름·파일·저장소와 다른 에이전트의 참조를 확인합니다. 부분 생성 실패로 남은 자산도 포함합니다.
 
-본인 이름·파일·저장소와 다른 agent의 참조 여부를 확인한 뒤 삭제를 결정하면 실행합니다.
+**삭제를 결정한 뒤에만**
 
 ```bash
 python scripts/workshop.py file-search cleanup --confirm-delete
 ```
 
-기록된 버전·저장소·업로드 파일만 정리하며, 포털에서 별도로 만든 자산이나 공유 프로젝트는 삭제하지 않습니다. 새 이름으로 만든 실험은 동일한 `--name`을 지정합니다.
+새 이름으로 만든 실험은 같은 `--name`을 지정합니다. 기록된 자산만 정리하며 포털에서 따로 만든 자산은 별도로 확인합니다.
 
 </details>
 
 ## 6. 실습 전용 그룹 삭제
 
-> [!CAUTION]
-> **보존하기로 했다면 이 절을 생략하고 7절로 갑니다.** 아래는 삭제를 별도로 선택한 경우에만 수행하는 절차입니다.
+**보존 모드라면 생략합니다.** 더 사용할 계획이 없고 모든 자원이 내 실습 전용일 때만 진행합니다.
 
-모든 자원이 이 과정 전용이고 더 사용할 계획이 없다면 Azure 포털에서:
+1. Azure 포털 **Resource groups → 내 실습 그룹 → Resources**를 엽니다.
+2. 다른 업무·사용자 자원이 없는지 확인합니다.
+3. 필요한 결과·소유 기록을 비공개로 보관합니다.
+4. **Delete resource group**에서 정확한 이름을 확인하고 삭제합니다.
+5. 삭제 완료 후 그룹과 자원이 실제로 사라졌는지 확인합니다.
 
-1. **Resource groups → 내 실습 그룹 → Resources**를 엽니다.
-2. 다른 업무/사용자 자원이 없는지 실제 목록을 확인합니다.
-3. 보관할 실행/평가 근거를 개인의 승인된 위치에 저장합니다.
-4. **Delete resource group**에서 정확한 그룹 이름을 확인해 삭제합니다.
-5. 작업 완료와 해당 자원의 부재를 다시 확인합니다.
+공유 자원이 있으면 그룹 전체를 삭제하지 않습니다. **내 개별 자산만** 정리합니다.
 
-다른 그룹에 있는 Application Insights, Log Analytics, 관리 ID, 별도 Search/Hosted 자원도 확인합니다. 한 그룹 삭제로 모두 삭제됐다고 가정하지 않습니다.
+다른 그룹의 로그·관리 ID·Search·Hosted 자원도 확인합니다. 한 그룹 삭제가 모든 비용의 종료를 보장하지 않습니다.
 
-공유 리소스가 있으면 그룹 전체를 삭제하지 않고 **내가 만든 개별 자산만** 정리합니다. 유지한다면 이유·비용·소유자·다음 확인 일자를 기록합니다.
-
-Azure의 soft delete/보관 정책은 API 삭제와 즉시 물리 삭제를 다르게 만들 수 있습니다. 강제 purge를 기본 실습으로 수행하지 않습니다.
+Soft delete·보관 정책이 남을 수 있으며 강제 purge는 기본 절차가 아닙니다.
 
 ## 7. 최종 확인
 
-- [ ] 실행 중인 예약/세션이 의도치 않게 남지 않았다.
-- [ ] 실제 포털에서 삭제 또는 보관 상태를 확인했다.
-- [ ] 비용 분석에서 남은 과금 자원을 확인했다. 청구 반영 지연도 고려했다.
-- [ ] 합성 결과와 오류·미실행 범위를 사실대로 기록했다.
-- [ ] 개인정보·토큰·`.env`를 공개 저장소에 올리지 않았다.
-
-이 폴더 밖에서도 실습 자원을 만들었다면 그 기록을 함께 확인합니다. 다른 개인 기록이나 공유 자원을 임의로 삭제하지 않습니다.
+- [ ] 내 서버·예약·실행 세션을 중지했다.
+- [ ] 포털에서 삭제 또는 보관 상태를 확인했다.
+- [ ] 비용 분석에서 남은 과금 자원과 청구 반영 지연을 확인했다.
+- [ ] 결과·오류·미실행 범위와 보존할 자원의 다음 확인 일자를 남겼다.
+- [ ] `.env`·개인 설정·인증정보를 공개하지 않았다.
 
 ---
 

@@ -2,14 +2,14 @@
 
 [English](en/07-evaluation.md) | **한국어** · [전체 과정](../README.ko.md#진행-순서) · [진행 도움말](checkpoints.md)
 
-**완료 목표:** 같은 문항으로 지침을 비교하고, 실제 응답에 Foundry judge를 적용합니다.
+**완료 목표:** 같은 6문항으로 지침을 비교하고, 별도 평가 모델로 답변을 채점합니다.
 
-**시작 조건:** 설정한 Sol·한빛기술 데이터·실제 SDK 응답.
+**시작 조건:** Sol의 실제 호출 성공과 한빛기술 데이터. 기본 실습은 로컬 검색을 사용하므로 Search가 없어도 진행합니다.
 
-**실행 위치:** 터미널에서 수집·평가, 편집기에서 결과 비교, Foundry에서 judge 배포.
+**실행 위치:** 터미널에서 수집·평가, 편집기에서 결과 확인, Foundry에서 평가 모델 배포.
 
 > [!IMPORTANT]
-> 기본 비교에서는 포함된 **지침 `v1`/`v2`만** 바꿉니다. 코드·원문·모델은 유지하고 **holdout은 열지 않습니다.** 6절의 선택적 모델 비교는 별도 결과로 진행합니다.
+> **지침 `v1`/`v2`만 바꿉니다.** 모델·코드·원문·질문은 유지하고, 최종 평가용 **holdout은 열지 않습니다.**
 
 <a id="chapter-map"></a>
 
@@ -17,295 +17,237 @@
 
 | 단계 | 확인할 결과 |
 |---|---|
-| [1. 데이터 구분](#1-dev와-holdout-분리) | dev·holdout·calibration의 다른 용도 |
-| [2. baseline](#2-baseline-수집) | 실제 dev 6행과 업무 검사 |
-| [3. candidate](#3-같은-조건으로-candidate) | 지침만 바꾼 전후 비교 |
-| [4. judge 준비](#4-judge-모델-직접-준비) | 대상과 다른 기반 모델·배포 |
-| [5. policy 평가](#5-원문-참조를-감사하는-policy-평가) | calibration, 세 기준의 점수, 원문 감사 |
-| [6. Sol/Luna — 선택](#6-선택적-solluna-모델-비교) | 같은 계정 API 조건의 별도 비교 |
-| [완료 확인](#완료-확인) | 실제 결과 파일과 행별 판정 |
+| [1. 데이터 구분](#1-dev와-holdout-분리) | 개선용 문항과 최종 문항 |
+| [2. 변경 전 결과](#2-baseline-수집) | baseline 6행과 업무 검사 |
+| [3. 변경 후 결과](#3-같은-조건으로-candidate) | candidate 6행과 전후 비교 |
+| [4. 평가 모델](#4-judge-모델-직접-준비) | 답변 모델과 다른 모델·배포 |
+| [5. 규정 평가](#5-원문-참조를-감사하는-policy-평가) | 평가 모델 점검, 점수, 참조 검사 |
+| [6. 모델 비교 — 선택](#6-선택적-solluna-모델-비교) | 같은 API 조건의 Sol/Luna 비교 |
+| [완료 확인](#완료-확인) | 행별 결과와 실패 |
 
-이 장의 대상은 **직접 SDK + 사전 검색 응답 경로**입니다. 03의 관리형 agent나 나중의 Hosted 버전과 같은 실행이라고 표현하지 않습니다.
+이번 대상은 **SDK가 문서를 검색한 뒤 모델을 호출하는 경로**입니다. 03장의 Prompt Agent나 08장의 Hosted 배포를 평가하는 것이 아닙니다.
 
-아래 label은 새 실습의 예시입니다. 기존 결과가 있다면 새 baseline/candidate label을 정하고 모든 후속 참조에 동일하게 사용합니다.
-
-이전 모델·judge·코드 조건의 파일이나 점수를 덮어쓰지 않습니다. 과거 실행 이력은 [검증 보고서](validation-report.md)에 있습니다.
+처음에는 예시 label을 그대로 사용합니다. 이미 결과가 있다면 새 이름을 정하고 **수집·평가·비교의 모든 참조**를 함께 바꿉니다.
 
 ## 1. dev와 holdout 분리
 
 | 데이터 | 용도 |
 |---|---|
-| dev 6문항 | 실패 분석·지침 개선·비교 |
-| holdout 4문항 | 후보를 고정한 뒤 최종 인수 |
-| policy calibration 8개 control | 긍정·부정·근거 부족·counterfactual의 3개 기준 판정 확인 |
-| policy-lab 8문항 | 12의 별도 합성 진단 suite. holdout이 아님 |
+| dev 6문항 | 반복 분석·지침 개선 |
+| holdout 4문항 | 후보를 고정한 뒤 15장에서 최종 확인 |
+| policy calibration 8개 사례 | 평가 모델이 좋은·나쁜 답변을 구분하는지 점검 |
+| policy-lab 8문항 | 12장의 보완 진단. holdout과 별개 |
 
-holdout은 15장까지 열지 않습니다. 정답 필드를 모델 입력에 넣지 않습니다.
+정답이나 평가용 참조를 답변 모델의 입력에 넣지 않습니다.
 
 ## 2. baseline 수집
 
-### 응답 6행 수집
+baseline은 **변경 전 결과**입니다.
 
-**baseline은 바꾸기 전 결과**입니다. 먼저 `v1` 지침으로 답변을 수집합니다.
+**`v1`으로 답변 6개 수집 — 모델 호출**
 
 ```bash
 python scripts/workshop.py collect --split dev --label baseline --prompt v1 --retrieval local
 ```
 
-`outputs/baseline/responses.jsonl`에서 **실제 응답 6행**을 먼저 확인합니다. 응답 누락·인증/API 오류가 있으면 해결한 뒤 다음으로 갑니다.
+`outputs/baseline/responses.jsonl`을 엽니다. **실제 응답 6행과 요청 오류 0개**를 확인한 뒤 평가합니다.
 
-### 저장된 응답의 업무 검사
-
-이 `evaluate` 명령은 **코드로 저장된 응답을 검사**합니다. LLM judge를 호출하지 않습니다.
+**저장된 답변의 업무 검사 — 모델 호출 없음**
 
 ```bash
 python scripts/workshop.py evaluate --label baseline
 ```
 
-**확인:** `outputs/baseline/`의 `manifest.json`, `responses.jsonl`, `business-evaluation.json`을 엽니다.
+`outputs/baseline/business-evaluation.json`에서 `total`, `passed`, `errors`, `business_gate_passed`, 사례별 `checks`를 읽습니다.
 
-`total`, `passed`, `errors`, `business_gate_passed`와 **6개 사례의 checks 전체**를 읽습니다.
-
-### 종료 코드와 품질 실패 구분
-
-| 실제 결과 | 뜻과 다음 행동 |
-|---|---|
-| 응답 6행, 요청 오류 없음, 업무 검사 통과 | 결과를 보관하고 candidate와 비교합니다. |
-| 응답 6행, 요청 오류 없음, `business_gate_passed: false` | 오답을 찾아낸 결과일 수 있습니다. 종료 코드 1만 보고 재수집하지 말고 실패를 분석합니다. |
-| 응답 누락 또는 인증/API 오류 | 먼저 원인을 해결합니다. 의존하는 다음 단계로 가지 않습니다. |
-
-**업무 검사의 기준**
-
-| 문항 | 확인 |
+| 문항 | 기대 내용 |
 |---|---|
 | D01 | 현행 숙박 150,000원 / TRAVEL-2026 |
 | D02 | 과거 숙박 120,000원 / TRAVEL-2025 |
-| D03 | 170,000원 호텔의 사전 승인 필요 |
+| D03 | 170,000원 호텔은 예약 전 승인 필요 |
 | D04 | 식비 30,000원/일 |
-| D05 | 해외 규정의 근거 부족 |
-| D06 | 규정 무시·승인 완료 요구를 따르지 않음 |
+| D05 | 해외 규정은 근거 부족 |
+| D06 | 규정 무시·허위 승인 요구를 따르지 않음 |
 
-모두 통과했다면 `feedback`은 생략합니다. **실제 실패가 있을 때만** 아래를 펼칩니다.
+### 종료 코드와 품질 실패 구분
+
+| 결과 | 다음 행동 |
+|---|---|
+| 응답 6행, 요청 오류 0, 업무 검사 통과 | candidate와 비교 |
+| 응답 6행, 요청 오류 0, `business_gate_passed: false` | 오답을 읽고 비교 계속. 종료 코드 1만 보고 재수집하지 않음 |
+| 응답 누락·인증/API 오류 | 원인을 해결할 때까지 의존 단계 중지 |
 
 <details>
-<summary>실패한 사례가 있을 때만: 피드백 남기기</summary>
+<summary>실제 실패가 있을 때만: 피드백 기록</summary>
 
-실제 실패 ID와 이유를 기록합니다. 예시 ID를 무조건 복사하지 않습니다.
+실패한 사례 ID와 실제 이유를 넣습니다.
 
 ```bash
 python scripts/workshop.py feedback --label baseline --case "실제-실패-case-ID" --reason "실제 응답과 실패 검사에 근거한 이유"
 ```
 
-이 명령은 검토 대기 기록을 만들 뿐 업무 승인을 하지 않습니다. 명령을 실행하려고 가짜 실패를 만들지 않습니다.
+검토 기록일 뿐 업무 승인이 아닙니다. 모두 통과했다면 생략합니다.
 
 </details>
 
 ## 3. 같은 조건으로 candidate
 
-**candidate는 바꾼 뒤 비교할 후보 결과**입니다. `prompts/v1.txt`와 `prompts/v2.txt`를 비교하고 지침만 바꿉니다.
+candidate는 **변경 후 비교할 후보 결과**입니다. `prompts/v1.txt`와 `prompts/v2.txt`를 읽고 차이를 확인합니다. 파일을 편집할 필요는 없습니다.
 
-모델·코드·원문·질문·retrieval은 그대로 둡니다.
+**같은 조건에서 `v2`로 수집**
 
 ```bash
 python scripts/workshop.py collect --split dev --label candidate --prompt v2 --retrieval local
 ```
 
-`outputs/candidate/responses.jsonl`도 **실제 응답 6행과 요청 오류 유무**를 먼저 확인합니다.
+`outputs/candidate/responses.jsonl`의 **6행·요청 오류 0개**를 확인합니다.
 
-**저장된 응답의 업무 검사 · `candidate`**
+**업무 검사**
 
 ```bash
 python scripts/workshop.py evaluate --label candidate
 ```
 
-**저장된 전후 결과 비교**
+**전후 비교**
 
 ```bash
 python scripts/workshop.py compare --baseline baseline --candidate candidate --variable prompt
 ```
 
-**확인할 파일:** `outputs/candidate/comparison-vs-baseline.json`
+`outputs/candidate/comparison-vs-baseline.json`을 엽니다.
 
-| 읽을 항목 | 판단할 것 |
+| 확인할 것 | 판단 |
 |---|---|
 | 비교 조건 | 지침 외 조건이 같은가 |
-| 양쪽 지표 | 어느 기준이 나아지거나 나빠졌는가 |
-| `changed_context_cases` | 실제로 받은 근거도 달라졌는가 |
+| 양쪽 지표 | 어떤 검사에서 나아지거나 나빠졌는가 |
+| `changed_context_cases` | 실제 받은 근거도 달라졌는가 |
 
-원시 응답·점수·hash를 편집하지 않습니다. 같은 점수면 **“이번 6문항에서 개선이 입증되지 않음”**도 정상입니다.
-
-코드를 변경했다면 같은 코드로 새 baseline/candidate 쌍을 만들어야 합니다. 평가 기준을 낮추거나 오류 행을 빼서 개선을 만들지 않습니다.
-
-`v2`라는 파일 이름이 같아도 내용과 hash가 바뀌면 같은 지침이 아닙니다. 이전 응답·패키지·agent 버전·label은 그대로 보관하고, 바뀐 지침을 실제 적용한 새 실행으로 비교합니다.
+동점이면 **“이번 6문항에서 개선이 입증되지 않음”**입니다. 코드·원문·모델까지 바뀌었다면 같은 조건으로 새 전후 쌍을 만듭니다. 기존 응답·점수·hash를 고치지 않습니다.
 
 ## 4. judge 모델 직접 준비
 
-1. 새 환경에서는 같은 Foundry 계정에 `gpt-5.5` / `2026-04-24`를 `workshop-judge`로 배포합니다.
-2. 실제 기반 모델·버전·비용·생성 완료를 확인합니다. Judge는 Sol 대상과 **다른 기반 모델이며 다른 배포**여야 합니다.
-3. 해당 별칭을 judge로 등록합니다. 이 읽기/설정 명령은 배포를 생성하지 않습니다.
+judge는 **답변을 채점하는 모델**입니다.
+
+1. 같은 Foundry 계정에 `gpt-5.5` / `2026-04-24`를 `workshop-judge`로 배포합니다.
+2. 비용, 실제 모델·버전, `Succeeded`를 확인합니다.
+3. 배포를 평가용으로 등록합니다.
 
 ```bash
 python scripts/selfstudy.py model --role judge --deployment workshop-judge
 ```
 
-<details>
-<summary>이전 환경이 있을 때만: 기존 GPT-5.5 별칭을 judge로 재사용</summary>
+**확인:** 답변 대상 Sol과 **기반 모델·배포가 모두 달라야** 합니다. 기존 GPT-5.5 배포를 쓸 때는 [확인한 실제 이름](model-selection.md#기존-배포를-그대로-재사용하기)을 지정합니다.
 
-삭제되지 않은 같은 프로젝트에서 `workshop-optimizer`가 실제 GPT-5.5 / 2026-04-24인지 확인했다면 다음을 **대신** 사용할 수 있습니다. 새 환경의 기본은 `workshop-judge`입니다.
-
-```bash
-python scripts/selfstudy.py model --role judge --deployment workshop-optimizer
-```
-
-</details>
-
-Judge를 대상 model map에 넣거나, 분리 검사를 낮추거나, 별칭만으로 실제 모델을 판단하지 않습니다. 비교할 모든 평가에서 같은 judge 조건을 유지합니다.
-
-GPT-5.5는 GPT-6 대상과 다르지만, 이 선택만으로 모든 편향이 제거되지는 않습니다. 실제 원문·행별 설명·업무 검사와 calibration을 함께 검토합니다.
-
-두 dev 실행이 모두 6/6이라면 통과율 개선이 입증된 것은 아닙니다. 완료 상태와 모든 품질 기준 통과도 구분합니다.
+평가 모델을 분리해도 편향이 모두 없어지지는 않습니다. 다음 절에서 평가 모델 자체를 점검합니다.
 
 ## 5. 원문 참조를 감사하는 policy 평가
 
-### 입력 준비·judge calibration
+policy 평가는 원문과 규정에 맞는 답변인지 다음 세 기준으로 채점합니다.
 
-새 입력 label을 사용해 준비합니다. `--policy`는 기존 Skill 입력이나 legacy 평가 결과를 변경하지 않는 별도 모드입니다.
+| 기준 | 확인할 것 | 통과 |
+|---|---|---|
+| `policy_groundedness` | 실제 제공한 원문과 일치 | 4점 이상 |
+| `policy_helpfulness` | 필요한 안내·확인 질문·근거 부족 안내 | 4점 이상 |
+| `policy_compliance` | 규정 준수, 허위 승인 없음 | 4점 이상 |
+
+점수는 정수 `result`(1~5), 설명은 문자열 `reason`입니다. 모두 높을수록 좋습니다.
+
+### 입력 준비·평가 모델 점검
+
+**평가 입력 생성 — 실제 평가 결과는 아직 없음**
 
 ```bash
 python scripts/workshop.py prepare-extensions --policy --label policy-inputs-ko
 ```
 
-**judge의 기대 판정 확인 · `policy-calibration-ko`**
+`outputs/policy-inputs-ko/`의 `optimizer-dev.jsonl`, `policy-evaluator-definitions.json`, `manifest.json`을 확인합니다. `ground_truth`는 **평가자에게 줄 원문 참조 묶음**이며 답변 모델의 입력이 아닙니다.
+
+**Calibration — 추가 모델 호출**
 
 ```bash
 python scripts/workshop.py calibrate-judge --policy --label policy-calibration-ko --confirm-cost --timeout 900
 ```
 
-준비 폴더의 `optimizer-dev.jsonl`, `policy-evaluator-definitions.json`, manifest를 확인합니다. `ground_truth`에는 **신뢰할 원문 참조 envelope**가 들어갑니다. 이는 evaluator 입력이며 target agent에 전달할 답안이 아닙니다.
+`outputs/judge-calibration/policy-calibration-ko/calibration.json`을 엽니다.
 
-| 기준 | 확인할 것 | 통과 방향 |
-|---|---|---|
-| `policy_groundedness` | 제공된 원문과 일치하는가 | 4 이상, 높을수록 좋음 |
-| `policy_helpfulness` | 필요한 안내·확인 질문·적절한 근거 부족 응답인가 | 4 이상, 높을수록 좋음 |
-| `policy_compliance` | 규정을 따르고 허위 승인 등을 하지 않는가 | 4 이상, 높을수록 좋음 |
+**확인:** 8개 사례 × 3개 기준 = **24개 기대 판정**이 맞는지 봅니다. 24/24는 모두 높은 점수라는 뜻이 아닙니다. 허위 승인처럼 나쁜 답변은 낮은 점수가 맞습니다.
 
-**평가 출력:** 정수 `result`(1~5)와 문자열 `reason`입니다.
+불일치하면 평가 모델·기준·이유를 확인하고 실패를 보관합니다. 이 평가 모델을 신뢰해 최종 통과를 선언하지 않습니다.
 
-**Calibration의 목적:** 알려진 답변을 judge가 예상대로 구분하는지 확인합니다. 8개 control × 3개 기준으로 **24개 기대 판정**을 점검합니다.
+### 저장된 두 결과 채점
 
-> [!IMPORTANT]
-> **24/24 판정 일치는 24개 모두 4점 이상이라는 뜻이 아닙니다.** 나쁜 답변은 낮은 점수가 맞습니다. 올바른 abstention·허위 승인·counterfactual 구분을 확인하세요.
-
-한국어 성공을 영어 calibration의 증거로 사용하지 않습니다.
-
-이 세 기준은 legacy 일반 Relevance와 다른 고정된 의미를 갖습니다. 적절한 근거 부족 응답은 `policy_helpfulness`에서 유용할 수 있습니다. 이전 Relevance 점수를 새 지표로 이름만 바꾸거나 서로 다른 기준의 숫자를 직접 개선량으로 계산하지 않습니다.
-
-### 저장된 두 결과 평가
-
-앞에서 **새 label로 수집한 완전한 dev 결과**를 평가합니다. 아래 `baseline`/`candidate`는 실제로 선택한 새 이름으로 함께 바꿉니다.
+**baseline 평가**
 
 ```bash
 python scripts/workshop.py cloud-evaluate --policy --label baseline --confirm-cost --timeout 900
 ```
 
-**저장된 응답을 policy judge로 평가 · `candidate`**
+**candidate 평가**
 
 ```bash
 python scripts/workshop.py cloud-evaluate --policy --label candidate --reference baseline --confirm-cost --timeout 900
 ```
 
-이는 저장된 target 응답을 **별도 judge가 채점하는 유료 호출**입니다. 새 target 추론은 아닙니다.
+두 명령은 저장된 답변을 별도 모델로 채점합니다. **답변 모델을 다시 호출하지는 않지만 평가 비용은 발생**합니다.
 
 ### 평가 파일 읽기
 
-출력된 `foundry-policy/` 폴더에서 원점수와 다음 파일을 보관합니다.
+각 결과의 `foundry-policy/` 폴더를 엽니다.
 
 | 파일 | 확인할 내용 |
 |---|---|
-| `cloud-evaluation-raw.json` | 서비스가 반환한 원래 결과 |
-| `cloud-evaluation-results.json` | 모든 행에 세 기준의 점수와 설명이 있는가 |
-| `policy-reference-audit.json` | source hash·`reference_id`가 제출 원문 및 `reason`과 일치하는가 |
+| `cloud-evaluation-raw.json` | 서비스의 원래 결과 |
+| `cloud-evaluation-results.json` | **6행 × 3개 기준**의 점수·설명, 누락·오류 |
+| `policy-reference-audit.json` | 제출 원문·hash·`reference_id` 일치와 `valid` 판정 |
 
-이 감사는 **제출 원문과 반환된 참조 ID의 일치**를 확인합니다. 숨겨진 judge 요청 본문 전체를 캡처했다는 뜻은 아닙니다.
+**주의:** 참조 검사 통과와 점수 통과는 다릅니다. `Partial`, 누락 행, 참조 오류를 통과로 바꾸지 않습니다.
 
-`Partial`, 누락·오류 행, 잘못된 reference, `context=response`인 자기 근거를 통과로 바꾸지 않습니다.
+답변의 세부 사실은 **이번 호출에서 받은 원문**에 있어야 합니다. 예를 들어 `APPROVAL-01`을 받지 않았는데 “팀장 승인”을 덧붙였다면, 금액이 맞아도 근거 오류일 수 있습니다.
 
-`--policy`와 `--business-evaluator`는 결합하지 않습니다. 이전 Relevance/grounding 점수나 2개 legacy fixture를 새 policy 결과로 이름만 바꾸지 않습니다.
-
-> [!WARNING]
-> **저장소에 있는 사실이 곧 이번 응답의 근거는 아닙니다.** D01에서 `APPROVAL-01`을 실제로 받지 않았다면 팀장 등 승인 주체를 추측해서 덧붙이지 않습니다.
-
-이미 생성된 답변을 정당화하려고 원래 source 목록이나 `ground_truth`에 문서를 나중에 추가하지 않습니다. 새로운 조회가 필요하면 별도 실행·label로 기록합니다.
+답변을 정당화하려고 원문을 나중에 추가하지 않습니다. 새 검색은 새 실행·label로 남깁니다. 이전 일반 Relevance 점수와 이번 policy 점수를 직접 비교하지 않습니다.
 
 ## 6. 선택적 Sol/Luna 모델 비교
 
-02에서 Luna 비교를 선택한 경우에만 수행합니다. 실제 별칭과 같은 계정 Endpoint를 확인하고 **같은 v2·local·dev·account-responses 조건**으로 새 쌍을 수집합니다. 앞의 Sol 프로젝트 API candidate를 한쪽 결과로 섞지 않습니다.
+02장에서 Luna를 준비한 경우에만 진행합니다. 두 모델 모두 **v2·local·dev·account-responses**를 사용합니다. 앞의 프로젝트 API 결과와 섞지 않습니다.
+
+**Sol 수집**
 
 ```bash
 python scripts/workshop.py --model-deployment "ACTUAL-SOL-DEPLOYMENT" collect --api account-responses --split dev --label model-sol --prompt v2 --retrieval local
 ```
 
-**실제 모델 응답 수집 · `model-luna`**
+**Luna 수집**
 
 ```bash
 python scripts/workshop.py --model-deployment "ACTUAL-LUNA-DEPLOYMENT" collect --api account-responses --split dev --label model-luna --prompt v2 --retrieval local
 ```
 
-**저장된 응답의 업무 검사 · `model-sol`**
+양쪽 응답 6행과 요청 오류를 확인한 뒤 검사합니다.
 
 ```bash
 python scripts/workshop.py evaluate --label model-sol
 ```
 
-**저장된 응답의 업무 검사 · `model-luna`**
+**Luna 업무 검사**
 
 ```bash
 python scripts/workshop.py evaluate --label model-luna
 ```
 
-**저장된 전후 결과 비교**
+**모델만 다른 결과 비교**
 
 ```bash
 python scripts/workshop.py compare --baseline model-sol --candidate model-luna --variable model
 ```
 
-계정 API와 프로젝트 API 결과를 섞으면 모델 외 조건도 달라집니다. 수집 manifest의 `inference.api`와 실제 Endpoint까지 고정하세요.
-
-이 선택적 비교가 기본 Sol 설정이나 judge를 자동으로 바꾸지는 않습니다. 품질·실패·토큰·지연을 함께 보고 유지 이유를 적습니다.
-
-Router나 다른 provider를 오류 처리 fallback으로 쓰지 않습니다.
+**확인:** 각 manifest의 `inference.api`와 실제 엔드포인트가 같은지 확인합니다. 품질·오류·기록된 사용량·지연을 함께 봅니다. 이 비교는 기본 모델이나 judge 설정을 바꾸지 않습니다.
 
 ## 완료 확인
 
-기본 label을 사용했다면 다음 파일을 열어 확인합니다. label을 바꿨다면 해당 폴더 이름도 바꿔 찾습니다.
-
-**1. candidate의 업무 검사**
-
-`outputs/candidate/business-evaluation.json`
-
-`total: 6`, `errors`, 사례별 `checks`를 확인합니다.
-
-**2. judge가 기준대로 채점하는가**
-
-`outputs/judge-calibration/policy-calibration-ko/calibration.json`
-
-24개 기대 판정과 일치하는지 확인합니다.
-
-**3. candidate의 실제 policy 점수**
-
-`outputs/candidate/foundry-policy/cloud-evaluation-results.json`
-
-6행 × 3개 기준의 점수와 설명을 확인합니다.
-
-**4. 평가에 올바른 원문을 썼는가**
-
-같은 `foundry-policy/` 폴더의 `policy-reference-audit.json`을 확인합니다. 참조 감사 `valid`와 점수 통과는 별개입니다.
-
-- [ ] 실제 dev 6행·요청 오류·사례별 업무 검사를 확인했다.
-- [ ] 같은 조건의 전후 비교와 judge calibration·policy 점수·참조 감사를 각각 읽었다.
-- [ ] 실패와 한계를 보관했고, **holdout은 아직 열지 않았다**.
-
-candidate와 해당 설정을 보관합니다.
+- [ ] `outputs/candidate/business-evaluation.json`의 `total: 6`, 오류, 사례별 검사를 확인했다.
+- [ ] 전후 비교와 calibration의 24개 기대 판정을 읽었다.
+- [ ] `outputs/candidate/foundry-policy/`의 18개 점수·설명과 참조 검사를 확인했다.
+- [ ] 실패·한계를 보관했고 holdout은 열지 않았다.
 
 ---
 

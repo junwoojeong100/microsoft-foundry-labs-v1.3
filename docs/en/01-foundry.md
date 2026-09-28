@@ -56,9 +56,11 @@ Run from the folder containing the README. The runner uses your actual configure
 python scripts/workshop.py --language en model --question "Write a three-line preparation checklist in English for an employee taking their first domestic business trip." --output outputs/learner-notes-en/01-sol-model.json
 ```
 
-**Check:** read the real answer, base model/deployment information, response ID, and usage. Empty responses and errors are not success. Identical questions need not produce identical wording.
+**Check:** open the result JSON and verify `mode: live`, nonempty `text`, `response_id`, `response_model`, and `inference_api: project-responses`. Read `usage` if supplied; `null` means unmeasured, not free. Empty responses and errors are not success.
 
-The core flow is `AIProjectClient → get_openai_client → responses.create`. Verify the actual **gpt-6-sol / 2026-09-22**, not just the alias. If a result file already exists, preserve it and choose a new output filename.
+This file does not contain a separate deployment version. Verify **gpt-6-sol / 2026-09-22** using 00's `doctor --cloud` output: `deployment.name`, `deployment.model.name`, and `deployment.model.version`. The service's `response_model` alone does not establish the deployment configuration.
+
+`trace_id: null` and `trace_export: not-configured` are expected before tracing is configured in 09. If a result file already exists, preserve it and choose a new output filename.
 
 ### Distinguish project and account APIs
 
@@ -81,7 +83,7 @@ They use the same synthetic scenario but are different executions. Local results
 Open `outputs/learner-notes-en/01-sol-model.json` and compare:
 
 - [ ] There is a real answer, not an error or empty response.
-- [ ] The actual model/version is `gpt-6-sol / 2026-09-22`, using `project-responses`.
+- [ ] I checked `response_model` and `inference_api: project-responses`, then verified `gpt-6-sol / 2026-09-22` in 00's cloud preflight output.
 - [ ] I checked the response ID and distinguished inference from retrieval or tool execution.
 
 Use `python scripts/selfstudy.py values` to recheck the saved project and deployment settings.

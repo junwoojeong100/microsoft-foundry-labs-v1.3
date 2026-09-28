@@ -2,9 +2,9 @@
 
 [English](en/troubleshooting.md) | **한국어** · [전체 과정](../README.ko.md)
 
-**현재 장, 마지막 성공, 실제 대상/버전, 오류 원문을 기록합니다.** 비밀번호·토큰·API key·회사 데이터는 기록하거나 공유하지 않습니다.
+**오류가 나면 의존하는 다음 명령을 멈춥니다.** 현재 장·마지막 성공·대상 버전·오류 원문을 확인합니다. 비밀번호·토큰·API key·회사 데이터는 공유하지 않습니다.
 
-처음 시작하거나 다음 날 이어간다면 먼저 [명령 읽기·재개 방법](checkpoints.md)을 확인합니다. 아래에서 **실제로 발생한 증상 하나**를 찾습니다. 검증 보고서의 과거 실패를 모두 재현하거나 해결할 필요는 없습니다.
+아래에서 **지금 발생한 증상만** 펼칩니다. 처음 시작하거나 이어 하는 방법은 [진행 도움말](checkpoints.md)에 있습니다. 과거 검증 오류를 재현할 필요는 없습니다.
 
 ## 증상별 바로 가기
 
@@ -28,91 +28,91 @@
 <details>
 <summary><code>can&#x27;t open file ... scripts/workshop.py</code></summary>
 
-**먼저 할 일:** README·scripts가 함께 있는 폴더를 열고 새 터미널에서 실행
+**먼저 할 일:** VS Code의 **File → Open Folder**로 README와 `scripts/`가 함께 있는 폴더를 엽니다. **Terminal → New Terminal**에서 다시 실행합니다. ZIP 내부나 상위 폴더에서는 실행하지 않습니다.
 
 </details>
 
 <details>
 <summary><code>python</code>을 찾을 수 없거나 패키지를 못 찾음</summary>
 
-**먼저 할 일:** 00의 OS별 설치와 `.venv` 활성화 확인. PowerShell 정책을 낮추지 않음
+**먼저 할 일:** [00장의 내 OS 절차](00-setup.md#2-실습-파일과-개발-도구)로 `.venv`를 활성화하고 `python --version`을 확인합니다. PowerShell 활성화가 차단되면 `python` 대신 `.\.venv\Scripts\python.exe`를 사용합니다. 시스템 정책은 낮추지 않습니다.
 
 </details>
 
 <details>
 <summary><code>먼저 Lab 00의 configure</code></summary>
 
-**먼저 할 일:** `values`는 첫 설치 명령이 아님. 00의 프로젝트·배포·configure까지 완료
+**먼저 할 일:** `values`는 저장된 설정을 읽습니다. 처음이라면 [00장 8절의 configure](00-setup.md#8-실제-값으로-설정-자동-수집)를 먼저 마칩니다. 기존 환경이라면 이전 실습 폴더를 열었는지 확인합니다.
 
 </details>
 
 <details>
 <summary><code>YOUR-...</code>/<code>실제-...</code>를 거부함</summary>
 
-**먼저 할 일:** 자리표시자를 앞 단계의 실제 값으로 변경. Endpoint와 ARM ID 구분
+**먼저 할 일:** 앞 단계가 출력한 내 값으로 바꿉니다. 따옴표는 남기고 꺾쇠는 제거합니다. [값 복사 안내](checkpoints.md#결과-파일을-읽고-다음-명령에-값-옮기기)에서 엔드포인트·ARM ID·폴더를 구분합니다.
 
 </details>
 
 <details>
 <summary>서버 명령 뒤 입력 프롬프트가 안 돌아옴</summary>
 
-**먼저 할 일:** 정상 대기일 수 있음. A를 둔 채 같은 환경의 터미널 B에서 상태 확인
+**먼저 할 일:** `serve`는 실행한 채 두는 명령입니다. A는 그대로 두고, [새 터미널 B](checkpoints.md#두-터미널을-사용하는-장)에서 같은 폴더·가상 환경으로 상태를 확인합니다. 준비 상태가 실패하면 A의 오류를 먼저 읽습니다.
 
 </details>
 
 <details>
 <summary><code>azd</code>가 <code>azure.yaml</code>을 못 찾거나 엉뚱한 서비스를 표시함</summary>
 
-**먼저 할 일:** 08 준비 명령이 출력한 **준비 폴더 절대 경로**를 `--cwd`에 지정. `.build` 패키지나 저장소 루트가 아님
+**먼저 할 일:** [08장의 준비 명령](08-hosted.md#3-기존-프로젝트에-연결하는-독립-폴더)이 출력한 **`폴더:` 절대 경로**를 `--cwd`에 넣습니다. `.build` 패키지·저장소 루트·`azure.yaml` 파일 경로가 아닙니다.
 
 </details>
 
 <details>
 <summary>Windows에서 <code>No module named &#x27;fcntl&#x27;</code></summary>
 
-**먼저 할 일:** 05의 로컬 SDK 실험만 macOS/Linux 필요. 승인된 WSL/Linux 사용 또는 해당 절 미실행 기록
+**먼저 할 일:** 05장 5절은 macOS/Linux 전용입니다. 승인된 WSL/Linux의 별도 소스·Python 환경을 쓰거나 그 절을 미실행으로 남깁니다. 패키지 재설치로 해결되지 않습니다.
 
 </details>
 
 <details>
 <summary>CI preflight가 식별자 누락을 보고함</summary>
 
-**먼저 할 일:** 14의 **정확한 `foundry-workshop` Environment → Variables**에 먼저 입력. Secret만 등록하면 안 됨
+**먼저 할 일:** [14장의 변수 표](14-additional-permissions.md#3-실행-전에-environment-변수-등록)를 보고 **`foundry-workshop` Environment → Variables**에 등록합니다. 같은 이름의 Secret만 있으면 읽지 못합니다.
 
 </details>
 
 <details>
 <summary>Fork 뒤 검사 실행이 없거나 <code>Run workflow</code>가 안 보임</summary>
 
-**먼저 할 일:** 본인 저장소의 Actions 활성화·`main`의 workflow 파일·실행 권한 확인. 14의 Workshop checks 수동 실행부터 진행
+**먼저 할 일:** 본인 저장소의 Actions 활성화, `main`의 workflow 파일, 실행 권한을 확인합니다. [14장 1절](14-additional-permissions.md#1-저장소와-environment-준비)의 Workshop checks부터 실행합니다.
 
 </details>
 
 <details>
 <summary>OIDC에 일치하는 federated credential이 없다고 나옴</summary>
 
-**먼저 할 일:** 14의 실제 issuer/subject/audience 대조. 새 저장소의 immutable ID와 Environment subject를 확인하고 client secret으로 우회하지 않음
+**먼저 할 일:** [14장 4절](14-additional-permissions.md#4-oidc-federation-연결)에서 실제 issuer·subject·audience를 대조합니다. 새 저장소의 숫자 ID와 Environment 형식을 확인합니다. client secret으로 우회하지 않습니다.
 
 </details>
 
 <details>
 <summary>준비 도중 중단했는데 <code>status</code>가 configure를 요구함</summary>
 
-**먼저 할 일:** 설정 파일이 없어도 Azure 자원은 남을 수 있음. 15의 설정 전 중단 안내에 따라 실제 포털에서 확인
+**먼저 할 일:** `status`는 생략하고 [15장 5절](15-capstone-cleanup.md#5-소유-자산-목록-대조)에 따라 포털의 실습 구독·그룹을 확인합니다. 설정 파일이 없어도 자원과 비용은 남을 수 있습니다.
 
 </details>
 
 <details>
 <summary><code>azure.yaml</code> JSON 문법 오류</summary>
 
-**먼저 할 일:** 13의 `policies`를 실제 agent 서비스 안에 추가했는지, 쉼표·괄호와 JSON/YAML 혼합 여부 확인
+**먼저 할 일:** [13장 3절](13-governance.md#3-내-hosted의-새-버전에-연결)처럼 `policies`를 `services` 아래 실제 에이전트 객체에 넣습니다. 쉼표·괄호를 확인하고 JSON에 YAML 문법을 섞지 않습니다. 문법 검사 전에는 배포하지 않습니다.
 
 </details>
 
 <details>
 <summary>native 점수 실패인데 예전 인수 결과는 <code>gate_passed: true</code></summary>
 
-**먼저 할 일:** 15의 `--require-native-pass` 포함 명령으로 저장 증거를 다시 검사. 관리형 red-team 감사는 별도 확인
+**먼저 할 일:** [15장 2절](15-capstone-cleanup.md#2-hosted-최종-확인)의 `--require-native-pass` 포함 명령으로 **기존 증거만** 검사합니다. holdout을 다시 수집하지 않습니다. 관리형 red-team 감사는 별도로 확인합니다.
 
 </details>
 
@@ -129,7 +129,7 @@
 
 **먼저 확인:** `.venv`의 Python 3.13인가
 
-**다음 행동:** 00의 환경 활성화/설치. 루트 축약 예제 SDK와 혼합 금지
+**다음 행동:** [00장의 설치](00-setup.md#2-실습-파일과-개발-도구)를 따릅니다. 같은 가상 환경에서 `python -m pip check`가 `No broken requirements found.`인지 확인합니다. 다른 Python 환경의 패키지와 섞지 않습니다.
 
 </details>
 
@@ -147,7 +147,7 @@
 
 **먼저 확인:** 과거 export가 우선하는가
 
-**다음 행동:** 해당 변수 해제 또는 새 터미널. 다른 프로젝트로 자동 전환하지 않음
+**다음 행동:** 이전에 변수를 설정한 터미널을 닫고 실습 폴더에서 새 터미널을 엽니다. 충돌이 계속되면 오류에 표시된 변수만 확인합니다. 다른 프로젝트로 바꾸거나 `.env`를 삭제하지 않습니다.
 
 </details>
 
@@ -245,7 +245,7 @@
 
 **먼저 확인:** 실제 가용성·quota
 
-**다음 행동:** 정식 quota 요청 또는 명시적 새 계획. 실행 중 몰래 모델 교체 금지
+**다음 행동:** 이 실습의 모델·리전을 유지하고 필요한 할당량을 요청합니다. 준비될 때까지 해당 단계를 차단으로 남깁니다. 다른 모델로 바꿔 같은 실습의 성공으로 기록하지 않습니다.
 
 </details>
 
@@ -411,6 +411,24 @@
 ### MAF·Toolbox·Skill·Hosted
 
 <details>
+<summary>01장 JSON에서 배포 버전·API를 찾기 어려움</summary>
+
+**먼저 확인:** `model` 결과의 `text`, `response_id`, `response_model`, `inference_api`를 확인합니다.
+
+**다음 행동:** 배포·모델 버전은 00장의 `doctor --cloud` 출력에서 확인합니다. 응답 JSON의 API 필드 이름은 `api`가 아니라 `inference_api`이며 기대 값은 `project-responses`입니다. [01장](01-foundry.md#2-같은-sol-배포를-코드에서).
+
+</details>
+
+<details>
+<summary>05장 결과에 토큰·지연이 없음</summary>
+
+**먼저 확인:** `pattern`, `outputs`, `approval_status`, `external_actions_performed`를 읽습니다.
+
+**다음 행동:** 이 결과는 토큰·지연 집계를 제공하지 않습니다. 역할별 출력과 근거를 비교하고, 없는 측정값을 0으로 채우지 않습니다.
+
+</details>
+
+<details>
 <summary>Toolbox 목록은 되는데 query 실패</summary>
 
 **먼저 확인:** downstream Search 접근
@@ -500,7 +518,16 @@
 
 **먼저 확인:** 이름/버전만 보내고 evaluator별 초기화를 생략
 
-**다음 행동:** Calibration catalog의 `initialization_parameters`까지 참조에 포함하고 SDK mapping 생성자로 보존. 원래 버전·문턱 4의 새 job과 baseline/후보 6행 감사를 12에서 확인. 원래 실패는 유지
+**다음 행동:** 선택한 calibration catalog의 `initialization_parameters`에 judge와 필수 문턱 4를 명시합니다. SDK 2.6.1의 공개 mapping 생성자로 값을 보존하고 실제 전송 본문에도 남는지 확인합니다. 평가자 이름·버전·기준을 바꾸거나 기존 실패를 지우지 않습니다. [12장의 결과 검사](12-improvement.md#3-지침만-최적화).
+
+</details>
+
+<details>
+<summary>Optimizer inline dataset 입력이 거부됨</summary>
+
+**먼저 확인:** 설치한 SDK와 서비스가 받는 입력 형식을 구분합니다.
+
+**다음 행동:** SDK 2.6.1에서 확인한 형식은 `train_dataset: {"type": "inline", "items": [...]}`입니다. `items`에는 dev의 `query`·`ground_truth`만 넣고 실제 전송 본문을 확인합니다. 서버 job이 생겼다면 같은 ID를 조회하며 새 job을 반복 생성하지 않습니다.
 
 </details>
 
@@ -594,7 +621,7 @@
 
 **먼저 확인:** 공식 리전 표와 개념 개요를 둘 다 확인
 
-**다음 행동:** 표는 East US 2/NC, 개요는 France/Sweden/Switzerland West도 포함. NC는 공통이지만 Sweden 미지원이나 ASR의 리전 원인은 확정하지 않음. [13](13-governance.md) 참조
+**다음 행동:** North Central US는 두 목록에 공통으로 포함됩니다. 다른 리전의 지원이나 오류 원인을 추측하지 않습니다. [13장의 두 공식 링크](13-governance.md#5-관리형-ai-red-teaming--기본-검증-대상)와 현재 환경의 실제 응답을 확인합니다.
 
 </details>
 
@@ -778,7 +805,7 @@
 
 ## 안전하게 재개
 
-프로젝트·prefix·언어·소스·소유권 ledger를 유지합니다. 이미 생성한 ID를 다시 조회하고, 이전 결과를 읽은 뒤 **실제로 필요한 다음 단계만** 진행합니다.
+프로젝트·접두사·언어·소스·소유 기록을 유지합니다. 이미 생성한 ID를 조회하고 기존 결과를 읽은 뒤 **필요한 다음 단계만** 진행합니다.
 
 완전히 다른 프로젝트/접두사로 바꾸려면 기존 자산을 정리/기록하고 새 실습 폴더에서 시작합니다. `.selfstudy`, `outputs`, `.env`를 삭제해 보호 조건을 우회하지 않습니다.
 
