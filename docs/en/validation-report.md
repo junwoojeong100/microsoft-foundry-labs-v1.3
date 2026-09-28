@@ -67,3 +67,9 @@ Existing resources, agent versions, evaluations, files, and ownership records we
 Search Basic, storage, and logs can continue to incur charges. An empty posted-cost query is not proof of zero total cost.
 
 Earlier failures were not overwritten with successful results. Original capacity errors, Luna project errors, self-grounding, contradictory ASR, unavailable caller conversations, and response/citation-contract failures remain separate evidence. This report describes the **latest verified lab scope**.
+
+## 6. Code and CI reproducibility
+
+All 278 core tests, 124 SDK tests, Ruff, and bilingual document/command/link checks passed. [GitHub checks](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36362144665) and the [approved OIDC release](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36362528860) succeeded on code commit `5267633`.
+
+Downloaded artifacts verified **six actual English responses from CI agent v2, 6/6 business checks, the current runtime code hash, an idle session, and no persistent-file deletion**. This CI local-retrieval smoke path is separate from the IQ Hosted verification above.

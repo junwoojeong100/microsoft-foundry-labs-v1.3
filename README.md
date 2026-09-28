@@ -71,7 +71,7 @@ Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/`
 
 ## Portal and CLI summary videos
 
-**3:38 each, silent with captions.** These are edited recordings of real portal interactions and live CLI output—not simulated model answers.
+**R2 update: 3:52 each, silent with captions.** These are edited recordings of real portal interactions and live CLI output—not simulated model answers.
 
 | English | 한국어 |
 |---|---|

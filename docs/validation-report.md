@@ -67,3 +67,9 @@ Routines는 명시적 `action.input`을 사용한 stateless timer로 실행했�
 Search Basic, 저장소, 로그 등의 보관 비용은 계속 발생할 수 있습니다. 청구 조회에 게시된 행이 없더라도 총비용 0으로 해석하지 않습니다.
 
 이 보고서의 이전 실패는 새 성공으로 덮어쓴 것이 아닙니다. 최초 리전 용량 오류, Luna 프로젝트 API 오류, 원래 자기 근거 평가, 모순된 ASR, 잘못된 대화 전달, 절차 응답과 인용 계약의 실패를 별도로 보존했습니다. 본 보고서는 **검증한 실습 범위의 최신 결과**를 설명합니다.
+
+## 6. 코드와 CI 재현 확인
+
+로컬 검사 278개와 SDK 검사 124개, Ruff, 양언어 문서·명령·링크 검사를 통과했습니다. [GitHub 검사](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36362144665)와 [승인된 OIDC 릴리스](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36362528860)는 같은 코드 커밋 `5267633`에서 성공했습니다.
+
+릴리스 artifact를 내려받아 **CI agent v2의 영문 실제 응답 6개, 업무 검사 6/6, 현재 runtime code hash 일치, 세션 idle, persistent 파일 비삭제**를 확인했습니다. 이 CI의 로컬 검색 smoke 경로와 위의 별도 IQ Hosted 검증을 혼동하지 않습니다.

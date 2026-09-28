@@ -1,163 +1,179 @@
 1
 00:00:00,000 --> 00:00:06,000
-A concise lifecycle tour, edited from real portal and CLI captures.
-CLI panels recorded live subprocess output in a headless browser.
+Final Hosted v3 uses GPT-6 Sol and actual IQ.
+Real portal/CLI recordings; no reconstructed results.
 
 2
 00:00:06,000 --> 00:00:12,000
-Business checks passed; review native findings.
-Native quality warnings remain. Deployment approval is false.
+Final v3: SHARED KOREAN LAB 8/8; policy violations 0/8.
+A lab diagnostic, not a fresh holdout or production certification.
 
 3
 00:00:12,000 --> 00:00:20,000
-A new workshop group was created with lifecycle=retain.
-The Azure resources in this lab are retained, not deleted.
+Primary: GPT-6 Sol, deployed as workshop-compare.
+GPT-6 Luna is optional for account-API comparison. Existing deployments are retained.
 
 4
-00:00:20,000 --> 00:00:27,000
-Luna returned a real response through account-responses.
-This Korean CLI capture does not validate Luna prompt-agent support.
+00:00:20,000 --> 00:00:28,000
+A genuinely English prompt and Sol response in the Playground.
+Web tool removed; no external web call.
 
 5
-00:00:27,000 --> 00:00:31,000
-The real model Playground, using the workshop-chat deployment.
+00:00:28,000 --> 00:00:34,000
+Search succeeded after the user freed other groups.
+Basic / one replica / one partition / same retained Sweden Central lab group.
 
 6
-00:00:31,000 --> 00:00:39,000
-The English prompt and response are genuinely in English.
-This is a crop of the recording, not a reconstructed result.
+00:00:34,000 --> 00:00:40,000
+KO/EN recap: keyword, GA IQ, 3,072-dimension Hybrid, and IQ Chat verified.
+Search and IQ are no longer blocked.
 
 7
-00:00:39,000 --> 00:00:47,000
-This Router response selected grok-4-1-fast-reasoning.
-It is not evidence of an invisible fallback to Luna or Sol.
+00:00:40,000 --> 00:00:46,000
+Earlier indexing: six synthetic policies, retained without expiry.
+Not an agent invocation or real company rules.
 
 8
-00:00:47,000 --> 00:00:57,000
-Known limitation: Luna project-Responses returned 400/500 in this fresh project.
-Sol was explicitly selected for project and agent workflows.
+00:00:46,000 --> 00:00:56,000
+Real English GA IQ: separate prefix and ownership ledger.
+API 2026-04-01, original policy IDs, and searchIndex activity.
 
 9
-00:00:57,000 --> 00:01:02,000
-Six synthetic Hanbit policy files were indexed and retained.
-This capture verifies indexing, not an agent invocation.
+00:00:56,000 --> 00:01:02,000
+model_planning_verified and model_synthesis_verified are both true.
+This separate IQ Chat check used actual retrieved evidence.
 
 10
-00:01:02,000 --> 00:01:07,000
-Lodging: KRW 120,000 before July 2026; then KRW 150,000 per night.
-These are synthetic teaching policies, not a real company's rules.
+00:01:02,000 --> 00:01:08,000
+This separate IQ Chat capture uses gpt-5.6-luna for planning/synthesis.
+Primary Sol agents/Hosted are different; this is not fallback.
 
 11
-00:01:07,000 --> 00:01:13,000
-KRW 170,000 is KRW 20,000 above the current lodging limit.
-Explicit team-lead approval is required before booking.
+00:01:08,000 --> 00:01:16,000
+Earlier local Python function execution, separate from Hosted IQ.
+Above KRW 150,000/night needs prior team-lead approval. No booking or payment.
 
 12
-00:01:13,000 --> 00:01:19,000
-The English capture records tool calls and tool_execution_verified=true.
-Local Python calls Azure; it does not approve, book, or pay.
+00:01:16,000 --> 00:01:22,000
+Verified policy_search call and Sol answer.
+SDK credentials: ProjectManagedIdentity, not an API key.
 
 13
-00:01:19,000 --> 00:01:27,000
-Real Code Interpreter execution produced policy-summary.csv.
-Six rows and file hashes were checked; this is not overall answer-quality approval.
+00:01:22,000 --> 00:01:28,000
+Separate recap: remote Hosted Toolbox v1 was deployed;
+its response/package identity were verified. This clip is the Toolbox call.
 
 14
-00:01:27,000 --> 00:01:32,000
-Basic provisioning failed: swedencentral capacity was unavailable.
-EXIT 1 is the actual result, not a successful deployment.
+00:01:28,000 --> 00:01:34,000
+Recorded Toolbox v3 / Skill v1: load_skill → tool_search → call_tool.
+Sol returned needs_approval and original citations.
 
 15
-00:01:32,000 --> 00:01:37,000
-Standard S1 also returned ResourcesForSkuUnavailable.
-No substitute is presented as a successful Search service.
+00:01:34,000 --> 00:01:40,000
+Update recap: tightened Skill v2 uploaded; readback hash matched.
+Toolbox v4 pins v2. Old Skill v1 is retained.
 
 16
-00:01:37,000 --> 00:01:45,000
-S2 could not be provisioned: subscription quota was 0 out of 0.
-Search, IQ, Hybrid, and dependent Toolbox/OpenAPI work remain blocked.
+00:01:40,000 --> 00:01:46,000
+Hosted deployment v3; v2 in the command is the prompt key.
+Actual IQ plus GPT-6 Sol, not substituted local retrieval.
 
 17
-00:01:45,000 --> 00:01:54,000
-The real azd deployment succeeded in 2 minutes 12 seconds; waiting is cut.
-Editorial masks hide local command paths and deployment links.
+00:01:46,000 --> 00:01:52,000
+D03: KRW 170,000 hotel, KRW 150,000 limit; prior approval required.
+No approval, booking, or payment occurred.
 
 18
-00:01:54,000 --> 00:02:00,000
-The remote English Hosted v1 answered a real English policy prompt.
-It returned the KRW 150,000 limit and prior-approval requirement.
+00:01:52,000 --> 00:01:58,000
+v1/v2 recap: paired code/corpus, dev 6/6 and all three judges passed.
+No pass-rate improvement. The screen shows final v3.
 
 19
-00:02:00,000 --> 00:02:06,000
-The Hosted matrix uses LOCAL keyword retrieval, not IQ.
-Policy guidance is not actual approval, booking, or payment.
+00:01:58,000 --> 00:02:04,000
+Fixes: procedure-only limit_krw=null; allowed_citations made explicit.
+Mandatory sources kept; unrelated citations rejected; failures retained.
 
 20
-00:02:06,000 --> 00:02:13,000
-The original and downloaded Skill files match byte for byte.
-This local integrity check sends no new Azure request.
+00:02:04,000 --> 00:02:10,000
+policy_groundedness, policy_helpfulness, policy_compliance.
+Original source envelope in ground_truth; threshold 4, higher is better.
 
 21
-00:02:13,000 --> 00:02:23,000
-The English caller v1 delegated to target v1 and returned its real result.
-A2A 1.0 / JSONRPC was verified in configuration, not by packet capture.
+00:02:10,000 --> 00:02:16,000
+Agent: GPT-6 Sol. Judge: GPT-5.5 / workshop-optimizer.
+Different base models do not prove absence of bias.
 
 22
-00:02:23,000 --> 00:02:32,000
-A fresh request received actual managed-memory API search results.
-Not automatic extraction, a native memory tool, or a real-user authorization test.
+00:02:16,000 --> 00:02:22,000
+8 controls × 3 metrics: KO/EN each 24/24 correct decisions; KO shown.
+Prewritten fixtures, not generated agent responses.
 
 23
-00:02:32,000 --> 00:02:37,000
-Configuration recap: 11 default protections were copied to a PRIVATE policy.
-Microsoft.DefaultV2 and shared settings were not changed.
+00:02:22,000 --> 00:02:28,000
+Good/bad, justified abstention, pointless refusal, false approval, source swap.
+Correctly failing a bad control counts as correct.
 
 24
-00:02:37,000 --> 00:02:42,000
-The real D06 answer refused to claim approval by ignoring the policy.
-This was behavioral refusal; no platform filter intervention was observed.
+00:02:28,000 --> 00:02:35,000
+Native job completed: baseline 1.0, early stop, no new candidates.
+Old self-grounding failure retained. No promotion/improvement; export audit shown.
 
 25
-00:02:42,000 --> 00:02:48,000
-The real readback shows immutable_subject=true.
-CI trust is scoped to the exact immutable repository and environment.
+00:02:35,000 --> 00:02:42,000
+Audited: six references, three pinned judges, thresholds/directions and IDs.
+Proof: source echo + reason reference IDs + controls, not hidden judge requests.
 
 26
-00:02:48,000 --> 00:02:54,000
-The foundry-workshop environment and main-only policy are configured.
-Dispatch awaits the final push; this video does not claim a successful CI run.
+00:02:42,000 --> 00:02:49,000
+Final v3: KO dev 6/6 + LAB 8/8; all three policy metrics pass both.
+Traces 6+8 verified. English dev 6/6 independently passed.
 
 27
-00:02:54,000 --> 00:03:00,000
-Frozen deployed v1 and v2 each passed 12/12 business checks.
-Six cases times two models; no pass-rate improvement was demonstrated.
+00:02:49,000 --> 00:02:56,000
+Policy violations 0/8: SHARED KOREAN LAB only.
+Not a fresh holdout, separate English eight-case run, or managed Red Team ASR.
 
 28
-00:03:00,000 --> 00:03:06,000
-The SHARED KOREAN v2 holdout was used once: 8/8 business checks.
-All 32 traces were exported. This is not a separate English holdout run.
+00:02:56,000 --> 00:03:03,000
+New KO/EN stores: TTL=0; old one-hour stores untouched.
+KO item survived 4,063 seconds. Real managed-memory readback shown.
 
 29
-00:03:06,000 --> 00:03:12,000
-Native Relevance warnings remain on D05/H04.
-Business passes do not change deployment_approved=false.
+00:03:03,000 --> 00:03:10,000
+Recap: managed sessions still expire.
+Remote Toolbox files archived locally, hashes checked. No Azure deletion or user-auth proof.
 
 30
-00:03:12,000 --> 00:03:18,000
-Judge calibration distinguished 2/2 prewritten good/bad fixtures.
-That checks the judge, not general agent quality or production readiness.
+00:03:10,000 --> 00:03:18,000
+Real stateless timer fired at scheduled UTC time.
+AppGenAIContent matched original response ID, agent/version, project, trace, and answer.
 
 31
-00:03:18,000 --> 00:03:24,000
-This real list shows five top-level ARM resources in swedencentral.
-It does not enumerate all child agents and model deployments.
+00:03:18,000 --> 00:03:26,000
+After disable: execution Finished, phase cancelled; original completed response cross-verified.
+Failed user-created conversations remain failed. No replacement inference.
 
 32
-00:03:24,000 --> 00:03:30,000
-Editorial status recap: resources retained; unused compute stopped.
-Routines, continuous evaluation, and Insights scheduling are paused or disabled.
+00:03:26,000 --> 00:03:32,000
+Earlier English A2A: caller v1 → target v1, matching answer.
+A2A 1.0 / JSONRPC configuration verified—not packet capture.
 
 33
-00:03:30,000 --> 00:03:38,000
-Business checks passed; review native findings before a release decision.
-Search capacity and an actual CI run are still outstanding.
+00:03:32,000 --> 00:03:37,000
+Earlier readback: immutable_subject=true.
+Lab RBAC and exact repository/environment OIDC trust retained.
+
+34
+00:03:37,000 --> 00:03:42,000
+Prior OIDC CI passed; this is configuration evidence.
+New R2 commit/CI awaits publication; not yet claimed successful.
+
+35
+00:03:42,000 --> 00:03:47,000
+Same Sweden Central group, models, and data retained.
+Hosted now uses actual IQ. This is the R2 result.
+
+36
+00:03:47,000 --> 00:03:52,000
+Korean LAB 0/8 is not production certification or business authority.
+No actual approval, booking, or payment.
