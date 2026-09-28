@@ -4,6 +4,8 @@
 
 Take one step at a time: **run → inspect → next**. No separate write-up or submission is required. Keep the configuration and result files produced by the commands.
 
+**On a first run, follow the default route in one language.** Historical validation reports and collapsed recovery commands are not additional assignments. If you skipped a chapter, check the next chapter's **prerequisites** before proceeding.
+
 ## Read commands and placeholders
 
 | What you see | What to do |
@@ -16,6 +18,8 @@ Take one step at a time: **run → inspect → next**. No separate write-up or s
 | A JSON/YAML block or question text | Not a shell command. Save it to the specified file or paste it into Playground as instructed. |
 | Optional, alternative, or collapsed recovery section | Do not execute it in addition to every default command. Use it only when its condition applies. |
 
+Even a multiline command block is executed **one line at a time**. For ordinary commands, wait for the prompt to return and inspect the result before the next line. Long-running servers such as `serve` are the exception; their chapters explain terminals A and B.
+
 `--confirm-create`, `--confirm-cost`, and `--confirm-delete` explicitly acknowledge creation, charges, and deletion. **Model requests without these options can still incur charges.** Check the target and cost before running them.
 
 ## Read results and carry values into the next command
@@ -26,6 +30,7 @@ Open the printed path in your editor's file explorer. A created folder or a prin
 |---|---|
 | `.json` | Uses `"name": value`. Copy **the value, not the field name**, into the next command. |
 | `.jsonl` | One case per line. For six cases, check all six rows and their errors; do not convert the file into a JSON array. |
+| `.html` | Open the file in a browser to read tables and per-case results, rather than only viewing source in the editor. |
 | `true` / `false` / `null` | True / false / no value. `null` usage does not mean zero cost or no request. |
 | `manifest.json` | Records the run's model, instructions, data, and settings. Read the actual answer in its response file. |
 | `result_directory` or a saved path | Open that folder/file. Responses, evaluations, and ownership records are different artifacts. |
@@ -116,6 +121,15 @@ In 05, 08, and 10, leave **terminal A** running the server. Logs without a retur
 
 A completed command, an actual response, and a quality pass are different. Record failures/unsupported features honestly, then use the corresponding [troubleshooting entry](troubleshooting.md).
 
+### Can I continue after an error?
+
+| Actual state | Next action |
+|---|---|
+| `ERROR`, traceback, authentication/API errors, or missing responses | Stop dependent commands and consult that chapter and troubleshooting. A saved file is not a success. |
+| All six responses in 07, zero request errors, but failed business checks | Analyze the failures and continue the instruction comparison. Do not repeatedly recollect to erase low scores. |
+| A managed job is still running when the local wait times out | Follow that chapter's same-ID/label read/resume procedure; do not submit another job. |
+| Failed quality criteria or inconsistent managed verdicts | Preserve the analysis and hold final acceptance/holdout. Still perform [15's stopping and cleanup](15-capstone-cleanup.md#4-stop-running-work-first). |
+
 ## Before moving on
 
 | Stage | Gate |
@@ -147,6 +161,7 @@ Without Search, stop Search-dependent work in 06 and Toolbox/OpenAPI in 10. Work
 | Only File Search in 03 or Code Interpreter in 04 | Record that tool as not run. With a working primary model, local MAF/functions/MCP in 04 and workflows in 05 can proceed. |
 | Only Hybrid or IQ Chat in 06 | Keep keyword/IQ evidence separate. 07 uses local retrieval; 10 needs the original keyword index, not successful Hybrid/IQ Chat. |
 | Only remote Hosted deployment in 08 | If local preparation succeeds, retain sections 1–3's folder for connections. Continue with 09's Prompt Agent trace, 10's non-Hosted tools, and independently prepared features in 11. |
+| Only Memory or embeddings in 11 | Mark Memory not run. A2A can proceed with 08's preparation folder; Routines separately need 03's Prompt Agent and 09's logs. |
 | Optimizer unavailable or no candidates in 12 | Record the outcome; continue with bundled Hosted `v1`/`v2` comparison if its prerequisites exist. Do not change sources or criteria to force a candidate. |
 | Hosted guardrail exercise unavailable in 13 | Mark sections 2–4 not run. Section 5's managed verification can be checked separately with its Prompt Agent, judge, and logging prerequisites. |
 | No GitHub permissions in 14 | Continue to 15. Skipping 14 does not waive other quality gates. |

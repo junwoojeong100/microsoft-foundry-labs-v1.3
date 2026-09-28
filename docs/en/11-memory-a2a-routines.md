@@ -4,9 +4,17 @@
 
 **Outcome:** Create, use, and verify memory storage, delegation to another agent, and scheduled execution, then explicitly stop, retain, or remove what you own.
 
-**Prerequisites:** Project identity roles from 00, the embedding deployment from 06, and the azd Foundry extension from 08. Review creation and request costs for each feature.
+**Prerequisites:** All experiments need 00's project, model, and project-identity roles, plus the azd Foundry extension from 08. Review creation/request costs and check **the prerequisites for the experiment you are about to run**.
+
+| Experiment | What must already be ready |
+|---|---|
+| Memory in section 1 | [06's deployed and registered embedding model](06-search-iq.md#6-prepare-embeddings-and-hybrid-retrieval); successful Hybrid retrieval is separate |
+| A2A in section 2 | [08's `prepare-hosted` folder](08-hosted.md#3-prepare-an-isolated-folder-for-the-existing-project); a successful remote Hosted deployment is not required |
+| Routines in sections 3–4 | [03's inline Prompt Agent](03-knowledge.md#2-create-a-stored-prompt-agent) name/version and [09's logging connection/read permissions](09-operations.md#1-create-and-connect-logging-resources) |
 
 **These are three separate experiments:** storing/recalling an item, delegating to another agent, and running at a scheduled time. **Always disable the Routine at the end.** Record scheduled delivery separately from verification of its actual answer.
+
+Do not recreate all three because one is blocked. Mark only the unavailable experiment not run and check the prerequisites above before proceeding with another.
 
 ## 1. Memory: persist an item and recall it in a new request
 

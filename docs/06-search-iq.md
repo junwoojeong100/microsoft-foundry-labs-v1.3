@@ -10,7 +10,7 @@
 
 1. Azure 포털 **Create a resource → Azure AI Search**.
 2. 실습 구독과 **실습 전용 그룹**, 고유한 서비스 이름을 선택합니다.
-3. [리전 표](https://learn.microsoft.com/azure/search/search-region-support)에서 **Semantic ranker와 Agentic retrieval**을 모두 확인합니다.
+3. 서비스 리전을 **North Central US**로 선택하고, [리전 표](https://learn.microsoft.com/azure/search/search-region-support)에서 **Semantic ranker와 Agentic retrieval**을 모두 확인합니다. 리소스 그룹의 위치만 같다고 서비스 리전도 자동으로 같아지는 것은 아닙니다.
 4. **Basic**, Compute type **Default**, **replica 1개 / partition 1개**로 시작합니다. 상위 SKU나 Confidential compute가 이 실습의 기본은 아닙니다.
 5. 가격을 확인한 뒤 생성하고 완료 상태를 기다립니다.
 6. Overview의 **URL**, JSON View의 **전체 리소스 ID**, 실제 SKU·replica·partition과 지속 비용을 기록합니다.
@@ -97,13 +97,15 @@ python scripts/workshop.py answer --prompt v2 --retrieval hybrid --question "202
 
 실제 embedding 호출과 차원, text+vector 검색, 반환 근거를 확인합니다. 0 벡터를 넣거나 키워드 검색의 이름만 바꾸지 않습니다.
 
-**다음 단계 전에 원래 index로 복귀**합니다. 4절의 `outputs/learner-notes-ko/06-search.json`을 열고 **`configuration` 안의 `index` 값**을 아래 따옴표 안에 넣습니다. 방금 만든 hybrid 결과 파일의 index가 아닙니다.
+**성공 여부와 관계없이, Hybrid 실험을 끝내거나 중단할 때 원래 index로 복귀**합니다. 4절의 `outputs/learner-notes-ko/06-search.json`을 열고 **`configuration` 안의 `index` 값**을 아래 따옴표 안에 넣습니다. 방금 만든 hybrid 결과 파일의 index가 아닙니다.
 
 ```bash
 python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "06-search.json의-configuration.index-값"
 ```
 
 이 설정 변경은 hybrid index를 삭제하지 않습니다. 둘 다 소유권 ledger에 남으며 최종 정리 때 확인합니다.
+
+`python scripts/selfstudy.py status`의 `sdk_settings.AZURE_SEARCH_INDEX_NAME`이 원래 이름인지 확인한 뒤 다음으로 갑니다. Hybrid 실패를 해결하지 못했다면 그 결과는 미완료로 보관합니다.
 
 ## 7. 모델 기반 IQ Chat
 

@@ -59,7 +59,7 @@ python scripts/workshop.py evaluate --label candidate
 python scripts/workshop.py compare --baseline baseline --candidate candidate --variable prompt
 ```
 
-`comparison-vs-baseline.json`의 조건, 양쪽 지표, `changed_context_cases`를 확인합니다. 원시 응답·점수·hash를 편집하지 않습니다. 같은 점수면 “이번 6문항에서 개선이 입증되지 않음”도 정상입니다.
+`outputs/candidate/comparison-vs-baseline.json`의 조건, 양쪽 지표, `changed_context_cases`를 확인합니다. 원시 응답·점수·hash를 편집하지 않습니다. 같은 점수면 “이번 6문항에서 개선이 입증되지 않음”도 정상입니다.
 
 코드를 변경했다면 같은 코드로 새 baseline/candidate 쌍을 만들어야 합니다. 평가 기준을 낮추거나 오류 행을 빼서 개선을 만들지 않습니다.
 
@@ -139,6 +139,15 @@ python scripts/workshop.py compare --baseline model-sol --candidate model-luna -
 계정 API와 프로젝트 API 결과를 섞으면 모델 외 조건도 달라집니다. 수집 manifest의 `inference.api`와 실제 Endpoint까지 고정하세요. 이 선택적 비교가 기본 Sol 설정이나 judge를 자동으로 바꾸지는 않습니다. 품질·실패·토큰·지연을 함께 보고 유지 이유를 적습니다. Router나 다른 provider를 오류 처리 fallback으로 쓰지 않습니다.
 
 ## 완료 확인
+
+기본 label을 사용했다면 다음 파일을 열어 확인합니다. label을 바꿨다면 해당 폴더 이름도 바꿔 찾습니다.
+
+| 확인할 것 | 파일과 읽을 내용 |
+|---|---|
+| candidate의 업무 검사 | `outputs/candidate/business-evaluation.json`의 `total: 6`, `errors`, 사례별 `checks` |
+| judge가 기준대로 채점하는가 | `outputs/judge-calibration/policy-calibration-ko/calibration.json`의 24개 기대 판정 일치 여부 |
+| candidate의 실제 policy 점수 | `outputs/candidate/foundry-policy/cloud-evaluation-results.json`의 6행 × 3개 기준 |
+| 평가에 올바른 원문을 썼는가 | 같은 `foundry-policy/`의 `policy-reference-audit.json`. 참조 감사 `valid`와 점수 통과는 별개 |
 
 실제 6행, 전후 비교, judge 결과, 자신의 검토를 남깁니다. **holdout을 아직 열지 않고** candidate와 해당 설정을 보관합니다.
 

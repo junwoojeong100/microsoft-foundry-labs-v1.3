@@ -12,7 +12,7 @@
 
 1. In the Azure portal, open **Create a resource → Azure AI Search**.
 2. Choose the workshop subscription, **dedicated lab group**, and a unique service name.
-3. Verify both **Semantic ranker and Agentic retrieval** in the [regional support table](https://learn.microsoft.com/azure/search/search-region-support).
+3. Select **North Central US** for the service and verify both **Semantic ranker and Agentic retrieval** in the [regional support table](https://learn.microsoft.com/azure/search/search-region-support). A resource group's location does not automatically determine the service's region.
 4. Start with **Basic**, compute type **Default**, **one replica and one partition**. A higher SKU or Confidential compute is not the default for this lab.
 5. Review pricing, create, and wait for completion.
 6. Record the **URL** from Overview, the **full resource ID** from JSON View, and the actual SKU, replica count, partition count, and ongoing price.
@@ -105,13 +105,15 @@ python scripts/workshop.py --language en answer --prompt v2 --retrieval hybrid -
 
 Verify real embedding calls and dimensions, text-plus-vector retrieval, and returned evidence. Do not insert zero vectors or rename keyword search as Hybrid.
 
-**Restore the original index before continuing.** Open section 4's `outputs/learner-notes-en/06-search.json` and copy the **`index` value inside `configuration`** into the quotes below. Do not use the index from the new hybrid result:
+**Restore the original index whenever you finish or stop the Hybrid experiment, even after failure.** Open section 4's `outputs/learner-notes-en/06-search.json` and copy the **`index` value inside `configuration`** into the quotes below. Do not use the index from the new hybrid result:
 
 ```bash
 python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "INDEX-VALUE-FROM-06-SEARCH-JSON"
 ```
 
 This configuration change does not delete the hybrid index. Both remain in the ownership ledger for the final lifecycle review.
+
+Before continuing, check that `sdk_settings.AZURE_SEARCH_INDEX_NAME` in `python scripts/selfstudy.py status` contains the original name. Preserve an unresolved Hybrid failure as incomplete.
 
 ## 7. Model-based IQ Chat
 

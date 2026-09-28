@@ -22,7 +22,7 @@
 
 1. 받은 **실습 ZIP**을 압축 해제합니다. ZIP이 없다면 [이 저장소](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5)의 **Code → Download ZIP**을 사용합니다. 비공개 저장소라면 접근 권한이 필요합니다.
 2. 압축을 푼 폴더 중 **`README.md`, `scripts/`, `curriculum.json`이 함께 있는 폴더**를 찾습니다. 압축파일 안이나 그 상위 폴더에서 실행하지 않습니다.
-3. 편집기의 **File → Open Folder**로 그 폴더 전체를 엽니다. VS Code라면 **Terminal → New Terminal**로 명령 입력 창을 엽니다.
+3. 편집기가 없다면 [VS Code](https://code.visualstudio.com/download)를 먼저 설치합니다. **File → Open Folder**로 그 폴더 전체를 열고, **Terminal → New Terminal**로 명령 입력 창을 엽니다.
 
 가이드는 브라우저에서 읽거나, VS Code에서 Markdown 파일을 연 뒤 **Open Preview**(macOS `Cmd+Shift+V`, Windows/Linux `Ctrl+Shift+V`)로 읽습니다. 그래야 표·링크·접힌 선택 절이 보입니다. 명령은 미리보기 화면이 아니라 **터미널**에 붙여 넣습니다.
 
@@ -44,10 +44,12 @@ PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owne
 
 | 도구 | 설치와 확인 |
 |---|---|
-| Python **3.13** | [Python](https://www.python.org/downloads/) 설치. macOS/Linux `python3.13 --version`, Windows `py -3.13 --version` |
+| Python **3.13** | [Python](https://www.python.org/downloads/)에서 **3.13.x 버전**을 선택해 설치. macOS/Linux `python3.13 --version`, Windows `py -3.13 --version` |
 | Azure CLI | [공식 설치](https://learn.microsoft.com/cli/azure/install-azure-cli) 후 `az version` |
 | Azure Developer CLI | [azd 설치](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) 후 `azd version` |
 | 편집기 | VS Code 등으로 **v1.5 폴더 전체** 열기 |
+
+설치 후에는 편집기를 다시 열고 새 터미널에서 위 버전 명령을 확인합니다. `command not found` 또는 “인식되지 않는 명령”이 나오면 아직 다음 단계로 가지 않습니다. Python의 최신 버전을 설치하는 것과 **이 실습의 3.13 환경**을 준비하는 것은 다릅니다.
 
 **Windows의 실행 범위:** PowerShell로 준비할 수 있지만 **05장 5절의 로컬 SDK 중단·재개와 그 추가 실험은 macOS/Linux(승인된 WSL 포함)에서만 실행**합니다. 현재 실행기가 POSIX `fcntl` 잠금을 사용하므로 Windows Python에서는 동작하지 않습니다. 해당 절도 수행하려면 승인된 WSL/Linux의 별도 소스 사본에서 아래 Linux Python 설치와 doctor까지만 준비합니다. 그 로컬 실험에는 Azure 설정·로그인이 필요하지 않습니다. Windows의 `.venv`나 개인 Azure 상태를 복사하지 않습니다.
 
@@ -76,6 +78,7 @@ PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owne
 ```bash
 python3.13 -m venv .venv
 source .venv/bin/activate
+python --version
 python -m pip install -r requirements.txt
 python -m pip check
 ```
@@ -85,11 +88,14 @@ python -m pip check
 ```powershell
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+python --version
 python -m pip install -r requirements.txt
 python -m pip check
 ```
 
 PowerShell 활성화가 차단되면 시스템 정책을 낮추지 않습니다. 이후 모든 `python ...`을 `.\.venv\Scripts\python.exe ...`로 실행할 수 있습니다.
+
+**`python --version`이 `Python 3.13.x`인지 확인한 뒤 패키지를 설치합니다.** 다른 버전이면 설치를 계속하지 말고 위 가상 환경 생성·활성화부터 확인합니다.
 
 이 단계는 로컬 패키지만 설치합니다. **Azure 리소스 생성·로그인·구독 변경은 하지 않습니다.** 이미 개인 설정이나 실행 결과가 있는 폴더를 덮어쓰지 말고 보관하세요.
 
@@ -218,6 +224,8 @@ Azure 포털의 **실제 Foundry 리소스 → IAM → Role assignments**를 봅
 
 구독 Owner의 리소스 관리 권한이 데이터 작업 권한을 대신하지 않습니다. 앱 등록이나 client secret은 만들지 않습니다.
 
+역할을 방금 추가했다면 반영에 몇 분 걸릴 수 있습니다. 바로 403이 나도 새 프로젝트를 만들거나 같은 역할을 중복 추가하지 말고, 주체·범위를 확인한 뒤 잠시 기다려 같은 작업을 다시 확인합니다.
+
 ## 8. 실제 값으로 설정 자동 수집
 
 아래 값의 출처를 먼저 확인하고 따옴표 안 자리표시자를 바꿉니다. 따옴표는 남깁니다.
@@ -272,6 +280,8 @@ python scripts/workshop.py doctor --cloud
 **처음에는 장을 건너뛰지 않아도 됩니다.** MAF는 04장, 로그는 09장에서 준비합니다. 최초 요청부터 trace가 꼭 필요한 별도 검증에만 [09의 로그 연결](09-operations.md#1-로그-환경-생성연결)을 먼저 적용합니다. 연결 전 응답이 소급 수집되지는 않습니다.
 
 ## 9. 역할의 실제 명령이 필요할 때
+
+**7절에서 IAM의 두 역할을 확인했다면 이 절은 생략하고 완료 확인으로 갑니다.** CLI로 부여할 명령이 필요한 경우에만 사용합니다.
 
 Azure 포털에서 본인 사용자 Object ID를 확인하거나 다음 읽기 명령을 사용합니다.
 

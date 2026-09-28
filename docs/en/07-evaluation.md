@@ -61,7 +61,7 @@ python scripts/workshop.py --language en evaluate --label candidate-en
 python scripts/workshop.py --language en compare --baseline baseline-en --candidate candidate-en --variable prompt
 ```
 
-Inspect the conditions, both metrics, and `changed_context_cases` in `comparison-vs-baseline-en.json`. Do not edit raw responses, scores, or hashes. An unchanged score can legitimately mean “no improvement demonstrated on these six cases.”
+Inspect the conditions, both metrics, and `changed_context_cases` in `outputs/candidate-en/comparison-vs-baseline-en.json`. Do not edit raw responses, scores, or hashes. An unchanged score can legitimately mean “no improvement demonstrated on these six cases.”
 
 If you changed code, collect a new baseline/candidate pair with that same code. Do not lower the rubric or remove error rows to manufacture improvement.
 
@@ -145,6 +145,15 @@ python scripts/workshop.py --language en compare --baseline model-sol-en --candi
 Mixing account and project API results changes more than the model. Fix `inference.api`, the actual endpoint, reasoning, and output limits. This optional comparison does not automatically change the configured Sol target or judge. Review quality, errors, tokens, and latency together. Do not use Router or another provider as an error fallback.
 
 ## Completion check
+
+For the default labels, open these files. If you changed labels, use those folder names instead.
+
+| Check | File and what to read |
+|---|---|
+| Candidate business checks | `total: 6`, `errors`, and per-case `checks` in `outputs/candidate-en/business-evaluation.json` |
+| Whether the judge follows the rubric | Agreement with 24 expected judgments in `outputs/judge-calibration/policy-calibration-en/calibration.json` |
+| Actual candidate policy scores | Six rows × three criteria in `outputs/candidate-en/foundry-policy/cloud-evaluation-results.json` |
+| Whether evaluation used the right sources | `policy-reference-audit.json` in the same `foundry-policy/` folder. A `valid` reference audit is separate from passing scores |
 
 Keep six real rows, a before/after comparison, judge results, and your own review. **Do not open holdout yet.** Preserve the candidate and its exact configuration.
 

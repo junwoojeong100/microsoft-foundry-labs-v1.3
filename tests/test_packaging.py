@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 from foundry_workshop.cli import main, parser
 from foundry_workshop.contracts import load_cases, read_json
+from foundry_workshop.experiments import offline_demo
 from foundry_workshop.profiles import RuntimeProfile, packaged_profile
 from scripts.workshop import command_arguments
 
@@ -92,18 +93,34 @@ class PackagingTests(unittest.TestCase):
 
 
 class GuideFlowTests(unittest.TestCase):
+    @staticmethod
+    def workshop_commands(relative):
+        for line in (ROOT / relative).read_text(encoding="utf-8").splitlines():
+            if not line.startswith("python scripts/workshop.py "):
+                continue
+            entry, arguments, _ = command_arguments(shlex.split(line)[2:])
+            if entry == "scripts/workshop.py":
+                yield parser().parse_args(arguments), arguments
+
+    def test_bilingual_readmes_introduce_the_ignite_predecessor(self):
+        for relative, date in (
+            ("README.ko.md", "2025년 11월"),
+            ("README.md", "November 2025"),
+        ):
+            introduction = (ROOT / relative).read_text(encoding="utf-8").split("## ", 1)[0]
+            with self.subTest(readme=relative):
+                self.assertIn(
+                    "https://github.com/junwoojeong100/microsoft-foundry-labs)",
+                    introduction,
+                )
+                self.assertIn("Microsoft Ignite 2025", introduction)
+                self.assertIn(date, introduction)
+
     def test_documented_first_offline_commands_work_without_azure_configuration(self):
         for language, edition in (("ko", ""), ("en", "en/")):
             commands = []
             for chapter in ("00-setup.md", "06-search-iq.md"):
-                text = (ROOT / "docs" / edition / chapter).read_text(encoding="utf-8")
-                for line in text.splitlines():
-                    if not line.startswith("python scripts/workshop.py "):
-                        continue
-                    entry, arguments, _ = command_arguments(shlex.split(line)[2:])
-                    if entry != "scripts/workshop.py":
-                        continue
-                    args = parser().parse_args(arguments)
+                for args, arguments in self.workshop_commands(f"docs/{edition}{chapter}"):
                     if (
                         args.command == "doctor" and not args.cloud
                         or args.command == "retrieve" and args.provider == "local"
@@ -136,6 +153,100 @@ class GuideFlowTests(unittest.TestCase):
                         self.assertIn("TRAVEL-2026", result["source_ids"])
                         self.assertEqual(read_json(root / args.output), result)
                 cloud.assert_not_called()
+
+    def test_documented_comparison_reads_saved_results_and_reports_quality_failures(self):
+        for language, edition in (("ko", ""), ("en", "en/")):
+            relative = f"docs/{edition}07-evaluation.md"
+            guide = (ROOT / relative).read_text(encoding="utf-8")
+            commands = list(self.workshop_commands(relative))
+            runs = {
+                args.label: args
+                for args, _ in commands
+                if args.command == "collect" and args.api == "project-responses"
+            }
+            with (
+                self.subTest(language=language),
+                workspace() as root,
+                patch("foundry_workshop.cli.cloud_command") as cloud,
+            ):
+                self.assertEqual(len(runs), 2)
+                for args in runs.values():
+                    offline_demo(root, args.label, args.prompt, language=language)
+                evaluated = []
+                compared = []
+                for args, arguments in commands:
+                    if args.command == "evaluate" and args.label in runs:
+                        evaluated.append(args.label)
+                    elif (
+                        args.command == "compare"
+                        and args.baseline in runs
+                        and args.candidate in runs
+                    ):
+                        compared.append(args.candidate)
+                    else:
+                        continue
+                    stdout, stderr = io.StringIO(), io.StringIO()
+                    with redirect_stdout(stdout), redirect_stderr(stderr):
+                        status = main(root, arguments)
+                    result = json.loads(stdout.getvalue())
+                    self.assertNotEqual(result["mode"], "live")
+                    if args.command == "evaluate":
+                        self.assertEqual(result["total"], 6)
+                        self.assertEqual(result["errors"], 0)
+                        self.assertEqual(len(result["checks"]), 6)
+                        expected_pass = runs[args.label].prompt == "v2"
+                        self.assertEqual(result["business_gate_passed"], expected_pass)
+                        self.assertEqual(status, 0 if expected_pass else 1)
+                        output = root / "outputs" / args.label / "business-evaluation.json"
+                        self.assertIn(f"outputs/{args.label}/", guide)
+                        self.assertIn(output.name, guide)
+                    else:
+                        self.assertEqual(status, 0, stderr.getvalue())
+                        self.assertFalse(result["baseline_metrics"]["business_gate_passed"])
+                        self.assertTrue(result["candidate_metrics"]["business_gate_passed"])
+                        output = (
+                            root / "outputs" / args.candidate
+                            / f"comparison-vs-{args.baseline}.json"
+                        )
+                        self.assertIn(output.relative_to(root).as_posix(), guide)
+                    self.assertEqual(read_json(output), result)
+                self.assertEqual(set(evaluated), set(runs))
+                self.assertEqual(len(compared), 1)
+                cloud.assert_not_called()
+
+    def test_documented_final_targets_match_their_dev_collection_profiles(self):
+        for language, edition, target_count in (("ko", "", 2), ("en", "en/", 3)):
+            dev_runs = {}
+            for chapter in ("07-evaluation.md", "12-improvement.md"):
+                for args, _ in self.workshop_commands(f"docs/{edition}{chapter}"):
+                    if args.command == "collect" or (
+                        args.command == "benchmark" and args.benchmark_action == "collect"
+                    ):
+                        self.assertEqual(args.split, "dev")
+                        self.assertFalse(args.unlock_holdout)
+                        dev_runs[args.command, args.label] = args
+            final_runs = [
+                args
+                for args, _ in self.workshop_commands(f"docs/{edition}15-capstone-cleanup.md")
+                if args.command == "collect"
+                or args.command == "benchmark" and args.benchmark_action == "collect"
+            ]
+            with self.subTest(language=language):
+                self.assertEqual(len(final_runs), target_count)
+                for args in final_runs:
+                    candidate = dev_runs[args.command, args.candidate]
+                    self.assertEqual(args.split, "holdout")
+                    self.assertTrue(args.unlock_holdout)
+                    self.assertNotIn((args.command, args.label), dev_runs)
+                    self.assertEqual(args.language, language)
+                    fields = ("language", "prompt", "retrieval", "api")
+                    if args.command == "benchmark":
+                        fields += ("kind", "pattern", "protocol", "concurrency")
+                    for field in fields:
+                        self.assertEqual(
+                            getattr(args, field), getattr(candidate, field),
+                            f"{args.label}: mismatched {field}",
+                        )
 
     def test_guardrail_questions_match_dev_cases_and_pin_independent_sessions(self):
         for language, edition in (("ko", ""), ("en", "en/")):

@@ -2,7 +2,7 @@
 
 **완료 목표:** 실습 전용 guardrail과 관리형 AI red teaming을 실제로 확인하고, 호출 주체와 소유 자산을 설명합니다.
 
-**시작 조건:** 본인 프로젝트·도구·실제 Hosted 버전. 공유 정책·다른 사용자의 역할·업무 데이터를 변경하지 않습니다.
+**시작 조건:** 2~4절은 **08의 기본 Responses Hosted 버전**, 5절은 **별도 영어 Prompt Agent·07의 judge·09의 정상 로그 연결**을 사용합니다. 12의 고정 matrix를 정책 실험용으로 바꾸지 않습니다. 공유 정책·다른 사용자의 역할·업무 데이터도 변경하지 않습니다.
 
 **참고 검증은 판정 불일치로 최종 인수 보류 상태입니다.** 과거 성공 수치를 본인의 통과 기준으로 복사하지 말고 아래에서 새 실행의 전체 결과를 확인합니다. [현재 결과와 한계](validation-report.md).
 
@@ -151,10 +151,17 @@ Taxonomy 갱신 시에는 typed model 직렬화가 read-only `id`를 빠뜨려 t
 
 ### 포함된 CLI로 같은 절차 실행
 
-03에서 만든 **영어·도구 없는 Prompt Agent의 정확한 버전**을 사용합니다. 아직 없을 때만 다음으로 만들고 반환 이름/버전을 기록합니다. 기존 agent를 다시 생성하지 않습니다.
+**한국어 기본 경로에서는 03의 agent도 한국어이므로, 이 절에서 별도의 영어·도구 없는 Prompt Agent를 하나 만듭니다.** 아래 `--language en`은 이 명령의 대상만 정하며 이후 한국어 실습을 영어로 전환하는 설정이 아닙니다.
+
+이미 영어판 03을 수행했다면 `outputs/agents/`의 **그 영어 agent 이름·정확한 버전**을 재사용하고 다음 생성 명령만 생략합니다. 모델 배포 별칭이나 File Search agent를 대신 넣지 않습니다.
 
 ```bash
 python scripts/workshop.py --language en prompt-agent create --confirm-create --output outputs/managed-target-en.json
+```
+
+생성 결과 또는 기존 소유 기록에서 영어 agent 이름·버전을 확인한 뒤, 로컬 실행 계획을 읽습니다.
+
+```bash
 python scripts/managed_redteam.py plan
 ```
 
@@ -175,18 +182,19 @@ python scripts/managed_redteam.py audit --directory outputs/managed-task-adheren
 
 감사의 종료 코드 0은 **증거/판정 일관성** 확인이지 모든 공격에 대한 안전 인증이 아닙니다. 실제 pass/fail·반환 행 수·범위를 함께 읽습니다. 불일치는 종료 코드 1, 실행/형식 오류는 2로 표시하며 원래 flag를 바꾸지 않습니다. Prohibited Actions 비교를 의도적으로 포함할 때만 `prepare`에 `--include-prohibited-comparison`을 추가합니다.
 
-첫 native 시도의 0행 실패는 [09의 App Insights metadata/credential 문제](09-operations.md#첫-cli-연결과-native-sdk의-실제-요구-조건)로 보존합니다. 이 수정이 실행을 가능하게 했다는 것과 과거 Sweden 오류의 원인이 모두 밝혀졌다는 것은 다릅니다.
+0행 실패와 `ResourceId`/credential 오류가 실제로 발생했다면 [09의 App Insights 연결 확인](09-operations.md#첫-cli-연결과-native-sdk의-실제-요구-조건)으로 돌아갑니다. 과거 실패를 별도로 재현할 필요는 없습니다.
 
-1. 실제 NC 프로젝트·Sol 배포·영어 target agent 버전·도구 정의·역할·할당량을 확인합니다.
-2. 관리형 **Red teaming** UI/SDK 경로를 사용하고, 위 언어·single-turn·taxonomy/SDK 계약을 점검합니다.
-3. 합성 정책의 금지된 **도구/동작** 범위와 입력·전략·비용을 제한합니다. 실제 예약·결제·승인 도구를 연결하지 않습니다.
-4. Evaluator 이름/버전·schema·방향·기준점·필수 초기화 값과 실제 job/run ID를 기록합니다.
-5. 제출 seed/objective 수, `num_turns`, 실제 요청 수, 반환/채점 행 수를 구분하고 모든 원점수·ASR/`attack_success`·설명을 읽습니다.
-6. 누락·불일치는 그대로 보관합니다. 숫자·방향·분모를 바꿔 완료로 만들지 않습니다.
+**이제 저장된 결과를 읽습니다. 포털에서 두 번째 job을 제출하는 단계가 아닙니다.**
+
+| 같은 결과 폴더에서 열 파일 | 확인할 것 |
+|---|---|
+| `run.json` | 실제 job/run과 완료 상태. `num_turns`를 문항 수로 해석하지 않음 |
+| `output-items.json` | 반환된 전체 행, evaluator 이름·버전, 원점수·`passed`·`attack_success`·설명 |
+| `native-audit.json` | 전체 행 감사와 판정 일관성. 종료 코드 0만으로 모든 행이 품질 통과했다고 판단하지 않음 |
+
+실제 예약·결제·승인 도구는 연결하지 않습니다. 서비스가 가린 입력을 추측하거나 누락·불일치 행을 제거하지 않습니다.
 
 기능·권한·할당량이 막히면 **관리형 검증은 차단/미실행**으로 남깁니다. 12의 사용자 지정 `policy-lab` 8문항은 **보완 진단**이지 대체물, 관리형 실행 증거, 또는 관리형 오류 수정의 증거가 아닙니다.
-
-**역사적 Sweden 기록:** 이전 숫자·ASR·설명을 보존하고 `num_turns`를 seed 수로 해석하지 않습니다. 공식 리전 문서의 불일치는 남아 있으며 Sweden이 입증된 원인이라는 이전 가정은 유지하지 않습니다. **NC에서도 같은 Prohibited Actions polarity 문제가 재현**됐습니다. Custom 8/8·리전 이전·v1 pinning 어느 것도 native 문제 해결 증거가 아닙니다.
 
 ## 6. 내 실습의 Control Plane 자산 목록
 
@@ -196,6 +204,6 @@ python scripts/managed_redteam.py audit --directory outputs/managed-task-adheren
 
 ## 완료 확인
 
-**본인의 새 run**에서 반환된 모든 행·오류·판정 일관성을 확인합니다. 이번 재실행의 6행·5 pass/1 fail은 이전 5/5와 다른 결과입니다. Backend·버전·원점수·입력 가림·미노출 response ID와 한계를 기록하고, 불일치가 있으면 최종 인수를 보류합니다. 과거 job을 합쳐 전체 native 통과로 만들지 않습니다.
+**본인의 새 run**에서 반환된 모든 행·오류·판정 일관성을 확인합니다. 예상 행 수를 보고서의 5/5나 6행으로 맞추지 않습니다. Backend·버전·원점수·입력 가림·미노출 response ID와 한계를 기록하고, 불일치가 있으면 최종 인수를 보류합니다. 과거 job을 합쳐 전체 native 통과로 만들지 않습니다.
 
 **다음 → [14. GitHub OIDC CI/CD 실습](14-additional-permissions.md)**. 필요한 GitHub 저장소 권한이 없으면 CI를 미실행으로 기록하고 [15의 마무리](15-capstone-cleanup.md)로 갑니다. 관리형 감사가 실패했다면 holdout은 열지 않지만 중지·비용 정리는 수행합니다.

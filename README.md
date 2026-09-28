@@ -2,6 +2,8 @@
 
 **English** | [한국어](README.ko.md)
 
+This repository is **the v1.5 successor to [microsoft-foundry-labs](https://github.com/junwoojeong100/microsoft-foundry-labs), which was created in November 2025 just after Microsoft Ignite 2025**. Start here without first installing or completing the previous version.
+
 **Build an AI assistant in your own Azure environment, connect evidence and tools, evaluate it, and deploy it. All workshop code and synthetic data are included.**
 
 You need a **Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role**. Work at your own pace; there is no course time limit. A workshop ZIP does not require a GitHub account or Git.
@@ -13,7 +15,7 @@ Already started? → [Resume from saved results](docs/en/checkpoints.md#resume-o
 ## Start in this order
 
 1. **Complete 00: download the files, install tools, and configure Azure.** Start there even if you are new to terminals.
-2. **Follow one language edition through 01-15.** Run each numbered step, inspect its result, then continue. Read sections marked optional, troubleshooting, or existing-environment only when they apply.
+2. **Follow one language edition through 01-15.** Check each chapter's **prerequisites**, run each numbered step, inspect its result, then continue. Read sections marked optional, troubleshooting, or existing-environment only when they apply.
 3. **Inspect command output and saved results; no separate write-up is required.** Use [resume instructions and checkpoints](docs/en/checkpoints.md) next time. Even if you finish early, follow [15's stopping and cleanup steps](docs/en/15-capstone-cleanup.md#4-stop-running-work-first).
 
 Luna and Router comparisons in 02 are optional. Chapter 14 requires GitHub repository permissions. If another feature is unavailable, **record it as blocked/not run** and continue only where prerequisites are met. This is not an entirely free workshop or a guarantee that every subscription can run every feature.

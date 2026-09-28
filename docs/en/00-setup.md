@@ -24,7 +24,7 @@ Names in this guide are examples. Do not copy resource groups or IDs from valida
 
 1. Extract the **workshop ZIP** you received. Otherwise, open [this repository](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5) and select **Code → Download ZIP**. A private repository requires access.
 2. Find the extracted folder containing **`README.md`, `scripts/`, and `curriculum.json` together**. Do not work inside the ZIP or its parent folder.
-3. Open that entire folder using your editor's **File → Open Folder**. In VS Code, choose **Terminal → New Terminal** to enter commands.
+3. If you do not have an editor, install [VS Code](https://code.visualstudio.com/download) first. Use **File → Open Folder** to open that entire folder, then **Terminal → New Terminal** to enter commands.
 
 Read the guide in your browser or open the Markdown file in VS Code and select **Open Preview** (`Cmd+Shift+V` on macOS, `Ctrl+Shift+V` on Windows/Linux). This renders tables, links, and collapsed optional sections. Paste commands into the **terminal**, not the preview.
 
@@ -46,10 +46,12 @@ Use an approved development environment. Azure Owner does not override software-
 
 | Tool | Install and check |
 |---|---|
-| Python **3.13** | Install [Python](https://www.python.org/downloads/). Check `python3.13 --version` on macOS/Linux or `py -3.13 --version` on Windows. |
+| Python **3.13** | Select a **3.13.x release** from [Python downloads](https://www.python.org/downloads/). Check `python3.13 --version` on macOS/Linux or `py -3.13 --version` on Windows. |
 | Azure CLI | Follow the [official installation guide](https://learn.microsoft.com/cli/azure/install-azure-cli), then run `az version`. |
 | Azure Developer CLI | [Install azd](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd), then run `azd version`. |
 | Editor | Open the **entire v1.5 folder** in VS Code or another editor. |
+
+After installation, reopen your editor and check these version commands in a new terminal. Stop if a command is not found or not recognized. Installing the newest Python release is not the same as preparing **this lab's Python 3.13 environment**.
 
 **Windows execution boundary:** you can prepare the lab in PowerShell, but **05 section 5's local SDK pause/resume and its recovery extension require macOS/Linux, including approved WSL**. The runner uses POSIX `fcntl` locks and does not run in Windows Python. To do that section, use a separate source copy in approved WSL/Linux and complete only the Linux Python setup and doctor below; that local experiment needs no Azure configuration or login. Do not copy a Windows `.venv` or private Azure state.
 
@@ -78,6 +80,7 @@ Do not overwrite a `.venv` created with another Python version or existing perso
 ```bash
 python3.13 -m venv .venv
 source .venv/bin/activate
+python --version
 python -m pip install -r requirements.txt
 python -m pip check
 ```
@@ -87,11 +90,14 @@ python -m pip check
 ```powershell
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+python --version
 python -m pip install -r requirements.txt
 python -m pip check
 ```
 
 If PowerShell blocks activation, do not weaken system policy. Replace subsequent `python ...` commands with `.\.venv\Scripts\python.exe ...`.
+
+**Verify that `python --version` reports `Python 3.13.x` before installing packages.** Otherwise, stop and check virtual-environment creation and activation above.
 
 This installs local packages only. **It does not create Azure resources, sign you in, or change subscriptions.** Preserve folders that already contain personal configuration or results.
 
@@ -222,6 +228,8 @@ The managed identity is not your user account or a project-name string. Identify
 
 Subscription Owner's resource-management permission does not replace data-plane permission. Do not create an app registration or client secret for this step.
 
+New role assignments can take a few minutes to propagate. An immediate 403 is not a reason to create another project or duplicate an assignment: verify the identity and scope, wait briefly, then check the same operation again.
+
 ## 8. Collect configuration from actual values
 
 Check these sources, then replace the placeholders inside quotes. Keep the quotes:
@@ -276,6 +284,8 @@ Check the subscription, tenant, and deployment. `doctor --cloud` checks authenti
 **A first-time learner does not need to jump ahead.** MAF is introduced in 04 and logging in 09. Only for a separate investigation requiring traces from its first request, prepare [09's logging connection](09-operations.md#1-create-and-connect-logging-resources) early. Earlier responses are not collected retroactively.
 
 ## 9. Generate role-assignment commands when needed
+
+**If section 7's two IAM assignments are already verified, skip to the completion check.** Use this section only when you need CLI assignment commands.
 
 Find your user Object ID in the Azure portal or use:
 

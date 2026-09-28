@@ -31,6 +31,8 @@ In the Azure portal, create a **user-assigned managed identity** in the lab grou
 
 Use each resource's **IAM → Add role assignment** and select your CI identity. Add only missing roles, not subscription Owner or a client secret. The deployed **Hosted runtime's Foundry User** is a separate assignment, applied at project scope by the later explicitly approved workflow step.
 
+**Why CI can make that assignment:** [Foundry Project Manager conditionally permits assigning Foundry User](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/ai-machine-learning#foundry-project-manager), not arbitrary roles. The CI identity does not need Owner for this lab.
+
 ## 3. Register Environment variables before execution
 
 Under GitHub **Settings → Environments → foundry-workshop → Environment variables → Add variable**, register each value as a **Variable**. The workflows read `vars.*`; putting a value only in a Secret will not satisfy them.

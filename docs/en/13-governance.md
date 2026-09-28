@@ -4,7 +4,7 @@
 
 **Outcome:** Verify lab-owned guardrails and managed AI red teaming, and explain caller identities and owned resources.
 
-**Prerequisites:** Your own project, tools, and actual Hosted version. Do not change shared policies, another user's roles, or business data.
+**Prerequisites:** Sections 2–4 use **08's introductory Responses Hosted version**; section 5 uses **a separate English Prompt Agent, 07's judge, and 09's working logging connection**. Do not repurpose 12's frozen matrix for policy experiments or change shared policies, another user's roles, or business data.
 
 **Reference validation holds final acceptance because of inconsistent verdicts.** Do not copy historical pass counts as your own success; inspect your new run's complete results below. See [current results and limits](validation-report.md).
 
@@ -153,10 +153,17 @@ The service redacted the inputs and did not expose original response IDs. Do not
 
 ### Run the included CLI workflow
 
-Use the **exact version of the English, tool-free Prompt Agent** from 03. Only if it does not exist, create it and record the returned name/version; do not recreate an existing agent.
+For the English course, reuse **03's English, tool-free Prompt Agent name and exact version** from `outputs/agents/` and skip the creation command below. Do not substitute a model deployment alias or the File Search agent.
+
+**Create an English target only if it does not already exist**, including when arriving from the Korean course. `--language en` applies to this command; it does not switch subsequent Korean commands to English.
 
 ```bash
 python scripts/workshop.py --language en prompt-agent create --confirm-create --output outputs/managed-target-en.json
+```
+
+Check the English name/version in the creation result or existing ownership record, then read the local execution plan:
+
+```bash
 python scripts/managed_redteam.py plan
 ```
 
@@ -177,18 +184,19 @@ python scripts/managed_redteam.py audit --directory outputs/managed-task-adheren
 
 Audit exit 0 confirms **evidence/flag consistency**, not safety against every attack. Read actual pass/fail counts and scope too. Inconsistent flags return 1; execution/format errors return 2. Provider flags remain unchanged. Add `--include-prohibited-comparison` to `prepare` only when intentionally requesting that comparison.
 
-Preserve the initial zero-row native failure caused by [09's App Insights metadata/credential issue](09-operations.md#first-cli-connection-and-actual-native-sdk-requirements). Fixing that execution dependency does not establish the causes of every earlier Sweden failure.
+If your run actually fails with zero rows and a `ResourceId`/credential error, return to [09's App Insights connection checks](09-operations.md#first-cli-connection-and-actual-native-sdk-requirements). You do not need to reproduce a historical failure.
 
-1. Verify the actual NC project, Sol deployment, English target agent version, tool definitions, roles, and quota.
-2. Use the managed **Red teaming** UI/SDK path and check the language, single-turn, taxonomy, and SDK contracts above.
-3. Bound synthetic prohibited **tool/action** behavior, inputs, strategies, and cost. Do not connect real booking, payment, or approval tools.
-4. Record evaluator names/versions, schemas, directions, thresholds, required initialization values, and actual job/run IDs.
-5. Distinguish seed/objective count, `num_turns`, actual request count, and returned/scored rows; read every raw score, ASR/`attack_success`, and explanation.
-6. Preserve omissions and contradictions. Do not change values, direction, or denominators to manufacture completion.
+**Read the saved results now; this is not an instruction to submit a second job in the portal.**
+
+| File in the same result folder | What to check |
+|---|---|
+| `run.json` | Actual job/run and completion status; `num_turns` is not a case count |
+| `output-items.json` | Every returned row, evaluator name/version, raw scores, `passed`, `attack_success`, and explanations |
+| `native-audit.json` | Complete-row audit and flag consistency; exit 0 alone does not mean every row passed quality criteria |
+
+Do not connect real booking, payment, or approval tools, reconstruct redacted inputs, or remove missing/inconsistent rows.
 
 If service access, permissions, or quota block execution, the **managed verification remains blocked/not run**. The eight custom `policy-lab` cases in 12 are **complementary diagnostics**, not a replacement, proof of managed-service execution, or a fix for managed-service errors.
-
-**Historical Sweden evidence:** retain its original counts, ASR, and reasons without treating `num_turns` as a seed count. Official regional descriptions still conflict; the earlier assumption that Sweden was a proven cause must not stand. **The same Prohibited Actions polarity issue reproduced in NC.** Custom 8/8, relocation, and v1 pinning are not native-fix evidence.
 
 ## 6. Inventory your lab's Control Plane resources
 
@@ -198,6 +206,6 @@ Separate read-only observations, the roles/policies you added, and resources you
 
 ## Completion check
 
-Inspect **every row, error, and flag-consistency check in your own new run**. This rerun's six rows/five pass/one fail are not the previous 5/5. Preserve backend, version, raw scores, redacted inputs, unavailable response IDs, and limitations; hold final acceptance when flags are inconsistent. Do not combine historical jobs into an all-native pass.
+Inspect **every row, error, and flag-consistency check in your own new run**. Do not force its expected row count to match a report's historical 5/5 or six-row result. Preserve backend, version, raw scores, redacted inputs, unavailable response IDs, and limitations; hold final acceptance when flags are inconsistent. Do not combine historical jobs into an all-native pass.
 
 **Next → [14. GitHub OIDC CI/CD lab](14-additional-permissions.md).** Without repository permissions, record CI as not run and continue to [15](15-capstone-cleanup.md). A failed managed audit keeps holdout locked; it does not postpone stopping resources and reviewing costs.

@@ -4,7 +4,7 @@
 
 **Outcome:** Evaluate whole conversations and compare improvement candidates and actual Hosted versions using evidence.
 
-**Prerequisites:** Judge/dev results from 07, Hosted preparation from 08, the same-account OpenAI endpoint, and logging from 09. The IQ matrix also needs working Search/IQ from 06; the explicitly selected local matrix does not. Check costs for each feature. **Do not open holdout in this chapter.**
+**Prerequisites:** Judge/dev results and policy calibration from 07, Hosted preparation from 08, the same-account OpenAI endpoint, and logging from 09. The IQ matrix also needs working Search/IQ from 06; the explicitly selected local matrix does not. Check costs for each feature. **Do not open holdout in this chapter.**
 
 **Order:** conversations (1) → Optimizer (2–3) → actual Hosted comparison (4–9) → separate diagnostics (11). Section 10 is a local-retrieval alternative, not an additional required matrix. Record zero candidates or no improvement honestly. The Hosted comparison uses the bundled `v1`/`v2`, so do not wait for or automatically apply an Optimizer candidate.
 
@@ -217,6 +217,8 @@ Check collection completeness and errors before proceeding. This single Sol targ
 
 `trace-plan` generates KQL; `monitor` actually queries connected Application Insights. A trace ID in a response is not proof of verified trace export.
 
+Open **`outputs/benchmarks/wf-baseline-en/report.html` in a browser** for the business checks and failed cases. In that folder's `business-evaluation.json`, also inspect `expected_rows: 6`, `actual_rows: 6`, `errors`, and `models.primary.checks`. The HTML's business checks, the `foundry-policy/` judge results, and actual traces are separate evidence.
+
 ## 7. Change only instructions for the candidate
 
 ```bash
@@ -250,13 +252,22 @@ python scripts/workshop.py --language en benchmark monitor --label wf-candidate-
 
 Keep model map, code, language, data, retrieval, concurrency, judge, reasoning, and output cap fixed. If retrieved evidence changes, do not attribute all improvement to instructions alone.
 
+The candidate report is **`outputs/benchmarks/wf-candidate-en/report.html`**. Do not confuse it with SDK results under `outputs/candidate-en/` or with the baseline report.
+
 ## 8. Calibrate the judge and record regressions
 
-**If 07 already completed matching calibration, reuse it; do not rerun this command.** Check language, judge, and criteria/catalog hashes. Run the block only if the label is absent; changed conditions require a new label and matching evaluation settings.
+**If 07 already completed matching calibration, reuse it; do not rerun this command.** Open `outputs/judge-calibration/policy-calibration-en/calibration.json` and that folder's manifest/catalog to check language, judge, and criteria/catalog hashes.
+
+<details>
+<summary>Only if calibration is missing or its conditions changed</summary>
+
+Run this block only if the label is absent. Changed conditions require a new label and matching evaluation settings; use that label in later acceptance commands too.
 
 ```bash
 python scripts/workshop.py --language en calibrate-judge --policy --label policy-calibration-en --confirm-cost --timeout 900
 ```
+
+</details>
 
 Read **24 expected judgments across eight controls and three criteria**. Negative controls should score low; 24 high scores are not the goal. This small calibration does not itself pass dev or matrix quality.
 
@@ -267,6 +278,8 @@ python scripts/workshop.py --language en benchmark regression --label wf-baselin
 ```
 
 The reviewer string is not an Entra-verified business approver. Creating a regression file does not automatically apply it to future collection; later dev runs must explicitly include `--regressions reviewed-failure-en`.
+
+If every dev business check passed, skip the `regression` command above. Do not invent a failure or row ID just to execute an example.
 
 ## 9. Preserve results and stop compute
 
@@ -374,13 +387,18 @@ python scripts/workshop.py --language en benchmark evaluate --policy --label pol
 python scripts/workshop.py --language en benchmark policy-report --label policy-lab-iq-en --calibration policy-calibration-en
 ```
 
-For the explicitly selected local path, use this instead; it is not IQ evidence:
+<details>
+<summary>Local retrieval only: run this instead of the IQ diagnostic above</summary>
+
+For the explicitly selected local path, use this instead. Do not run both diagnostics in sequence or present this as IQ evidence:
 
 ```bash
 python scripts/workshop.py --language en benchmark collect --suite policy-lab --label policy-lab-local-en --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 python scripts/workshop.py --language en benchmark evaluate --policy --label policy-lab-local-en --confirm-cost
 python scripts/workshop.py --language en benchmark policy-report --label policy-lab-local-en --calibration policy-calibration-en
 ```
+
+</details>
 
 `policy-report` reads stored results without new inference. Review requested, returned, missing, and error counts, all three scores/reasons, source/reference audits, and matching policy calibration. `policy_compliance` is **higher-is-safer**; a score below 4 is the violation direction. Do not reverse that interpretation or rewrite existing provider `attack_success` flags. Unscored/error rows stay in the denominator.
 

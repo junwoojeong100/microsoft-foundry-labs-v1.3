@@ -2,7 +2,7 @@
 
 **완료 목표:** 전체 대화를 평가하고, 개선 후보와 실제 Hosted 버전을 근거로 비교합니다.
 
-**시작 조건:** 07의 judge와 dev 결과, 08의 Hosted 준비 방법, 06의 IQ/계정 OpenAI Endpoint, 09의 로그 연결. 수행하는 기능별 비용을 확인합니다. **holdout은 이 장에서도 열지 않습니다.**
+**시작 조건:** 07의 judge·dev 결과·policy calibration, 08의 Hosted 준비 방법, 같은 계정의 OpenAI Endpoint, 09의 로그 연결입니다. 기본 Hosted 비교에는 06의 IQ 조회 성공도 필요하지만 명시적 로컬 검색 대안에는 필요하지 않습니다. 수행하는 기능별 비용을 확인합니다. **holdout은 이 장에서도 열지 않습니다.**
 
 **순서:** 1절 대화 평가 → 2~3절 Optimizer → 4~9절 실제 Hosted 전후 비교 → 10절 별도 진단입니다. Optimizer가 후보를 만들지 않거나 개선하지 못해도 결과를 그대로 기록합니다. 이후 Hosted 비교는 포함된 `v1`/`v2`를 사용하므로 Optimizer 후보를 기다리거나 자동 적용하지 않습니다.
 
@@ -221,6 +221,8 @@ python scripts/workshop.py benchmark monitor --label wf-baseline
 
 `trace-plan`은 KQL 작성, `monitor`는 연결된 App Insights 실제 조회입니다. 응답의 Trace ID만 있는 것을 export 검증으로 대신하지 않습니다.
 
+`report`가 만든 **`outputs/benchmarks/wf-baseline/report.html`을 브라우저로 열면** 전체 업무 검사와 실패 사례를 표로 볼 수 있습니다. 같은 폴더의 `business-evaluation.json`에서 `expected_rows: 6`, `actual_rows: 6`, `errors`, `models.primary.checks`도 확인합니다. 이 HTML의 업무 검사와 `foundry-policy/`의 judge 결과, 실제 trace는 별개입니다.
+
 ## 7. candidate는 지침만 변경
 
 ```bash
@@ -254,13 +256,22 @@ python scripts/workshop.py benchmark monitor --label wf-candidate
 
 모델 map·코드·언어·데이터·검색·동시성·judge 조건을 유지합니다. 반환 근거가 달라졌다면 지침만의 개선이라고 주장하지 않습니다.
 
+후보 보고서는 **`outputs/benchmarks/wf-candidate/report.html`**입니다. SDK 결과인 `outputs/candidate/`나 baseline 보고서와 혼동하지 않습니다.
+
 ## 8. Judge calibration과 회귀
 
-**07에서 같은 policy calibration을 마쳤다면 다시 실행하지 않습니다.** 결과의 언어·judge·criteria/catalog hash를 확인해 재사용합니다. 아래는 그 label이 아직 없을 때만 실행하며, 조건이 달라졌다면 새 label과 맞는 평가 조건을 사용합니다.
+**07에서 같은 policy calibration을 마쳤다면 다시 실행하지 않습니다.** `outputs/judge-calibration/policy-calibration-ko/calibration.json`과 같은 폴더의 manifest/catalog를 열어 언어·judge·criteria/catalog hash를 확인해 재사용합니다.
+
+<details>
+<summary>Calibration이 없거나 조건이 달라졌을 때만</summary>
+
+아래는 그 label이 아직 없을 때만 실행합니다. 조건이 달라졌다면 새 label과 맞는 평가 조건을 사용하고 이후 인수 명령에도 그 label을 지정합니다.
 
 ```bash
 python scripts/workshop.py calibrate-judge --policy --label policy-calibration-ko --confirm-cost --timeout 900
 ```
+
+</details>
 
 **8개 control × 3개 기준의 기대 판정 24개**를 읽습니다. 부정 control은 낮은 점수가 맞으므로 24개 모두 높은 점수를 받는 것이 목표가 아닙니다. 이 작은 calibration만으로 실제 dev·matrix 품질을 통과 처리하지 않습니다.
 
@@ -271,6 +282,8 @@ python scripts/workshop.py benchmark regression --label wf-baseline --row-id "�
 ```
 
 reviewer 문자열은 Entra로 검증된 업무 승인자가 아닙니다. 회귀 파일을 만들었다는 것만으로 다음 수집에 적용됐다고 하지 않습니다. 후속 dev 수집에서 `--regressions reviewed-failure`를 명시할 때만 사용됩니다.
+
+모든 dev 업무 검사가 통과했다면 위 `regression` 명령은 생략합니다. 예시를 실행하려고 실패나 row ID를 만들지 않습니다.
 
 ## 9. 유지와 중지
 
@@ -295,13 +308,18 @@ python scripts/workshop.py benchmark evaluate --policy --label policy-lab-iq-ko 
 python scripts/workshop.py benchmark policy-report --label policy-lab-iq-ko --calibration policy-calibration-ko
 ```
 
-명시적으로 선택한 로컬 경로에서는 다음을 대신 사용합니다. IQ 결과로 표시하지 않습니다.
+<details>
+<summary>로컬 검색을 선택했을 때만: 위 IQ 진단 대신 실행</summary>
+
+명시적으로 선택한 로컬 경로에서는 다음을 대신 사용합니다. 두 진단을 연달아 실행하거나 IQ 결과로 표시하지 않습니다.
 
 ```bash
 python scripts/workshop.py benchmark collect --suite policy-lab --label policy-lab-local-ko --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 python scripts/workshop.py benchmark evaluate --policy --label policy-lab-local-ko --confirm-cost
 python scripts/workshop.py benchmark policy-report --label policy-lab-local-ko --calibration policy-calibration-ko
 ```
+
+</details>
 
 `policy-report`는 저장된 결과를 읽으며 새 추론을 하지 않습니다. 요청·반환·누락·오류 행 수, 세 기준의 점수/설명, source/reference 감사와 일치하는 policy calibration을 함께 봅니다. `policy_compliance`는 **높을수록 규정 준수**, 4 미만은 위반 방향입니다. 이를 반대로 읽거나 서비스의 기존 `attack_success` 값을 고치지 않습니다. 오류·미채점 행도 분모에서 빼지 않습니다.
 

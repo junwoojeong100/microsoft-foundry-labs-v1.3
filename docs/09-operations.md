@@ -2,14 +2,14 @@
 
 **완료 목표:** 로그 환경을 직접 만들고, 본인의 실제 요청을 Foundry에서 추적합니다.
 
-**시작 조건:** 03의 Prompt Agent 또는 08의 Hosted. 이 장에서 Application Insights와 Log Analytics를 직접 준비합니다.
+**시작 조건:** 기본 경로는 **03의 인라인 Prompt Agent 이름·버전과 호출 성공**입니다. File Search agent가 아니라 `prompt-agent create`로 만든 대상입니다. Hosted만 있다면 아래 2절의 대안을 사용합니다. 이 장에서 Application Insights와 Log Analytics를 직접 준비합니다.
 
 **순서:** 로그 자원 생성·연결 → 연결 이후 새 요청 → trace 조회 → Insights·비용·반복 평가 확인입니다. 앞 장의 응답이 소급 수집되지는 않습니다. 로그를 미리 준비했다면 새 자원을 만들지 말고 같은 연결과 권한을 확인합니다.
 
 ## 1. 로그 환경 생성·연결
 
-1. Azure 포털 **Create a resource → Log Analytics workspace**에서 내 실습 구독·그룹에 새 workspace를 만듭니다.
-2. **Create a resource → Application Insights**에서 같은 실습 그룹, 해당 workspace, 적절한 리전을 선택해 생성합니다.
+1. Azure 포털 **Create a resource → Log Analytics workspace**에서 내 실습 구독·그룹, **North Central US**에 새 workspace를 만듭니다.
+2. **Create a resource → Application Insights**에서 같은 실습 그룹, 해당 workspace, **North Central US**를 선택해 생성합니다.
 3. 두 리소스 각각의 **JSON View → id**를 기록합니다. 다른 그룹에 자동 생성된 자원이 없는지 확인합니다.
 4. Foundry **Agents → Traces → Connect**에서 방금 만든 Application Insights를 선택합니다.
 5. Connect가 없으면 **Manage → Project details → Connected resources → Add connection → Application Insights**를 사용합니다.
@@ -50,6 +50,8 @@ python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 **Insights 분석에는 호출 주체가 하나 더 있습니다.** 사용자뿐 아니라 프로젝트 관리 ID의 Monitoring Reader와, 보호 콘텐츠를 읽을 때 필요한 Privileged Monitoring Data Reader 범위를 확인합니다. 해당 실습 로그 자원 범위에서 필요한 역할만 확인합니다.
 
 ## 2. 연결 이후 새 요청 한 번
+
+**Hosted만 있는 경우:** 아래 Prompt Agent 명령 대신 [08의 정확한 원격 버전 호출](08-hosted.md#6-정확한-원격-버전-호출)로 기존 Hosted 버전에 새 요청 **한 번만** 보냅니다. 다시 배포하지 않으며, 같은 응답의 trace를 확인한 뒤 그 세션을 중지합니다.
 
 03에서 기록한 에이전트 버전으로 다시 호출합니다.
 
@@ -100,13 +102,20 @@ GPT-6의 **reasoning 토큰도 출력 비용과 출력 상한에 포함**됩니�
 
 ## 6. 제한된 반복 평가
 
+이 절은 실제 반복 평가를 확인하는 단계입니다. **완료된 trace 평가가 없으면 다음 문단의 반복 설정은 생략하고, 아래 Continuous 방식의 제공 여부를 확인**합니다. 어느 경로든 지원되지 않거나 비용을 수락하지 않으면 미실행으로 남기며 예약을 켜 두지 않습니다.
+
 본인 agent의 **완료된 trace 평가**가 있으면 그 평가의 반복 설정을 엽니다. 먼저 종료 시각과 비용을 정하고, 작은 샘플(예: 실행당 최대 5개), 시간별 예약 등 제한된 구성을 선택합니다.
 
 한 번의 실제 실행·표본을 확인하고 **계획한 시각에는 결과가 부족해도 일시 중지**합니다. 활성화 자체는 평가 성공이 아니며, 결과를 기다리느라 무기한 켜 두지 않습니다. 이미 발생한 비용은 중지로 없어지지 않습니다.
 
 실시간 방식을 시험한다면 **Continuous**, 평가자 하나(예: Coherence), 본인의 judge, 샘플링 100%, **최대 1회/시간**으로 작게 설정합니다. 포털 Playground에서 합성 질문 하나를 보내고, 실제 평가 run과 그 응답 ID를 대조한 뒤 Pause합니다. 실습 코드의 기본 호출은 `store=False`입니다. 연속 평가가 응답을 다시 조회하는 경로에서는 저장되지 않은 응답이 평가되지 않을 수 있으므로, trace 존재만으로 실행 완료를 판단하지 않습니다. 저장할 때도 합성 데이터만 사용합니다.
 
-**Coherence 버전 주의:** NC의 v1 실행은 `CoherenceEvaluator.__init__() got an unexpected keyword argument 'is_reasoning_model'`로 0행 실패했습니다. 실제 catalog의 **v13**을 확인해 새 rule/evaluation에서 같은 GPT-5.5 judge·문턱 3·1회/시간을 유지하자 원래 저장 응답 1개가 score 5/pass로 평가됐습니다. 두 rule은 모두 paused이며 v1 실패를 지우지 않았습니다. 다른 evaluator까지 일괄 v13으로 바꾸지 않습니다.
+<details>
+<summary>Coherence 초기화 오류가 있을 때만: 과거 버전별 결과</summary>
+
+NC의 v1 실행은 `CoherenceEvaluator.__init__() got an unexpected keyword argument 'is_reasoning_model'`로 0행 실패했습니다. 실제 catalog의 **v13**을 확인해 새 rule/evaluation에서 같은 GPT-5.5 judge·문턱 3·1회/시간을 유지하자 원래 저장 응답 1개가 score 5/pass로 평가됐습니다. 두 rule은 모두 paused이며 v1 실패를 지우지 않았습니다. 이 오류를 재현하거나 다른 evaluator까지 일괄 v13으로 바꾸지 않습니다.
+
+</details>
 
 CLI·포털·MCP가 서로 다른 로그인 주체를 사용할 수 있습니다. 오류의 Object ID가 지정한 사용자와 다르면 먼저 인증 컨텍스트를 확인합니다. 모르는 MCP 주체에 새 역할을 부여해 우회하지 않습니다.
 

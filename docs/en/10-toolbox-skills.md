@@ -4,7 +4,9 @@
 
 **Outcome:** Create a keyless connection to your own Search service and actually use versioned tools and procedures.
 
-**Prerequisites:** The original Search index and successful retrieval from 06, the project managed identity from 00, and the azd Foundry extension from 08. No preprovisioned service is needed.
+**Prerequisites:** The original Search index and successful retrieval from 06, the project managed identity from 00, and **08's azd Foundry extension plus the actual folder created by `prepare-hosted`**. Installing the extension alone does not create a folder for `--cwd`.
+
+Even without a successful remote deployment in 08, **successful folder preparation in its sections 1–3 is enough for this chapter's sections 1–7**. If missing, complete [08's preparation](08-hosted.md#3-prepare-an-isolated-folder-for-the-existing-project) first. Check remote Hosted support separately for section 8.
 
 **Order:** Search connection → standard Toolbox → tool discovery → Skill upload/binding → OpenAPI → Hosted Toolbox. **Skill, Toolbox, and Hosted agent versions are different values.** Record the version returned by each command.
 

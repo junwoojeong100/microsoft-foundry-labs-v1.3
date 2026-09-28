@@ -4,14 +4,14 @@
 
 **Outcome:** Create your logging environment and trace your own actual requests in Foundry.
 
-**Prerequisites:** A Prompt Agent from 03 or Hosted Agent from 08. You prepare Application Insights and Log Analytics here.
+**Prerequisites:** The default path needs **03's inline Prompt Agent name, version, and successful invocation**: the target created with `prompt-agent create`, not the File Search agent. If you have only a Hosted Agent, use section 2's alternative. You prepare Application Insights and Log Analytics here.
 
 **Order:** create/connect logs → send a new request → locate its trace → inspect Insights, costs, and recurring evaluation. Earlier responses are not collected retroactively. If logging was prepared early, verify that connection and its roles instead of creating duplicates.
 
 ## 1. Create and connect logging resources
 
-1. In the Azure portal, open **Create a resource → Log Analytics workspace** and create one in your workshop subscription/group.
-2. Under **Create a resource → Application Insights**, choose that group, workspace, and an appropriate region.
+1. In the Azure portal, open **Create a resource → Log Analytics workspace** and create one in your workshop subscription/group in **North Central US**.
+2. Under **Create a resource → Application Insights**, choose that group, workspace, and **North Central US**.
 3. Record each resource's **JSON View → id**. Check for resources automatically created in a different group.
 4. In Foundry, open **Agents → Traces → Connect** and select your new Application Insights resource.
 5. If Connect is absent, use **Manage → Project details → Connected resources → Add connection → Application Insights**.
@@ -52,6 +52,8 @@ Verify or grant **Log Analytics Reader** at the needed scope. Organizations with
 **Insights has an additional caller:** verify Monitoring Reader for the user/project identity and scoped Privileged Monitoring Data Reader when protected content is needed. Check only the roles needed on this lab's logging resources.
 
 ## 2. Send a new request after connecting
+
+**If you have only a Hosted Agent:** instead of the Prompt Agent command below, send **one new request** to its existing version using [08's exact remote-version invocation](08-hosted.md#6-invoke-the-exact-remote-version). Do not redeploy. Find that response's trace, then stop its session.
 
 Invoke the exact agent version recorded in 03:
 
@@ -102,13 +104,20 @@ GPT-6 **reasoning tokens count toward output cost and the output cap**. Do not c
 
 ## 6. Bound recurring evaluation
 
-**Earlier NC version finding:** Coherence v1 failed with zero rows and `CoherenceEvaluator.__init__() got an unexpected keyword argument 'is_reasoning_model'`. A separate pinned-v13 rule succeeded. **This new rerun verified catalog v13 before creating its own rule**, retained GPT-5.5/threshold 3/one-run-hourly, graded one original stored response score 5/pass, then paused. Earlier failures remain archived; do not change unrelated evaluator versions to v13.
+This section verifies actual recurring evaluation. **If you have no completed trace evaluation, skip the next paragraph's recurring settings and check availability of the Continuous path below.** If neither path is available or you decline the cost, record not run; do not leave a schedule enabled.
 
 If a trace evaluation for your agent has completed, open its recurring settings. First decide the end time and budget, then select a small sample, such as at most five traces per run, and a limited cadence such as hourly.
 
 Verify one actual execution and its sampled data, then **pause at the planned time even if evidence is incomplete**. Enabling the schedule is not evaluation success. Do not leave it running indefinitely while waiting for results. Stopping does not erase charges already incurred.
 
 For a small real-time trial, choose **Continuous**, one evaluator such as Coherence, your judge deployment, 100% sampling, and **at most one run per hour**. Send one synthetic question in the portal Playground, match the actual evaluation run to its response ID, and Pause. Workshop code defaults to `store=False`; a continuous evaluator that retrieves responses may not evaluate an unstored response. A trace alone is not proof of an evaluation run. Store synthetic data only.
+
+<details>
+<summary>Only for a Coherence initialization error: historical version findings</summary>
+
+Coherence v1 failed in the earlier NC environment with zero rows and `CoherenceEvaluator.__init__() got an unexpected keyword argument 'is_reasoning_model'`. A separate pinned-v13 rule succeeded. **The new rerun verified catalog v13 before creating its own rule**, retained GPT-5.5/threshold 3/one-run-hourly, graded one original stored response score 5/pass, then paused. Earlier failures remain archived. Do not reproduce the error or change unrelated evaluator versions to v13.
+
+</details>
 
 CLI, portal, and MCP tools can use different identities. If an error names a different Object ID, check authentication context first. Do not grant new roles to an unknown MCP principal as a workaround.
 

@@ -19,7 +19,7 @@
 다음에 재사용하거나 검증 환경을 남기기로 했다면 **삭제 명령을 실행하지 않습니다.**
 
 - `--confirm-delete`, Memory `forget`/`cleanup`, `azd down`, 리소스 그룹 삭제를 모두 생략합니다.
-- 03의 File Search는 처음 만들 때 `--retain`을 사용해 vector store 자동 만료도 설정하지 않습니다.
+- 03에서 `--retain`으로 만든 File Search vector store는 자동 만료가 없습니다. **기본 명령으로 이미 만든 store의 마지막 활동 후 7일 만료는 그대로**이므로 소유 기록을 확인합니다. 보존 설정을 바꾸려고 이 장에서 create를 다시 실행하지 않습니다.
 - 11의 Memory는 언어별 새 store를 명시하고 **`memory create --ttl-seconds 0 --confirm-create`**로 항목의 자동 만료 없이 생성합니다. 이전 store가 있다면 그 TTL을 임의로 변경하지 않습니다.
 - 로컬 서버는 중지하고 Routines·반복 평가는 disabled/paused로 둡니다. 필요 없는 Hosted 실행 세션은 **stop만** 하며 agent·버전·volume은 삭제하지 않습니다.
 - `.env`, `.selfstudy/` 전체, `.build/`와 `outputs/`의 실제 ID·배포 준비·소유권 기록을 개인의 승인된 위치에 보관합니다. 공개 저장소에 올리지 않습니다.
@@ -65,6 +65,9 @@ python scripts/workshop.py benchmark verify --policy --baseline wf-baseline --ca
 
 **`--require-native`는 Foundry policy 평가의 증거를 요구하고, `--require-native-pass`가 candidate/holdout의 실제 점수 통과까지 요구합니다.** 둘을 혼동하지 않습니다. 이 명령이 13의 관리형 red-team 감사를 대신 확인하지는 않으므로, 1절에서 그 결과도 별도로 확인해야 합니다.
 
+<details>
+<summary>SDK 대상만 선택했을 때: 위 Hosted 최종 확인 대신 실행</summary>
+
 **SDK 대상만 선택한 경우**에는 Hosted 명령을 실행하지 않고 다음을 사용합니다. 먼저 07의 `candidate`가 6/6·오류 0·고정 비교 조건을 충족해야 합니다.
 
 ```bash
@@ -75,6 +78,8 @@ python scripts/workshop.py accept --candidate candidate --holdout final-holdout
 ```
 
 `accept`의 업무 검사만으로 policy grading·참조 감사가 확인되는 것은 아닙니다. 해당 실제 결과와 일치하는 policy calibration도 별도로 검토합니다. 기존 legacy calibration이나 점수를 이름만 바꿔 대체하지 않습니다.
+
+</details>
 
 둘 중 **선택한 하나만** 수행합니다. holdout 실패를 보고 수정했다면 새 최종 데이터가 필요합니다.
 
@@ -144,6 +149,8 @@ python scripts/workshop.py file-search cleanup --confirm-delete
 기록된 버전·저장소·업로드 파일만 정리하며, 포털에서 별도로 만든 자산이나 공유 프로젝트는 삭제하지 않습니다. 새 이름으로 만든 실험은 동일한 `--name`을 지정합니다.
 
 ## 6. 실습 전용 그룹 삭제
+
+**보존하기로 했다면 이 절은 생략하고 7절로 갑니다.** 아래는 삭제를 선택한 경우에만 수행하는 절차입니다.
 
 모든 자원이 이 과정 전용이고 더 사용할 계획이 없다면 Azure 포털에서:
 

@@ -29,6 +29,8 @@ Azure 포털에서 실습 그룹에 **User assigned managed identity**를 만들
 
 해당 리소스의 **IAM → Add role assignment**에서 본인 CI ID를 선택합니다. 없는 역할만 추가하고 구독 Owner나 client secret은 부여하지 않습니다. 릴리스가 생성하는 **Hosted 런타임 ID의 Foundry User**는 다른 역할이며, 뒤의 동의한 workflow 단계에서 프로젝트 범위로 부여합니다.
 
+**CI가 그 역할을 부여할 수 있는 이유:** [Foundry Project Manager는 Foundry User 역할에 한해 조건부 역할 부여를 허용](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/ai-machine-learning#foundry-project-manager)합니다. 모든 역할을 부여할 수 있는 관리자가 되는 것은 아니며, 이 실습을 위해 CI에 Owner를 추가할 필요도 없습니다.
+
 ## 3. 실행 전에 Environment 변수 등록
 
 GitHub **Settings → Environments → foundry-workshop → Environment variables → Add variable**에서 다음을 각각 **변수(Variables)**로 등록합니다. workflow는 `vars.*`를 읽으므로 같은 이름의 Secret에만 넣으면 읽지 못합니다.

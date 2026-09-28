@@ -21,7 +21,7 @@ Even when stopping early, **perform the stopping, inventory, and retention decis
 If you want to reuse the lab or preserve a validation environment, **do not execute deletion commands**.
 
 - Skip `--confirm-delete`, all Memory `forget`/`cleanup`, other cleanup operations, `azd down`, and resource-group deletion.
-- Create File Search in 03 with `--retain` so the vector store has no automatically configured expiry.
+- File Search vector stores created in 03 with `--retain` have no automatic expiry. **A store already created with the default command still expires seven days after its last activity**; check its ownership record. Do not rerun create here to change retention.
 - In 11, explicitly select a new language-specific Memory store and use **`memory create --ttl-seconds 0 --confirm-create`** for no automatic item expiry. If older stores exist, do not silently change their TTLs.
 - Stop local servers and leave Routines/recurring evaluation **disabled/paused**. **Stop only** unnecessary Hosted compute sessions; do not delete agents, versions, or persistent volumes.
 - Privately retain `.env`, all of `.selfstudy/`, `.build/`, and `outputs/`, including actual IDs, deployment preparation, and ownership records. Use an approved location, not a public repository.
@@ -65,6 +65,9 @@ python scripts/workshop.py --language en benchmark monitor --label wf-final-en
 python scripts/workshop.py --language en benchmark verify --policy --baseline wf-baseline-en --candidate wf-candidate-en --holdout wf-final-en --require-native --require-native-pass --require-traces --calibration policy-calibration-en
 ```
 
+<details>
+<summary>Local Hosted target only: use this instead of the IQ block</summary>
+
 ### Local-retrieval Hosted target
 
 For 12's separately named `matrix-local-en`, keep the frozen local profile throughout collection and use only its own baseline, candidate, and calibration:
@@ -78,9 +81,14 @@ python scripts/workshop.py --language en benchmark verify --policy --baseline wf
 
 `benchmark verify` checks the stored run contracts and exact versions; it does **not** accept `--retrieval`. Verify the selected manifests contain `retrieval: local` and retain their original hashes. The explicit local collection and local-only labels determine which profile is verified; do not override, edit, or substitute IQ results.
 
+</details>
+
 For either Hosted path, inspect every row and error after each step. This guide's single Sol target requires **four core holdout rows**. Check `gate_passed`, `native_quality_passed`, `native_quality_required: true`, and `deployment_approved: false` together. A local Hosted pass does not complete Search/IQ/Hybrid or Toolbox/OpenAPI work.
 
 **`--require-native` requires Foundry policy-evaluation evidence; `--require-native-pass` also requires candidate/holdout scores to pass.** They are not interchangeable. This command does not verify chapter 13's separate managed red-team audit; check that explicitly in section 1.
+
+<details>
+<summary>SDK target only: use this instead of either Hosted block</summary>
 
 ### SDK-only target
 
@@ -94,6 +102,8 @@ python scripts/workshop.py --language en accept --candidate candidate-en --holdo
 ```
 
 The business-only `accept` result does not itself verify policy grading or reference audits. Review those actual artifacts and matching policy calibration separately. Do not substitute renamed legacy calibration or scores.
+
+</details>
 
 Choose **one path only**. If you modify the system after observing holdout failures, you need a new final test set; do not tune against this holdout or edit it.
 
