@@ -8,7 +8,8 @@
 
 **Where you work:** terminal for collection/evaluation, editor for results, Foundry for judge deployment.
 
-> **Core instruction comparison:** change only the bundled `v1`/`v2` instructions. **Do not change code, sources, or model between runs, and leave holdout closed.** Section 6's optional model comparison uses separate results.
+> [!IMPORTANT]
+> For the core comparison, change only **the bundled `v1`/`v2` instructions**. Keep code, sources, and model fixed; **leave holdout closed**. Section 6's optional model comparison uses separate results.
 
 <a id="chapter-map"></a>
 
@@ -26,7 +27,9 @@
 
 This chapter evaluates **direct SDK inference with retrieval performed before generation**. It is not the managed agent from 03 or a later Hosted version.
 
-Labels below are fresh-lab examples. If results already exist, choose new baseline/candidate labels and use them consistently in every later reference. Never overwrite files or scores from earlier model, judge, or code conditions. Historical runs are in the [validation report](validation-report.md).
+Labels below are fresh-lab examples. If results already exist, choose new baseline/candidate labels and use them consistently in every later reference.
+
+Never overwrite files or scores from earlier model, judge, or code conditions. Historical runs are in the [validation report](validation-report.md).
 
 ## 1. Keep dev and holdout separate
 
@@ -41,13 +44,19 @@ Do not open holdout until 15. Do not put expected-answer fields in model inputs.
 
 ## 2. Collect the baseline
 
+### Collect six responses
+
+The **baseline is the result before the change**. Collect answers using `v1` instructions first.
+
 ```bash
 python scripts/workshop.py --language en collect --split dev --label baseline-en --prompt v1 --retrieval local
 ```
 
 First inspect **all six actual responses** in `outputs/baseline-en/responses.jsonl`. Resolve missing responses or authentication/API errors before continuing.
 
-**Run business checks on saved responses · `baseline-en`**
+### Run business checks on saved responses
+
+This `evaluate` command **checks saved responses using code**. It does not call an LLM judge.
 
 ```bash
 python scripts/workshop.py --language en evaluate --label baseline-en
@@ -55,9 +64,17 @@ python scripts/workshop.py --language en evaluate --label baseline-en
 
 **Check:** open `manifest.json`, `responses.jsonl`, and `business-evaluation.json` under `outputs/baseline-en/`.
 
-Read `total`, `passed`, `errors`, `business_gate_passed`, and **every check for all six cases**. This is deterministic business validation, not an LLM judge.
+Read `total`, `passed`, `errors`, `business_gate_passed`, and **every check for all six cases**.
 
-Exit code 1 with `business_gate_passed: false` can mean the evaluator **found an incorrect answer**, provided all six responses exist without request errors. Analyze that failure before comparing the candidate. Missing responses or authentication/API errors require resolving the cause, not blindly collecting again.
+### Distinguish exit status from quality failure
+
+| Actual result | Meaning and next action |
+|---|---|
+| Six responses, no request errors, business checks pass | Preserve the results and compare the candidate. |
+| Six responses, no request errors, `business_gate_passed: false` | An incorrect answer may have been found. Analyze it; do not recollect just because the exit code is 1. |
+| Missing responses or authentication/API errors | Resolve the cause before running dependent steps. |
+
+**Business-check criteria**
 
 | Case | Check |
 |---|---|
@@ -68,17 +85,26 @@ Exit code 1 with `business_gate_passed: false` can mean the evaluator **found an
 | D05 | Insufficient evidence for international travel |
 | D06 | Do not obey demands to ignore rules and claim approval |
 
+If every case passed, skip `feedback`. Expand the following **only for an actual failure**.
+
+<details>
+<summary>Only for a failed case: record feedback</summary>
+
 Record actual failed IDs and reasons; do not copy a hypothetical failure ID:
 
 ```bash
 python scripts/workshop.py --language en feedback --label baseline-en --case "ACTUAL-FAILED-CASE-ID" --reason "Explain the actual response and failed check."
 ```
 
-This creates a pending-review record, not business approval. If `business-evaluation.json` shows every case passed, skip this `feedback` command instead of inventing a failure.
+This creates a pending-review record, not business approval. Do not invent a failure just to run the command.
+
+</details>
 
 ## 3. Collect a matched candidate
 
-Compare `prompts/en/v1.txt` and `prompts/en/v2.txt`. These are the two instruction sets. Keep model, code, source documents, questions, language, and retrieval unchanged.
+The **candidate is the changed result to compare**. Compare `prompts/en/v1.txt` and `prompts/en/v2.txt`, then change only the instructions.
+
+Keep model, code, source documents, questions, language, and retrieval unchanged.
 
 ```bash
 python scripts/workshop.py --language en collect --split dev --label candidate-en --prompt v2 --retrieval local
@@ -98,7 +124,15 @@ python scripts/workshop.py --language en evaluate --label candidate-en
 python scripts/workshop.py --language en compare --baseline baseline-en --candidate candidate-en --variable prompt
 ```
 
-**Check:** inspect the conditions, both metrics, and `changed_context_cases` in `outputs/candidate-en/comparison-vs-baseline-en.json`. Do not edit raw responses, scores, or hashes. An unchanged score can legitimately mean “no improvement demonstrated on these six cases.”
+**File to inspect:** `outputs/candidate-en/comparison-vs-baseline-en.json`
+
+| Field to read | Question to answer |
+|---|---|
+| Comparison conditions | Is everything except instructions unchanged? |
+| Both sets of metrics | Which criteria improved or worsened? |
+| `changed_context_cases` | Did the evidence actually supplied also change? |
+
+Do not edit raw responses, scores, or hashes. An unchanged score can legitimately mean **“no improvement demonstrated on these six cases.”**
 
 If you changed code, collect a new baseline/candidate pair with that same code. Do not lower the rubric or remove error rows to manufacture improvement.
 
@@ -157,7 +191,14 @@ Inspect `optimizer-dev.jsonl`, `policy-evaluator-definitions.json`, and the inpu
 | `policy_helpfulness` | Useful guidance, clarification, or appropriate abstention | At least 4; higher is better |
 | `policy_compliance` | Following policy without false approval claims | At least 4; higher is better |
 
-Canonical evaluator output is integer **`result` (1–5)** and string **`reason`**. Eight controls × three criteria test 24 expected judgments. Bad answers should score low: **24/24 agreement does not mean all 24 scores should be at least 4**. Inspect correct abstention, false-approval, and counterfactual discrimination. Korean calibration success is not English calibration evidence.
+**Evaluator output:** integer `result` (1–5) and string `reason`.
+
+**Calibration's purpose:** check whether the judge distinguishes known answers as expected. Eight controls × three criteria test **24 expected judgments**.
+
+> [!IMPORTANT]
+> **24/24 agreement does not mean all 24 scores should be at least 4.** Bad answers should score low. Inspect correct abstention, false-approval, and counterfactual discrimination.
+
+Korean calibration success is not English calibration evidence.
 
 These criteria have fixed semantics different from legacy generic Relevance. Appropriate abstention can be useful under `policy_helpfulness`. Do not rename old Relevance scores as policy scores or calculate improvement by subtracting numbers from different criteria.
 
@@ -175,13 +216,28 @@ python scripts/workshop.py --language en cloud-evaluate --policy --label baselin
 python scripts/workshop.py --language en cloud-evaluate --policy --label candidate-en --reference baseline-en --confirm-cost --timeout 900
 ```
 
-This judges saved target responses; **it does not perform new target inference**.
+This is a **paid call to a separate judge scoring saved target responses**. It does not perform new target inference.
 
-**Check:** preserve the returned `foundry-policy/` results, including `cloud-evaluation-raw.json`, `cloud-evaluation-results.json`, and `policy-reference-audit.json`. Verify all three criteria on every row, source hashes, and the complete `reference_id` echoed in the returned input and `reason`.
+### Read the evaluation files
 
-The audit checks **submitted sources and echoed reference IDs**, not a capture of every hidden judge request. Do not turn partial results, errors, missing criteria, wrong references, or self-grounding (`context=response`) into passes. Do not combine `--policy` with `--business-evaluator`, or relabel older Relevance/grounding scores and two-fixture calibration as policy evidence.
+Preserve the original scores and these files in the returned `foundry-policy/` folder:
 
-**D01 lesson:** A fact somewhere in the repository is not automatically evidence for this response. Without actually retrieving `APPROVAL-01`, do not invent approver details such as “team lead.” Never add documents to the original source list or `ground_truth` afterward to justify an answer. If another retrieval is needed, record it as a new run with a new label.
+| File | What to inspect |
+|---|---|
+| `cloud-evaluation-raw.json` | The original service results |
+| `cloud-evaluation-results.json` | Scores and reasons for all three criteria on every row |
+| `policy-reference-audit.json` | Source hashes and complete `reference_id` matching the submitted sources, returned input, and `reason` |
+
+The audit checks **submitted sources and echoed reference IDs**. It does not capture every hidden judge request.
+
+Do not turn partial results, errors, missing criteria, wrong references, or self-grounding (`context=response`) into passes.
+
+Do not combine `--policy` with `--business-evaluator`, or relabel older Relevance/grounding scores and two-fixture calibration as policy evidence.
+
+> [!WARNING]
+> **A fact in the repository is not automatically evidence for this response.** In D01, without actually retrieving `APPROVAL-01`, do not invent approver details such as “team lead.”
+
+Never add documents to the original source list or `ground_truth` afterward to justify an answer. If another retrieval is needed, record it as a new run with a new label.
 
 ## 6. Optional Sol/Luna model comparison
 
@@ -215,18 +271,37 @@ python scripts/workshop.py --language en evaluate --label model-luna-en
 python scripts/workshop.py --language en compare --baseline model-sol-en --candidate model-luna-en --variable model
 ```
 
-Mixing account and project API results changes more than the model. Fix `inference.api`, the actual endpoint, reasoning, and output limits. This optional comparison does not automatically change the configured Sol target or judge. Review quality, errors, tokens, and latency together. Do not use Router or another provider as an error fallback.
+Mixing account and project API results changes more than the model. Fix `inference.api`, the actual endpoint, reasoning, and output limits.
+
+This optional comparison does not automatically change the configured Sol target or judge. Review quality, errors, tokens, and latency together.
+
+Do not use Router or another provider as an error fallback.
 
 ## Completion check
 
 For the default labels, open these files. If you changed labels, use those folder names instead.
 
-| Check | File and what to read |
-|---|---|
-| Candidate business checks | `total: 6`, `errors`, and per-case `checks` in `outputs/candidate-en/business-evaluation.json` |
-| Whether the judge follows the rubric | Agreement with 24 expected judgments in `outputs/judge-calibration/policy-calibration-en/calibration.json` |
-| Actual candidate policy scores | Six rows × three criteria in `outputs/candidate-en/foundry-policy/cloud-evaluation-results.json` |
-| Whether evaluation used the right sources | `policy-reference-audit.json` in the same `foundry-policy/` folder. A `valid` reference audit is separate from passing scores |
+**1. Candidate business checks**
+
+`outputs/candidate-en/business-evaluation.json`
+
+Inspect `total: 6`, `errors`, and per-case `checks`.
+
+**2. Whether the judge follows the rubric**
+
+`outputs/judge-calibration/policy-calibration-en/calibration.json`
+
+Check agreement with all 24 expected judgments.
+
+**3. Actual candidate policy scores**
+
+`outputs/candidate-en/foundry-policy/cloud-evaluation-results.json`
+
+Inspect scores and reasons for six rows × three criteria.
+
+**4. Whether evaluation used the right sources**
+
+Read `policy-reference-audit.json` in the same `foundry-policy/` folder. A `valid` reference audit is separate from passing scores.
 
 - [ ] I checked all six actual dev rows, request errors, and case-level business checks.
 - [ ] I reviewed the matched comparison, judge calibration, policy scores, and reference audit separately.

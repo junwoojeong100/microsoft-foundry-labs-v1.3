@@ -8,6 +8,7 @@
 
 **Where you work:** terminal for evaluation, sessions, and ownership records; Azure portal for actual resources and costs.
 
+> [!WARNING]
 > **Stopping is not deletion.** Quality failures are not a reason to leave chargeable resources unattended. Stop execution, then separately decide what to retain or delete.
 
 | Your current state | Where to go |
@@ -16,9 +17,15 @@
 | Frozen candidate and all prerequisite gates satisfied | Section 1 → **one chosen target** in 2 → sections 3–7 |
 | Retaining resources for reuse | Retention mode below plus 4, 5, and 7; skip deletion commands and section 6 |
 
-**You can stop and clean up even before completing 00's `configure`.** Inspect the subscription and lab group you used in 00 directly in Azure. Skip commands for agents or labels you never created; also skip `selfstudy.py status` if `.selfstudy/azure.json` does not exist. Missing local configuration does not mean there are no Azure resources.
+**You can stop and clean up even before completing 00's `configure`.** Inspect the subscription and lab group you used in 00 directly in Azure.
 
-**Reference validation still holds final acceptance.** The new managed Task Adherence result has six rows/five pass/one fail with inconsistent severity/flags, so no new holdout was opened. The [report's results and lifecycle history](validation-report.md) are not your completion record or deletion instructions. **Execution and final quality acceptance are separate.**
+- Skip commands for agents or labels you never created.
+- Skip `selfstudy.py status` if `.selfstudy/azure.json` does not exist.
+- Azure resources can remain even without local configuration.
+
+**Reference validation still holds final acceptance.** The new managed Task Adherence result has six rows/five pass/one fail with inconsistent severity/flags, so no new holdout was opened.
+
+The [report's results and lifecycle history](validation-report.md) are not your completion record or deletion instructions. **Execution and final quality acceptance are separate.**
 
 <a id="chapter-map"></a>
 
@@ -37,26 +44,54 @@
 
 ## Retention mode
 
-If you want to reuse the lab or preserve a validation environment, **do not execute deletion commands**.
+> [!CAUTION]
+> In retention mode, **do not execute deletion commands**. Skip `--confirm-delete`, Memory `forget`/`cleanup`, other cleanup operations, `azd down`, and resource-group deletion.
 
-- Skip `--confirm-delete`, all Memory `forget`/`cleanup`, other cleanup operations, `azd down`, and resource-group deletion.
-- File Search vector stores created in 03 with `--retain` have no automatic expiry. **A store already created with the default command still expires seven days after its last activity**; check its ownership record. Do not rerun create here to change retention.
-- In 11, explicitly select a new language-specific Memory store and use **`memory create --ttl-seconds 0 --confirm-create`** for no automatic item expiry. If older stores exist, do not silently change their TTLs.
-- Stop local servers and leave Routines/recurring evaluation **disabled/paused**. **Stop only** unnecessary Hosted compute sessions; do not delete agents, versions, or persistent volumes.
-- Privately retain `.env`, all of `.selfstudy/`, `.build/`, and `outputs/`, including actual IDs, deployment preparation, and ownership records. Use an approved location, not a public repository.
-- Record remaining Search Basic, file/volume, and logging costs and the next review date. `lifecycle=retain` is an administrative tag, not a deletion lock or a budget cap.
+### What to stop and what to keep
 
-**Check TTL:** Memory's new default `default_ttl_seconds=0` means no automatic item expiry. Positive TTLs can be at most 365 days, and previously recorded stores retain their original settings.
+| Target | Retention-mode action |
+|---|---|
+| Local servers | Stop |
+| Routines and recurring evaluation | Verify `disabled` / `paused` |
+| Unneeded Hosted compute sessions | **Stop only**; retain agents, versions, and volumes |
 
-**Check the language-specific store:** `WORKSHOP_MEMORY_STORE_NAME` is global. Use `<prefix>-memory-retained-en` for English and `<prefix>-memory-retained-ko` for Korean, checking the selector before each language's run. Follow [11's retained-store procedure](11-memory-a2a-routines.md#1-memory-persist-an-item-and-recall-it-in-a-new-request).
+### Files and ownership records to retain
 
-Keep every owned store's name, TTL, IDs, and records. Do not silently update or adopt older assets under the new setting. Managed-session expiry is separate from Memory-item TTL. Treat deletion sections as reference only and record “retained, not deleted.”
+Retain `.env`, all of `.selfstudy/`, `.build/`, and `outputs/` in an approved private location. Include actual IDs, deployment preparation, and ownership records. **Do not publish them.**
 
-Read-only `status` and `cleanup-plan` may still be used for inventory; they do not authorize deletion.
+Keep every owned store's name, TTL, IDs, and records too. Do not silently update or adopt older assets under the new setting.
+
+### Automatic expiry and remaining costs
+
+| Asset and creation condition | Expiry behavior |
+|---|---|
+| File Search in 03, created with `--retain` | No automatic expiry |
+| File Search in 03, created with the default command | Still expires **seven days after last activity** |
+| New Memory in 11, created with `--ttl-seconds 0` | No automatic item expiry |
+| An older Memory store | Keeps its originally recorded TTL |
+
+Do not rerun File Search creation to change retention or silently change an older Memory store's TTL.
+
+In 11, **explicitly select a new language-specific store** and create it with `memory create --ttl-seconds 0 --confirm-create`. The new default `default_ttl_seconds=0` means no automatic item expiry; positive TTLs can be at most 365 days.
+
+Managed-session expiry and Memory-item TTL are separate.
+
+**Language selector:** `WORKSHOP_MEMORY_STORE_NAME` is global. Before each run, distinguish English `<prefix>-memory-retained-en` from Korean `<prefix>-memory-retained-ko`. Follow [11's retained-store procedure](11-memory-a2a-routines.md#1-memory-persist-an-item-and-recall-it-in-a-new-request).
+
+Record **remaining costs and the next review date** for Search Basic, files/volumes, and logging. `lifecycle=retain` is an administrative tag, not a deletion lock or budget cap.
+
+Read-only `status` and `cleanup-plan` remain available for inventory; they do not authorize deletion. Read deletion sections as reference only and record **“retained, not deleted.”**
 
 ## 1. Freeze the final evaluation target
 
-The recommended target is 12's **actual Hosted candidate**: `wf-candidate-en` for the IQ path, or `wf-local-candidate-en` for the explicitly selected local-retrieval path. Choose one. Freeze model map, code, instructions, source documents, retrieval, API, concurrency, judge, generation settings, and version.
+The recommended target is 12's **actual Hosted candidate**. Choose one:
+
+| Your selected retrieval path | Final candidate |
+|---|---|
+| IQ | `wf-candidate-en` |
+| Explicit local retrieval | `wf-local-candidate-en` |
+
+Freeze model map, code, instructions, source documents, retrieval, API, concurrency, judge, generation settings, and version.
 
 Before unlocking holdout, verify the following. **If any item is unmet, go to section 4 to stop work and review costs first.**
 
@@ -67,7 +102,9 @@ Before unlocking holdout, verify the following. **If any item is unmet, go to se
 - [ ] Chapter 13's **managed run and full row/version/direction audit** are recorded, retaining the Prohibited Actions limitation. A new Task Adherence-only result is judged only within its native scope; filtered old rows or custom `policy-lab` are not substitutes.
 - [ ] I did not lower thresholds after seeing failures or edit raw results.
 
-If not satisfied, **do not open holdout; record incomplete acceptance**. If unavailable features prevented the Hosted matrix, you may instead select 07's SDK candidate as a separate final target. Do not call that Hosted acceptance.
+If not satisfied, **do not open holdout; record incomplete acceptance**.
+
+If unavailable features prevented the Hosted matrix, you may instead select 07's SDK candidate as a separate final target. Do not call that Hosted acceptance.
 
 **Use holdout for only one chosen final target in an experiment.** Cases already seen in an SDK run cannot later be called unseen Hosted test data.
 
@@ -75,27 +112,32 @@ If not satisfied, **do not open holdout; record incomplete acceptance**. If unav
 
 If you already saw these four cases, another run is **known-case regression**, not a new unseen test or production approval, even if its recorded split is `holdout`.
 
-Only after **all section 1 prerequisites pass**, run the block matching your **chosen final target**. `--unlock-holdout` is not permission to ignore unfinished evaluation. Never run the IQ block against a local matrix or count local results as IQ validation.
+> [!IMPORTANT]
+> Run the block for your **chosen final target only after all section 1 prerequisites pass**. `--unlock-holdout` is not permission to ignore unfinished evaluation.
+
+Never run the IQ block against a local matrix or count local results as IQ validation.
 
 ### IQ Hosted target
+
+**1. Collect four new cases from the chosen Hosted version**
 
 ```bash
 python scripts/workshop.py --language en benchmark collect --split holdout --label wf-final-en --candidate wf-candidate-en --unlock-holdout --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 ```
 
-**Evaluate saved responses with the policy judge · `wf-final-en`**
+**2. Evaluate saved responses with the policy judge · `wf-final-en`**
 
 ```bash
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-final-en --reference wf-baseline-en --confirm-cost
 ```
 
-**Query actual traces · `wf-final-en`**
+**3. Query actual traces · `wf-final-en`**
 
 ```bash
 python scripts/workshop.py --language en benchmark monitor --label wf-final-en
 ```
 
-**Check final gates against saved evidence**
+**4. Check final gates against saved evidence**
 
 ```bash
 python scripts/workshop.py --language en benchmark verify --policy --baseline wf-baseline-en --candidate wf-candidate-en --holdout wf-final-en --require-native --require-native-pass --require-traces --calibration policy-calibration-en
@@ -130,13 +172,29 @@ python scripts/workshop.py --language en benchmark monitor --label wf-local-fina
 python scripts/workshop.py --language en benchmark verify --policy --baseline wf-local-baseline-en --candidate wf-local-candidate-en --holdout wf-local-final-en --require-native --require-native-pass --require-traces --calibration policy-calibration-en
 ```
 
-`benchmark verify` checks the stored run contracts and exact versions; it does **not** accept `--retrieval`. Verify the selected manifests contain `retrieval: local` and retain their original hashes. The explicit local collection and local-only labels determine which profile is verified; do not override, edit, or substitute IQ results.
+`benchmark verify` checks the stored run contracts and exact versions; it does **not** accept `--retrieval`. Verify the selected manifests contain `retrieval: local` and retain their original hashes.
+
+The local collection and local-only labels determine which profile is verified. Do not override, edit, or substitute IQ results.
 
 </details>
 
-For either Hosted path, inspect every row and error after each step. This guide's single Sol target requires **four core holdout rows**. Check `gate_passed`, `native_quality_passed`, `native_quality_required: true`, and `deployment_approved: false` together. A local Hosted pass does not complete Search/IQ/Hybrid or Toolbox/OpenAPI work.
+For either Hosted path, inspect every row and error after each step. This guide's single Sol target requires **four core holdout rows**.
 
-**`--require-native` requires Foundry policy-evaluation evidence; `--require-native-pass` also requires candidate/holdout scores to pass.** They are not interchangeable. This command does not verify chapter 13's separate managed red-team audit; check that explicitly in section 1.
+| Result field | What to read |
+|---|---|
+| `gate_passed` | Whether the acceptance criteria checked by this command passed |
+| `native_quality_passed` | Whether actual Foundry policy scores passed |
+| `native_quality_required: true` | Whether passing scores were required |
+| `deployment_approved: false` | Do not interpret this as production approval |
+
+A local Hosted pass does not complete Search/IQ/Hybrid or Toolbox/OpenAPI work.
+
+**Distinguish the two options**
+
+- `--require-native`: requires Foundry policy-evaluation **evidence**.
+- `--require-native-pass`: also requires candidate/holdout **scores to pass**.
+
+This command does not verify chapter 13's separate managed red-team audit. Check that explicitly in section 1.
 
 <details>
 <summary>SDK target only: use this instead of either Hosted block</summary>
@@ -183,7 +241,9 @@ Learning completion and passing the small lab quality gate are different states.
 
 1. Stop your local `serve`/recovery servers with `Ctrl+C` in their terminals.
 2. Verify only Routines and recurring evaluations you created are **disabled/paused**. If you created none, mark this not applicable.
-3. If you ran a Hosted matrix, stop **only labels that actually exist**. Skip the final-label line if holdout was not run. For the IQ path:
+3. If you ran a Hosted matrix, stop **only labels that actually exist**. Skip the final-label line if holdout was not run.
+
+### If you chose the IQ matrix
 
 ```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-baseline-en
@@ -201,7 +261,7 @@ python scripts/workshop.py --language en benchmark stop-session --label wf-candi
 python scripts/workshop.py --language en benchmark stop-session --label wf-final-en
 ```
 
-For the separately selected local-retrieval path instead:
+### If you chose the local-retrieval matrix instead
 
 ```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-local-baseline-en
@@ -221,9 +281,14 @@ python scripts/workshop.py --language en benchmark stop-session --label wf-local
 
 Do not invent missing experiment labels. Identify separate smoke/manual sessions using `azd ai agent sessions list` in the appropriate Hosted folder and stop only your sessions.
 
-**Archive evidence before session/file expiry.** Files may still be retrieved from a stopped session while available. Follow [session-file retrieval](advanced/session-files.md) with an **absolute `--target-path`**, matching the original request/version and recorded tool-result hashes. Stopping or retaining resources does not guarantee indefinite file retention.
+**Archive evidence before session/file expiry.** Files may still be retrieved from a stopped session while available.
 
-**Stopping does not delete volumes.** In retention mode, keep those volumes. Otherwise, after deciding they are no longer needed, inspect the current session-deletion UI/CLI before removing them. Never terminate other people's processes in bulk by name.
+Follow [session-file retrieval](advanced/session-files.md) with an **absolute `--target-path`**. Match the original request/version and recorded tool-result hashes. Stopping or retaining resources does not guarantee indefinite file retention.
+
+> [!WARNING]
+> **Stopping does not delete volumes.** Keep them in retention mode. Only after separately deciding they are no longer needed, inspect the current session-deletion UI/CLI before removing them.
+
+Never terminate other people's processes in bulk by name.
 
 ## 5. Reconcile your owned assets
 
@@ -263,11 +328,20 @@ The removal column below applies **only if you separately choose deletion**, not
 
 Deleting ownership ledgers makes it harder—not easier—to determine which assets are yours.
 
-Only if you have 03's SDK File Search ownership records, and outside retention mode, inspect the deletion plan below. Skip both cleanup commands if you never created File Search. If partial failure left only files/stores, reconcile the ownership record and portal first:
+Expand the following **only if you chose to delete File Search**. If you never created it or are in retention mode, skip both cleanup commands.
+
+<details>
+<summary>Only after choosing deletion, with SDK File Search ownership records from 03</summary>
+
+If partial failure left only files/stores, reconcile the ownership record and portal first.
+
+**1. Inspect the plan without deleting**
 
 ```bash
 python scripts/workshop.py --language en file-search cleanup
 ```
+
+**2. Delete only after checking ownership and references**
 
 Check owned names, files, stores, and references from other agents. Only after choosing deletion:
 
@@ -275,11 +349,16 @@ Check owned names, files, stores, and references from other agents. Only after c
 python scripts/workshop.py --language en file-search cleanup --confirm-delete
 ```
 
-This removes only recorded versions, stores, and uploads—not portal-created assets or a shared project. For experiments created with another name, provide the same `--name`. In retention mode, skip both cleanup commands.
+This removes only recorded versions, stores, and uploads—not portal-created assets or a shared project. For experiments created with another name, provide the same `--name`.
+
+</details>
 
 ## 6. Optional deletion of the dedicated lab group
 
-Skip this section in retention mode. If every resource is dedicated to this course and no longer needed:
+> [!CAUTION]
+> **Skip this section in retention mode and go to section 7.** These steps apply only after you separately choose deletion.
+
+If every resource is dedicated to this course and no longer needed:
 
 1. In the Azure portal, open **Resource groups → your lab group → Resources**.
 2. Inspect the actual list for business resources or another user's assets.

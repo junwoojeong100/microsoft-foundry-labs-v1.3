@@ -2,9 +2,12 @@
 
 **English** | [한국어](../checkpoints.md) · [Course home](../../README.md)
 
-Take one step at a time: **run → inspect → next**. No separate write-up or submission is required. Keep the configuration and result files produced by the commands.
+Take one step at a time: **run → inspect → next**.
 
-**On a first run, follow the default route in one language.** Historical validation reports and collapsed recovery commands are not additional assignments. If you skipped a chapter, check the next chapter's **prerequisites** before proceeding.
+No separate write-up or submission is required. Keep the configuration and result files produced by the commands.
+
+> [!TIP]
+> On a first run, follow **the default route in one language**. Historical reports and collapsed recovery sections are not additional assignments. If you skipped a chapter, check the next chapter's **prerequisites** first.
 
 ## Find the help you need
 
@@ -34,13 +37,21 @@ Take one step at a time: **run → inspect → next**. No separate write-up or s
 | A JSON/YAML block or question text | Not a shell command. Save it to the specified file or paste it into Playground as instructed. |
 | Optional, alternative, or collapsed recovery section | Do not execute it in addition to every default command. Use it only when its condition applies. |
 
-The lab chapters use **one command per executable block**. Read **the explanation above → run that command → check the result below**. For ordinary commands, wait for the prompt to return and inspect the result before the next block. Long-running servers such as `serve` are the exception; their chapters explain terminals A and B.
+### Run one command at a time
 
-For long commands, scroll horizontally or use the block's copy button to copy **the entire line**. Visual wrapping is fine; do not insert Enter, a backslash, or a PowerShell backtick yourself. Quoted questions, paths, and options must remain part of the same command.
+1. **Read the explanation above the block.** Check where to run it and which values to replace.
+2. **Copy and run one block.** Each executable block contains one command.
+3. **When the prompt returns, inspect the result.** Follow the check below the block before continuing.
+
+Long-running servers such as `serve` are the exception. Follow the chapter's [terminal A/B instructions](#chapters-with-two-terminals).
+
+> [!TIP]
+> For long commands, scroll horizontally or use the copy button to copy **the entire line**. Visual wrapping is fine; do not insert Enter, a backslash, or a PowerShell backtick. Questions, paths, and options must stay in the same command.
 
 JSON, YAML, questions, and example output can span multiple lines. Do not execute those blocks in the terminal; use the editor, Playground, or result-viewing location specified immediately above them.
 
-`--confirm-create`, `--confirm-cost`, and `--confirm-delete` explicitly acknowledge creation, charges, and deletion. **Model requests without these options can still incur charges.** Check the target and cost before running them.
+> [!WARNING]
+> `--confirm-create`, `--confirm-cost`, and `--confirm-delete` acknowledge creation, charges, and deletion. **Model requests without these options can still incur charges.** Check the target and cost before running them.
 
 ## Read results and carry values into the next command
 
@@ -55,9 +66,16 @@ Open the printed path in your editor's file explorer. A created folder or a prin
 | `manifest.json` | Records the run's model, instructions, data, and settings. Read the actual answer in its response file. |
 | `result_directory` or a saved path | Open that folder/file. Responses, evaluations, and ownership records are different artifacts. |
 
-**Names have different roles too.** In `prepare-hosted --name hosted-en`, `hosted-en` is a **suffix after your prefix**. Use the full service name printed by the helper in subsequent `azd deploy` commands. In contrast, `prompt-agent create --name` takes the **full agent name including your prefix**. Do not substitute the same string into every `--name`.
+### Carry names and paths into the next command
 
-From 08 onward, use [08's value-copying table](08-hosted.md#3-prepare-an-isolated-folder-for-the-existing-project) to copy the package path, preparation folder, service, and version **directly from command output into the next command**. `--cwd` selects the target folder for one azd command; it does not change your terminal's working directory. Keep the terminal in the README folder.
+The same `--name` option can accept different kinds of names:
+
+- **`prepare-hosted --name hosted-en`:** `hosted-en` is a suffix after your prefix. Use the helper's **full printed service name** in later `azd deploy` commands.
+- **`prompt-agent create --name`:** supply the **full agent name including your prefix**.
+
+From 08 onward, use [08's value-copying table](08-hosted.md#3-prepare-an-isolated-folder-for-the-existing-project) to copy **actual output values** for the package, preparation folder, service, and version.
+
+`--cwd` selects the target folder for one azd command. It does not change your terminal's working directory; keep the terminal in the README folder.
 
 ## Find saved configuration and results
 
@@ -89,10 +107,16 @@ File existence is not completion. Compare the chapter's **completion check** wit
 
 ## Resume on another day
 
-**For the same project, do not start by reinstalling or recreating resources.** Keep the original folder, `.env`, `.selfstudy/`, and `outputs/`.
+> [!IMPORTANT]
+> For the same project, **do not start by reinstalling or recreating resources**. Keep the original folder, `.env`, `.selfstudy/`, and `outputs/`.
 
-1. Open the existing workshop folder in your editor and start a terminal.
-2. Run **only your OS's** activation command.
+### 1. Open the existing workshop folder
+
+Open the existing workshop folder in your editor and start a terminal.
+
+### 2. Activate your OS's virtual environment
+
+Run **only the command for your OS** from the two blocks below.
 
 **macOS / Linux**
 
@@ -108,27 +132,50 @@ source .venv/bin/activate
 
 If organizational policy blocks activation, use `.\.venv\Scripts\python.exe` instead of `python`; do not weaken policy.
 
-**Then, on every operating system**
+### 3. Check local readiness and saved settings
 
-3. After chapter 00's `configure` has been completed, run:
+Continue on every operating system. Chapter 00's `configure` must already be complete.
+
+**Check local readiness**
 
 ```bash
 python scripts/workshop.py --language en doctor
 ```
 
-After checking local readiness, read the saved settings.
+**After checking readiness, read saved settings**
 
 ```bash
 python scripts/selfstudy.py values
 ```
 
-Check `PASS` and **your project, prefix, and model**. `values` and `status` read saved settings, not the current existence or health of Azure resources. If prompted to run Lab 00's configure, return to [configuration](00-setup.md#8-collect-configuration-from-actual-values). For expired sign-in, use 00's normal `az login`/`azd auth login` process. `values` uses Korean field labels even in the English edition; it has no global language flag.
+| Result | Next action |
+|---|---|
+| `PASS` and the intended project, prefix, and model | Inspect saved results and continue. |
+| Prompt to run Lab 00's configure | Return to [00's configuration step](00-setup.md#8-collect-configuration-from-actual-values). |
+| Expired sign-in | Follow 00's normal `az login` / `azd auth login` process. |
 
-4. Locate the chapter's saved result using the table above, compare it with the **completion check**, and continue at the next unperformed step. To inspect an existing answer, open its file rather than calling the model again.
+`values` and `status` **read saved settings**. They do not check the current existence or health of Azure resources.
+
+`values` uses Korean field labels even in the English edition; it has no global language flag.
+
+### 4. Continue from saved results
+
+Use the [saved-locations table](#find-saved-configuration-and-results) to open the chapter's results and compare them with its **completion check**. Continue at the next unperformed step.
+
+To inspect an existing answer, open its file. You do not need to call the model again.
 
 ### Chapters with two terminals
 
-In 05, 08, and 10, leave **terminal A** running the server. Logs without a returned prompt are normal. Open **terminal B** with your editor's new-terminal button, check the same working folder, and activate `.venv` there too. Send checks/requests from B, then use `Ctrl+C` in A to stop your server.
+In 05, 08, and 10, the two terminals have different roles:
+
+| Terminal | Task | Normal behavior |
+|---|---|---|
+| A | Run the server | Logs continue instead of returning a prompt |
+| B | Check readiness and send requests | Inspect each command's result before continuing |
+
+Open B with your editor's new-terminal button. Use the same workshop folder as A and **activate `.venv` in B too**.
+
+When finished, stop your server with **`Ctrl+C` in A**.
 
 ## Can I rerun the same name?
 
@@ -180,7 +227,11 @@ Opening a portal or completing a CLI command does not imply the next chapter's p
 
 ## If a stage is blocked
 
-Without Search, stop Search-dependent work in 06 and Toolbox/OpenAPI in 10. Work that does not require Search, such as 07's `local` retrieval evaluation, can continue. A deliberately chosen local matrix in 12 is not Search/IQ success. If Hosted is unavailable, record remote work in 08/12 as not run and distinguish 15's SDK target.
+First, stop **the steps that depend on the blocked feature**:
+
+- **No Search:** stop Search-dependent work in 06 and Toolbox/OpenAPI in 10. The `local` retrieval evaluation in 07 can continue.
+- **Local retrieval chosen in 12:** do not count that matrix as Search/IQ success.
+- **No Hosted support:** record remote work in 08/12 as not run and distinguish it from 15's SDK target.
 
 | Blocked feature | What can proceed |
 |---|---|
@@ -195,7 +246,10 @@ Without Search, stop Search-dependent work in 06 and Toolbox/OpenAPI in 10. Work
 
 For another project, follow [00's archive/fresh-workspace procedure](00-setup.md#start-a-new-project-without-adopting-old-state). A retained CI identity or old deployment alias does not establish new-project permissions or ownership.
 
-**Keep failure output; do not treat unsupported or unperformed work as complete.** The [validation report](validation-report.md) is reference evidence, not your run. When stopping, jump to [15's stopping steps](15-capstone-cleanup.md#4-stop-running-work-first). Search Basic can incur charges without requests, and retained storage can cost money after compute stops.
+Keep failure output; do not treat unsupported or unperformed work as complete. The [validation report](validation-report.md) is reference evidence, not your run.
+
+> [!WARNING]
+> When stopping, jump to [15's stopping steps](15-capstone-cleanup.md#4-stop-running-work-first). **Search Basic can incur charges without requests; retained storage can cost money after compute stops.**
 
 ## Share workshop materials safely
 

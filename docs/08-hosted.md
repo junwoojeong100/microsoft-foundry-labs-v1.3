@@ -55,9 +55,14 @@ azd auth login
 azd ai agent show --help
 ```
 
-현재 구독·리전의 Hosted 지원과 용량을 확인합니다. 지원되지 않으면 이 장은 차단으로 기록하고 **기존 프로젝트를 임의로 재생성하지 않습니다**. 코드 배포에는 Docker/ACR 로컬 설치가 필수는 아닙니다.
+현재 구독·리전의 Hosted 지원과 용량을 확인합니다. 코드 배포에는 Docker/ACR 로컬 설치가 필수는 아닙니다.
 
-원격 배포만 막힌 경우에도 1~3절의 **로컬 준비 폴더**는 뒤의 프로젝트 연결에 사용할 수 있습니다. 준비가 성공했다면 그 폴더를 보관하고, 원격 배포/호출은 미실행으로 구분합니다. 폴더 준비 자체가 실패했다면 준비된 것으로 기록하지 않습니다.
+| 막힌 범위 | 다음 행동 |
+|---|---|
+| 원격 배포만 미지원 | 성공한 1~3절의 로컬 준비 폴더는 이후 프로젝트 연결에 사용합니다. 원격 배포·호출은 미실행으로 남깁니다. |
+| 로컬 준비 폴더 생성도 실패 | 준비 완료로 기록하지 않습니다. 의존하는 다음 단계는 멈춥니다. |
+
+지원되지 않으면 해당 범위를 차단으로 기록합니다. **기존 프로젝트를 임의로 재생성하지 않습니다.**
 
 ## 2. 안전한 패키지
 
@@ -67,7 +72,11 @@ python scripts/workshop.py --script package-hosted
 
 **확인:** 출력 경로의 `package-manifest.json`, `runtime-profile.json`, `requirements.txt`를 엽니다. 기본 경로는 `.build/hosted/`입니다.
 
-코드·합성 정책·지침은 있고, `.env`·인증정보·평가 정답·실행 결과는 없어야 합니다. `cloud_deployed: false`는 **패키징 결과**이며 Azure 조회 결과가 아닙니다.
+| 있어야 하는 것 | 없어야 하는 것 |
+|---|---|
+| 코드·합성 정책·지침 | `.env`·인증정보·평가 정답·실행 결과 |
+
+`cloud_deployed: false`는 **패키징 결과**입니다. Azure를 조회했다는 뜻이 아닙니다.
 
 이미 패키지가 있으면 내용을 먼저 읽습니다. 다시 만들 필요가 있을 때만 이전 패키지를 다른 개인 경로에 보관한 후 재생성합니다.
 
@@ -83,15 +92,21 @@ python scripts/selfstudy.py status
 python scripts/selfstudy.py prepare-hosted --kind runtime --package "실제-패키지-경로" --name hosted
 ```
 
-생성된 `azure.yaml`에는 기존 프로젝트 연결과 의도한 Hosted 서비스 하나만 있어야 합니다. 모델 배포 목록을 새로 추가하거나 소스 전체를 서비스로 만들지 않습니다. 별도 Foundry 프로젝트를 또 provision할 필요가 없는 경로입니다.
+생성된 `azure.yaml`에는 **기존 프로젝트 연결과 의도한 Hosted 서비스 하나**만 있어야 합니다. 모델 배포 목록을 추가하거나 소스 전체를 서비스로 만들지 않습니다.
 
-`prepare-hosted`는 로컬 manifest/azd 환경만 준비하며 아직 배포하거나 모델을 호출하지 않습니다. 같은 준비 폴더가 이미 있으면 덮어쓰지 말고 기존 경로를 재사용합니다. 새 준비가 필요한 경우만 `--run second`처럼 새 이름을 지정합니다.
+> [!NOTE]
+> `prepare-hosted`는 **로컬 manifest와 azd 환경만 준비**합니다. 배포하거나 모델을 호출하지 않으며, 별도 Foundry 프로젝트를 또 provision할 필요도 없습니다.
+
+같은 준비 폴더가 이미 있으면 덮어쓰지 말고 기존 경로를 재사용합니다. 새 준비가 필요한 경우만 `--run second`처럼 새 이름을 지정합니다.
 
 영문 패키지를 준비할 때는 `prepare-hosted`에도 `--language en`을 명시합니다. 패키지의 언어와 준비 단계의 언어가 다르면 중단하며 한국어 프로필로 자동 변경하지 않습니다.
 
+### 준비 결과에서 복사할 값
+
 명령이 **서비스 이름, 폴더, 다음 배포/조회 명령**을 출력합니다. 이후의 서비스 이름과 Hosted 경로에는 이 값을 사용합니다.
 
-**출력된 배포 명령을 지금 바로 실행하지 않습니다.** 아래 표에서 값의 출처만 확인하고, 4절의 로컬 확인을 마친 뒤 5절에서 실행합니다.
+> [!IMPORTANT]
+> **출력된 배포 명령을 지금 바로 실행하지 않습니다.** 값의 출처만 확인한 뒤 **4절 로컬 확인 → 5절 원격 배포** 순서를 따르세요.
 
 | 다음 명령에 넣을 값 | 복사할 곳 | 넣으면 안 되는 값 |
 |---|---|---|
@@ -101,11 +116,17 @@ python scripts/selfstudy.py prepare-hosted --kind runtime --package "실제-패�
 | 원격 `--version` | 5절 `show` 결과의 **`version` 값** | prompt 이름 `v2`, 패키지명, 추측한 `latest` |
 | 역할 부여 대상 | 같은 `show`의 **`instance_identity.principal_id`** | 내 사용자 ID나 Client ID |
 
-따옴표 안 자리표시자만 바꾸고 따옴표는 남깁니다. `--cwd`를 사용해도 터미널은 계속 실습 루트에 둡니다. 7절 workflow와 10·12장에서는 **그 배포가 출력한 값**을 사용합니다.
+따옴표 안 자리표시자만 바꾸고 따옴표는 남깁니다. `--cwd`를 사용해도 터미널은 계속 실습 루트에 둡니다.
 
-터미널 출력을 닫았더라도 `.selfstudy/` 아래의 해당 `azure.yaml`을 열면 `name`과 `services`에서 서비스 이름을 확인할 수 있습니다. 그 파일이 있는 **폴더의 절대 경로**가 `--cwd`이며, 버전은 아래 `show`로 다시 조회합니다. 별도 기록 파일을 만들 필요는 없습니다.
+7절 workflow와 10·12장에서는 **그 배포가 출력한 값**을 사용합니다.
 
-서비스 이름, `main.py`, Python 3.13, Responses protocol, 실제 Endpoint와 모델, 원격 인증 `managed-identity`를 확인합니다.
+### 출력을 닫았을 때 다시 찾기
+
+1. `.selfstudy/` 아래 해당 `azure.yaml`을 엽니다. `name`과 `services`에서 서비스 이름을 확인합니다.
+2. 그 파일이 있는 **폴더의 절대 경로**를 `--cwd`에 사용합니다.
+3. 실제 버전은 5절의 `show`로 다시 조회합니다. 별도 기록 파일을 만들 필요는 없습니다.
+
+**로컬 호출 전 확인:** 서비스 이름, `main.py`, Python 3.13, Responses protocol, 실제 Endpoint와 모델, 원격 인증 `managed-identity`.
 
 ## 4. 로컬 실제 호출
 
@@ -133,7 +154,15 @@ python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8
 azd ai agent invoke --cwd "실제-Hosted-절대경로" --local --port 8088 --new-session --new-conversation --timeout 120 "2026년 9월 국내 출장 숙박비 한도와 근거를 알려주세요."
 ```
 
-**확인:** 실제 답변·근거가 있어야 추론 성공입니다. 앞의 `healthy`는 서버 준비만 뜻합니다. 로컬 서버도 Azure 모델 비용이 있습니다.
+**결과를 두 단계로 구분합니다.**
+
+| 확인 결과 | 의미 |
+|---|---|
+| `healthy` | 로컬 서버가 요청을 받을 준비가 됨 |
+| 실제 답변·근거 | 모델 추론 성공 |
+
+> [!WARNING]
+> **로컬 서버도 Azure 모델 호출 비용이 발생합니다.** 로컬 실행을 무료·오프라인 실행으로 해석하지 않습니다.
 
 **중지:** 확인 후 A에서 `Ctrl+C`로 내 서버를 종료합니다.
 
@@ -151,7 +180,9 @@ azd deploy "실제-agent-서비스-이름" --cwd "실제-Hosted-절대경로"
 azd ai agent show "실제-agent-서비스-이름" --cwd "실제-Hosted-절대경로" --output json
 ```
 
-배포 실패 후 과거 active 버전을 이번 성공으로 쓰지 않습니다. 실제 새 `name`, `version`, `status`, endpoint를 기록합니다.
+**확인할 값:** 실제 새 `name`, `version`, `status`, endpoint.
+
+배포가 실패했다면 과거 active 버전을 이번 성공의 증거로 쓰지 않습니다.
 
 ### 런타임에 필요한 역할
 
@@ -161,7 +192,9 @@ azd ai agent show "실제-agent-서비스-이름" --cwd "실제-Hosted-절대경
 python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID" --hosted-principal-id "실제-instance_identity.principal_id"
 ```
 
-이 출력은 계획입니다. **실제 배포한 이름·버전의 ID**인지 대조한 뒤 런타임의 Foundry User 등 필요한 역할만 그 리소스 범위에 부여합니다. 로컬 `az login` 성공이 원격 런타임 권한을 주지는 않습니다.
+이 출력은 **역할 부여 계획**이며 아직 실행하지 않았습니다.
+
+실제 배포한 이름·버전의 ID인지 대조한 뒤, Foundry User 등 필요한 역할만 해당 리소스 범위에 부여합니다. 로컬 `az login` 성공이 원격 런타임 권한을 주지는 않습니다.
 
 ## 6. 정확한 원격 버전 호출
 
@@ -183,7 +216,8 @@ azd ai agent sessions list --cwd "실제-Hosted-절대경로" --limit 10
 azd ai agent sessions stop "실제-내-session-id" --cwd "실제-Hosted-절대경로"
 ```
 
-stop은 실행 compute를 중지하지만 persistent volume까지 삭제하지 않습니다. 이후 삭제와 보관 비용도 마지막 장에서 확인합니다.
+> [!WARNING]
+> **stop은 실행 compute만 중지하며 persistent volume을 삭제하지 않습니다.** 남는 보관 비용과 삭제 여부는 [15장](15-capstone-cleanup.md)에서 확인합니다.
 
 ## 7. 같은 방식을 workflow로
 
@@ -205,7 +239,15 @@ python scripts/selfstudy.py prepare-hosted --kind runtime --package "실제-work
 python scripts/workshop.py serve --kind workflow --pattern sequential --retrieval local --prompt v2 --api project-responses --protocol responses
 ```
 
-터미널 B의 상태 확인·로컬 호출·배포에는 방금 출력된 **workflow 서비스 이름과 폴더**를 사용합니다. 이전 서버는 먼저 `Ctrl+C`로 중지하며, 단일-agent 패키지나 과거 버전을 대신 사용하지 않습니다.
+**다시 사용할 것과 바꿀 것을 구분합니다.**
+
+| 항목 | workflow 실행에서 할 일 |
+|---|---|
+| 이전 서버 | 먼저 `Ctrl+C`로 중지 |
+| 터미널 A | 위의 workflow 프로필로 서버 실행 |
+| 터미널 B·원격 배포 | 방금 출력된 workflow 서비스 이름과 폴더 사용 |
+
+단일-agent 패키지나 과거 버전을 대신 사용하지 않습니다.
 
 ## 완료 확인
 

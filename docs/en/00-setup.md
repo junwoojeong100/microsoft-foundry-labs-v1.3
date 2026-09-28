@@ -8,7 +8,8 @@
 
 **Where you work:** Azure and Foundry portals, your editor, and a terminal in the workshop folder.
 
-> **Before starting:** prepare Azure resources in **North Central US (`northcentralus`)**. New resources and model calls can incur charges. Follow the **portal route** on your first run; skip the collapsed CLI alternatives.
+> [!IMPORTANT]
+> Prepare Azure resources in **North Central US (`northcentralus`)**. Follow the **portal route** on your first run; skip the collapsed CLI alternatives. New resources and model calls can incur charges.
 
 <a id="chapter-map"></a>
 
@@ -47,7 +48,9 @@ Names in this guide are examples. Do not copy resource groups or IDs from valida
 2. Find the extracted folder containing **`README.md`, `scripts/`, and `curriculum.json` together**. Do not work inside the ZIP or its parent folder.
 3. If you do not have an editor, install [VS Code](https://code.visualstudio.com/download) first. Use **File → Open Folder** to open that entire folder, then **Terminal → New Terminal** to enter commands.
 
-Read the guide in your browser or open the Markdown file in VS Code and select **Open Preview** (`Cmd+Shift+V` on macOS, `Ctrl+Shift+V` on Windows/Linux). This renders tables, links, and collapsed optional sections. Paste commands into the **terminal**, not the preview.
+**Read the guide:** use your browser or VS Code's **Open Preview**. The shortcut is `Cmd+Shift+V` on macOS or `Ctrl+Shift+V` on Windows/Linux. Read with tables, links, and collapsed sections rendered.
+
+**Run commands:** paste them into the **terminal**, not the preview.
 
 All code and data are included. A ZIP provided to you requires neither a GitHub account nor Git.
 
@@ -79,17 +82,26 @@ Use an approved development environment. Azure Owner does not override software-
 | Azure Developer CLI | [Install azd](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd), then run `azd version`. |
 | Editor | Open the **entire v1.5 folder** in VS Code or another editor. |
 
-After installation, reopen your editor and check these version commands in a new terminal. Stop if a command is not found or not recognized. Installing the newest Python release is not the same as preparing **this lab's Python 3.13 environment**.
+After installation, reopen your editor and check these version commands in a new terminal. Stop if a command is not found or not recognized.
 
-> **Windows execution boundary:** you can prepare the lab in PowerShell, but **05 section 5's local SDK pause/resume and its recovery extension require macOS/Linux, including approved WSL**. The runner uses POSIX `fcntl` locks and does not run in Windows Python.
+You need **this lab's Python 3.13 environment**, not simply the newest Python release.
 
-To do that section, use a **separate source copy** in approved WSL/Linux and complete only the Linux Python setup and doctor below. That local experiment needs no Azure configuration or login. Do not copy a Windows `.venv` or private Azure state.
+> [!NOTE]
+> **Windows setup works in PowerShell.** Only 05 section 5's local SDK pause/resume and recovery extension require macOS/Linux, including approved WSL. The runner uses POSIX `fcntl` locks and does not run in Windows Python.
 
-Check your current folder/files using `pwd` and `ls` on macOS/Linux, or `Get-Location` and `Get-ChildItem` in PowerShell. The `bash`/`powershell` labels above code blocks are not commands. **Execute one line at a time; stop on an error before running the next line.**
+For that section, use a **separate source copy** in approved WSL/Linux and complete only Linux Python setup and doctor. That local experiment needs no Azure configuration or login.
+
+Do not copy a Windows `.venv` or private Azure state into WSL/Linux.
+
+Check the current folder/files with `pwd` and `ls` on macOS/Linux, or `Get-Location` and `Get-ChildItem` in PowerShell.
+
+The `bash`/`powershell` labels above code blocks are not commands. **Execute one line at a time; stop on an error before running the next line.**
 
 Do not overwrite a `.venv` created with another Python version or existing personal lab state. Preserve that folder and **extract the ZIP into a new folder**.
 
 **On a first run, skip the collapsed section below and follow only your OS's installation steps.** Continue to package installation only after `python --version` reports **Python 3.13.x**.
+
+**Jump to your OS:** [macOS / Linux](#macos--linux) · [Windows PowerShell](#windows-powershell) → [Shared installation check](#all-operating-systems-verify-installation)
 
 <details>
 <summary>Existing environments only: start again with a different project</summary>
@@ -107,19 +119,19 @@ Do not overwrite a `.venv` created with another Python version or existing perso
 
 ### macOS / Linux
 
-**Create a new virtual environment**
+**1. Create a new virtual environment**
 
 ```bash
 python3.13 -m venv .venv
 ```
 
-**Activate the virtual environment**
+**2. Activate the virtual environment**
 
 ```bash
 source .venv/bin/activate
 ```
 
-**Check for Python 3.13**
+**3. Check for Python 3.13**
 
 ```bash
 python --version
@@ -127,13 +139,13 @@ python --version
 
 **Continue only if you see `Python 3.13.x`.** If another version appears, check the virtual environment before installing packages.
 
-**Install the required packages**
+**4. Install the required packages**
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-**Check the installed packages**
+**5. Check the installed packages**
 
 ```bash
 python -m pip check
@@ -141,13 +153,13 @@ python -m pip check
 
 ### Windows PowerShell
 
-**Create a new virtual environment**
+**1. Create a new virtual environment**
 
 ```powershell
 py -3.13 -m venv .venv
 ```
 
-**Activate the virtual environment**
+**2. Activate the virtual environment**
 
 If activation is blocked, do not weaken system policy. Instead of activating it, replace every subsequent `python ...` command with `.\.venv\Scripts\python.exe ...`.
 
@@ -155,7 +167,7 @@ If activation is blocked, do not weaken system policy. Instead of activating it,
 .\.venv\Scripts\Activate.ps1
 ```
 
-**Check for Python 3.13**
+**3. Check for Python 3.13**
 
 ```powershell
 python --version
@@ -163,13 +175,13 @@ python --version
 
 **Continue only if you see `Python 3.13.x`.** If another version appears, check the virtual environment before installing packages.
 
-**Install the required packages**
+**4. Install the required packages**
 
 ```powershell
 python -m pip install -r requirements.txt
 ```
 
-**Check the installed packages**
+**5. Check the installed packages**
 
 ```powershell
 python -m pip check
@@ -198,9 +210,19 @@ It reports dataset counts only; do not open holdout questions or answers.
 
 Continue without creating a separate notes file. Section 8 saves configuration in `.env` and `.selfstudy/azure.json`; later commands identify their result files. The helpers create the required directories too.
 
-Names beginning with a dot, such as `.selfstudy`, `.env`, and `.build`, may be hidden by your file manager. Find them in the editor's file explorer and keep the leading dot. **Section 8's `configure` creates `.env`; you do not need to copy `.env.example` or supply keys now.**
+Names beginning with a dot, such as `.selfstudy`, `.env`, and `.build`, may be hidden by your file manager. Find them in the editor's file explorer and keep the leading dot.
 
-English workshop commands use `--language en` **before the subcommand**. Wrapper options (`--model-deployment`, `--script`) go before `--language en`. The shared `selfstudy.py` helper has no global language flag; its later `prepare-hosted` and `capture` subcommands accept their own `--language en`. Keep English labels and results separate from Korean runs; see [Data and localization](data-format.md).
+> [!NOTE]
+> **Section 8's `configure` creates `.env`.** You do not need to copy `.env.example` or supply keys now.
+
+**English command options**
+
+| Script | Where the language option goes |
+|---|---|
+| `workshop.py` | `--language en` goes before the subcommand, after wrapper options such as `--model-deployment` and `--script`. |
+| `selfstudy.py` | No global language option. Its later `prepare-hosted` and `capture` subcommands accept their own `--language en`. |
+
+Keep English labels and results separate from Korean runs. See [Data and localization](data-format.md).
 
 ## 3. Sign in and plan names
 
@@ -274,7 +296,13 @@ You can set a personal budget alert under the subscription or group's **Cost Man
 5. The Foundry resource name may be generated automatically. Verify the actual name instead of assuming an example.
 6. Copy the **Project endpoint** from the project home.
 
-Its format is `https://<your-domain>.services.ai.azure.com/api/projects/<your-project>`. It is different from the model's `.openai.azure.com` endpoint. If the displayed URL differs from the format accepted by this pinned runtime, check Libraries/API for the project endpoint. Do not invent a different domain.
+**Value 1 to copy — Project endpoint**
+
+Its format is `https://<your-domain>.services.ai.azure.com/api/projects/<your-project>`. It is different from the model's `.openai.azure.com` endpoint.
+
+If the displayed URL differs from the format accepted by this pinned runtime, check Libraries/API for the project endpoint. Do not invent a different domain.
+
+**Value 2 to copy — Project ARM ID**
 
 In the Azure portal, open **project resource → JSON View** and copy `id`.
 
@@ -313,11 +341,16 @@ CLI creation **does not guarantee Foundry User assignments** for the user and pr
 4. Select a pay-as-you-go Standard variant permitted by your policies. Choose Global Standard only if global processing is allowed. No PTU contract is required.
 5. Wait for **Succeeded** and verify the actual base model, version, deployment type, and region.
 
-If quota is unavailable or the model is not offered, **do not repeatedly click Create**. Check current availability, request the required quota, or pause until it is available. Keep a required region and the Sol selection fixed; do not substitute another model and present it as the same success.
+> [!WARNING]
+> If quota is unavailable or the model is not offered, **do not repeatedly click Create**. Keep the required region and Sol selection fixed; do not substitute another model and present it as the same success.
+
+Check current availability in the deployment/Quota screen. Request the required quota or pause until it is available.
 
 Sol is the default answer model. The GPT-6 Luna comparison in 02 is optional; the judge in 07 is **GPT-5.5 / 2026-04-24**. Prepare IQ Chat's separate `gpt-5.6-luna` model and Optimizer only in their respective chapters.
 
-If a different model already uses the same deployment name, **do not replace or delete it**. Explicitly reuse the actual existing Sol deployment or choose a new unique name. The setup helper checks the real model/version. Do not relabel existing agents or evaluations as results from a new model.
+If a different model already uses the same deployment name, **do not replace or delete it**. Explicitly reuse the actual existing Sol deployment or choose a new unique name.
+
+The setup helper checks the real model/version. Do not relabel existing agents or evaluations as results from a new model.
 
 ## 7. Verify data-access roles
 
@@ -328,7 +361,9 @@ In the Azure portal, inspect **your actual Foundry resource → IAM → Role ass
 | Your signed-in user | **Foundry User** | This workshop's Foundry resource |
 | This project's managed identity | **Foundry User** | The same Foundry resource |
 
-Do not duplicate assignments already created by the portal. If missing, use **Add role assignment → Foundry User → Members** and select the correct identity. The older name **Azure AI User** may appear; the role ID is `53ca6127-db72-4b80-b1b0-d745d6d5456d`.
+Do not duplicate assignments already created by the portal. If missing, use **Add role assignment → Foundry User → Members** and select the correct identity.
+
+The older name **Azure AI User** may appear. The role ID is `53ca6127-db72-4b80-b1b0-d745d6d5456d`.
 
 The managed identity is not your user account or a project-name string. Identify it through **project resource → JSON View → identity.principalId**. If no identity exists, check the project's managed-identity configuration before continuing.
 
@@ -369,9 +404,19 @@ This helper **only reads subscription, project, account, and deployment metadata
 - `.env`: one set of SDK configuration values.
 - `.selfstudy/azure.json`: actual resource IDs, managed identities, region, and verification time.
 
-It does not store tokens, passwords, or API keys, and does not overwrite configuration for a different existing project. Distinguish `management_metadata_read: true` from `model_invoked: false`.
+It does not store tokens, passwords, or API keys. It does not overwrite configuration for a different existing project.
 
-New configuration uses **reasoning `low` and a `32768` output-token cap**. Reasoning tokens count toward this cap. If reusing older personal settings, inspect and explicitly align them, then use new agents and experiment labels:
+| Output | Meaning |
+|---|---|
+| `management_metadata_read: true` | Azure management metadata was read. |
+| `model_invoked: false` | No model request has been made yet. |
+
+New configuration uses **reasoning `low` and a `32768` output-token cap**. Reasoning tokens count toward this cap.
+
+<details>
+<summary>Only when reusing older personal settings: align generation settings</summary>
+
+Inspect the saved values, then align them below. Use new agents and experiment labels for the changed conditions.
 
 ```bash
 python scripts/selfstudy.py set WORKSHOP_REASONING_EFFORT low
@@ -382,6 +427,10 @@ python scripts/selfstudy.py set WORKSHOP_REASONING_EFFORT low
 ```bash
 python scripts/selfstudy.py set WORKSHOP_MAX_OUTPUT_TOKENS 32768
 ```
+
+</details>
+
+**Read back saved values**
 
 ```bash
 python scripts/selfstudy.py values
@@ -395,7 +444,10 @@ python scripts/workshop.py --language en doctor --cloud
 
 Check the subscription, tenant, and deployment. `doctor --cloud` checks authentication and metadata, not inference.
 
-**Pass the first real Sol request in the next chapter before creating agents.** Deployment status `Succeeded` is not proof that every tool/API path works. Preserve original errors and use [Troubleshooting](troubleshooting.md) when needed.
+> [!IMPORTANT]
+> **Pass the first real Sol request in the next chapter before creating agents.** Deployment status `Succeeded` does not prove that every tool/API path works.
+
+Preserve original errors and use [Troubleshooting](troubleshooting.md) when needed.
 
 **A first-time learner does not need to jump ahead.** MAF is introduced in 04 and logging in 09. Only for a separate investigation requiring traces from its first request, prepare [09's logging connection](09-operations.md#1-create-and-connect-logging-resources) early. Earlier responses are not collected retroactively.
 

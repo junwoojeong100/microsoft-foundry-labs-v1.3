@@ -4,11 +4,16 @@
 
 **완료 목표:** 전체 대화를 평가하고, 개선 후보와 실제 Hosted 버전을 근거로 비교합니다.
 
-**시작 조건:** 07의 judge·dev 결과·policy calibration, 08의 Hosted 준비, 같은 계정의 OpenAI Endpoint, 09의 로그 연결. 기본 IQ 비교에는 06의 IQ 조회 성공도 필요합니다. 명시적 로컬 검색 대안에는 필요하지 않습니다.
+**시작 조건:**
+
+- **평가:** 07의 judge·dev 결과·policy calibration.
+- **Hosted 비교:** 08의 Hosted 준비, 같은 계정의 OpenAI Endpoint, 09의 로그 연결.
+- **IQ 경로만:** 06의 IQ 조회 성공. 명시적 로컬 검색 경로에는 필요하지 않습니다.
 
 **실행 위치:** Foundry 포털에서 Optimizer, 터미널에서 배포·평가, 브라우저에서 HTML 보고서.
 
-> **비교 조건:** 기능별 비용을 먼저 확인합니다. 코드를 동결하고 **지침만 바꾸며, holdout은 열지 않습니다.** Optimizer 후보를 기다리거나 자동 적용하지 않고 포함된 `v1`/`v2`로 Hosted를 비교합니다.
+> [!IMPORTANT]
+> 기능별 비용을 먼저 확인합니다. 코드를 동결하고 **지침만 바꾸며, holdout은 열지 않습니다.** Hosted 비교에는 포함된 `v1`/`v2`를 사용합니다. Optimizer 후보를 기다리거나 자동 적용하지 않습니다.
 
 <a id="chapter-map"></a>
 
@@ -39,7 +44,9 @@
 
 ## IQ 또는 로컬 검색을 명시적으로 선택하기
 
-**기본은 06에서 확인한 IQ 경로입니다.** 대화 평가·Optimizer는 Search 없이도 각자의 선행 조건을 갖춰 진행할 수 있습니다. IQ가 준비되지 않았다면 아래의 명시적 로컬 경로를 검토할 수 있지만 IQ 성공으로 기록하지 않습니다.
+**기본은 06에서 확인한 IQ 경로입니다.** IQ가 준비되지 않았다면 아래의 명시적 로컬 경로를 검토합니다. 이를 IQ 성공으로 기록하지 않습니다.
+
+대화 평가·Optimizer는 Search 없이도 각자의 선행 조건을 갖춰 진행할 수 있습니다.
 
 <details>
 <summary>IQ가 준비되지 않았을 때만: 로컬 검색을 사용하는 별도 Hosted 비교</summary>
@@ -62,9 +69,17 @@ python scripts/workshop.py --script package-hosted --kind workflow --pattern seq
 python scripts/selfstudy.py prepare-hosted --kind matrix --package "실제-local-v1-패키지-경로" --name matrix-local --run v1
 ```
 
-이후에도 v2 패키징·dev 수집·15의 holdout에서 `--retrieval local`을 유지하고, 준비 도구가 반환한 **실제 matrix-local 서비스·폴더·버전**을 사용합니다. `wf-baseline`/`wf-candidate` label은 선택한 한 경로에서만 사용합니다. 준비 도구는 승인한 서비스 이름을 자식 프로세스에 전달하고, `bind-matrix`는 배포 후 실제 Endpoint를 읽어 저장합니다.
+**이후에도 바꾸지 않을 값**
 
-로컬 검색은 Search·IQ·벡터 검색의 구현/검증이 아닙니다. 원격 Hosted 실행, 모델 호출, 평가, trace와 검색 provider를 각각 구분해 기록합니다. IQ 경로로 나중에 바꾸면 기존 결과를 재사용하지 않고 새 label과 전후 쌍을 만듭니다.
+- v2 패키징·dev 수집·15의 holdout에서도 `--retrieval local`을 유지합니다.
+- 준비 도구가 반환한 **실제 matrix-local 서비스·폴더·버전**을 사용합니다.
+- `wf-baseline`/`wf-candidate` label은 선택한 한 경로에서만 사용합니다.
+
+준비 도구는 승인한 서비스 이름을 자식 프로세스에 전달합니다. `bind-matrix`는 배포 후 실제 Endpoint를 읽어 저장합니다.
+
+로컬 검색은 Search·IQ·벡터 검색의 구현/검증이 아닙니다. 원격 Hosted 실행, 모델 호출, 평가, trace와 검색 provider를 각각 구분해 기록합니다.
+
+나중에 IQ 경로로 바꾸면 **새 label과 전후 쌍**을 만듭니다. 기존 결과를 재사용하지 않습니다.
 
 </details>
 
@@ -98,7 +113,14 @@ python scripts/workshop.py conversations evaluate --label conversations-first --
 python scripts/workshop.py conversations evaluate --label conversations-first --level conversation --confirm-cost
 ```
 
-**확인:** 같은 실제 대화를 턴 수준과 전체 대화 수준으로 봅니다. 독립 평가 사례 사이에 Memory나 대화 상태를 공유하지 않습니다. 앞 답변과의 모순, 의도 해결, 전체 행/오류를 읽고 차이를 기록합니다.
+**확인:** 같은 실제 대화를 두 수준으로 읽습니다.
+
+| 평가 수준 | 읽을 내용 |
+|---|---|
+| `turn` | 개별 턴의 응답과 판정 |
+| `conversation` | 앞 답변과의 모순, 전체 대화의 의도 해결 |
+
+전체 행과 오류를 확인하고 두 수준의 차이를 기록합니다. 독립 평가 사례 사이에 Memory나 대화 상태를 공유하지 않습니다.
 
 ## 2. Optimizer를 위한 모델과 데이터 직접 준비
 
@@ -111,7 +133,14 @@ python scripts/workshop.py conversations evaluate --label conversations-first --
 python scripts/selfstudy.py model --role optimizer
 ```
 
-`outputs/policy-inputs-ko/optimizer-dev.jsonl`의 **dev 6행**, 원문 참조 envelope가 있는 `ground_truth`, `policy-evaluator-definitions.json`과 manifest를 확인합니다. 입력이 없다면 [07의 준비·calibration](07-evaluation.md#5-원문-참조를-감사하는-policy-평가)을 먼저 마칩니다. 기존 폴더에 같은 준비 명령을 다시 실행하지 않습니다.
+**확인할 폴더:** `outputs/policy-inputs-ko/`
+
+| 파일 | 확인할 내용 |
+|---|---|
+| `optimizer-dev.jsonl` | dev 6행과 원문 참조 envelope를 담은 `ground_truth` |
+| `policy-evaluator-definitions.json`·manifest | 실제 평가 기준과 입력의 조건 |
+
+입력이 없다면 [07의 준비·calibration](07-evaluation.md#5-원문-참조를-감사하는-policy-평가)을 먼저 마칩니다. 기존 폴더에 같은 준비 명령을 다시 실행하지 않습니다.
 
 ## 3. 지침만 최적화
 
@@ -128,11 +157,37 @@ python scripts/workshop.py prompt-agent create --name "YOUR-PREFIX-optimize-ko" 
 <details>
 <summary>SDK로 직접 실행하거나 초기화 오류가 있을 때: 계약 차이와 검증 이력</summary>
 
-**리포 재실행의 새 결과:** `opt_bfa363582dff4c048ca6fceaea6ae953`은 원래 평가기/문턱 4로 succeeded이며 baseline 6/6·참조 감사 valid입니다. 새 전체 후보는 0개이고 승격하지 않았습니다. SDK의 inline dataset 설명과 실제 서비스 wire contract가 달라 첫 요청이 거부됐고, 공개 mapping 생성자로 `train_dataset: {"type": "inline", "items": [...]}`를 전달한 새 요청이 성공했습니다. `items`에는 dev의 `query`/`ground_truth`만 넣고 원시 HTTP body도 확인합니다. 아래의 후보 1개와 이전 초기화 실패는 **삭제 전 NC job의 보관 이력**입니다.
+#### 이번 리포 재실행
 
-**NC Optimizer의 필수 초기화 누락을 해결했습니다.** 원래 실패 `opt_3aa677fe825a4b3ea433904433b57e53`은 보존하고, 새 SDK job `opt_6f23f99c0f2d49f7b930c7b25629543f`에서 **원래 세 평가기의 이름·버전 1, judge**와 필수 `pass_threshold: 4`를 그대로 사용했습니다. Baseline·새 후보 각각 dev 6/6, 세 policy 기준 각각 6/6, 원문 참조 감사 `valid`입니다. 두 점수는 1.0으로 동점이며 `best`는 baseline입니다. 후보는 생성됐지만 개선이나 승격은 주장하지 않습니다.
+Job: `opt_bfa363582dff4c048ca6fceaea6ae953`
 
-원인은 평가기 이름을 잘못 고른 것이 아니라 **Optimizer 참조에서 필수 초기화 인자를 생략한 것**입니다. 인증된 포털의 요청에서 evaluator별 `initialization_parameters`를 확인했습니다. SDK 2.6.1은 이를 named field로 노출하지 않지만, 공개 mapping 생성자 `AgentOptimizationEvaluatorRef(mapping)`는 보존합니다. `optimizer_evaluator_references(catalog, judge)`는 검증된 calibration catalog의 이름·버전·초기화 값을 함께 묶습니다. 이를 `AgentOptimizationJobInputs.evaluators`에 전달하고 직렬화된 **실제 HTTP body**에서도 값이 남는지 확인합니다. 기존 평가기를 교체하거나 required 필드를 삭제하지 않습니다.
+- **실행 결과:** 원래 평가기·문턱 4로 succeeded. Baseline 6/6, 참조 감사 valid.
+- **후보 결과:** 새 전체 후보 0개. 승격하지 않았습니다.
+- **첫 요청의 실패:** SDK의 inline dataset 설명과 실제 서비스 wire contract가 달랐습니다.
+
+공개 mapping 생성자로 `train_dataset: {"type": "inline", "items": [...]}`를 전달한 새 요청은 성공했습니다. `items`에는 dev의 `query`/`ground_truth`만 넣고 원시 HTTP body도 확인합니다.
+
+아래의 후보 1개와 초기화 실패는 **삭제 전 NC job의 보관 이력**입니다.
+
+#### 이전 NC 실행의 초기화 수정
+
+원래 실패 `opt_3aa677fe825a4b3ea433904433b57e53`은 보존했습니다. 새 SDK job `opt_6f23f99c0f2d49f7b930c7b25629543f`은 다음 조건으로 확인했습니다.
+
+- **유지한 조건:** 원래 세 평가기의 이름·버전 1, judge, 필수 `pass_threshold: 4`.
+- **실행 결과:** baseline·새 후보 각각 dev 6/6, 세 policy 기준 각각 6/6, 원문 참조 감사 `valid`.
+- **비교 결과:** 두 점수는 1.0으로 동점이며 `best`는 baseline. 후보 생성은 확인했지만 개선·승격은 주장하지 않습니다.
+
+원인은 잘못된 평가기 이름이 아니라 **Optimizer 참조의 필수 초기화 인자 누락**이었습니다. 인증된 포털 요청에서 evaluator별 `initialization_parameters`를 확인했습니다.
+
+#### SDK에 전달할 값
+
+SDK 2.6.1은 `initialization_parameters`를 named field로 노출하지 않습니다. 공개 mapping 생성자 `AgentOptimizationEvaluatorRef(mapping)`는 이 값을 보존합니다.
+
+1. `optimizer_evaluator_references(catalog, judge)`로 검증된 catalog의 이름·버전·초기화 값을 함께 묶습니다.
+2. 이를 `AgentOptimizationJobInputs.evaluators`에 전달합니다.
+3. 직렬화된 **실제 HTTP body**에서도 값이 남는지 확인합니다.
+
+기존 평가기를 교체하거나 required 필드를 삭제하지 않습니다.
 
 기존 평가기 한 개의 참조는 다음 형태이며 **세 평가기 모두** 필요합니다. `name`과 `version`은 실제 calibration 값으로 채웁니다.
 
@@ -147,19 +202,34 @@ python scripts/workshop.py prompt-agent create --name "YOUR-PREFIX-optimize-ko" 
 }
 ```
 
-별도 `deployment_name`·required `threshold` 정의도 문턱 4에서 control 24/24를 통과했지만, 이름/버전만 보낸 Optimizer는 다시 `threshold` 누락으로 실패했습니다. 따라서 **필드 이름 변경이나 schema의 `default`만으로 해결되지 않습니다.** 선택한 catalog의 필수 인자를 명시적으로 전달해야 합니다. 이 대조 실패도 보존했습니다. 설치된 azd의 standalone instruction/metadata 사전 검사 문제까지 고쳤다는 의미는 아닙니다.
+별도 `deployment_name`·required `threshold` 정의도 문턱 4에서 control 24/24를 통과했습니다. 그러나 이름/버전만 보낸 Optimizer는 다시 `threshold` 누락으로 실패했습니다. 이 대조 실패도 보존했습니다.
 
-`max_candidates: 2`는 전체 호출 수 제한이 아닙니다. 이번 job은 baseline·후보의 전체 평가 2회와 3행짜리 minibatch 11회를 실행했고, 서비스는 agent 호출 45회를 보고했습니다. Minibatch 3의 실패 3행도 보존했습니다. 전체 검증 없이 minibatch만 보고 후보를 승인하지 않습니다.
+**필드 이름 변경이나 schema의 `default`만으로 해결되지 않습니다.** 선택한 catalog의 필수 인자를 명시적으로 전달해야 합니다. 설치된 azd의 standalone instruction/metadata 사전 검사 문제까지 고쳤다는 뜻은 아닙니다.
 
-SDK poller의 ID는 `poller.details["job_id"]`로 읽습니다. `details.job_id`는 이 버전에서 로컬 오류를 내지만 이미 서버 job이 생성됐을 수 있으므로 기존 target의 job 목록에서 ID를 확인하고 같은 job을 조회합니다. 생성 명령부터 반복하지 않습니다.
+#### 비용과 같은 job 재조회
 
-**역사적 Sweden Optimizer job**의 baseline 1.0·후보 0개·참조 감사 성공은 보관본입니다. 위 NC 성공은 새 job과 새 export로 확인했으며, 삭제된 Sweden job이나 옛 export를 인수하지 않았습니다.
+`max_candidates: 2`는 전체 호출 수 제한이 아닙니다. 이 이전 NC job의 실제 실행량은 다음과 같습니다.
+
+- Baseline·후보의 전체 평가 2회.
+- 3행짜리 minibatch 11회.
+- 서비스가 보고한 agent 호출 45회.
+
+Minibatch 3의 실패 3행도 보존했습니다. 전체 검증 없이 minibatch만 보고 후보를 승인하지 않습니다.
+
+SDK poller의 ID는 `poller.details["job_id"]`로 읽습니다. `details.job_id`는 이 버전에서 로컬 오류를 냅니다.
+
+이미 서버 job이 생성됐을 수 있으므로 기존 target의 job 목록에서 ID를 확인하고 **같은 job을 조회**합니다. 생성 명령부터 반복하지 않습니다.
+
+#### Sweden 보관 기록
+
+역사적 Sweden Optimizer의 baseline 1.0·후보 0개·참조 감사 성공은 보관본입니다. 위 NC 성공은 새 job과 새 export로 확인했습니다. 삭제된 Sweden job이나 옛 export를 인수하지 않았습니다.
 
 </details>
 
 ### 포털: 최적화 한 번 제출
 
-> **비용 주의:** 최대 후보 **2개**는 전체 모델 호출 **2회**가 아닙니다. 여러 평가·minibatch가 추가 호출을 발생시킵니다.
+> [!WARNING]
+> 최대 후보 **2개**는 전체 모델 호출 **2회**가 아닙니다. 여러 평가·minibatch가 추가 호출을 발생시킵니다.
 
 1. Foundry **Build → Agents**에서 방금 만든 별도 Prompt Agent의 이름·버전을 엽니다.
 2. **Optimize / Create optimization run → Agent**를 선택합니다.
@@ -171,7 +241,9 @@ SDK poller의 ID는 `poller.details["job_id"]`로 읽습니다. `details.job_id`
 8. 비용·예상 호출 범위를 확인한 뒤 한 번 제출합니다.
 9. baseline과 모든 후보의 지침 차이·전체 행·평가 결과를 읽습니다.
 
-비용을 수락할 수 없거나 화면에서 필요한 평가 조건을 설정할 수 없다면 Optimizer를 미실행/차단으로 기록하고, 준비된 조건의 Hosted 비교로 이어갑니다. **후보 0개나 동점은 개선 성공이 아닙니다.**
+**중단 조건:** 비용을 수락할 수 없거나 필요한 평가 조건을 설정할 수 없다면 Optimizer를 미실행/차단으로 남깁니다. 선행 조건을 갖춘 Hosted 비교로는 이어갈 수 있습니다.
+
+**결과 해석:** 후보 0개나 동점은 개선 성공이 아닙니다.
 
 ### 터미널: 전체 결과 내보내기·감사
 
@@ -187,7 +259,9 @@ python scripts/workshop.py --script export-evaluation --language ko --evaluation
 python scripts/audit_optimizer.py --export-directory outputs/evaluation-exports/optimizer-policy-export-ko --dataset outputs/policy-inputs-ko/optimizer-dev.jsonl --calibration-label policy-calibration-ko --language ko --output outputs/optimizer-policy-audit-ko.json
 ```
 
-이 스크립트는 **Azure 호출 없이 저장된 파일을 읽는 감사**입니다. baseline과 실제 생성된 각 전체 후보를 별도 export/감사 파일로 보관합니다. 후보가 없으면 후보 export를 만들지 않습니다. [과거 결과](validation-report.md)의 파일·점수를 복사하지 않습니다.
+이 스크립트는 **Azure 호출 없이 저장된 파일을 읽는 감사**입니다.
+
+Baseline과 실제 생성된 각 전체 후보를 별도 export/감사 파일로 보관합니다. 후보가 없으면 후보 export를 만들지 않습니다. [과거 결과](validation-report.md)의 파일·점수를 복사하지 않습니다.
 
 **확인:** `validation_status: valid`, 6/6 matched와 다음 증거 범위를 읽습니다.
 
@@ -203,7 +277,8 @@ candidate_generation_assessed: false
 
 후보 0개/조기 종료는 native job의 실제 결과에서 별도로 기록합니다. 기존 export나 audit JSON이 있으면 새 이름을 선택합니다. [공식 Optimizer 개념](https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview).
 
-> **참조 감사 주의:** judge의 `context`가 생성된 `response`와 같다면 자기 근거입니다. 정상 grounding이나 개선의 증거로 인정하지 않습니다.
+> [!WARNING]
+> judge의 `context`가 생성된 `response`와 같다면 **자기 근거**입니다. 정상 grounding이나 개선의 증거로 인정하지 않습니다.
 
 <details>
 <summary>참고: 이전 legacy 실행에서 자기 근거를 발견한 사례</summary>
@@ -218,13 +293,17 @@ candidate_generation_assessed: false
 
 이번 matrix의 실행 방식은 **workflow / sequential / IQ / account-chat / Invocations**입니다. 08의 기본 Responses 프로필과 다르므로 새 profile·패키지·azd 폴더를 만듭니다.
 
-`matrix`는 **같은 dev 문항을 배포 버전별로 실행해 비교하는 결과 묶음**입니다. 시작 전에 `selfstudy.py status`에서 `AZURE_OPENAI_ENDPOINT`를 확인합니다. 없다면 Foundry의 같은 계정에서 Azure OpenAI **서비스 루트**를 복사해 등록합니다. 프로젝트 Endpoint가 아니며, 표시된 URL의 `/openai/v1` 경로는 제외합니다. 명시적 로컬 검색 경로에도 필요합니다.
+`matrix`는 **같은 dev 문항을 배포 버전별로 실행해 비교하는 결과 묶음**입니다.
+
+먼저 `AZURE_OPENAI_ENDPOINT`가 저장되어 있는지 확인합니다. 명시적 로컬 검색 경로에도 필요합니다.
 
 ```bash
 python scripts/selfstudy.py status
 ```
 
-**OpenAI 루트 Endpoint 등록**
+**값이 없을 때만: OpenAI 루트 Endpoint 등록**
+
+Foundry의 같은 계정에서 Azure OpenAI **서비스 루트**를 복사합니다. 프로젝트 Endpoint가 아니며, 표시된 URL의 `/openai/v1` 경로는 제외합니다.
 
 ```bash
 python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "실제-같은-계정의-OpenAI-루트-URL"
@@ -291,9 +370,19 @@ azd ai agent show "내-prefix-matrix" --cwd "실제-matrix-v1-절대경로" --ou
 | `account-chat` → 부모 계정 OpenAI API | 이 실습 Foundry 계정의 **Cognitive Services OpenAI User** |
 | IQ → Search | 이 Search의 **Search Index Data Reader** |
 
-**프로젝트 범위 Foundry User만으로 계정 API 권한까지 충족되지 않습니다.** Cognitive Services OpenAI User의 역할 ID는 `5e0bd9bd-7b93-4f28-af87-19fc36ad61bd`입니다. `selfstudy.py roles`의 기본 Hosted 계획은 프로젝트 역할만 다룹니다. 누락된 역할만 확인/부여하며 구독 전체로 범위를 넓히지 않습니다.
+> [!IMPORTANT]
+> **프로젝트 범위 Foundry User만으로 계정 API 권한까지 충족되지 않습니다.** `selfstudy.py roles`의 기본 Hosted 계획은 프로젝트 역할만 다룹니다.
 
-실제 재실행에서 Search는 HTTP 200이었지만 account-chat은 해당 data action 부족으로 401, 외부 Hosted 요청은 500이었습니다. 원래 로그와 실패 세션을 보존하고 해당 런타임/계정 역할만 추가한 뒤 **같은 버전·새 smoke label**로 확인했습니다. 모델/API/provider를 바꾸지 않습니다.
+Cognitive Services OpenAI User의 역할 ID는 `5e0bd9bd-7b93-4f28-af87-19fc36ad61bd`입니다. 누락된 역할만 확인/부여하며 구독 전체로 범위를 넓히지 않습니다.
+
+<details>
+<summary>참고: Search 성공과 account-chat 권한 실패가 함께 나온 재실행</summary>
+
+Search는 HTTP 200이었지만 account-chat은 data action 부족으로 401, 외부 Hosted 요청은 500이었습니다.
+
+원래 로그와 실패 세션을 보존했습니다. 해당 런타임/계정 역할만 추가한 뒤 **같은 버전·새 smoke label**로 확인했습니다. 모델/API/provider는 바꾸지 않았습니다.
+
+</details>
 
 ### 실제 버전 연결·한 건 호출
 
@@ -353,7 +442,13 @@ python scripts/workshop.py benchmark monitor --label wf-baseline
 
 `trace-plan`은 KQL 작성, `monitor`는 연결된 App Insights 실제 조회입니다. 응답의 Trace ID만 있는 것을 export 검증으로 대신하지 않습니다.
 
-`report`가 만든 **`outputs/benchmarks/wf-baseline/report.html`을 브라우저로 열면** 전체 업무 검사와 실패 사례를 표로 볼 수 있습니다. 같은 폴더의 `business-evaluation.json`에서 `expected_rows: 6`, `actual_rows: 6`, `errors`, `models.primary.checks`도 확인합니다. 이 HTML의 업무 검사와 `foundry-policy/`의 judge 결과, 실제 trace는 별개입니다.
+**먼저 브라우저로 열 파일**
+
+`outputs/benchmarks/wf-baseline/report.html`
+
+전체 업무 검사와 실패 사례를 표로 읽습니다. 같은 폴더의 `business-evaluation.json`에서 `expected_rows: 6`, `actual_rows: 6`, `errors`, `models.primary.checks`도 확인합니다.
+
+**서로 다른 증거:** HTML의 업무 검사, `foundry-policy/`의 judge 결과, 실제 조회한 trace. 어느 하나로 나머지를 대신하지 않습니다.
 
 ## 7. candidate는 지침만 변경
 
@@ -433,7 +528,11 @@ python scripts/workshop.py benchmark monitor --label wf-candidate
 
 ## 8. Judge calibration과 회귀
 
-**07에서 같은 policy calibration을 마쳤다면 다시 실행하지 않습니다.** `outputs/judge-calibration/policy-calibration-ko/calibration.json`과 같은 폴더의 manifest/catalog를 열어 언어·judge·criteria/catalog hash를 확인해 재사용합니다.
+**07에서 같은 policy calibration을 마쳤다면 다시 실행하지 않습니다.**
+
+`outputs/judge-calibration/policy-calibration-ko/calibration.json`
+
+이 파일과 같은 폴더의 manifest/catalog에서 언어·judge·criteria/catalog hash가 일치하는지 확인한 뒤 재사용합니다.
 
 <details>
 <summary>Calibration이 없거나 조건이 달라졌을 때만</summary>
@@ -448,15 +547,20 @@ python scripts/workshop.py calibrate-judge --policy --label policy-calibration-k
 
 **8개 control × 3개 기준의 기대 판정 24개**를 읽습니다. 부정 control은 낮은 점수가 맞으므로 24개 모두 높은 점수를 받는 것이 목표가 아닙니다. 이 작은 calibration만으로 실제 dev·matrix 품질을 통과 처리하지 않습니다.
 
-실제 dev 실패가 있으면 해당 row만 검토 기록으로 남깁니다.
+모든 dev 업무 검사가 통과했다면 `regression`은 생략합니다. **실제 dev 실패가 있을 때만** 해당 row를 검토 기록으로 남깁니다.
+
+<details>
+<summary>실제 dev 실패가 있을 때만: 회귀 사례 등록</summary>
 
 ```bash
 python scripts/workshop.py benchmark regression --label wf-baseline --row-id "실제-실패-row-ID" --regression-label reviewed-failure --reviewer "내-실습-ID" --reason "실제 응답과 근거에 기반한 이유" --confirm-review
 ```
 
-reviewer 문자열은 Entra로 검증된 업무 승인자가 아닙니다. 회귀 파일을 만들었다는 것만으로 다음 수집에 적용됐다고 하지 않습니다. 후속 dev 수집에서 `--regressions reviewed-failure`를 명시할 때만 사용됩니다.
+reviewer 문자열은 Entra로 검증된 업무 승인자가 아닙니다. 회귀 파일 생성만으로 다음 수집에 자동 적용되지 않습니다.
 
-모든 dev 업무 검사가 통과했다면 위 `regression` 명령은 생략합니다. 예시를 실행하려고 실패나 row ID를 만들지 않습니다.
+후속 dev 수집에서 `--regressions reviewed-failure`를 명시할 때만 사용됩니다. 예시를 실행하려고 실패나 row ID를 만들지 않습니다.
+
+</details>
 
 ## 9. 유지와 중지
 
@@ -476,9 +580,14 @@ python scripts/workshop.py benchmark stop-session --label wf-candidate
 
 ## 10. 별도의 policy-lab 진단 8문항
 
-이 suite는 **보완용 합성 진단 8문항**입니다. 13의 **관리형 AI red teaming이 기본 검증 대상**이며, 이 suite는 관리형 실행의 대체물이나 증거가 아닙니다. Holdout이나 core dev의 대체물도 아니므로 `--unlock-holdout`을 사용하지 않습니다. 새 NC에서 준비·smoke한 정확한 배포와 프로필을 사용하고, `nc-policy-lab-ko` 같은 새 label을 모든 참조에 일치시킵니다.
+이 suite는 **보완용 합성 진단 8문항**입니다.
 
-IQ 경로:
+> [!IMPORTANT]
+> 13의 **관리형 AI red teaming이 기본 검증 대상**입니다. 이 8문항은 관리형 실행의 대체물이나 증거가 아닙니다. Core dev·holdout도 대신하지 않으므로 `--unlock-holdout`을 사용하지 않습니다.
+
+새 NC에서 준비·smoke한 정확한 배포와 프로필을 사용합니다. `nc-policy-lab-ko` 같은 새 label을 정했다면 모든 참조에 동일하게 적용합니다.
+
+**IQ 경로 — 로컬 검색을 선택했다면 아래의 접힌 대안만 실행**
 
 ```bash
 python scripts/workshop.py benchmark collect --suite policy-lab --label policy-lab-iq-ko --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
@@ -519,11 +628,25 @@ python scripts/workshop.py benchmark policy-report --label policy-lab-local-ko -
 
 </details>
 
-`policy-report`는 저장된 결과를 읽으며 새 추론을 하지 않습니다. 요청·반환·누락·오류 행 수, 세 기준의 점수/설명, source/reference 감사와 일치하는 policy calibration을 함께 봅니다. `policy_compliance`는 **높을수록 규정 준수**, 4 미만은 위반 방향입니다. 이를 반대로 읽거나 서비스의 기존 `attack_success` 값을 고치지 않습니다. 오류·미채점 행도 분모에서 빼지 않습니다.
+**보고서 읽기:** `policy-report`는 저장된 결과를 읽으며 새 추론을 하지 않습니다.
+
+- **행 수:** 요청·반환·누락·오류를 모두 확인합니다. 오류·미채점 행도 분모에서 빼지 않습니다.
+- **점수:** 세 기준의 점수와 설명을 읽습니다.
+- **근거:** source/reference 감사와 일치하는 policy calibration을 함께 확인합니다.
+
+> [!IMPORTANT]
+> `policy_compliance`는 **높을수록 규정 준수**이며, 4 미만은 위반 방향입니다. 반대로 읽거나 서비스의 기존 `attack_success` 값을 고치지 않습니다.
 
 Suite version 2는 두 언어 모두 **PL05·PL06·PL07의 명시적 `allowed_citations`** 안에서만 추가 근거를 허용합니다. 목록은 알려진 중복 없는 ID로 필수 참조를 모두 포함하며, 답변의 필수 참조 누락과 무관한 인용은 거부합니다.
 
-PL06의 절차 전용 질문은 수정된 v2 지침으로 `limit_krw: null`을 반환했습니다. 이전 동결 version 1 결과는 그대로 읽을 수 있으며, 추가 인용 거부와 `150000` 응답·점수·source·label은 변경하지 않습니다.
+<details>
+<summary>참고: PL06의 이전 결과와 수정된 v2 결과</summary>
+
+PL06의 절차 전용 질문은 수정된 v2 지침으로 `limit_krw: null`을 반환했습니다.
+
+이전 동결 version 1 결과는 그대로 읽을 수 있습니다. 추가 인용 거부와 `150000` 응답·점수·source·label은 변경하지 않습니다.
+
+</details>
 
 이 8문항은 새 holdout이나 관리형 red-team scan이 아닙니다. 결과 확인 뒤에는 **실제로 사용한 label 하나**로 세션을 중지하고 [만료 전 증거 보관](advanced/session-files.md)을 진행합니다. 로컬 경로라면 아래 label을 `policy-lab-local-ko`로 바꿉니다.
 

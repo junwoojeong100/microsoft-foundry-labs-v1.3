@@ -2,7 +2,7 @@
 
 **English** | [한국어](README.ko.md)
 
-**Build an AI assistant in your own Azure environment, connect evidence and tools, evaluate it, and deploy it. All workshop code and synthetic data are included.**
+Build a **travel-policy assistant** in your own Azure environment. Connect evidence and tools, evaluate its answers, then deploy it. All workshop code and synthetic data are included.
 
 This is the successor to [microsoft-foundry-labs](https://github.com/junwoojeong100/microsoft-foundry-labs), created in November 2025 just after Microsoft Ignite 2025. You do not need to install or complete the previous version first.
 
@@ -14,19 +14,32 @@ This is the successor to [microsoft-foundry-labs](https://github.com/junwoojeong
 | Resolve an error | [Troubleshooting](docs/en/troubleshooting.md) |
 | Finish for today | **[Stop work and review costs](docs/en/15-capstone-cleanup.md#4-stop-running-work-first)** |
 
-**Requirements:** a Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role. A provided ZIP needs neither a GitHub account nor Git. Work at your own pace; there is no course time limit.
+**Requirements:** a Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role.
 
-> **Cost warning:** this is not a free workshop. Model calls and services can incur charges. Review running work, schedules, and retained resources even when stopping early.
+A provided ZIP needs neither a GitHub account nor Git. Work at your own pace; there is no course time limit.
+
+> [!WARNING]
+> **This is not a free workshop.** Model calls and services can incur charges. Review running work, schedules, and retained resources even when stopping early.
 
 ## Start in this order
 
-1. **Complete 00: download the files, install tools, and configure Azure.** Start there even if you are new to terminals.
-2. **Follow one language edition through 01-15.** Use each chapter's **prerequisites → chapter map → completion check**. Execute one step, inspect its result, then continue.
-3. **Inspect command output and saved results; no separate write-up is required.** Use [resume instructions and checkpoints](docs/en/checkpoints.md) next time. Even if you finish early, follow [15's stopping and cleanup steps](docs/en/15-capstone-cleanup.md#4-stop-running-work-first).
+1. **[00. Set up your environment](docs/en/00-setup.md)** — download the files, install tools, and configure Azure. Start here even if you are new to terminals.
+2. **Continue from [01. First response](docs/en/01-foundry.md)** — follow one language edition in order. Run one step and inspect its result before continuing.
+3. **Finish with [15. Stop and clean up](docs/en/15-capstone-cleanup.md#4-stop-running-work-first)** — even if you stop before the last chapter. Next time, follow the [resume steps](docs/en/checkpoints.md#resume-on-another-day).
 
-Luna and Router comparisons in 02 are optional. Chapter 14 requires GitHub repository permissions. If another feature is unavailable, **record it as blocked/not run** and continue only where prerequisites are met. This is not an entirely free workshop or a guarantee that every subscription can run every feature.
+No separate write-up or submission is required. Command output and saved results are your lab record.
 
-**How to read the guide**
+| Conditional step | When to run it |
+|---|---|
+| Luna and Router comparisons in 02 | Only if you choose to compare them. |
+| GitHub CI/CD in 14 | When you have the required repository permissions. |
+| A feature unavailable in your subscription | Record blocked/not run; continue only where prerequisites are met. |
+
+Not every subscription can run every feature. See [what can proceed after a blocker](docs/en/checkpoints.md#if-a-stage-is-blocked).
+
+### How to read one step
+
+**Check prerequisites → choose a step in the chapter map → run one command → inspect the result**
 
 | Label | How to use it |
 |---|---|
@@ -36,7 +49,9 @@ Luna and Router comparisons in 02 are optional. Chapter 14 requires GitHub repos
 | **Check** / **Completion check** | Compare against real output and files. Finishing a command is not the same as passing quality checks. |
 | **Optional** / collapsed notes | Expand only when the condition applies; do not run every alternative in addition to the default. |
 
-Lost your place in a long chapter? Use **Chapter map ↑** at the bottom. Copy a long command in full even if it extends beyond the visible box; do not insert line breaks yourself. See [commands and placeholders](docs/en/checkpoints.md#read-commands-and-placeholders).
+Lost your place in a long chapter? Use **Chapter map ↑** at the bottom.
+
+Copy **the entire command block**, even if it extends beyond the visible box. Do not insert line breaks yourself. See [commands and placeholders](docs/en/checkpoints.md#read-commands-and-placeholders).
 
 ## What will you build?
 
@@ -56,7 +71,9 @@ Keep the model **roles separate**. Prepare only the answer model at first.
 | Optional comparison · only if chosen in 02 | GPT-6 Luna → `workshop-compare` |
 | Answer grading · 07 | GPT-5.5 → `workshop-judge` |
 
-The judge uses a **different base model and a separate deployment** from the target. Existing aliases may differ: never replace the model behind an existing name or delete it to match these examples. See [Model roles and existing aliases](docs/en/model-selection.md).
+The judge uses a **different base model and a separate deployment** from the target.
+
+Existing aliases may differ. Never replace or delete the model behind an existing name to match these examples. See [Model roles and existing aliases](docs/en/model-selection.md).
 
 ![Workshop architecture: models, knowledge, tools, evaluation, and operations](docs/assets/architecture.svg)
 
@@ -104,21 +121,39 @@ Follow each chapter's **run → verify → next** sequence. [The progress guide]
 
 ## Run in English
 
-Run all commands from **the folder containing this README**. **These are resume commands, after completing `configure` in chapter 00.** For a first run, start with 00 instead.
+> [!IMPORTANT]
+> These are **resume commands, after completing `configure` in chapter 00**. For a first run, start with [00. Setup](docs/en/00-setup.md).
+
+Run all commands from **the folder containing this README**.
+
+**1. Check local readiness**
 
 ```bash
 python scripts/workshop.py --language en doctor
 ```
 
-After checking local readiness, read the saved connection settings.
+**2. Read saved connection settings**
 
 ```bash
 python scripts/selfstudy.py values
 ```
 
-`--language en` selects the bundled English prompts, policies, and cases. It goes **before the workshop subcommand**; wrapper options such as `--model-deployment` and `--script` go before it. `selfstudy.py` has no global language flag, but its `prepare-hosted` and `capture` subcommands require their own `--language en` for English work. See [Data and localization](docs/en/data-format.md).
+`--language en` selects the bundled English prompts, policies, and cases. Its position depends on the script:
 
-Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/` for real results and ownership records. Retain `.selfstudy/` too: it holds personal configuration and deployment preparation. English examples use separate labels and `outputs/learner-notes-en/`. Neither command above invokes a model.
+| Script | English option |
+|---|---|
+| `workshop.py` | Put `--language en` before the subcommand, after wrapper options such as `--model-deployment` and `--script`. |
+| `selfstudy.py` | No global language option. Its `prepare-hosted` and `capture` subcommands require their own `--language en`. |
+
+See [Data and localization](docs/en/data-format.md). Neither resume command above invokes a model.
+
+| Location | Purpose |
+|---|---|
+| `.venv/` | This project's Python environment |
+| `.env` | Private Azure configuration; do not share |
+| `outputs/` | Actual results and ownership records |
+
+Retain `.selfstudy/` too: it holds personal configuration and deployment preparation. English examples use separate labels and `outputs/learner-notes-en/`.
 
 ## Ground rules
 
@@ -129,25 +164,49 @@ Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/`
 
 ## Validation status and limits
 
-**Final acceptance is held in the September 28, 2026 validation; no new holdout was run.** Execution and final quality acceptance are separate.
+> [!IMPORTANT]
+> **Final acceptance is held in the September 28, 2026 validation; no new holdout was run.** Execution and final quality acceptance are separate.
 
-- **SDK and Hosted dev:** 6/6 each.
-- **Managed Task Adherence:** six rows, five pass, one fail; severity and verdict flags disagree.
-- **Optimizer:** no new full candidate, so no improvement or promotion is claimed.
+| Validation target | Actual result | Interpretation |
+|---|---|---|
+| SDK and Hosted dev | 6/6 each | Dev results, not final acceptance. |
+| Managed Task Adherence | Six rows: five pass, one fail | Severity and verdict flags disagree. |
+| Optimizer | No new full candidate | No improvement or promotion is claimed. |
 
-The [live validation report](docs/en/validation-report.md) is reference evidence, not your completion record. Chapter 13's managed AI red teaming cannot be replaced by the custom eight-case diagnostic. The report and relevant chapters retain regional-document discrepancies and historical run details.
+The [live validation report](docs/en/validation-report.md) is reference evidence, not your completion record. It and the relevant chapters retain regional-document discrepancies and historical run details.
+
+Chapter 13's managed AI red teaming cannot be replaced by the custom eight-case diagnostic.
 
 <a id="portal-and-cli-summary-videos"></a>
 
 ## North Central US portal and CLI summary videos
 
-**Renamed-repository rerun edition: 4:32 each, 31 scenes, silent with captions.** Five authenticated portal scenes accompany this run's actual CLI recordings and labelled saved-evidence reviews. The videos cover new-group creation through evaluation, deployment, and stopping compute, including the native inconsistency and acceptance hold. Login screens and credentials are excluded.
+**4:32 each · 31 scenes · silent with captions**
+
+This renamed-repository rerun edition covers new-group creation through evaluation, deployment, and stopping compute. It retains the native inconsistency and acceptance hold.
+
+Five authenticated portal scenes accompany this run's actual CLI recordings and labelled saved-evidence reviews. Login screens and credentials are excluded.
 
 | English | 한국어 |
 |---|---|
 | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) |
 | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) |
 
-[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). These files show the **new group's portal/CLI rerun**. The previous NC portal edition remains in revision `7b7ca26`, NC CLI in `1d53a68`, and Sweden in `0a8ab50`. Bilingual captions do not imply two complete language-specific reruns.
+[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md)
+
+Bilingual captions do not imply two complete language-specific reruns.
+
+<details>
+<summary>Where earlier video editions are preserved</summary>
+
+The current files show the **new group's portal/CLI rerun**. Earlier editions remain in these revisions:
+
+| Earlier edition | Revision |
+|---|---|
+| NC portal | `7b7ca26` |
+| NC CLI | `1d53a68` |
+| Sweden | `0a8ab50` |
+
+</details>
 
 **Help:** [Troubleshooting](docs/en/troubleshooting.md) · [Feature map](docs/en/feature-map.md) · [Checkpoints](docs/en/checkpoints.md) · [Code reading](docs/en/code-reading.md) · [Official sources](docs/en/sources.md) · [Next steps](docs/en/next-steps.md)

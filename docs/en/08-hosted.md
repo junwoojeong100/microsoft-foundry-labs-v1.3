@@ -55,9 +55,14 @@ azd auth login
 azd ai agent show --help
 ```
 
-Check Hosted support and capacity in your subscription/region. If unavailable, mark the chapter blocked; **do not recreate an existing project arbitrarily**. Code deployment does not require local Docker or ACR installation.
+Check Hosted support and capacity in your subscription/region. Code deployment does not require local Docker or ACR installation.
 
-If only remote deployment is blocked, sections 1–3's **local preparation folder** can still support later project-connection steps. Retain it if preparation succeeds, while recording remote deployment/invocation as not run. Do not claim the folder is ready if preparation itself failed.
+| Blocked scope | Next action |
+|---|---|
+| Only remote deployment is unavailable | Retain sections 1–3's successfully prepared folder for later project connections. Record remote deployment/invocation as not run. |
+| Local folder preparation also failed | Do not mark preparation complete. Stop dependent steps. |
+
+Record the unavailable scope as blocked. **Do not recreate an existing project arbitrarily.**
 
 ## 2. Build a safe English package
 
@@ -67,7 +72,11 @@ python scripts/workshop.py --script package-hosted --language en
 
 **Check:** open `package-manifest.json`, `runtime-profile.json`, and `requirements.txt` at the printed location. The default English package is `.build/hosted-en/`.
 
-Verify code, synthetic policies, and instructions are present, but `.env`, credentials, evaluation answers, and execution results are absent. The frozen runtime profile must contain `language: en`. `cloud_deployed: false` describes **packaging**, not an Azure resource check.
+| Must be present | Must be absent |
+|---|---|
+| Code, synthetic policies, instructions | `.env`, credentials, evaluation answers, execution results |
+
+The frozen runtime profile must contain `language: en`. `cloud_deployed: false` describes **packaging**, not an Azure resource check.
 
 Read any existing package before rebuilding. If rebuilding is necessary, preserve that exact package in another private location first. Do not delete unrelated packages or results.
 
@@ -87,13 +96,21 @@ python scripts/selfstudy.py prepare-hosted --language en --kind runtime --packag
 
 If package and preparation languages differ, the helper stops; it does not automatically convert the profile to Korean.
 
-The helper reuses the saved project ID/location, derives the owned service name `<prefix>-hosted-en`, and prints its new folder and deployment commands. The destination must be new and independent of any existing azd project. This prepares a local manifest/environment attached to your existing project; it does not provision, deploy, or invoke a model. Use a new `--run` when a preparation folder already exists; do not overwrite it.
+The helper reuses the saved project ID/location and derives the owned service name `<prefix>-hosted-en`. It prints the new folder and deployment commands.
 
-The generated `azure.yaml` must contain the existing project binding and only the intended Hosted agent service. Do not add new model deployments or turn the whole source repository into a service. There is no need to provision another Foundry project.
+> [!NOTE]
+> `prepare-hosted` prepares **only a local manifest and azd environment** attached to your existing project. It does not provision, deploy, or invoke a model. You do not need another Foundry project.
 
-Record the exact service name and absolute folder path. Check `main.py`, Python 3.13, the Responses protocol, actual endpoint/model, and remote `managed-identity` authentication. Use this same service and folder in subsequent commands.
+The destination must be new and independent of any existing azd project. Use a new `--run` when a preparation folder already exists; do not overwrite it.
 
-**Do not immediately execute the printed deployment commands.** Use the table below to identify each value's source, complete section 4's local check, then deploy in section 5.
+The generated `azure.yaml` must contain **the existing project binding and only the intended Hosted service**. Do not add model deployments or turn the whole source repository into a service.
+
+### Values to copy from preparation
+
+Use the helper's exact service name and absolute folder path in subsequent commands.
+
+> [!IMPORTANT]
+> **Do not immediately execute the printed deployment commands.** Identify each value's source, then follow **section 4's local check → section 5's remote deployment**.
 
 | Value for the next command | Copy from | Do not substitute |
 |---|---|---|
@@ -103,9 +120,17 @@ Record the exact service name and absolute folder path. Check `main.py`, Python 
 | Remote `--version` | Section 5's actual **`version` value** from `show` | Prompt name `v2`, package name, or guessed `latest` |
 | Role-assignment identity | That version's **`instance_identity.principal_id`** from `show` | Your user ID or a Client ID |
 
-Replace only placeholders inside quotes and keep the quotes. Keep the terminal in the workshop root even when using `--cwd`. Use **that deployment's returned values** for section 7's workflow and each new deployment in 10/12.
+Replace only placeholders inside quotes and keep the quotes. Keep the terminal in the workshop root even when using `--cwd`.
 
-If the terminal output is gone, open the relevant `azure.yaml` under `.selfstudy/` and read its `name` and `services`. The **absolute path of the folder containing that file** is `--cwd`; query the actual version with `show` below. No separate notes file is needed.
+Use **that deployment's returned values** for section 7's workflow and each new deployment in 10/12.
+
+### Find values after closing the terminal output
+
+1. Open the relevant `azure.yaml` under `.selfstudy/`. Read its service name from `name` and `services`.
+2. Use the **absolute path of the folder containing that file** as `--cwd`.
+3. Query the actual version with section 5's `show`. No separate notes file is needed.
+
+**Before the local request, check:** service name, `main.py`, Python 3.13, Responses protocol, actual endpoint/model, and remote `managed-identity` authentication.
 
 ## 4. Make a real local request
 
@@ -133,7 +158,15 @@ python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8
 azd ai agent invoke --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --local --port 8088 --new-session --new-conversation --timeout 120 "What is the domestic business-trip lodging limit for September 2026, and what is the source?"
 ```
 
-**Check:** an actual answer with evidence demonstrates inference. The earlier `healthy` status establishes server readiness only. The local server still incurs Azure model charges.
+**Distinguish the two results.**
+
+| Result | Meaning |
+|---|---|
+| `healthy` | The local server is ready to receive requests |
+| Actual answer and evidence | Model inference succeeded |
+
+> [!WARNING]
+> **The local server still incurs Azure model charges.** Local execution does not mean free or offline execution.
 
 **Stop:** after verification, use `Ctrl+C` in A to stop your server.
 
@@ -151,7 +184,9 @@ azd deploy "YOUR-AGENT-SERVICE-NAME" --cwd "YOUR-HOSTED-ABSOLUTE-PATH"
 azd ai agent show "YOUR-AGENT-SERVICE-NAME" --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --output json
 ```
 
-After deployment failure, an older active version is not evidence that this deployment succeeded. Record the actual new `name`, `version`, `status`, and endpoint.
+**Values to inspect:** the actual new `name`, `version`, `status`, and endpoint.
+
+If deployment failed, an older active version is not evidence that this deployment succeeded.
 
 ### Runtime roles
 
@@ -161,7 +196,9 @@ The **`instance_identity.principal_id`** returned by `show` is not your user, th
 python scripts/selfstudy.py roles --user-object-id "YOUR-USER-OBJECT-ID" --hosted-principal-id "ACTUAL-INSTANCE-IDENTITY-PRINCIPAL-ID"
 ```
 
-This prints a plan. Match the identity to the **actual deployed name/version**, then grant only the required resource-scoped roles, such as Foundry User. Local `az login` does not grant permissions to the remote runtime.
+This prints a **role-assignment plan**; it has not executed the assignments.
+
+Match the identity to the actual deployed name/version, then grant only the required resource-scoped roles, such as Foundry User. Local `az login` does not grant permissions to the remote runtime.
 
 ## 6. Invoke the exact remote version
 
@@ -183,7 +220,8 @@ azd ai agent sessions list --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --limit 10
 azd ai agent sessions stop "YOUR-ACTUAL-SESSION-ID" --cwd "YOUR-HOSTED-ABSOLUTE-PATH"
 ```
 
-Stopping ends running compute but does not delete persistent volumes. Review retention and remaining charges in the final chapter. In retention mode, keep agents, versions, and volumes.
+> [!WARNING]
+> **Stopping ends compute but does not delete persistent volumes.** Review remaining storage charges and deletion decisions in [15](15-capstone-cleanup.md). In retention mode, keep agents, versions, and volumes.
 
 ## 7. Repeat with a workflow
 
@@ -199,7 +237,7 @@ Prepare the **new profile's package path** under a separate name and folder:
 python scripts/selfstudy.py prepare-hosted --language en --kind runtime --package "ACTUAL-ENGLISH-WORKFLOW-PACKAGE-PATH" --name workflow-en
 ```
 
-Repeat sections 4–6 using the printed service/folder. Do not substitute the single-agent package or an older remote version.
+Repeat sections 4–6 using the printed service/folder.
 
 For the matching local workflow profile, use this instead of the plain `serve` command:
 
@@ -207,7 +245,15 @@ For the matching local workflow profile, use this instead of the plain `serve` c
 python scripts/workshop.py --language en serve --kind workflow --pattern sequential --retrieval local --prompt v2 --api project-responses --protocol responses
 ```
 
-Stop the earlier server with `Ctrl+C` first. Terminal B must use the newly printed **workflow service and folder**, not the single-agent service.
+**Keep the execution steps, but use the workflow's values.**
+
+| Item | What to do for the workflow |
+|---|---|
+| Earlier server | Stop it with `Ctrl+C` first |
+| Terminal A | Run the workflow-profile server above |
+| Terminal B and remote deployment | Use the newly printed workflow service and folder |
+
+Do not substitute the single-agent package or an older remote version.
 
 ## Completion check
 
