@@ -1,10 +1,27 @@
 # 06. Search·Foundry IQ·Hybrid
 
+[English](en/06-search-iq.md) | **한국어** · [전체 과정](../README.ko.md#진행-순서) · [진행 도움말](checkpoints.md)
+
 **완료 목표:** 본인이 Search를 생성·설정하고 같은 문서를 키워드, IQ, Hybrid로 검색합니다.
 
 **시작 조건:** 00의 Owner·Foundry 설정. 이 장에서 Search와 필요 모델을 직접 만듭니다. **Search Basic은 요청하지 않아도 서비스 비용이 발생**합니다.
 
-**순서:** 1~3절에서 Search 서비스·권한·과금을 준비한 뒤, 4절 keyword → 5절 IQ → 6절 Hybrid → 7절 IQ Chat을 각각 확인합니다. **6절 뒤에는 원래 index로 복귀**합니다. 모든 방식이 같은 기능이거나 같은 모델을 사용하는 것은 아닙니다.
+**실행 위치:** Azure·Foundry 포털에서 서비스·모델 준비, 터미널에서 설정·검색.
+
+> **설정 복귀:** Hybrid 실험이 성공하거나 실패해도 **6절 마지막에 원래 index로 돌아옵니다.** 뒤의 실습은 원래 index를 사용합니다.
+
+**진행 지도**
+
+| 단계 | 확인할 결과 |
+|---|---|
+| [1. Search 생성](#1-search-서비스-직접-생성) | 실제 서비스·리전·Basic 비용 |
+| [2. 인증·관리 ID](#2-토큰-인증과-관리-id) | 토큰 인증과 사용자 데이터 역할 |
+| [3. 기능 과금](#3-기능별-과금-설정) | 서비스 비용과 기능 플랜 구분 |
+| [4. 로컬·키워드 검색](#4-같은-질문-로컬과-search) | 원래 index 이름과 반환 원문 |
+| [5. GA IQ](#5-ga-foundry-iq) | 실제 documents·references·activity |
+| [6. Hybrid](#6-embedding과-hybrid-직접-준비) | 실제 embedding·검색, 원래 index 복귀 |
+| [7. IQ Chat](#7-모델-기반-iq-chat) | 별도 모델의 질의 계획·답변 합성 |
+| [완료 확인](#완료-확인) | 네 검색 경로의 결과와 소유권 보관 |
 
 ## 1. Search 서비스 직접 생성
 
@@ -53,9 +70,9 @@ python scripts/workshop.py seed-search --confirm-create
 python scripts/workshop.py retrieve --provider search --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-search.json
 ```
 
-`seed-search`는 새 서비스가 아니라 **내 Prefix의 index와 합성 문서**를 생성합니다. 원래 index 이름은 방금 저장한 `outputs/learner-notes-ko/06-search.json`의 **`configuration.index`**에서 다시 읽을 수 있습니다. `outputs/azure-objects.json`도 보관하며, 6절 후 이 원래 이름으로 복귀합니다.
+`seed-search`는 새 서비스가 아니라 **내 Prefix의 index와 합성 문서**를 생성합니다. 원래 index 이름은 방금 저장한 `outputs/learner-notes-ko/06-search.json`의 `configuration.index`에서 다시 읽을 수 있습니다. `outputs/azure-objects.json`도 보관하며, 6절 후 이 원래 이름으로 복귀합니다.
 
-`provider: azure-ai-search-keyword`, 실제 index/Endpoint, 원문 ID와 내용을 확인합니다. 로컬 검색은 의미 검색이나 Azure 서비스 호출이 아닙니다.
+**확인:** `provider: azure-ai-search-keyword`, 실제 index/Endpoint, 원문 ID와 내용을 확인합니다. 로컬 검색은 의미 검색이나 Azure 서비스 호출이 아닙니다.
 
 ## 5. GA Foundry IQ
 
@@ -68,11 +85,13 @@ python scripts/workshop.py retrieve --provider iq --question "2026년 9월 국�
 python scripts/workshop.py answer --prompt v2 --retrieval iq --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-iq-answer.json
 ```
 
-`provider: foundry-iq`, knowledge base, `api_version: 2026-04-01`, 실제 documents/references/activity를 봅니다. 마지막 명령은 앞 파일을 읽는 것이 아니라 **새 검색과 모델 호출**입니다.
+**확인:** `provider: foundry-iq`, knowledge base, `api_version: 2026-04-01`, 실제 documents/references/activity를 봅니다. 마지막 명령은 앞 파일을 읽는 것이 아니라 **새 검색과 모델 호출**입니다.
 
 이 GA 경로를 모델의 질의 계획·답변 합성 실험과 같은 것으로 부르지 않습니다.
 
 ## 6. Embedding과 Hybrid 직접 준비
+
+### 모델·차원 등록
 
 1. 같은 Foundry 카탈로그에서 **text-embedding-3-large**를 찾습니다.
 2. 지원 리전/할당량을 확인하고 `workshop-embedding`으로 배포합니다.
@@ -86,6 +105,8 @@ python scripts/selfstudy.py set WORKSHOP_EMBEDDING_API account
 python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "실제-같은-계정의-OpenAI-루트-URL"
 ```
 
+### 별도 index에서 검색
+
 원래 index는 그대로 두고 **새 hybrid index 이름**을 명시합니다. 예시 접두사는 내 값으로 바꿉니다.
 
 ```bash
@@ -95,7 +116,9 @@ python scripts/workshop.py retrieve --provider hybrid --question "2026년 9월 �
 python scripts/workshop.py answer --prompt v2 --retrieval hybrid --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-hybrid-answer.json
 ```
 
-실제 embedding 호출과 차원, text+vector 검색, 반환 근거를 확인합니다. 0 벡터를 넣거나 키워드 검색의 이름만 바꾸지 않습니다.
+**확인:** 실제 embedding 호출과 차원, text+vector 검색, 반환 근거를 확인합니다. 0 벡터를 넣거나 키워드 검색의 이름만 바꾸지 않습니다.
+
+### 반드시 원래 index로 복귀
 
 **성공 여부와 관계없이, Hybrid 실험을 끝내거나 중단할 때 원래 index로 복귀**합니다. 4절의 `outputs/learner-notes-ko/06-search.json`을 열고 **`configuration` 안의 `index` 값**을 아래 따옴표 안에 넣습니다. 방금 만든 hybrid 결과 파일의 index가 아닙니다.
 
@@ -114,7 +137,7 @@ python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "06-search.json의-confi
 기본 답변 모델은 계속 **GPT-6 Sol**입니다. 여기의 **GPT-5.6 Luna**는 Search가 계획/합성에 사용하는 별도 모델이며, 선택적 비교용 GPT-6 Luna와도 다릅니다. [모델 역할](model-selection.md)을 혼동하지 않습니다.
 
 1. 카탈로그에서 해당 모델/버전의 가용성과 할당량을 확인합니다.
-2. 같은 Foundry 계정에 배포 이름 **`gpt-5.6-luna`**로 만듭니다. 기본 답변 모델은 바꾸지 않습니다.
+2. 같은 Foundry 계정에 배포 이름 `gpt-5.6-luna`로 만듭니다. 기본 답변 모델은 바꾸지 않습니다.
 3. Foundry 계정 IAM에서 **Search 관리 ID → Cognitive Services User**를 부여합니다. 내 사용자나 프로젝트 ID와 혼동하지 않습니다.
 4. 앞에서 기록한 OpenAI 루트 Endpoint와 Search 기능 플랜을 확인합니다.
 
@@ -127,8 +150,16 @@ python scripts/workshop.py iq-chat ask --label iq-chat-first --confirm-cost
 
 `model_planning_verified`, `model_synthesis_verified`뿐 아니라 실제 **`modelQueryPlanning` / `modelAnswerSynthesis` activity와 `gpt-5.6-luna` 모델 기록**, 반환 원문을 확인합니다. 배포가 불가능하면 이 preset만 **차단**으로 기록합니다. 다른 모델을 같은 이름으로 위장하거나 GA 조회를 IQ Chat 성공으로 대신하지 않습니다.
 
-## 완료와 유지
+<a id="완료와-유지"></a>
+
+## 완료 확인
+
+- [ ] keyword·IQ·Hybrid·IQ Chat의 실제 결과 또는 차단 상태를 각각 확인했다.
+- [ ] `sdk_settings.AZURE_SEARCH_INDEX_NAME`이 4절의 원래 index 이름이다.
+- [ ] 생성한 index·base·모델의 소유권과 계속 발생하는 비용을 확인했다.
 
 원래 index·IQ base와 hybrid index의 결과/소유권을 보관합니다. 이 Search는 10장의 Toolbox/OpenAPI와 이후 Hosted 평가에 사용하므로 아직 삭제하지 않습니다.
 
-**다음 → [07. 업무 평가와 Foundry 평가](07-evaluation.md)**
+---
+
+[← 05. 워크플로](05-workflows.md) · [전체 과정](../README.ko.md#진행-순서) · [07. 평가 →](07-evaluation.md)

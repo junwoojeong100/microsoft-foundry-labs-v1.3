@@ -1,6 +1,6 @@
 # 10. Toolbox, Tool Search, Skills, and OpenAPI
 
-**English** | [한국어](../10-toolbox-skills.md) · [Course home](../../README.md)
+**English** | [한국어](../10-toolbox-skills.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Create a keyless connection to your own Search service and actually use versioned tools and procedures.
 
@@ -8,7 +8,24 @@
 
 Even without a successful remote deployment in 08, **successful folder preparation in its sections 1–3 is enough for this chapter's sections 1–7**. If missing, complete [08's preparation](08-hosted.md#3-prepare-an-isolated-folder-for-the-existing-project) first. Check remote Hosted support separately for section 8.
 
-**Order:** Search connection → standard Toolbox → tool discovery → Skill upload/binding → OpenAPI → Hosted Toolbox. **Skill, Toolbox, and Hosted agent versions are different values.** Record the version returned by each command.
+**Where you work:** portal for roles/connections; terminal for tools, Skills, and Hosted execution. Section 8 uses terminals A and B.
+
+> **Keep versions separate:** Skill, Toolbox, and Hosted agent versions are different values. Use the version returned by the corresponding command.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. Project permissions](#1-grant-project-to-search-access) | Project identity's Search roles |
+| [2. Keyless connection](#2-create-a-keyless-project-connection) | Actual target and authentication |
+| [3. Standard Toolbox](#3-start-with-a-standard-toolbox) | Listing → actual retrieval → model answer |
+| [4. Tool discovery](#4-tool-search-and-pinned-tools) | New version's discovery/pinned-tool list |
+| [5. Upload Skill](#5-prepare-upload-and-read-back-a-skill) | Downloaded content matches the source |
+| [6. Attach Skill](#6-attach-the-exact-skill-version) | Actual Skill load and tool results |
+| [7. OpenAPI](#7-use-openapi-against-the-same-search-service) | Actual retrieval under a different caller identity |
+| [8. Hosted Toolbox](#8-host-the-same-toolbox) | Local/remote responses and preserved raw evidence |
+| [9. Select default version — optional](#9-manage-versions-deliberately) | Explicit selection of a reviewed version |
+| [Completion check](#completion-check) | Versioned execution, ownership, and stopped sessions |
 
 These steps require the working keyword index from 06. Keyword retrieval alone does not verify Toolbox, OpenAPI, or Hosted Toolbox; check each actual call below. If a prerequisite is missing in your environment, pause that dependent step rather than substituting File Search.
 
@@ -34,7 +51,7 @@ azd ai connection create "YOUR-PREFIX-search-en" --kind cognitive-search --targe
 python scripts/selfstudy.py set TOOLBOX_SEARCH_CONNECTION_NAME "YOUR-PREFIX-search-en"
 ```
 
-In Foundry **Project details → Connected resources**, read back the connection, target, and authentication type. Do not use `--force`, API keys, or another project's connection.
+**Check:** in Foundry **Project details → Connected resources**, read back the connection, target, and authentication type. Do not use `--force`, API keys, or another project's connection.
 
 The current SDK can report project-managed-identity authentication as **`ProjectManagedIdentity`**. Do not reject a valid connection merely because earlier code expected only legacy `AAD`. Keep the CLI's `--auth-type project-managed-identity`; do not bypass an enum mismatch with an API key or another identity.
 
@@ -84,6 +101,8 @@ Verify `tool_search`, `call_tool`, and `policy_search` in the actual list. Tool 
 
 ## 5. Prepare, upload, and read back a Skill
 
+### Prepare inputs and upload
+
 ```bash
 python scripts/workshop.py --language en prepare-extensions --label extensions-en
 ```
@@ -97,6 +116,8 @@ azd ai skill create "SKILL-NAME-FROM-MANIFEST" --file outputs/extensions-en/poli
 azd ai skill show "SKILL-NAME-FROM-MANIFEST" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 ```
 
+### Download the same version and compare
+
 Specify the returned `default_version` and download into a **new readback folder that does not already exist**:
 
 ```bash
@@ -104,7 +125,7 @@ azd ai skill download "SKILL-NAME-FROM-MANIFEST" --version "ACTUAL-SKILL-VERSION
 python scripts/selfstudy.py compare-files outputs/extensions-en/policy-review/SKILL.md .selfstudy/skill-readback-en/SKILL.md
 ```
 
-If bytes differ, investigate. Do not edit the downloaded file to force a match.
+**Check:** if bytes differ, investigate. Do not edit the downloaded file to force a match.
 
 **If this is your first Skill and readback matches, continue directly to section 6.** The following procedure applies only when changing instructions in an existing Skill.
 
@@ -146,7 +167,7 @@ python scripts/workshop.py --language en toolbox probe --version "NEW-TOOLBOX-VE
 python scripts/workshop.py --language en toolbox ask --version "NEW-TOOLBOX-VERSION" --label skilled-answer-en --with-skill --confirm-cost
 ```
 
-Check `skill_load_verified`, actual calls, and policy results. Registration alone does not prove the Skill was read. This example does not execute arbitrary Skill scripts.
+**Check:** `skill_load_verified`, actual calls, and policy results. Registration alone does not prove the Skill was read. This example does not execute arbitrary Skill scripts.
 
 ## 7. Use OpenAPI against the same Search service
 
@@ -166,6 +187,8 @@ Verify the actual OpenAPI tool call and returned source text. Explain how `looku
 
 ## 8. Host the same Toolbox
 
+### Prepare the package and deployment folder
+
 Start with a verified **standard Toolbox version**. If selecting a Skill-enabled version, add `--with-skill` to both packaging and serving; keep that choice consistent.
 
 ```bash
@@ -175,11 +198,15 @@ python scripts/selfstudy.py prepare-hosted --language en --kind toolbox --packag
 
 As in 08, inspect the manifest and actual project, and use the exact printed service/folder. `prepare-hosted` defaults to Korean; keep its explicit `--language en` matched to the package.
 
+### Terminal A: start the local server
+
 Stop any earlier local server. Leave terminal A running in the repository root:
 
 ```bash
 python scripts/workshop.py --language en toolbox serve --version "VERIFIED-TOOLBOX-VERSION"
 ```
+
+### Terminal B: invoke actual tools
 
 Open terminal B in the same root and activate `.venv` there too:
 
@@ -188,7 +215,11 @@ python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8
 azd ai agent invoke --cwd "YOUR-TOOLBOX-HOSTED-ABSOLUTE-PATH" --local --port 8088 --new-session --new-conversation --timeout 210 "What advance approval is required for a KRW 170000 hotel on a domestic business trip in September 2026?"
 ```
 
-Verify actual tools, model response, and sources, then stop A with `Ctrl+C`. Decide separately whether to deploy remotely:
+**Check and stop:** verify actual tools, model response, and sources, then stop A with `Ctrl+C`.
+
+### Deploy remotely
+
+Decide separately whether to deploy remotely:
 
 ```bash
 azd deploy "YOUR-PREFIX-toolbox-hosted-en" --cwd "YOUR-TOOLBOX-HOSTED-ABSOLUTE-PATH"
@@ -227,6 +258,15 @@ python scripts/workshop.py --language en toolbox select --version "REVIEWED-VERS
 
 Keep earlier versions so the same mechanism can select a reviewed prior version.
 
-**Completion:** Record listing, actual retrieval, model answers, and Skill readback/load separately. Retain assets and ledgers for later exercises. If deleting at the end, respect reference order; in retention mode, keep them.
+## Completion check
 
-**Next → [11. Memory, A2A, and Routines](11-memory-a2a-routines.md)**
+- [ ] I checked listing, actual retrieval, and model answers separately.
+- [ ] I verified Skill readback/load and distinguished all three kinds of version.
+- [ ] I preserved actual OpenAPI/Hosted results or blocked status.
+- [ ] I stopped local servers and remote sessions and retained raw responses and ownership records.
+
+Retain assets and ledgers for later exercises. Remove them in reference order only if choosing deletion during final cleanup.
+
+---
+
+[← 09. Operations](09-operations.md) · [Course home](../../README.md#curriculum) · [11. State and scheduling →](11-memory-a2a-routines.md)

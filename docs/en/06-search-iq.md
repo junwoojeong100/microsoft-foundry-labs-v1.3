@@ -1,12 +1,27 @@
 # 06. Search, Foundry IQ, and Hybrid
 
-**English** | [한국어](../06-search-iq.md) · [Course home](../../README.md)
+**English** | [한국어](../06-search-iq.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Create and configure Search yourself, then retrieve the same documents using keyword, IQ, and Hybrid retrieval.
 
 **Prerequisites:** Owner access and Foundry configuration from 00. You create Search and any required models here. **Search Basic—and any explicitly selected Standard tier—incurs ongoing service charges even without requests.**
 
-**Order:** prepare Search, permissions, and billing in 1–3, then verify keyword (4), IQ (5), Hybrid (6), and IQ Chat (7) separately. **Restore the original index after section 6.** These are not interchangeable features or a single model.
+**Where you work:** Azure/Foundry portals for services and models; terminal for configuration and retrieval.
+
+> **Restore configuration:** whether Hybrid succeeds or fails, **return to the original index at the end of section 6**. Later exercises use that index.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. Create Search](#1-create-a-search-service) | Actual service, region, and Basic costs |
+| [2. Authentication and identity](#2-configure-token-authentication-and-managed-identity) | Token authentication and user data access |
+| [3. Feature billing](#3-review-per-feature-billing) | Service charges versus feature plans |
+| [4. Local and keyword search](#4-compare-local-and-search-retrieval) | Original index name and retrieved sources |
+| [5. GA IQ](#5-ga-foundry-iq) | Actual documents, references, and activity |
+| [6. Hybrid](#6-prepare-embeddings-and-hybrid-retrieval) | Real embeddings/retrieval; original index restored |
+| [7. IQ Chat](#7-model-based-iq-chat) | Separate model planning and synthesis |
+| [Completion check](#completion-check) | Results and ownership for each retrieval path |
 
 ## 1. Create a Search service
 
@@ -63,7 +78,7 @@ python scripts/workshop.py --language en retrieve --provider search --question "
 
 `seed-search` creates **your prefix's index and synthetic documents**, not a new service. Read the original index name from **`configuration.index`** in the saved `outputs/learner-notes-en/06-search.json` when needed. Keep `outputs/azure-objects.json` too, and restore that original name after section 6.
 
-Check `provider: azure-ai-search-keyword`, the actual index/endpoint, and source IDs and text. Local retrieval is neither semantic search nor an Azure service call.
+**Check:** `provider: azure-ai-search-keyword`, the actual index/endpoint, and source IDs and text. Local retrieval is neither semantic search nor an Azure service call.
 
 ## 5. GA Foundry IQ
 
@@ -76,11 +91,13 @@ python scripts/workshop.py --language en retrieve --provider iq --question "What
 python scripts/workshop.py --language en answer --prompt v2 --retrieval iq --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-iq-answer.json
 ```
 
-Inspect `provider: foundry-iq`, the knowledge base, `api_version: 2026-04-01`, and actual documents/references/activity. The final command performs **new retrieval and inference**; it does not read the previous result file.
+**Check:** `provider: foundry-iq`, the knowledge base, `api_version: 2026-04-01`, and actual documents/references/activity. The final command performs **new retrieval and inference**; it does not read the previous result file.
 
 This GA retrieval path is not the same as the model-based planning and synthesis experiment below.
 
 ## 6. Prepare embeddings and Hybrid retrieval
+
+### Register the model and dimensions
 
 1. Find **text-embedding-3-large** in the same Foundry catalog.
 2. Check regional support/quota and deploy it as `workshop-embedding`.
@@ -94,6 +111,8 @@ python scripts/selfstudy.py set WORKSHOP_EMBEDDING_API account
 python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "YOUR-SAME-ACCOUNT-OPENAI-ROOT-URL"
 ```
 
+### Retrieve from a separate index
+
 Keep the original index and explicitly name a **new hybrid index**. Replace the illustrative prefix with yours:
 
 ```bash
@@ -103,7 +122,9 @@ python scripts/workshop.py --language en retrieve --provider hybrid --question "
 python scripts/workshop.py --language en answer --prompt v2 --retrieval hybrid --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-hybrid-answer.json
 ```
 
-Verify real embedding calls and dimensions, text-plus-vector retrieval, and returned evidence. Do not insert zero vectors or rename keyword search as Hybrid.
+**Check:** real embedding calls and dimensions, text-plus-vector retrieval, and returned evidence. Do not insert zero vectors or rename keyword search as Hybrid.
+
+### Always restore the original index
 
 **Restore the original index whenever you finish or stop the Hybrid experiment, even after failure.** Open section 4's `outputs/learner-notes-en/06-search.json` and copy the **`index` value inside `configuration`** into the quotes below. Do not use the index from the new hybrid result:
 
@@ -135,8 +156,16 @@ python scripts/workshop.py --language en iq-chat ask --label iq-chat-first-en --
 
 Inspect `model_planning_verified`, `model_synthesis_verified`, the actual **`modelQueryPlanning` / `modelAnswerSynthesis` activities and `gpt-5.6-luna` model records**, and source evidence. If the required model cannot be deployed, mark this preset **blocked**. Do not disguise another model under its name or submit GA retrieval as IQ Chat success.
 
-## Completion and retention
+<a id="completion-and-retention"></a>
+
+## Completion check
+
+- [ ] I checked actual results or blocked status for keyword, IQ, Hybrid, and IQ Chat separately.
+- [ ] `sdk_settings.AZURE_SEARCH_INDEX_NAME` matches section 4's original index.
+- [ ] I verified ownership and ongoing costs for the indexes, bases, and models I created.
 
 Preserve results and ownership for the original index/IQ base and the hybrid index. Search is reused by Toolbox/OpenAPI in 10 and later Hosted evaluation; do not delete it yet.
 
-**Next → [07. Business and Foundry evaluation](07-evaluation.md)**
+---
+
+[← 05. Workflows](05-workflows.md) · [Course home](../../README.md#curriculum) · [07. Evaluation →](07-evaluation.md)

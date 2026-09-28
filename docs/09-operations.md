@@ -1,10 +1,28 @@
 # 09. Trace·Insights·운영
 
+[English](en/09-operations.md) | **한국어** · [전체 과정](../README.ko.md#진행-순서) · [진행 도움말](checkpoints.md)
+
 **완료 목표:** 로그 환경을 직접 만들고, 본인의 실제 요청을 Foundry에서 추적합니다.
 
 **시작 조건:** 기본 경로는 **03의 인라인 Prompt Agent 이름·버전과 호출 성공**입니다. File Search agent가 아니라 `prompt-agent create`로 만든 대상입니다. Hosted만 있다면 아래 2절의 대안을 사용합니다. 이 장에서 Application Insights와 Log Analytics를 직접 준비합니다.
 
-**순서:** 로그 자원 생성·연결 → 연결 이후 새 요청 → trace 조회 → Insights·비용·반복 평가 확인입니다. 앞 장의 응답이 소급 수집되지는 않습니다. 로그를 미리 준비했다면 새 자원을 만들지 말고 같은 연결과 권한을 확인합니다.
+**실행 위치:** Azure·Foundry 포털에서 연결·관찰, 터미널에서 자원 등록·새 요청.
+
+> **중요:** 로그 연결 전의 응답은 소급 수집되지 않습니다. 반복 평가를 켰다면 결과 유무와 관계없이 계획한 시각에 **Pause**합니다.
+
+**진행 지도**
+
+| 단계 | 확인할 결과 |
+|---|---|
+| [1. 로그 연결](#1-로그-환경-생성연결) | 실제 로그 자원·연결·조회 역할 |
+| [2. 새 요청](#2-연결-이후-새-요청-한-번) | 연결 이후의 새 응답 ID |
+| [3. Trace](#3-무엇이-보이는가) | 같은 요청의 trace와 세부 span |
+| [4. Insights](#4-agent-insights) | 실제 finding 또는 미실행 상태 |
+| [5. 비용](#5-비용을-연결해서-읽기) | 토큰 외 서비스·보관 비용 |
+| [6. 반복 평가](#6-제한된-반복-평가) | 실제 평가 결과와 paused 상태 |
+| [완료 확인](#완료-확인) | 관찰한 증거와 중지·보관 상태 |
+
+로그를 미리 준비했다면 새 자원을 만들지 말고 같은 연결과 권한을 확인합니다.
 
 ## 1. 로그 환경 생성·연결
 
@@ -43,7 +61,7 @@ python scripts/selfstudy.py resource --kind logs --id "실제-Log-Analytics-ARM-
 python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 ```
 
-`resource --kind logs`는 실제 Azure 응답의 **`customerId`**를 읽어 **`AZURE_LOG_ANALYTICS_WORKSPACE_ID`를 자동 설정**하고 현재 프로젝트 ARM ID도 기록합니다. Workspace GUID와 리소스 ARM ID는 다릅니다. 이름으로 GUID를 추측하거나 ARM ID를 이 변수에 넣지 않습니다. 이 등록은 조회 역할을 부여하거나 새 모델 응답을 만들지 않습니다.
+`resource --kind logs`는 실제 Azure 응답의 `customerId`를 읽어 **`AZURE_LOG_ANALYTICS_WORKSPACE_ID`를 자동 설정**하고 현재 프로젝트 ARM ID도 기록합니다. Workspace GUID와 리소스 ARM ID는 다릅니다. 이름으로 GUID를 추측하거나 ARM ID를 이 변수에 넣지 않습니다. 이 등록은 조회 역할을 부여하거나 새 모델 응답을 만들지 않습니다.
 
 필요한 범위의 **Log Analytics Reader**를 IAM에서 확인/부여합니다. 보호된 테이블을 사용하는 조직은 별도 Privileged Monitoring Data Reader가 필요할 수 있습니다. 토큰이나 connection string을 로그/환경 예제에 넣지 않습니다.
 
@@ -61,7 +79,7 @@ python scripts/workshop.py prompt-agent invoke --question "2026년 9월 국내 �
 
 기존 파일 이름을 덮어쓰지 않습니다. 이미 사용했으면 새 파일명을 정합니다.
 
-Foundry **Agents → Traces**에서 최근 시간 범위와 agent를 선택하고 응답 ID로 찾습니다. 수집에 시간이 걸릴 수 있으므로 잠시 기다린 후 새로 고칩니다.
+**확인:** Foundry **Agents → Traces**에서 최근 시간 범위와 agent를 선택하고 응답 ID로 찾습니다. 수집에 시간이 걸릴 수 있으므로 잠시 기다린 후 새로 고칩니다.
 
 ## 3. 무엇이 보이는가
 
@@ -108,7 +126,14 @@ GPT-6의 **reasoning 토큰도 출력 비용과 출력 상한에 포함**됩니�
 
 한 번의 실제 실행·표본을 확인하고 **계획한 시각에는 결과가 부족해도 일시 중지**합니다. 활성화 자체는 평가 성공이 아니며, 결과를 기다리느라 무기한 켜 두지 않습니다. 이미 발생한 비용은 중지로 없어지지 않습니다.
 
-실시간 방식을 시험한다면 **Continuous**, 평가자 하나(예: Coherence), 본인의 judge, 샘플링 100%, **최대 1회/시간**으로 작게 설정합니다. 포털 Playground에서 합성 질문 하나를 보내고, 실제 평가 run과 그 응답 ID를 대조한 뒤 Pause합니다. 실습 코드의 기본 호출은 `store=False`입니다. 연속 평가가 응답을 다시 조회하는 경로에서는 저장되지 않은 응답이 평가되지 않을 수 있으므로, trace 존재만으로 실행 완료를 판단하지 않습니다. 저장할 때도 합성 데이터만 사용합니다.
+실시간 방식을 시험한다면 다음 순서로 진행합니다.
+
+1. **Continuous**, 평가자 하나(예: Coherence), 본인의 judge를 선택합니다.
+2. 샘플링 100%, **최대 1회/시간**으로 작게 설정합니다.
+3. 포털 Playground에서 합성 질문 하나를 보냅니다.
+4. 실제 평가 run과 그 응답 ID를 대조한 뒤 **Pause**합니다.
+
+실습 코드의 기본 호출은 `store=False`입니다. 연속 평가가 응답을 다시 조회하는 경로에서는 저장되지 않은 응답이 평가되지 않을 수 있습니다. **trace 존재만으로 평가 완료를 판단하지 않습니다.** 저장할 때도 합성 데이터만 사용합니다.
 
 <details>
 <summary>Coherence 초기화 오류가 있을 때만: 과거 버전별 결과</summary>
@@ -119,6 +144,14 @@ NC의 v1 실행은 `CoherenceEvaluator.__init__() got an unexpected keyword argu
 
 CLI·포털·MCP가 서로 다른 로그인 주체를 사용할 수 있습니다. 오류의 Object ID가 지정한 사용자와 다르면 먼저 인증 컨텍스트를 확인합니다. 모르는 MCP 주체에 새 역할을 부여해 우회하지 않습니다.
 
-**완료:** 실제 trace와 측정값, Insights/반복 평가의 수행 상태, 중지/보관 계획을 기록합니다.
+## 완료 확인
 
-**다음 → [10. Toolbox·Tool Search·Skills](10-toolbox-skills.md)**
+- [ ] 연결 이후의 새 응답을 실제 trace·span과 대조했다.
+- [ ] 측정된 사용량과 미측정 `null`, 실제 청구액을 구분했다.
+- [ ] Insights·반복 평가의 실제 수행 여부를 확인하고, 켠 예약은 paused로 두었다.
+
+로그·보관 비용과 필요한 증거를 함께 보관합니다.
+
+---
+
+[← 08. 배포](08-hosted.md) · [전체 과정](../README.ko.md#진행-순서) · [10. 공유 도구 →](10-toolbox-skills.md)

@@ -1,15 +1,18 @@
 import importlib.util
 import io
 import json
+import re
 import shlex
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from unittest.mock import patch
+from urllib.parse import unquote
 
 from foundry_workshop.cli import main, parser
 from foundry_workshop.contracts import load_cases, read_json
 from foundry_workshop.experiments import offline_demo
 from foundry_workshop.profiles import RuntimeProfile, packaged_profile
+from scripts.check_workshop import headings
 from scripts.workshop import command_arguments
 
 from . import ROOT, workspace
@@ -270,6 +273,108 @@ class GuideFlowTests(unittest.TestCase):
                     self.assertEqual(
                         len({command[command.index(option) + 1] for command in invocations}), 1
                     )
+
+
+class GuideReadabilityTests(unittest.TestCase):
+    @staticmethod
+    def chapters():
+        steps = read_json(ROOT / "curriculum.json")["steps"]
+        for language in ("ko", "en"):
+            paths = [
+                ROOT / step["file"]
+                if language == "ko"
+                else ROOT / "docs/en" / step["file"].rsplit("/", 1)[-1]
+                for step in steps
+            ]
+            for index, path in enumerate(paths):
+                yield language, paths, index, path
+
+    def test_bilingual_chapters_have_maps_and_matching_navigation(self):
+        for language, paths, index, path in self.chapters():
+            text = path.read_text(encoding="utf-8")
+            introduction = text.split("\n## ", 1)[0]
+            home = (
+                "../README.ko.md#진행-순서"
+                if language == "ko"
+                else "../../README.md#curriculum"
+            )
+            translation = f"en/{path.name}" if language == "ko" else f"../{path.name}"
+            markers = (
+                ("**완료 목표:**", "**시작 조건:**", "**실행 위치:**", "**진행 지도**")
+                if language == "ko"
+                else ("**Outcome:**", "**Prerequisites:**", "**Where you work:**", "**Chapter map**")
+            )
+            with self.subTest(guide=path.relative_to(ROOT)):
+                for marker in markers:
+                    self.assertIn(marker, introduction)
+                for target in (home, translation, "checkpoints.md"):
+                    self.assertIn(f"]({target})", introduction)
+                chapter_map = introduction.split(markers[-1], 1)[1]
+                anchors = re.findall(r"\]\(#([^)\n]+)\)", chapter_map)
+                self.assertGreaterEqual(len(anchors), 4)
+                self.assertTrue({unquote(anchor) for anchor in anchors} <= headings(path))
+                self.assertIn("\n---\n", text)
+                footer = text.rsplit("\n---\n", 1)[1]
+                self.assertIn(f"]({home})", footer)
+                if index:
+                    self.assertIn(f"]({paths[index - 1].name})", footer)
+                if index + 1 < len(paths):
+                    self.assertIn(f"]({paths[index + 1].name})", footer)
+
+    def test_default_steps_and_completion_remain_visible_and_reachable(self):
+        for language, _, index, path in self.chapters():
+            text = path.read_text(encoding="utf-8")
+            introduction = text.split("\n## ", 1)[0]
+            visible_headings = []
+            details = 0
+            fenced = False
+            with self.subTest(guide=path.relative_to(ROOT)):
+                for line in text.splitlines():
+                    if line.startswith("```"):
+                        fenced = not fenced
+                    elif not fenced:
+                        if line == "<details>":
+                            details += 1
+                        elif line == "</details>":
+                            details -= 1
+                            self.assertGreaterEqual(details, 0)
+                        elif not details and line.startswith("## "):
+                            visible_headings.append(line[3:])
+                self.assertFalse(fenced)
+                self.assertEqual(details, 0)
+                self.assertEqual(text.count("<details>"), text.count("<summary>"))
+                self.assertEqual(text.count("<summary>"), text.count("</summary>"))
+                for title in visible_headings:
+                    number = re.match(r"(\d+)\. ", title)
+                    if number:
+                        self.assertRegex(
+                            introduction,
+                            rf"\]\(#{number.group(1)}-[^)\n]+\)",
+                            f"Default step missing from chapter map: {title}",
+                        )
+                completion = (
+                    ("7. 최종 확인" if language == "ko" else "7. Final checklist")
+                    if index == 15
+                    else ("완료 확인" if language == "ko" else "Completion check")
+                )
+                self.assertIn(completion, visible_headings)
+                checklist = text.split(f"\n## {completion}\n", 1)[1].split("\n---\n", 1)[0]
+                self.assertGreaterEqual(len(re.findall(r"^- \[ \] ", checklist, re.MULTILINE)), 3)
+
+    def test_korean_emphasis_avoids_punctuation_before_particles(self):
+        for language, _, _, path in self.chapters():
+            if language != "ko":
+                continue
+            fenced = False
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                if line.startswith("```"):
+                    fenced = not fenced
+                elif not fenced:
+                    with self.subTest(guide=path.relative_to(ROOT), line=number):
+                        self.assertNotRegex(
+                            line, r"[`)\]]\*\*[가-힣]",
+                            "Use code/link styling alone, or end bold before punctuation.",
+                        )
 
 
 if __name__ == "__main__":

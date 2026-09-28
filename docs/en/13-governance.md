@@ -1,14 +1,35 @@
 # 13. Lab safety, managed AI red teaming, and Control Plane
 
-**English** | [한국어](../13-governance.md) · [Course home](../../README.md)
+**English** | [한국어](../13-governance.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Verify lab-owned guardrails and managed AI red teaming, and explain caller identities and owned resources.
 
-**Prerequisites:** Sections 2–4 use **08's introductory Responses Hosted version**; section 5 uses **a separate English Prompt Agent, 07's judge, and 09's working logging connection**. Do not repurpose 12's frozen matrix for policy experiments or change shared policies, another user's roles, or business data.
+**Prerequisites:** distinguish each experiment's target and required evidence.
 
-**Reference validation holds final acceptance because of inconsistent verdicts.** Do not copy historical pass counts as your own success; inspect your new run's complete results below. See [current results and limits](validation-report.md).
+| Experiment | Target to use |
+|---|---|
+| Guardrails in sections 2–4 | **08's introductory Responses Hosted version** |
+| Managed red teaming in section 5 | **Separate English Prompt Agent, 07's judge, and 09's working logs** |
 
-**Order:** inspect identities/assets → attach a policy to the separate introductory Hosted agent → verify actual requests → run/audit managed red teaming. Collapsed SDK/history notes are reference material. Do not erase failures by changing flags, directions, denominators, or repeating evaluations for a passing outcome.
+Do not change 12's frozen matrix, shared policies, another user's roles, or business data.
+
+**Where you work:** portal for policies/roles/traces, editor for the configuration fragment, terminal for deployment and managed runs/audits.
+
+> **Acceptance warning:** reference validation **holds final acceptance** because of inconsistent verdicts. Inspect your new run's complete results. Do not erase failures by changing flags, directions, denominators, or repeating evaluations. See [current results and limits](validation-report.md).
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. Permission paths](#1-inspect-permission-paths) | Actual callers and owned assets |
+| [2. Dedicated policy](#2-create-your-own-raiguardrail-policy) | Your actual policy ARM ID |
+| [3. Hosted binding](#3-attach-it-to-a-new-version-of-your-hosted-agent) | Policy reference on a new version |
+| [4. Normal/boundary requests](#4-use-normal-and-boundary-test-synthetic-questions) | Actual intervention, answers, and stopped sessions |
+| [5. Managed verification](#5-managed-ai-red-teaming--the-primary-verification-target) | Real job's complete rows and flag consistency |
+| [6. Asset reconciliation](#6-inventory-your-labs-control-plane-resources) | Actual resources versus ownership records |
+| [Completion check](#completion-check) | Scope, limitations, and acceptance hold status |
+
+Collapsed SDK/history notes are references, not additional exercises.
 
 ## 1. Inspect permission paths
 
@@ -174,7 +195,9 @@ python scripts/managed_redteam.py prepare --agent-name "ACTUAL-ENGLISH-AGENT-NAM
 python scripts/managed_redteam.py run --label managed-task-adherence --confirm-cost --timeout 900
 ```
 
-`outputs/managed-task-adherence/` retains generated/reviewed taxonomies, the pinned evaluator catalog, requests, run ID, every output item, and `native-audit.json`. After an active-run timeout, resume **the same run command and label** without creating another job. `--retry-failed` is only for explicitly retrying a terminal failed execution while preserving its original attempt—not erasing low scores or inconsistencies.
+`outputs/managed-task-adherence/` retains generated/reviewed taxonomies, the pinned evaluator catalog, requests, run ID, every output item, and `native-audit.json`.
+
+**If the wait times out:** resume an active run with **the same run command and label**, without creating another job. `--retry-failed` is only for explicitly retrying a terminal failed execution while preserving its original attempt—not erasing low scores or inconsistencies.
 
 Audit saved results without another Azure/model request:
 
@@ -182,7 +205,15 @@ Audit saved results without another Azure/model request:
 python scripts/managed_redteam.py audit --directory outputs/managed-task-adherence --project-endpoint "ACTUAL-PROJECT-ENDPOINT" --prefix "YOUR-LAB-PREFIX" --agent-name "ACTUAL-ENGLISH-AGENT-NAME" --agent-version "ACTUAL-NUMERIC-VERSION"
 ```
 
-Audit exit 0 confirms **evidence/flag consistency**, not safety against every attack. Read actual pass/fail counts and scope too. Inconsistent flags return 1; execution/format errors return 2. Provider flags remain unchanged. Add `--include-prohibited-comparison` to `prepare` only when intentionally requesting that comparison.
+**Check:** distinguish the exit code from actual quality verdicts.
+
+| Audit exit code | Meaning | Next action |
+|---|---|---|
+| `0` | Evidence and flags are consistent | Read actual pass/fail counts, all rows, and scope; this is not safety certification |
+| `1` | Inconsistent verdicts | Preserve original flags and hold final acceptance |
+| `2` | Execution/format error | Resolve the cause and inspect the same records |
+
+Add `--include-prohibited-comparison` to `prepare` only when intentionally requesting that comparison.
 
 If your run actually fails with zero rows and a `ResourceId`/credential error, return to [09's App Insights connection checks](09-operations.md#first-cli-connection-and-actual-native-sdk-requirements). You do not need to reproduce a historical failure.
 
@@ -206,6 +237,15 @@ Separate read-only observations, the roles/policies you added, and resources you
 
 ## Completion check
 
-Inspect **every row, error, and flag-consistency check in your own new run**. Do not force its expected row count to match a report's historical 5/5 or six-row result. Preserve backend, version, raw scores, redacted inputs, unavailable response IDs, and limitations; hold final acceptance when flags are inconsistent. Do not combine historical jobs into an all-native pass.
+- [ ] I checked policy binding, actual intervention, and answer correctness separately, then stopped sessions.
+- [ ] I inspected **every row, error, and flag-consistency check in my own new run**.
+- [ ] I preserved backend/version, raw scores, redacted inputs, unavailable response IDs, and limitations.
+- [ ] If managed verification was inconsistent or blocked, I held final acceptance and left holdout closed.
 
-**Next → [14. GitHub OIDC CI/CD lab](14-additional-permissions.md).** Without repository permissions, record CI as not run and continue to [15](15-capstone-cleanup.md). A failed managed audit keeps holdout locked; it does not postpone stopping resources and reviewing costs.
+Do not force the row count to match historical 5/5 or six-row results, or combine historical jobs into an all-native pass.
+
+Without repository permissions, record CI as not run and continue to [15](15-capstone-cleanup.md). A failed managed audit does not postpone stopping resources and reviewing costs.
+
+---
+
+[← 12. Improvement](12-improvement.md) · [Course home](../../README.md#curriculum) · [14. CI/CD →](14-additional-permissions.md)

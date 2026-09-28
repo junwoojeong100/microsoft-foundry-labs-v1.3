@@ -2,23 +2,38 @@
 
 **English** | [한국어](README.ko.md)
 
-This repository is **the v1.5 successor to [microsoft-foundry-labs](https://github.com/junwoojeong100/microsoft-foundry-labs), which was created in November 2025 just after Microsoft Ignite 2025**. Start here without first installing or completing the previous version.
-
 **Build an AI assistant in your own Azure environment, connect evidence and tools, evaluate it, and deploy it. All workshop code and synthetic data are included.**
 
-You need a **Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role**. Work at your own pace; there is no course time limit. A workshop ZIP does not require a GitHub account or Git.
+This is the successor to [microsoft-foundry-labs](https://github.com/junwoojeong100/microsoft-foundry-labs), created in November 2025 just after Microsoft Ignite 2025. You do not need to install or complete the previous version first.
 
-**Start here → [00. Set up your environment](docs/en/00-setup.md)**
+| What you need now | Go to |
+|---|---|
+| Start for the first time | **[00. Set up your environment](docs/en/00-setup.md)** |
+| Continue an existing lab | [Resume from saved results](docs/en/checkpoints.md#resume-on-another-day) |
+| Find a chapter | [Full curriculum](#curriculum) |
+| Resolve an error | [Troubleshooting](docs/en/troubleshooting.md) |
+| Finish for today | **[Stop work and review costs](docs/en/15-capstone-cleanup.md#4-stop-running-work-first)** |
 
-Already started? → [Resume from saved results](docs/en/checkpoints.md#resume-on-another-day)
+**Requirements:** a Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role. A provided ZIP needs neither a GitHub account nor Git. Work at your own pace; there is no course time limit.
+
+> **Cost warning:** this is not a free workshop. Model calls and services can incur charges. Review running work, schedules, and retained resources even when stopping early.
 
 ## Start in this order
 
 1. **Complete 00: download the files, install tools, and configure Azure.** Start there even if you are new to terminals.
-2. **Follow one language edition through 01-15.** Check each chapter's **prerequisites**, run each numbered step, inspect its result, then continue. Read sections marked optional, troubleshooting, or existing-environment only when they apply.
+2. **Follow one language edition through 01-15.** Use each chapter's **prerequisites → chapter map → completion check**. Execute one step, inspect its result, then continue.
 3. **Inspect command output and saved results; no separate write-up is required.** Use [resume instructions and checkpoints](docs/en/checkpoints.md) next time. Even if you finish early, follow [15's stopping and cleanup steps](docs/en/15-capstone-cleanup.md#4-stop-running-work-first).
 
 Luna and Router comparisons in 02 are optional. Chapter 14 requires GitHub repository permissions. If another feature is unavailable, **record it as blocked/not run** and continue only where prerequisites are met. This is not an entirely free workshop or a guarantee that every subscription can run every feature.
+
+**How to read the guide**
+
+| Label | How to use it |
+|---|---|
+| **Where you work** | Check whether the action belongs in the portal, terminal, or editor. |
+| **Chapter map** | Select a step to jump to its section. The right column identifies the result to inspect. |
+| **Check** / **Completion check** | Compare against real output and files. Finishing a command is not the same as passing quality checks. |
+| **Optional** / collapsed notes | Expand only when the condition applies; do not run every alternative in addition to the default. |
 
 ## What will you build?
 
@@ -38,20 +53,37 @@ The shared diagram shows local CLI/MAF code calling Foundry models and agents, r
 
 ## Curriculum
 
+### Setup and first responses · 00–02
+
 | Step | What you do | Evidence you keep |
 |---|---|---|
 | [00 Setup](docs/en/00-setup.md) | Prepare tools, a project, a model, and permissions | Your environment |
 | [01 First response](docs/en/01-foundry.md) | Call a model in the portal and from code | An actual response |
 | [02 Models and prompts](docs/en/02-models-prompts.md) | Compare instructions; optionally compare Luna and Router | A reasoned selection |
+
+### Knowledge, tools, and evaluation · 03–07
+
+| Step | What you do | Evidence you keep |
+|---|---|---|
 | [03 Agents and files](docs/en/03-knowledge.md) | Create a Prompt Agent and use File Search | Exact versions and citations |
 | [04 Tools](docs/en/04-tools.md) | Run functions, MCP, and Code Interpreter | Actual tool results |
 | [05 Workflows](docs/en/05-workflows.md) | Run sequential, parallel, chat, and pause/resume flows | Execution records |
 | [06 Retrieval](docs/en/06-search-iq.md) | Configure Search, IQ, and Hybrid | Retrieved source documents |
 | [07 Evaluation](docs/en/07-evaluation.md) | Compare the same questions before and after changes | Quality evidence |
+
+### Deployment, operations, and extensions · 08–11
+
+| Step | What you do | Evidence you keep |
+|---|---|---|
 | [08 Deployment](docs/en/08-hosted.md) | Test locally, then deploy a Hosted Agent | A remote version and response |
 | [09 Operations](docs/en/09-operations.md) | Inspect traces, Insights, and costs | Request-level observations |
 | [10 Shared tools](docs/en/10-toolbox-skills.md) | Connect Toolbox, Skills, and OpenAPI | Reusable, versioned tools |
 | [11 State and scheduling](docs/en/11-memory-a2a-routines.md) | Use Memory, A2A, and Routines | State and dispatch records |
+
+### Improvement, verification, and cleanup · 12–15
+
+| Step | What you do | Evidence you keep |
+|---|---|---|
 | [12 Improvement](docs/en/12-improvement.md) | Evaluate conversations, optimization, and deployed versions | Reviewed candidates |
 | [13 Lab safety](docs/en/13-governance.md) | Verify managed AI red teaming, lab guardrails, identities, and inventory | Native run evidence and limitations |
 | [14 GitHub OIDC CI/CD](docs/en/14-additional-permissions.md) | Run the included identity-based lab release workflow | Exact version and dev business checks |

@@ -1,10 +1,22 @@
 # 01. Foundry and your first model response
 
-**English** | [한국어](../01-foundry.md) · [Course home](../../README.md)
+**English** | [한국어](../01-foundry.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Explain Foundry and receive an actual response from your configured **GPT-6 Sol** deployment.
 
 **Prerequisites:** The project, Sol deployment, permissions, and configuration from [00](00-setup.md). Do not add another model or resource in this chapter.
+
+**Where you work:** Foundry Playground → terminal in the workshop folder → result JSON in your editor.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [Start with the concepts](#what-you-are-learning-and-why) | Model, agent, and Foundry distinctions |
+| [1. Portal request](#1-make-one-portal-request) | A first Sol response without retrieval |
+| [2. Call the same model from code](#2-call-the-same-sol-deployment-from-code) | JSON with the real answer, model, and response ID |
+| [3. Implementation types](#3-distinguish-three-implementations) | Prompt Agent, local MAF, and Hosted boundaries |
+| [Completion check](#completion-check) | Only model inference has been verified |
 
 ## What you are learning and why
 
@@ -32,7 +44,7 @@ Azure OpenAI inference is one Foundry capability. **Microsoft Agent Framework (M
 Write a three-line preparation checklist in English for an employee taking their first domestic business trip.
 ```
 
-A general answer about dates, purpose, and preparation demonstrates the first model call. **It has not searched Hanbit Technology's policies or executed a tool.**
+**Check:** a general answer about dates, purpose, and preparation demonstrates the first model call. **It has not searched Hanbit Technology's policies or executed a tool.**
 
 ## 2. Call the same Sol deployment from code
 
@@ -42,7 +54,7 @@ Run from the folder containing the README. The runner uses your actual configure
 python scripts/workshop.py --language en model --question "Write a three-line preparation checklist in English for an employee taking their first domestic business trip." --output outputs/learner-notes-en/01-sol-model.json
 ```
 
-Read the real answer, base model/deployment information, response ID, and usage. Empty responses and errors are not success. Identical questions need not produce identical wording.
+**Check:** read the real answer, base model/deployment information, response ID, and usage. Empty responses and errors are not success. Identical questions need not produce identical wording.
 
 The core flow is `AIProjectClient → get_openai_client → responses.create`. Verify the actual **gpt-6-sol / 2026-09-22**, not just the alias. If a result file already exists, preserve it and choose a new output filename.
 
@@ -64,10 +76,18 @@ They use the same synthetic scenario but are different executions. Local results
 
 ## Completion check
 
-Inspect the actual response, model, API, and response ID in `outputs/learner-notes-en/01-sol-model.json`. Use `python scripts/selfstudy.py values` to recheck the saved project and deployment settings.
+Open `outputs/learner-notes-en/01-sol-model.json` and compare:
+
+- [ ] There is a real answer, not an error or empty response.
+- [ ] The actual model/version is `gpt-6-sol / 2026-09-22`, using `project-responses`.
+- [ ] I checked the response ID and distinguished inference from retrieval or tool execution.
+
+Use `python scripts/selfstudy.py values` to recheck the saved project and deployment settings.
 
 **Key point:** Foundry connects models, agents, knowledge, tools, evaluation, and operations. This chapter verified only model inference.
 
 For 401/403, check identity, tenant, and data roles. For 404, check the project endpoint and actual deployment name. For 429, check quota. See [Troubleshooting](troubleshooting.md).
 
-**Next → [02. Sol prompts and optional model/Router comparison](02-models-prompts.md)**
+---
+
+[← 00. Setup](00-setup.md) · [Course home](../../README.md#curriculum) · [02. Models and prompts →](02-models-prompts.md)

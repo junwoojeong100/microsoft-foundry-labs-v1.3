@@ -1,12 +1,29 @@
 # 00. Set up your own lab environment
 
-**English** | [한국어](../00-setup.md) · [Course home](../../README.md)
+**English** | [한국어](../00-setup.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Create a Foundry project and model deployment in your own Azure subscription, then prepare data-access permissions and the local runtime.
 
-Start with a **Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role**. You do not need someone else's preconfigured endpoint or Search service. New resources and model requests can incur charges.
+**Prerequisites:** a Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role. You do not need someone else's preconfigured endpoint or Search service.
 
-**Default order:** permissions → files/tools → sign-in → dedicated group/project/Sol deployment → data roles → configuration checks. Prepare Azure resources in **North Central US (`northcentralus`)**. On your first run, follow the **portal route**; the collapsed CLI alternatives are not additional required steps.
+**Where you work:** Azure and Foundry portals, your editor, and a terminal in the workshop folder.
+
+> **Before starting:** prepare Azure resources in **North Central US (`northcentralus`)**. New resources and model calls can incur charges. Follow the **portal route** on your first run; skip the collapsed CLI alternatives.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. Permissions](#1-check-your-permissions) | Active Owner on the intended subscription |
+| [2. Files and tools](#2-get-the-files-and-development-tools) | Python 3.13 environment and local doctor `PASS` |
+| [3. Sign-in and names](#3-sign-in-and-plan-names) | Matching tenant and your unique prefix |
+| [4. Dedicated group](#4-create-a-dedicated-resource-group) | A group containing only lab resources |
+| [5. Project](#5-create-a-foundry-project) | Project endpoint and full project ID |
+| [6. Sol deployment](#6-deploy-the-first-model) | Actual model/version and `Succeeded` |
+| [7. Data roles](#7-verify-data-access-roles) | User and project-identity assignments |
+| [8. Configuration](#8-collect-configuration-from-actual-values) | Saved settings and authentication/metadata checks |
+| [9. Role commands — only if needed](#9-generate-role-assignment-commands-when-needed) | A plan for missing assignments |
+| [Completion check](#completion-check) | Ready for the first model call in 01 |
 
 Names in this guide are examples. Do not copy resource groups or IDs from validation reports into your configuration. To continue an existing environment, start with [resume instructions](checkpoints.md#resume-on-another-day).
 
@@ -21,6 +38,8 @@ Names in this guide are examples. Do not copy resource groups or IDs from valida
 **Important:** Subscription Owner is not Entra Global Administrator. Preparing the Azure resources in this course does not require directory-wide administration or a new client secret. Chapter 14 covers the included GitHub OIDC workflow's lab permissions.
 
 ## 2. Get the files and development tools
+
+### Open the workshop folder
 
 1. Extract the **workshop ZIP** you received. Otherwise, open [this repository](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5) and select **Code → Download ZIP**. A private repository requires access.
 2. Find the extracted folder containing **`README.md`, `scripts/`, and `curriculum.json` together**. Do not work inside the ZIP or its parent folder.
@@ -42,6 +61,8 @@ Open the cloned folder in your editor. Do not also repeat the ZIP route.
 
 </details>
 
+### Install the required tools
+
 Use an approved development environment. Azure Owner does not override software-installation restrictions on your device.
 
 | Tool | Install and check |
@@ -53,13 +74,15 @@ Use an approved development environment. Azure Owner does not override software-
 
 After installation, reopen your editor and check these version commands in a new terminal. Stop if a command is not found or not recognized. Installing the newest Python release is not the same as preparing **this lab's Python 3.13 environment**.
 
-**Windows execution boundary:** you can prepare the lab in PowerShell, but **05 section 5's local SDK pause/resume and its recovery extension require macOS/Linux, including approved WSL**. The runner uses POSIX `fcntl` locks and does not run in Windows Python. To do that section, use a separate source copy in approved WSL/Linux and complete only the Linux Python setup and doctor below; that local experiment needs no Azure configuration or login. Do not copy a Windows `.venv` or private Azure state.
+> **Windows execution boundary:** you can prepare the lab in PowerShell, but **05 section 5's local SDK pause/resume and its recovery extension require macOS/Linux, including approved WSL**. The runner uses POSIX `fcntl` locks and does not run in Windows Python.
+
+To do that section, use a **separate source copy** in approved WSL/Linux and complete only the Linux Python setup and doctor below. That local experiment needs no Azure configuration or login. Do not copy a Windows `.venv` or private Azure state.
 
 Check your current folder/files using `pwd` and `ls` on macOS/Linux, or `Get-Location` and `Get-ChildItem` in PowerShell. The `bash`/`powershell` labels above code blocks are not commands. **Execute one line at a time; stop on an error before running the next line.**
 
 Do not overwrite a `.venv` created with another Python version or existing personal lab state. Preserve that folder and **extract the ZIP into a new folder**.
 
-**On a first run, skip the collapsed section below and execute only the installation block for your OS.**
+**On a first run, skip the collapsed section below and execute only the installation block for your OS.** Continue to package installation only after `python --version` reports **Python 3.13.x**.
 
 <details>
 <summary>Existing environments only: start again with a different project</summary>
@@ -97,7 +120,7 @@ python -m pip check
 
 If PowerShell blocks activation, do not weaken system policy. Replace subsequent `python ...` commands with `.\.venv\Scripts\python.exe ...`.
 
-**Verify that `python --version` reports `Python 3.13.x` before installing packages.** Otherwise, stop and check virtual-environment creation and activation above.
+### All operating systems: verify installation
 
 This installs local packages only. **It does not create Azure resources, sign you in, or change subscriptions.** Preserve folders that already contain personal configuration or results.
 
@@ -105,7 +128,16 @@ This installs local packages only. **It does not create Azure resources, sign yo
 python scripts/workshop.py --language en doctor
 ```
 
-Check the installation's `No broken requirements found.` and doctor's `language: en`, `documents: 6`, `dev_cases: 6`, `holdout_cases: 4`, `azure_tested: false`, and `result: PASS`. This is not an Azure connectivity test. It reports dataset counts; do not open holdout questions or answers.
+**Check:** the following output must match. This is not an Azure connectivity test.
+
+| Output | Expected value |
+|---|---|
+| Package check | `No broken requirements found.` |
+| `language` | `en` |
+| `documents` / `dev_cases` / `holdout_cases` | `6` / `6` / `4` |
+| `azure_tested` / `result` | `false` / `PASS` |
+
+It reports dataset counts only; do not open holdout questions or answers.
 
 **Activate `.venv` in every new terminal.** Run all commands from the folder containing `README.md`.
 
@@ -137,7 +169,11 @@ Choose your own unique prefix. Replace `YOUR-...`, `<...>`, and personal resourc
 
 The prefix must start with `lab-`, use lowercase letters, numbers, and hyphens, and contain at most 32 characters. Keep it unchanged throughout the lab so ownership remains clear.
 
-**Replace:** resource names containing `yourname` and `YOUR-...`/`ACTUAL-...` placeholders. **Keep on a first run:** deployment alias `workshop-chat`, result labels such as `baseline-en`/`candidate-en`, and file paths. Keep the guide's selected models, versions, and region too. If a name already exists, preserve that asset and follow the relevant fresh-name/resume instructions instead.
+| Replace with your values | Keep on a first run |
+|---|---|
+| Resource names containing `yourname`, `YOUR-...`/`ACTUAL-...` placeholders | `workshop-chat`, labels such as `baseline-en`/`candidate-en`, and file paths |
+
+Keep the guide's selected models, versions, and region too. If a name already exists, preserve that asset and follow the relevant fresh-name/resume instructions instead.
 
 ## 4. Create a dedicated resource group
 
@@ -305,4 +341,6 @@ python scripts/selfstudy.py roles --user-object-id "YOUR-USER-OBJECT-ID"
 
 Resolve blockers using [Troubleshooting](troubleshooting.md). If stopping, review [cleanup and retention](15-capstone-cleanup.md) now.
 
-**Next → [01. Foundry and your first model response](01-foundry.md)**
+---
+
+[Course home](../../README.md#curriculum) · [Next: 01. First model response →](01-foundry.md)

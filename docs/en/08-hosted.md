@@ -1,12 +1,27 @@
 # 08. Local Hosted execution and Azure deployment
 
-**English** | [한국어](../08-hosted.md) · [Course home](../../README.md)
+**English** | [한국어](../08-hosted.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Package your code, make a real local request, deploy to Foundry, and invoke the exact remote version.
 
 **Prerequisites:** The MAF function exercise from 04, project ARM ID/location from 00, and a working model. **Subscription Owner prepares deployment permissions**; runtime data permissions are separate.
 
-**Order:** package → isolated deployment folder → local response → remote deployment → runtime roles → same-version request and session stop. The package path, deployment folder, and service name are different values; use each actual output directly in the next command.
+**Where you work:** terminal for packaging/deployment/requests, editor for manifests, Azure portal for roles. Local requests use terminals A and B.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. Prepare azd](#1-prepare-azd-foundry-commands) | Foundry extension and Hosted availability |
+| [2. Package](#2-build-a-safe-english-package) | No secrets or evaluation answers in the package |
+| [3. Deployment folder](#3-prepare-an-isolated-folder-for-the-existing-project) | Actual service, folder, and project values |
+| [4. Local request](#4-make-a-real-local-request) | Readiness and real inference checked separately |
+| [5. Deployment and roles](#5-deploy-remotely) | New version and its runtime identity |
+| [6. Remote request and stop](#6-invoke-the-exact-remote-version) | Same-version response and stopped session |
+| [7. Repeat with a workflow](#7-repeat-with-a-workflow) | Local and remote workflow-profile results |
+| [Completion check](#completion-check) | Packaging, local, and remote outcomes distinguished |
+
+Package path, deployment folder, and service name are different values. Use **[section 3's value-copy table](#3-prepare-an-isolated-folder-for-the-existing-project)** and pass each actual output into the next command.
 
 ## 1. Prepare azd Foundry commands
 
@@ -33,7 +48,7 @@ If only remote deployment is blocked, sections 1–3's **local preparation folde
 python scripts/workshop.py --script package-hosted --language en
 ```
 
-Open `package-manifest.json`, `runtime-profile.json`, and `requirements.txt` at the printed location. The default English package is `.build/hosted-en/`.
+**Check:** open `package-manifest.json`, `runtime-profile.json`, and `requirements.txt` at the printed location. The default English package is `.build/hosted-en/`.
 
 Verify code, synthetic policies, and instructions are present, but `.env`, credentials, evaluation answers, and execution results are absent. The frozen runtime profile must contain `language: en`. `cloud_deployed: false` describes **packaging**, not an Azure resource check.
 
@@ -77,11 +92,15 @@ If the terminal output is gone, open the relevant `azure.yaml` under `.selfstudy
 
 ## 4. Make a real local request
 
+### Terminal A: start the server
+
 Leave terminal A running in the v1.5 root. See [using two terminals](checkpoints.md#chapters-with-two-terminals).
 
 ```bash
 python scripts/workshop.py --language en serve
 ```
+
+### Terminal B: check readiness, then invoke
 
 Open terminal B in the same root and activate `.venv` there too. The Python readiness check works on macOS/Linux and PowerShell:
 
@@ -90,9 +109,9 @@ python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8
 azd ai agent invoke --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --local --port 8088 --new-session --new-conversation --timeout 120 "What is the domestic business-trip lodging limit for September 2026, and what is the source?"
 ```
 
-If readiness fails, do not invoke. `healthy` means the server is ready; an actual answer with evidence demonstrates inference. The local server still incurs Azure model charges.
+**Check:** if readiness fails, do not invoke. `healthy` means the server is ready; an actual answer with evidence demonstrates inference. The local server still incurs Azure model charges.
 
-After verification, use `Ctrl+C` in A to stop your server.
+**Stop:** after verification, use `Ctrl+C` in A to stop your server.
 
 ## 5. Deploy remotely
 
@@ -121,7 +140,7 @@ This prints a plan. Match the identity to the **actual deployed name/version**, 
 azd ai agent invoke --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --version "ACTUAL-NEW-VERSION" --new-session --new-conversation --timeout 270 "What advance approval is required for a KRW 170000 hotel on a domestic business trip in September 2026?"
 ```
 
-Record the real answer, citations, session, conversation, and trace IDs. One successful request does not replace the full quality evaluation in 07.
+**Check:** record the real answer, citations, session, conversation, and trace IDs. One successful request does not replace the full quality evaluation in 07.
 
 If you do not plan to reuse it, stop **only the session you just created**:
 
@@ -156,6 +175,15 @@ python scripts/workshop.py --language en serve --kind workflow --pattern sequent
 
 Stop the earlier server with `Ctrl+C` first. Terminal B must use the newly printed **workflow service and folder**, not the single-agent service.
 
-**Complete only after verifying each stage:** packaging, local inference, remote deployment, and the remote response. Preserve the Hosted folder, exact version, and session stop/retention status.
+## Completion check
 
-**Next → [09. Traces, Insights, and operations](09-operations.md)**
+- [ ] I distinguished the package, deployment folder, and service name, using actual returned values.
+- [ ] I checked local readiness and real model inference separately.
+- [ ] I verified the new remote version's response or recorded blocked status, and stopped sessions I created.
+- [ ] I did not mix the workflow and single-agent profiles.
+
+Preserve the Hosted folder, exact version, and session stop/retention status.
+
+---
+
+[← 07. Evaluation](07-evaluation.md) · [Course home](../../README.md#curriculum) · [09. Operations →](09-operations.md)

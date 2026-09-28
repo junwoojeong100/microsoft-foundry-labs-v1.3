@@ -1,10 +1,14 @@
 # 15. Final acceptance and resource lifecycle
 
-**English** | [한국어](../15-capstone-cleanup.md) · [Course home](../../README.md)
+**English** | [한국어](../15-capstone-cleanup.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Test a frozen target on unseen cases, then explicitly stop, retain, or remove every chargeable resource you created.
 
-Even when stopping early, **perform the stopping, inventory, and retention decisions below now**. Quality failures are not a reason to leave chargeable resources unattended. Deletion is a separate choice.
+**Prerequisites:** final evaluation requires every prior quality gate. **Stop work and review costs now even if earlier chapters are incomplete.**
+
+**Where you work:** terminal for evaluation, sessions, and ownership records; Azure portal for actual resources and costs.
+
+> **Stopping is not deletion.** Quality failures are not a reason to leave chargeable resources unattended. Stop execution, then separately decide what to retain or delete.
 
 | Your current state | Where to go |
 |---|---|
@@ -15,6 +19,19 @@ Even when stopping early, **perform the stopping, inventory, and retention decis
 **You can stop and clean up even before completing 00's `configure`.** Inspect the subscription and lab group you used in 00 directly in Azure. Skip commands for agents or labels you never created; also skip `selfstudy.py status` if `.selfstudy/azure.json` does not exist. Missing local configuration does not mean there are no Azure resources.
 
 **Reference validation still holds final acceptance.** The new managed Task Adherence result has six rows/five pass/one fail with inconsistent severity/flags, so no new holdout was opened. The [report's results and lifecycle history](validation-report.md) are not your completion record or deletion instructions. **Execution and final quality acceptance are separate.**
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [Keeping resources: retention mode](#retention-mode) | Retained assets, expiry, and costs |
+| [1. Freeze the final target](#1-freeze-the-final-evaluation-target) | Prerequisites for opening holdout |
+| [2. Evaluate one chosen target](#2-run-final-acceptance) | Four new cases for one frozen target |
+| [3. Interpret results](#3-interpret-the-results) | Actual quality and incomplete scope |
+| [4. Stop first](#4-stop-running-work-first) | Local servers, schedules, and sessions stopped |
+| [5. Reconcile assets](#5-reconcile-your-owned-assets) | Actual portal resources and owned records |
+| [6. Delete group — optional](#6-optional-deletion-of-the-dedicated-lab-group) | Absence of dedicated resources chosen for deletion |
+| [7. Final checklist](#7-final-checklist) | Retention, deletion, remaining costs, and evidence |
 
 ## Retention mode
 
@@ -27,7 +44,9 @@ If you want to reuse the lab or preserve a validation environment, **do not exec
 - Privately retain `.env`, all of `.selfstudy/`, `.build/`, and `outputs/`, including actual IDs, deployment preparation, and ownership records. Use an approved location, not a public repository.
 - Record remaining Search Basic, file/volume, and logging costs and the next review date. `lifecycle=retain` is an administrative tag, not a deletion lock or a budget cap.
 
-Memory's new default **`default_ttl_seconds=0` means no automatic item expiry**. Positive TTLs can be at most 365 days, and previously recorded stores retain their original settings. `WORKSHOP_MEMORY_STORE_NAME` is global: use `<prefix>-memory-retained-en` for English and `<prefix>-memory-retained-ko` for Korean, checking the selector before each language's run. Follow [11's retained-store procedure](11-memory-a2a-routines.md#1-memory-persist-an-item-and-recall-it-in-a-new-request).
+**Check TTL:** Memory's new default `default_ttl_seconds=0` means no automatic item expiry. Positive TTLs can be at most 365 days, and previously recorded stores retain their original settings.
+
+**Check the language-specific store:** `WORKSHOP_MEMORY_STORE_NAME` is global. Use `<prefix>-memory-retained-en` for English and `<prefix>-memory-retained-ko` for Korean, checking the selector before each language's run. Follow [11's retained-store procedure](11-memory-a2a-routines.md#1-memory-persist-an-item-and-recall-it-in-a-new-request).
 
 Keep every owned store's name, TTL, IDs, and records. Do not silently update or adopt older assets under the new setting. Managed-session expiry is separate from Memory-item TTL. Treat deletion sections as reference only and record “retained, not deleted.”
 
@@ -37,14 +56,14 @@ Read-only `status` and `cleanup-plan` may still be used for inventory; they do n
 
 The recommended target is 12's **actual Hosted candidate**: `wf-candidate-en` for the IQ path, or `wf-local-candidate-en` for the explicitly selected local-retrieval path. Choose one. Freeze model map, code, instructions, source documents, retrieval, API, concurrency, judge, generation settings, and version.
 
-Before unlocking holdout, verify:
+Before unlocking holdout, verify the following. **If any item is unmet, go to section 4 to stop work and review costs first.**
 
-- Every expected dev matrix row exists: six core rows for this guide's single Sol target.
-- No errors, omissions, or duplicates remain.
-- The predetermined business gate and all three policy criteria pass, with valid source/reference audits and reviewed native limitations.
-- Required trace and calibration conditions are met.
-- Record chapter 13's **managed run and full row/version/direction audit**, explicitly retaining the Prohibited Actions limitation. Judge a new Task Adherence-only result only within that native scope; filtered old rows or custom `policy-lab` are not substitutes.
-- You did not lower thresholds after seeing failures or edit raw results.
+- [ ] Every expected dev matrix row exists: six core rows for this guide's single Sol target.
+- [ ] No errors, omissions, or duplicates remain.
+- [ ] The predetermined business gate and all three policy criteria pass, with valid source/reference audits and reviewed native limitations.
+- [ ] Required trace and calibration conditions are met.
+- [ ] Chapter 13's **managed run and full row/version/direction audit** are recorded, retaining the Prohibited Actions limitation. A new Task Adherence-only result is judged only within its native scope; filtered old rows or custom `policy-lab` are not substitutes.
+- [ ] I did not lower thresholds after seeing failures or edit raw results.
 
 If not satisfied, **do not open holdout; record incomplete acceptance**. If unavailable features prevented the Hosted matrix, you may instead select 07's SDK candidate as a separate final target. Do not call that Hosted acceptance.
 
@@ -208,4 +227,6 @@ Azure soft-delete and retention policies can make API deletion different from im
 
 If you created resources outside this folder's workflow, include their inventory too. Do not remove unrelated personal records or shared resources.
 
-**End of course. [Course home](../../README.md) · [Find saved results](checkpoints.md#find-saved-configuration-and-results) · [Review the lab](next-steps.md)**
+---
+
+**End of course.** [← 14. CI/CD](14-additional-permissions.md) · [Course home](../../README.md#curriculum) · [Find saved results](checkpoints.md#find-saved-configuration-and-results) · [Review the lab](next-steps.md)

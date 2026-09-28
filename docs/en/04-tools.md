@@ -1,12 +1,23 @@
 # 04. MAF, functions, MCP, and Code Interpreter
 
-**English** | [한국어](../04-tools.md) · [Course home](../../README.md)
+**English** | [한국어](../04-tools.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Inspect the inputs and results of tools that actually ran, and distinguish execution from a model's description.
 
 **Prerequisites:** The policy context from 03 and Python environment from 00. The required MAF, MCP, and Hosted packages are installed in that same environment.
 
-**Order:** MAF without tools → local function → MCP → boundary questions → Code Interpreter. Your Python coordinates the first three stages and calls an Azure model; Code Interpreter is a separate managed execution.
+**Where you work:** terminal in the workshop folder. Your Python coordinates sections 1–3 and calls an Azure model; Code Interpreter is a separate managed execution.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. MAF without tools](#1-run-a-maf-agent) | Local orchestration and an actual Azure response |
+| [2. Read-only function](#2-connect-a-read-only-function) | Function name, inputs, and returned result |
+| [3. MCP lookup](#3-perform-the-same-lookup-through-mcp) | Real MCP execution and historical policy evidence |
+| [4. Boundary questions](#4-test-incomplete-and-inappropriate-requests) | Date clarification and no false approval |
+| [5. Code Interpreter](#5-generate-an-actual-file-with-code-interpreter) | A real generated file and its contents |
+| [Completion check](#completion-check) | Tool configuration versus tool execution |
 
 Distinguish Function availability in the [managed-tool regional table](https://learn.microsoft.com/azure/foundry/agents/concepts/limits-quotas-regions#tool-support-by-region-and-model) from this **local function path**. The [validation report](validation-report.md) records its NC history; verify your own actual calls below.
 
@@ -16,7 +27,7 @@ Distinguish Function availability in the [managed-tool regional table](https://l
 python scripts/workshop.py --language en maf --question "Explain the difference between Foundry and Agent Framework in three sentences." --output outputs/learner-notes-en/04-nc-maf.json
 ```
 
-Check `orchestration: local`, `tools: none`, and the actual text. Python constructs the agent locally; the model runs in Azure. Without tools, the structured business `answer` may be empty while a general text response is still available.
+**Check:** `orchestration: local`, `tools: none`, and the actual text. Python constructs the agent locally; the model runs in Azure. Without tools, the structured business `answer` may be empty while a general text response is still available.
 
 ## 2. Connect a read-only function
 
@@ -24,7 +35,9 @@ Check `orchestration: local`, `tools: none`, and the actual text. Python constru
 python scripts/workshop.py --language en maf --tools --question "A hotel for my domestic business trip in September 2026 costs KRW 170000 per night. May I book it? Explain the limit and procedure." --output outputs/learner-notes-en/04-nc-function.json
 ```
 
-`lookup_policy` reads only the bundled Hanbit Technology documents. Inspect each actual **`tool_calls` entry: `name`, `arguments`, `completed`, and `result_text`**, together with **`tool_execution_verified: true`** and `answer.decision`, `answer.limit_krw`, and `answer.citations`. The static configuration label `tools: function` alone does not prove execution.
+`lookup_policy` reads only the bundled Hanbit Technology documents.
+
+**Check:** inspect each actual `tool_calls` entry: `name`, `arguments`, `completed`, and `result_text`, together with `tool_execution_verified: true` and `answer.decision`, `answer.limit_krw`, and `answer.citations`. The static configuration label `tools: function` alone does not prove execution.
 
 ```text
 The model requests a function call
@@ -64,7 +77,7 @@ First verify regional/model support and session pricing in the portal. Once you 
 python scripts/workshop.py --language en code-interpreter run --label code-policy-table-en --confirm-create --confirm-cost
 ```
 
-Check the real CSV made from the six Hanbit Technology policies: its file ID, downloaded path, and content. The text “I created a file” is not sufficient evidence.
+**Check:** the real CSV made from the six Hanbit Technology policies: its file ID, downloaded path, and content. The text “I created a file” is not sufficient evidence.
 
 Keep results first. **Only if you choose deletion**, remove this run's temporary assets. In [retention mode](15-capstone-cleanup.md#retention-mode), skip the following command and retain agent, file, and container IDs. Service-managed session expiry is separate.
 
@@ -76,6 +89,12 @@ If the model/tool is unsupported, mark the step blocked. Do not submit a file ge
 
 ## Completion check
 
-Open each command's saved results and verify what functions, MCP, and Code Interpreter actually executed. **OpenAPI needs the Search service created in 06, so it continues in 10.**
+- [ ] I checked actual function/MCP calls, inputs, and returned results in the saved evidence.
+- [ ] I compared the missing-date and false-approval responses with the expected behavior.
+- [ ] I checked Code Interpreter's actual file or blocked status and chose how to retain or remove its temporary assets.
 
-**Next → [05. Workflows, simulated approval, and local SDK pause/resume](05-workflows.md)**
+**OpenAPI needs the Search service created in 06, so it continues in 10.**
+
+---
+
+[← 03. Agents and files](03-knowledge.md) · [Course home](../../README.md#curriculum) · [05. Workflows →](05-workflows.md)

@@ -1,12 +1,35 @@
 # 13. 실습 안전·관리형 AI red teaming·Control Plane
 
+[English](en/13-governance.md) | **한국어** · [전체 과정](../README.ko.md#진행-순서) · [진행 도움말](checkpoints.md)
+
 **완료 목표:** 실습 전용 guardrail과 관리형 AI red teaming을 실제로 확인하고, 호출 주체와 소유 자산을 설명합니다.
 
-**시작 조건:** 2~4절은 **08의 기본 Responses Hosted 버전**, 5절은 **별도 영어 Prompt Agent·07의 judge·09의 정상 로그 연결**을 사용합니다. 12의 고정 matrix를 정책 실험용으로 바꾸지 않습니다. 공유 정책·다른 사용자의 역할·업무 데이터도 변경하지 않습니다.
+**시작 조건:** 실험별 대상과 선행 결과를 구분합니다.
 
-**참고 검증은 판정 불일치로 최종 인수 보류 상태입니다.** 과거 성공 수치를 본인의 통과 기준으로 복사하지 말고 아래에서 새 실행의 전체 결과를 확인합니다. [현재 결과와 한계](validation-report.md).
+| 실험 | 사용할 대상 |
+|---|---|
+| 2~4절 guardrail | **08의 기본 Responses Hosted 버전** |
+| 5절 관리형 red teaming | **별도 영어 Prompt Agent·07의 judge·09의 정상 로그 연결** |
 
-**순서:** 내 권한·자산 확인 → 별도 기본 Hosted에 정책 연결 → 실제 요청 확인 → 관리형 red-team 실행·감사입니다. 접힌 SDK/과거 검증 설명은 참고용입니다. 본인의 실패도 flag·방향·분모를 바꾸거나 반복 실행해 지우지 않습니다.
+12의 고정 matrix, 공유 정책, 다른 사용자의 역할, 업무 데이터는 변경하지 않습니다.
+
+**실행 위치:** 포털에서 정책·역할·trace 확인, 편집기에서 설정 조각 추가, 터미널에서 배포·관리형 실행·감사.
+
+> **인수 주의:** 참고 검증은 판정 불일치로 **최종 인수 보류** 상태입니다. 새 실행의 전체 결과를 확인하며, flag·방향·분모를 바꾸거나 반복 실행해 실패를 지우지 않습니다. [현재 결과와 한계](validation-report.md).
+
+**진행 지도**
+
+| 단계 | 확인할 결과 |
+|---|---|
+| [1. 권한 경로](#1-권한-경로-직접-확인) | 호출별 실제 주체와 소유 자산 |
+| [2. 전용 정책](#2-내-raiguardrail-정책-만들기) | 내가 만든 실제 정책 ARM ID |
+| [3. Hosted 연결](#3-내-hosted의-새-버전에-연결) | 새 버전의 정책 참조 |
+| [4. 정상·경계 요청](#4-합성-정상경계-질문) | 실제 개입과 업무 답변, 세션 중지 |
+| [5. 관리형 검증](#5-관리형-ai-red-teaming--기본-검증-대상) | 실제 job의 전체 행·판정 일관성 |
+| [6. 자산 대조](#6-내-실습의-control-plane-자산-목록) | 실제 자산과 소유 기록의 일치 |
+| [완료 확인](#완료-확인) | 검증 범위·한계·인수 보류 여부 |
+
+접힌 SDK·과거 검증 설명은 참고용이며 추가 실행 과제가 아닙니다.
 
 ## 1. 권한 경로 직접 확인
 
@@ -39,7 +62,7 @@ Azure 포털의 해당 리소스 IAM/Identity에서 다음을 대조합니다.
 
 ## 3. 내 Hosted의 새 버전에 연결
 
-08에서 만든 **기본 Responses Hosted 폴더의 `azure.yaml`**을 편집기에서 엽니다. **12의 고정 matrix는 변경하지 않습니다.** 이 실습 도구가 만든 파일은 확장자가 YAML이어도 내용은 JSON이며 정상입니다.
+08에서 만든 **기본 Responses Hosted 폴더**의 `azure.yaml`을 편집기에서 엽니다. **12의 고정 matrix는 변경하지 않습니다.** 이 실습 도구가 만든 파일은 확장자가 YAML이어도 내용은 JSON이며 정상입니다.
 
 `services` 아래의 **실제 agent 서비스 객체**에 `policies` 속성을 추가합니다. `workshop-project`나 문서 최상위가 아닙니다. 다음은 추가할 **속성 조각**이며 전체 파일을 대체하지 않습니다. 기존 마지막 속성(예: `container`) 뒤에 쉼표를 넣고, 실제 policy ARM ID로 바꿉니다.
 
@@ -120,7 +143,7 @@ D01의 정상 답변은 150,000원과 현행 규정 근거, D06은 허위 승인
 
 `num_turns`는 **대화 turn depth**이며 요청한 seed/사례 행 수가 아닙니다. 지원되는 single-turn 설정을 사용하고, 실제 제출 seed/objective 수·생성된 요청 수·반환/채점 행 수를 별도로 기록합니다. 깊이 5를 “5문항 요청”으로 계산하지 않습니다.
 
-공식 cloud red-team 예제의 taxonomy 생성 호출에는 `body=`가 보이지만, 설치된 **`azure-ai-projects` 2.6.1의 taxonomy create는 `taxonomy=`**를 요구합니다. 이 메서드의 실제 SDK signature에 맞추며 다른 SDK 호출의 `body`를 일괄 변경하지 않습니다. 잘못된 keyword 오류를 숨기거나 기존 taxonomy를 반복 생성하지 않습니다.
+공식 cloud red-team 예제의 taxonomy 생성 호출에는 `body=`가 보이지만, 설치된 `azure-ai-projects` 2.6.1의 taxonomy create는 `taxonomy=`를 요구합니다. 이 메서드의 실제 SDK signature에 맞추며 다른 SDK 호출의 `body`를 일괄 변경하지 않습니다. 잘못된 keyword 오류를 숨기거나 기존 taxonomy를 반복 생성하지 않습니다.
 
 Taxonomy 갱신 시에는 typed model 직렬화가 read-only `id`를 빠뜨려 taxonomy ID 오류를 냈습니다. **검토한 객체의 `reviewed.as_dict()`를 update payload로 전달해 원래 `id`를 유지**한 경로가 동작했고 새 버전 **2.0**을 반환했습니다. ID를 추측해 채우거나 미검토 정책을 켜지 않으며 원래 실패·버전도 보존합니다.
 
@@ -132,7 +155,7 @@ Taxonomy 갱신 시에는 typed model 직렬화가 read-only `id`를 빠뜨려 t
 | 공식 예제의 pinned `prohibited_actions` v1 | Ordinal 0~7 / `decrease`, 필수 `azure_ai_project` 설정 |
 | 실제 NC job에 고정한 `task_adherence` v1 | 기준점 4, 해당 버전의 schema 사용 |
 
-완료된 NC job은 **Prohibited Actions 1 + Task Adherence 1**, 영어 Prompt Agent, 검토 후 활성화한 허위 승인 정책 1개, **`num_turns: 1`과 `attack_strategies: []`**를 사용했습니다. 반환 구성은 **taxonomy action 1개 + Task Adherence item 5개 = 6행**이었습니다. `num_turns`는 depth이며 이 행 수나 요청 seed 수가 아닙니다. 요청한 v1 pinning만으로 native engine의 출력 방향이 수정되지는 않았습니다.
+완료된 NC job은 **Prohibited Actions 1 + Task Adherence 1**, 영어 Prompt Agent, 검토 후 활성화한 허위 승인 정책 1개, `num_turns: 1`과 `attack_strategies: []`를 사용했습니다. 반환 구성은 **taxonomy action 1개 + Task Adherence item 5개 = 6행**이었습니다. `num_turns`는 depth이며 이 행 수나 요청 seed 수가 아닙니다. 요청한 v1 pinning만으로 native engine의 출력 방향이 수정되지는 않았습니다.
 
 | 실제 항목 | 행 수 | 보고된 score | Native `passed` | Native `attack_success` | 설명과의 대조 |
 |---|---:|---:|---|---|---|
@@ -172,7 +195,9 @@ python scripts/managed_redteam.py prepare --agent-name "실제-영어-agent-이�
 python scripts/managed_redteam.py run --label managed-task-adherence --confirm-cost --timeout 900
 ```
 
-`outputs/managed-task-adherence/`에는 생성/검토 taxonomy, 고정 evaluator catalog, 요청, run ID, 모든 output item과 `native-audit.json`이 남습니다. 실행 중 timeout이면 **같은 run 명령과 label**로 이어서 조회하며 새 job을 만들지 않습니다. `--retry-failed`는 원래 terminal failed 실행을 보관한 뒤 명시적으로 재시도할 때만 사용합니다. 낮은 점수나 불일치를 지우기 위한 재시도 옵션이 아닙니다.
+`outputs/managed-task-adherence/`에는 생성/검토 taxonomy, 고정 evaluator catalog, 요청, run ID, 모든 output item과 `native-audit.json`이 남습니다.
+
+**대기 시간이 끝났다면:** 실행 중 timeout은 **같은 run 명령과 label**로 이어서 조회하며 새 job을 만들지 않습니다. `--retry-failed`는 원래 terminal failed 실행을 보관한 뒤 명시적으로 재시도할 때만 사용합니다. 낮은 점수나 불일치를 지우기 위한 옵션이 아닙니다.
 
 저장된 결과만 다시 감사할 수도 있습니다.
 
@@ -180,7 +205,15 @@ python scripts/managed_redteam.py run --label managed-task-adherence --confirm-c
 python scripts/managed_redteam.py audit --directory outputs/managed-task-adherence --project-endpoint "실제-프로젝트-Endpoint" --prefix "내-lab-prefix" --agent-name "실제-영어-agent-이름" --agent-version "실제-숫자-버전"
 ```
 
-감사의 종료 코드 0은 **증거/판정 일관성** 확인이지 모든 공격에 대한 안전 인증이 아닙니다. 실제 pass/fail·반환 행 수·범위를 함께 읽습니다. 불일치는 종료 코드 1, 실행/형식 오류는 2로 표시하며 원래 flag를 바꾸지 않습니다. Prohibited Actions 비교를 의도적으로 포함할 때만 `prepare`에 `--include-prohibited-comparison`을 추가합니다.
+**확인:** 종료 코드와 실제 품질 판정을 구분합니다.
+
+| 감사 종료 코드 | 의미 | 다음 행동 |
+|---|---|---|
+| `0` | 증거·판정이 일관됨 | 실제 pass/fail·전체 행·검증 범위를 읽음. 모든 공격에 대한 안전 인증은 아님 |
+| `1` | 판정 불일치 | 원래 flag를 보관하고 최종 인수 보류 |
+| `2` | 실행·형식 오류 | 원인을 해결하고 같은 기록 확인 |
+
+Prohibited Actions 비교를 의도적으로 포함할 때만 `prepare`에 `--include-prohibited-comparison`을 추가합니다.
 
 0행 실패와 `ResourceId`/credential 오류가 실제로 발생했다면 [09의 App Insights 연결 확인](09-operations.md#첫-cli-연결과-native-sdk의-실제-요구-조건)으로 돌아갑니다. 과거 실패를 별도로 재현할 필요는 없습니다.
 
@@ -204,6 +237,15 @@ python scripts/managed_redteam.py audit --directory outputs/managed-task-adheren
 
 ## 완료 확인
 
-**본인의 새 run**에서 반환된 모든 행·오류·판정 일관성을 확인합니다. 예상 행 수를 보고서의 5/5나 6행으로 맞추지 않습니다. Backend·버전·원점수·입력 가림·미노출 response ID와 한계를 기록하고, 불일치가 있으면 최종 인수를 보류합니다. 과거 job을 합쳐 전체 native 통과로 만들지 않습니다.
+- [ ] 정책 연결·실제 개입·업무 답변의 정확성을 각각 확인하고 세션을 중지했다.
+- [ ] **본인의 새 run** 전체 행·오류·판정 일관성을 확인했다.
+- [ ] Backend·버전·원점수·입력 가림·미노출 response ID와 한계를 보관했다.
+- [ ] 관리형 검증의 판정 불일치·차단이 있으면 최종 인수를 보류하고 holdout을 열지 않았다.
 
-**다음 → [14. GitHub OIDC CI/CD 실습](14-additional-permissions.md)**. 필요한 GitHub 저장소 권한이 없으면 CI를 미실행으로 기록하고 [15의 마무리](15-capstone-cleanup.md)로 갑니다. 관리형 감사가 실패했다면 holdout은 열지 않지만 중지·비용 정리는 수행합니다.
+예상 행 수를 보고서의 5/5나 6행으로 맞추거나, 과거 job을 합쳐 전체 native 통과로 만들지 않습니다.
+
+필요한 GitHub 저장소 권한이 없으면 CI를 미실행으로 기록하고 [15의 마무리](15-capstone-cleanup.md)로 갑니다. 관리형 감사가 실패해도 중지·비용 정리는 수행합니다.
+
+---
+
+[← 12. 품질 개선](12-improvement.md) · [전체 과정](../README.ko.md#진행-순서) · [14. CI/CD →](14-additional-permissions.md)

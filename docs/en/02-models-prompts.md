@@ -1,10 +1,22 @@
 # 02. Sol prompts and optional model/Router comparison
 
-**English** | [한국어](../02-models-prompts.md) · [Course home](../../README.md)
+**English** | [한국어](../02-models-prompts.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Experience the difference between instructions and knowledge, and compare model choices under fixed conditions.
 
 **Prerequisites:** A real model response from 01. **Sections 1–2 are the core exercise; 3–4 are optional comparisons.** If not comparing, complete the checklist after section 2 and continue to 03. Check availability and cost before adding either optional deployment.
+
+**Where you work:** Foundry Playground for the core exercise; portal and terminal for optional comparisons.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. Make the prompt specific](#1-change-only-the-prompt) | Instruction-driven differences on the same model |
+| [2. Ask without evidence](#2-instructions-cannot-invent-knowledge) | Instructions cannot supply unknown company policy |
+| [3. Luna comparison — optional](#3-optionally-compare-luna) | Two model responses under matching conditions |
+| [4. Router — optional](#4-optionally-explore-router) | Supported API and visibility of the selected model |
+| [Completion check](#completion-check) | Separate comparisons run from those not run |
 
 ## 1. Change only the prompt
 
@@ -25,7 +37,7 @@ The company policy, travel dates, and duration have not been provided.
 Do not guess costs or approval status. Ask for the missing information.
 ```
 
-Compare answer length, assumptions, and clarifying questions. A clear role, task, constraints, and format can make behavior more consistent.
+**Check:** compare answer length, assumptions, and clarifying questions. A clear role, task, constraints, and format can make behavior more consistent.
 
 ## 2. Instructions cannot invent knowledge
 
@@ -36,7 +48,7 @@ What is Hanbit Technology's domestic business-trip lodging limit for September 2
 Please provide the official source.
 ```
 
-Saying it does not know is an appropriate boundary. If the model gives an amount, check whether the original source was supplied. Confidence or a citation-looking string is not proof of correctness.
+**Check:** saying it does not know is an appropriate boundary. If the model gives an amount, check whether the original source was supplied. Confidence or a citation-looking string is not proof of correctness.
 
 **Prompts guide behavior; retrieval supplies evidence; fine-tuning changes model weights.** Editing instructions and connecting documents in this course is not fine-tuning.
 
@@ -100,4 +112,6 @@ Router is a **system that selects models per request**, not one fixed model. Do 
 
 Reuse additional models in later comparisons. Do not delete `workshop-chat` at this point.
 
-**Next → [03. Prompt Agents and File Search](03-knowledge.md)**
+---
+
+[← 01. First response](01-foundry.md) · [Course home](../../README.md#curriculum) · [03. Agents and files →](03-knowledge.md)

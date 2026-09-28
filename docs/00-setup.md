@@ -1,10 +1,29 @@
 # 00. 내 실습 환경 만들기
 
+[English](en/00-setup.md) | **한국어** · [전체 과정](../README.ko.md#진행-순서) · [진행 도움말](checkpoints.md)
+
 **완료 목표:** 내 Azure 구독에 Foundry 프로젝트와 모델 배포를 만들고, 데이터 작업 권한과 로컬 실행 환경을 직접 준비합니다.
 
-출발점은 **Microsoft Entra ID 계정 + Azure 구독 + 활성 구독 Owner**입니다. 이 장에서 다른 사람이 준비한 Endpoint나 Search를 받지 않습니다. 새 리소스와 모델 호출에는 비용이 발생할 수 있습니다.
+**시작 조건:** Microsoft Entra ID 계정 + Azure 구독 + 활성 구독 Owner. 다른 사람이 준비한 Endpoint나 Search는 필요하지 않습니다.
 
-**기본 순서:** 권한 확인 → 파일·도구 설치 → 로그인 → 전용 그룹·프로젝트·Sol 배포 → 데이터 역할 → 설정 확인입니다. Azure 자원은 **North Central US(`northcentralus`)**에 준비합니다. 처음에는 아래의 **포털 경로**를 사용하고, 접힌 CLI 대안은 실행하지 않아도 됩니다.
+**실행 위치:** Azure·Foundry 포털, 편집기, 실습 폴더의 터미널.
+
+> **먼저 확인:** Azure 자원은 **North Central US**(`northcentralus`)에 준비합니다. 새 자원과 모델 호출에는 비용이 발생할 수 있습니다. 처음에는 **포털 경로만** 따라가고, 접힌 CLI 대안은 생략합니다.
+
+**진행 지도**
+
+| 단계 | 확인할 결과 |
+|---|---|
+| [1. 권한 확인](#1-내-권한-확인) | 사용할 구독의 활성 Owner |
+| [2. 파일·도구 설치](#2-실습-파일과-개발-도구) | Python 3.13 환경, 로컬 doctor `PASS` |
+| [3. 로그인·이름 계획](#3-로그인과-이름-계획) | 같은 테넌트, 내 고유 접두사 |
+| [4. 전용 그룹 생성](#4-실습-전용-리소스-그룹-만들기) | 실습 자원만 넣을 그룹 |
+| [5. 프로젝트 생성](#5-foundry-프로젝트-만들기) | Project endpoint와 전체 프로젝트 ID |
+| [6. Sol 배포](#6-첫-모델-배포) | 실제 모델·버전과 `Succeeded` |
+| [7. 데이터 역할 확인](#7-데이터-접근-역할-확인) | 사용자·프로젝트 관리 ID의 역할 |
+| [8. 설정 수집](#8-실제-값으로-설정-자동-수집) | 저장된 내 설정과 인증·메타데이터 확인 |
+| [9. 역할 명령 생성 — 필요할 때만](#9-역할의-실제-명령이-필요할-때) | 미부여 역할의 명령 계획 |
+| [완료 확인](#완료-확인) | 01장의 첫 모델 호출을 시작할 준비 |
 
 문서의 이름은 예시입니다. 검증 보고서의 리소스 그룹·ID를 내 설정으로 복사하지 않습니다. 기존 환경을 재개한다면 [재개 방법](checkpoints.md#다음-날-재개하기)부터 확인합니다.
 
@@ -19,6 +38,8 @@
 **중요:** 구독 Owner와 Entra Global Administrator는 다릅니다. 이 과정의 Azure 리소스 준비에는 디렉터리 전체 관리자나 새 client secret이 필요하지 않습니다. GitHub OIDC workflow의 실습 권한은 14장에서 다룹니다.
 
 ## 2. 실습 파일과 개발 도구
+
+### 실습 폴더 열기
 
 1. 받은 **실습 ZIP**을 압축 해제합니다. ZIP이 없다면 [이 저장소](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5)의 **Code → Download ZIP**을 사용합니다. 비공개 저장소라면 접근 권한이 필요합니다.
 2. 압축을 푼 폴더 중 **`README.md`, `scripts/`, `curriculum.json`이 함께 있는 폴더**를 찾습니다. 압축파일 안이나 그 상위 폴더에서 실행하지 않습니다.
@@ -40,6 +61,8 @@ cd microsoft-foundry-labs-v1.5
 
 </details>
 
+### 필수 도구 설치
+
 PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owner로 해결되지 않으므로 승인된 개발 환경을 사용하세요.
 
 | 도구 | 설치와 확인 |
@@ -51,13 +74,15 @@ PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owne
 
 설치 후에는 편집기를 다시 열고 새 터미널에서 위 버전 명령을 확인합니다. `command not found` 또는 “인식되지 않는 명령”이 나오면 아직 다음 단계로 가지 않습니다. Python의 최신 버전을 설치하는 것과 **이 실습의 3.13 환경**을 준비하는 것은 다릅니다.
 
-**Windows의 실행 범위:** PowerShell로 준비할 수 있지만 **05장 5절의 로컬 SDK 중단·재개와 그 추가 실험은 macOS/Linux(승인된 WSL 포함)에서만 실행**합니다. 현재 실행기가 POSIX `fcntl` 잠금을 사용하므로 Windows Python에서는 동작하지 않습니다. 해당 절도 수행하려면 승인된 WSL/Linux의 별도 소스 사본에서 아래 Linux Python 설치와 doctor까지만 준비합니다. 그 로컬 실험에는 Azure 설정·로그인이 필요하지 않습니다. Windows의 `.venv`나 개인 Azure 상태를 복사하지 않습니다.
+> **Windows의 실행 범위:** PowerShell로 준비할 수 있지만 **05장 5절의 로컬 SDK 중단·재개와 그 추가 실험은 macOS/Linux(승인된 WSL 포함) 전용**입니다. 현재 실행기가 POSIX `fcntl` 잠금을 사용하므로 Windows Python에서는 동작하지 않습니다.
+
+해당 절도 수행하려면 승인된 WSL/Linux의 **별도 소스 사본**에서 아래 Linux Python 설치와 doctor까지만 준비합니다. 그 로컬 실험에는 Azure 설정·로그인이 필요하지 않습니다. Windows의 `.venv`나 개인 Azure 상태를 복사하지 않습니다.
 
 터미널에서 macOS/Linux는 `pwd`와 `ls`, PowerShell은 `Get-Location`과 `Get-ChildItem`으로 현재 폴더와 파일을 확인할 수 있습니다. 코드 상자의 `bash`/`powershell` 표시는 입력할 명령이 아닙니다. **한 줄씩 실행하고 오류가 나면 다음 줄로 넘어가지 않습니다.**
 
 이미 다른 Python으로 만든 `.venv`나 개인 실습 상태가 있다면 덮어쓰지 않습니다. 기존 폴더를 보관하고 **새 폴더에 ZIP을 풀어 시작**하세요.
 
-**처음 시작한다면 다음 접힌 절은 건너뛰고, 본인 OS의 설치 명령 한 묶음만 실행합니다.**
+**처음 시작한다면 다음 접힌 절은 건너뛰고, 본인 OS의 설치 명령 한 묶음만 실행합니다.** `python --version`에서 **Python 3.13.x**를 확인한 뒤에만 다음 설치 명령으로 갑니다.
 
 <details>
 <summary>이전 환경이 있을 때만: 다른 프로젝트로 새로 시작하기</summary>
@@ -95,7 +120,7 @@ python -m pip check
 
 PowerShell 활성화가 차단되면 시스템 정책을 낮추지 않습니다. 이후 모든 `python ...`을 `.\.venv\Scripts\python.exe ...`로 실행할 수 있습니다.
 
-**`python --version`이 `Python 3.13.x`인지 확인한 뒤 패키지를 설치합니다.** 다른 버전이면 설치를 계속하지 말고 위 가상 환경 생성·활성화부터 확인합니다.
+### 모든 OS: 설치 결과 확인
 
 이 단계는 로컬 패키지만 설치합니다. **Azure 리소스 생성·로그인·구독 변경은 하지 않습니다.** 이미 개인 설정이나 실행 결과가 있는 폴더를 덮어쓰지 말고 보관하세요.
 
@@ -103,7 +128,15 @@ PowerShell 활성화가 차단되면 시스템 정책을 낮추지 않습니다.
 python scripts/workshop.py doctor
 ```
 
-설치 검사의 `No broken requirements found.`와 doctor의 `documents: 6`, `dev_cases: 6`, `holdout_cases: 4`, `azure_tested: false`, `result: PASS`를 확인합니다. 아직 Azure 연결 시험은 아닙니다. holdout은 개수만 확인하며 문항·정답 파일은 15장까지 열지 않습니다.
+**확인:** 다음 출력이 맞아야 합니다. 아직 Azure 연결 시험은 아닙니다.
+
+| 출력 | 기대 값 |
+|---|---|
+| 패키지 검사 | `No broken requirements found.` |
+| `documents` / `dev_cases` / `holdout_cases` | `6` / `6` / `4` |
+| `azure_tested` / `result` | `false` / `PASS` |
+
+holdout은 개수만 확인하며 문항·정답 파일은 15장까지 열지 않습니다.
 
 **새 터미널마다 `.venv`를 활성화**합니다. 이후 모든 명령은 README.md가 있는 폴더에서 실행합니다.
 
@@ -133,7 +166,11 @@ azd auth login
 
 접두사는 `lab-`로 시작하는 소문자·숫자·하이픈, 최대 32자로 정합니다. 모든 자산을 내 것과 구분하는 이름이므로 실습 도중 바꾸지 않습니다.
 
-**내 값으로 바꿀 것:** `yourname`이 들어간 자원 이름, `YOUR-...`/`실제-...` 자리표시자. **처음에는 그대로 쓸 것:** 모델 배포 별칭 `workshop-chat`, 결과 label `baseline`/`candidate`, 파일 경로. 모델/버전·리전도 이 가이드의 선택을 유지합니다. 단, 이미 같은 이름이 사용 중이면 기존 자원을 바꾸지 말고 해당 절의 새 이름/재개 안내를 따릅니다.
+| 내 값으로 바꾸기 | 처음에는 그대로 사용하기 |
+|---|---|
+| `yourname`이 들어간 자원 이름, `YOUR-...`/`실제-...` 자리표시자 | `workshop-chat`, 결과 label `baseline`/`candidate`, 파일 경로 |
+
+모델·버전·리전도 이 가이드의 선택을 유지합니다. 이미 같은 이름이 사용 중이면 기존 자원을 바꾸지 말고 해당 절의 새 이름/재개 안내를 따릅니다.
 
 ## 4. 실습 전용 리소스 그룹 만들기
 
@@ -197,7 +234,7 @@ CLI 생성은 사용자·프로젝트의 **Foundry User 역할을 자동으로 �
 
 ## 6. 첫 모델 배포
 
-1. Foundry **Discover → Models**에서 **`gpt-6-sol`**을 찾습니다.
+1. Foundry **Discover → Models**에서 `gpt-6-sol`을 찾습니다.
 2. 버전 **`2026-09-22`**, 지원 기능·리전·할당량을 확인합니다. 첫 응답부터 에이전트·도구 실습까지 Sol로 직접 진행합니다. [모델 역할과 기준](model-selection.md).
 3. **Deploy / Use this model**에서 배포 이름을 `workshop-chat`으로 지정합니다.
 4. 본인 정책에 맞는 종량제 Standard 계열을 고릅니다. Global Standard는 글로벌 처리 정책이 허용할 때만 선택합니다. PTU 계약은 필요하지 않습니다.
@@ -261,7 +298,7 @@ python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" 
 
 토큰·비밀번호·API key는 저장하지 않습니다. 기존 다른 프로젝트의 설정은 덮어쓰지 않습니다. `management_metadata_read: true`, `model_invoked: false`를 구분하세요.
 
-새 설정은 **reasoning `low`, 출력 상한 `32768`**을 사용합니다. 값에는 reasoning 토큰도 포함됩니다. 예전 개인 설정을 재사용한다면 값을 직접 확인하고 다음과 같이 맞춘 뒤 새 agent·실험 label을 사용합니다.
+새 설정은 reasoning `low`, 출력 상한 `32768`을 사용합니다. 값에는 reasoning 토큰도 포함됩니다. 예전 개인 설정을 재사용한다면 값을 직접 확인하고 다음과 같이 맞춘 뒤 새 agent·실험 label을 사용합니다.
 
 ```bash
 python scripts/selfstudy.py set WORKSHOP_REASONING_EFFORT low
@@ -301,4 +338,6 @@ python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 
 막히면 [문제 해결](troubleshooting.md)의 해당 오류부터 해결합니다. 중단한다면 지금 [정리](15-capstone-cleanup.md)를 확인합니다.
 
-**다음 → [01. Foundry와 첫 모델 응답](01-foundry.md)**
+---
+
+[전체 과정](../README.ko.md#진행-순서) · [다음: 01. 첫 모델 응답 →](01-foundry.md)

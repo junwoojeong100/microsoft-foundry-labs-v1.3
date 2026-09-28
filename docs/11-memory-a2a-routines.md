@@ -1,5 +1,7 @@
 # 11. Memory·A2A·Routines
 
+[English](en/11-memory-a2a-routines.md) | **한국어** · [전체 과정](../README.ko.md#진행-순서) · [진행 도움말](checkpoints.md)
+
 **완료 목표:** 기억 저장, 다른 agent 위임, 예약 실행을 각각 생성·사용·확인·정리합니다.
 
 **시작 조건:** 공통으로 00의 프로젝트·모델·관리 ID 역할과 08의 azd Foundry 확장이 필요합니다. 새 agent/Memory/예약과 호출 비용을 확인하고, **진행할 실험의 선행 결과**도 대조합니다.
@@ -14,7 +16,21 @@
 
 하나가 막혔다고 세 가지를 모두 다시 만들지 않습니다. 준비되지 않은 실험만 미실행으로 남기고 나머지는 위 조건을 확인한 뒤 진행합니다.
 
+**실행 위치:** 터미널에서 API·CLI 실행, 편집기에서 Routine JSON 작성, Azure 포털에서 역할 확인.
+
+**진행 지도**
+
+| 단계 | 확인할 결과 |
+|---|---|
+| [1. Memory](#1-memory-실제-저장과-새-요청에서의-조회) | 저장·scope별 조회·수정과 보존 상태 |
+| [2. A2A](#2-a2a-별도-endpoint에-위임) | 별도 target에 실제로 위임한 호출 |
+| [3. Routine 준비](#3-routines-비활성-상태에서-준비) | 미래 시각·고정 입력·`enabled: false` |
+| [4. 예약 관찰·비활성화](#4-실제-timer-전달을-확인한-뒤-비활성화) | 원래 예약 응답과 최종 disabled 상태 |
+| [완료 확인](#완료-확인) | 세 실험의 실제 결과와 비용·보존 기록 |
+
 ## 1. Memory: 실제 저장과 새 요청에서의 조회
+
+### 새 store 계획·생성
 
 06에서 만든 `workshop-embedding`을 확인하고, 현재 prefix 아래의 **새 보존용 store 이름**을 선택합니다. 아래 `YOUR-PREFIX`는 실제 `WORKSHOP_PREFIX`로 바꿉니다. 이전 store가 있다면 그 설정과 기록은 그대로 둡니다.
 
@@ -33,11 +49,13 @@ python scripts/workshop.py memory create --ttl-seconds 0 --confirm-create
 python scripts/workshop.py memory put --scope alpha --case D02 --confirm-write --confirm-cost
 ```
 
-반환한 **새 store 이름, `memory_id`, 소유권 파일**을 기록합니다. 생성 readback의 `default_ttl_seconds: 0`과 `automatic_expiration_enabled: false`를 확인합니다. 이는 설정 확인이며 장기간 보관 시험을 수행했다는 뜻은 아닙니다. 저장 비용은 계속 발생할 수 있습니다.
+**확인:** 반환한 새 store 이름, `memory_id`, 소유권 파일을 기록합니다. 생성 readback의 `default_ttl_seconds: 0`과 `automatic_expiration_enabled: false`를 확인합니다. 이는 설정 확인이며 장기간 보관 시험을 수행했다는 뜻은 아닙니다. 저장 비용은 계속 발생할 수 있습니다.
 
 다른 **새 store**에 만료가 필요하면 `--ttl-seconds`에 1~31,536,000초(365일)를 명시할 수 있습니다. 이전 store의 TTL은 그 소유 기록을 따르며 새 기본값으로 자동 변경되지 않습니다. 같은 이름이 이미 생성되어 있다면 다시 create하지 말고 기록을 읽어 inspect/recall로 이어갑니다. 다른 새 실행에는 같은 prefix 아래의 사용하지 않은 이름을 선택하며, 원격 자산을 임의로 인수하지 않습니다.
 
 `WORKSHOP_MEMORY_STORE_NAME`은 **언어별 자동 설정이 아닌 전역 선택값**입니다. 한국어 실행은 `<prefix>-memory-retained-ko`, 영어 실행은 `<prefix>-memory-retained-en`을 명시합니다. 언어를 바꿀 때 이 설정부터 다시 확인하며, `--language en`만으로 store가 자동 전환된다고 가정하지 않습니다.
+
+### 독립 요청에서 조회
 
 ```bash
 python scripts/workshop.py memory inspect --scope alpha
@@ -46,7 +64,9 @@ python scripts/workshop.py memory recall --scope alpha --label memory-retained-a
 python scripts/workshop.py memory recall --scope beta --label memory-retained-beta-ko --confirm-cost
 ```
 
-독립 명령 사이에도 alpha의 항목이 유지되고 beta에는 없는지 확인합니다. **scope는 실제 사용자 두 명의 인가 경계가 아닙니다.** 같은 운영자가 둘 다 조회할 수 있습니다.
+**확인:** 독립 명령 사이에도 alpha의 항목이 유지되고 beta에는 없는지 확인합니다. **scope는 실제 사용자 두 명의 인가 경계가 아닙니다.** 같은 운영자가 둘 다 조회할 수 있습니다.
+
+### 같은 항목 수정·보존
 
 방금 **새 보존용 store에서 받은 memory_id**로 같은 항목의 내용만 명시적으로 변경합니다. 이 작업은 TTL이나 이전 store를 변경하지 않습니다.
 
@@ -61,6 +81,8 @@ python scripts/workshop.py memory inspect --scope alpha
 
 ## 2. A2A: 별도 endpoint에 위임
 
+### target 생성·card 확인
+
 ```bash
 python scripts/workshop.py a2a plan
 python scripts/workshop.py a2a target --confirm-create
@@ -68,6 +90,8 @@ python scripts/workshop.py a2a inspect
 ```
 
 본인 prefix의 target을 만들고 실제 card의 `supportedInterfaces`에서 **1.0 / JSONRPC / 정확한 URL**을 확인합니다. 로컬 참여자 두 명을 만든 것을 A2A라고 부르지 않습니다.
+
+### 연결 생성·caller 호출
 
 target 출력의 **target_base와 connection_name**을 사용합니다. card URL이 아닌 base path입니다. `--cwd`는 08에서 준비한 실제 Hosted 폴더입니다.
 
@@ -77,7 +101,7 @@ python scripts/workshop.py a2a caller --confirm-create
 python scripts/workshop.py a2a invoke --label a2a-first --confirm-cost
 ```
 
-caller 응답에 실제 성공한 A2A 호출이 있는지 확인합니다. 이름·버전·정확한 1.0 설정·원문 근거를 보존합니다. 지원되지 않는다고 0.3이나 다른 agent로 자동 바꾸지 않습니다.
+**확인:** caller 응답에 실제 성공한 A2A 호출이 있는지 확인합니다. 이름·버전·정확한 1.0 설정·원문 근거를 보존합니다. 지원되지 않는다고 0.3이나 다른 agent로 자동 바꾸지 않습니다.
 
 <details>
 <summary>이전 코드로 만든 caller에서 no valid target URL 오류가 있을 때만</summary>
@@ -111,6 +135,8 @@ python scripts/selfstudy.py resource --kind logs --id "실제-Log-Analytics-ARM-
 python -c "from datetime import datetime,timedelta,UTC; print((datetime.now(UTC)+timedelta(minutes=5)).isoformat(timespec='seconds').replace('+00:00','Z'))"
 ```
 
+### 편집기: 예약 파일 작성
+
 편집기로 **아직 없는 새 파일** `.selfstudy/routine-static-ko.json`을 만듭니다. 시각과 실제 agent 이름을 바꾸고 UTF-8 JSON으로 저장합니다. `conversation` 필드는 넣지 않습니다.
 
 ```json
@@ -130,18 +156,22 @@ python -c "from datetime import datetime,timedelta,UTC; print((datetime.now(UTC)
 }
 ```
 
-Manifest의 action type은 CLI 별칭 `agent-response`가 아니라 **`invoke_agent_responses_api`**입니다. Create에는 `--input`이 없으므로 저장될 입력은 manifest의 `action.input`에 넣습니다. 수동 `dispatch --input`은 그 한 번의 override일 뿐 timer의 저장 입력을 설정하지 않습니다.
+Manifest의 action type은 CLI 별칭 `agent-response`가 아니라 `invoke_agent_responses_api`입니다. Create에는 `--input`이 없으므로 저장될 입력은 manifest의 `action.input`에 넣습니다. 수동 `dispatch --input`은 그 한 번의 override일 뿐 timer의 저장 입력을 설정하지 않습니다.
+
+### 터미널: 비활성 상태로 생성·확인
 
 ```bash
 azd ai routine create "YOUR-PREFIX-timer-static-ko" --file .selfstudy/routine-static-ko.json --enabled=false --project-endpoint "실제-프로젝트-Endpoint" --output json
 azd ai routine show "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
-현재 prefix 아래의 새 이름, agent, 미래 시각, **`enabled: false`·고정 input·conversation 없음**을 readback에서 확인합니다. 기존 이름에 `--force`로 덮어쓰거나 이전 파일을 수정하지 않습니다.
+**확인:** 현재 prefix 아래의 새 이름, agent, 미래 시각, **`enabled: false`·고정 input·conversation 없음**을 readback에서 확인합니다. 기존 이름에 `--force`로 덮어쓰거나 이전 파일을 수정하지 않습니다.
 
 <a id="4-한-번-전달하고-반드시-비활성화"></a>
 
 ## 4. 실제 timer 전달을 확인한 뒤 비활성화
+
+### 활성화·예약 실행 관찰
 
 비용·시각·입력을 검토하고 준비가 끝났을 때만 enable합니다.
 
@@ -152,7 +182,9 @@ azd ai routine run list "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제
 
 예약 시각 이후 같은 목록을 제한적으로 다시 읽고 실제 **`timer_delivery`** 실행의 `dispatch_id`, `response_id`, 예약/실행 시각과 `Finished` 상태를 기록합니다. 이 timer에 수동 dispatch를 보내 예약 성공처럼 만들지 않습니다.
 
-**성공·실패·관찰 중단 어느 경우에도 disable을 따로 실행**합니다. 성공한 경우에만 정리를 실행하는 조건으로 묶지 않습니다.
+### 반드시 비활성화
+
+> **중지:** 성공·실패·관찰 중단 어느 경우에도 **disable을 따로 실행**합니다. 성공한 경우에만 정리를 실행하는 조건으로 묶지 않습니다.
 
 ```bash
 azd ai routine disable "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프로젝트-Endpoint"
@@ -202,6 +234,15 @@ python scripts/workshop.py routines inspect --name "원래-수동-Routine-이름
 
 </details>
 
-**완료 확인:** 생성·실행·readback·보존 상태를 각각 기록합니다. Timer 전달이 확인되어도 새로운 policy judge의 품질 기준까지 모두 통과한 것은 아닙니다.
+## 완료 확인
 
-**다음 → [12. 대화 평가·Optimizer·배포 품질](12-improvement.md)**
+- [ ] Memory의 alpha/beta 결과·항목 수정·TTL·소유권을 확인했다.
+- [ ] A2A의 실제 target·caller 버전과 위임 호출 또는 차단 상태를 확인했다.
+- [ ] Routine의 예약 전달과 원래 답변을 구분해 확인하고, **disabled 상태**로 두었다.
+- [ ] 생성·실행·readback·보존 상태와 미실행 범위를 각각 보관했다.
+
+Timer 전달이 확인되어도 새로운 policy judge의 품질 기준까지 모두 통과한 것은 아닙니다.
+
+---
+
+[← 10. 공유 도구](10-toolbox-skills.md) · [전체 과정](../README.ko.md#진행-순서) · [12. 품질 개선 →](12-improvement.md)

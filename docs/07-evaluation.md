@@ -1,12 +1,30 @@
 # 07. 업무 평가와 Foundry 평가
 
+[English](en/07-evaluation.md) | **한국어** · [전체 과정](../README.ko.md#진행-순서) · [진행 도움말](checkpoints.md)
+
 **완료 목표:** 같은 문항으로 지침을 비교하고, 실제 응답에 Foundry judge를 적용합니다.
 
-**시작 조건:** 설정한 Sol·한빛기술 데이터·실제 SDK 응답. 이 장의 대상은 **직접 SDK + 사전 검색 응답 경로**입니다. 03의 관리형 agent나 나중의 Hosted 버전과 같은 실행이라고 표현하지 않습니다.
+**시작 조건:** 설정한 Sol·한빛기술 데이터·실제 SDK 응답.
 
-아래 label은 새 실습의 예시입니다. 기존 결과가 있다면 새로운 baseline/candidate label을 정하고 모든 후속 참조에 동일하게 사용합니다. 이전 모델·judge·코드 조건의 파일이나 점수를 덮어쓰지 않습니다.
+**실행 위치:** 터미널에서 수집·평가, 편집기에서 결과 비교, Foundry에서 judge 배포.
 
-**순서:** baseline 수집·업무 검사 → candidate 수집·비교 → judge 준비 → calibration·policy 평가입니다. 먼저 포함된 `v1`/`v2`를 비교하며, **중간에 코드나 원문을 수정하지 않습니다**. 과거 실행의 점수·실패 이력은 [검증 보고서](validation-report.md)에서 별도로 볼 수 있습니다.
+> **기본 지침 비교:** 포함된 `v1`/`v2`만 바꿉니다. **중간에 코드·원문·모델을 바꾸지 않고, holdout은 열지 않습니다.** 6절의 선택적 모델 비교는 별도 결과로 진행합니다.
+
+**진행 지도**
+
+| 단계 | 확인할 결과 |
+|---|---|
+| [1. 데이터 구분](#1-dev와-holdout-분리) | dev·holdout·calibration의 다른 용도 |
+| [2. baseline](#2-baseline-수집) | 실제 dev 6행과 업무 검사 |
+| [3. candidate](#3-같은-조건으로-candidate) | 지침만 바꾼 전후 비교 |
+| [4. judge 준비](#4-judge-모델-직접-준비) | 대상과 다른 기반 모델·배포 |
+| [5. policy 평가](#5-원문-참조를-감사하는-policy-평가) | calibration, 세 기준의 점수, 원문 감사 |
+| [6. Sol/Luna — 선택](#6-선택적-solluna-모델-비교) | 같은 계정 API 조건의 별도 비교 |
+| [완료 확인](#완료-확인) | 실제 결과 파일과 행별 판정 |
+
+이 장의 대상은 **직접 SDK + 사전 검색 응답 경로**입니다. 03의 관리형 agent나 나중의 Hosted 버전과 같은 실행이라고 표현하지 않습니다.
+
+아래 label은 새 실습의 예시입니다. 기존 결과가 있다면 새로운 baseline/candidate label을 정하고 모든 후속 참조에 동일하게 사용합니다. 이전 모델·judge·코드 조건의 파일이나 점수를 덮어쓰지 않습니다. 과거 실행 이력은 [검증 보고서](validation-report.md)에 있습니다.
 
 ## 1. dev와 holdout 분리
 
@@ -26,7 +44,7 @@ python scripts/workshop.py collect --split dev --label baseline --prompt v1 --re
 python scripts/workshop.py evaluate --label baseline
 ```
 
-`outputs/baseline/`의 `manifest.json`, `responses.jsonl`, `business-evaluation.json`을 엽니다.
+**확인:** `outputs/baseline/`의 `manifest.json`, `responses.jsonl`, `business-evaluation.json`을 엽니다.
 
 `total`, `passed`, `errors`, `business_gate_passed`와 **6개 사례의 checks 전체**를 읽습니다. 이 평가는 결정적 업무 검사이며 LLM judge가 아닙니다.
 
@@ -59,7 +77,7 @@ python scripts/workshop.py evaluate --label candidate
 python scripts/workshop.py compare --baseline baseline --candidate candidate --variable prompt
 ```
 
-`outputs/candidate/comparison-vs-baseline.json`의 조건, 양쪽 지표, `changed_context_cases`를 확인합니다. 원시 응답·점수·hash를 편집하지 않습니다. 같은 점수면 “이번 6문항에서 개선이 입증되지 않음”도 정상입니다.
+**확인:** `outputs/candidate/comparison-vs-baseline.json`의 조건, 양쪽 지표, `changed_context_cases`를 확인합니다. 원시 응답·점수·hash를 편집하지 않습니다. 같은 점수면 “이번 6문항에서 개선이 입증되지 않음”도 정상입니다.
 
 코드를 변경했다면 같은 코드로 새 baseline/candidate 쌍을 만들어야 합니다. 평가 기준을 낮추거나 오류 행을 빼서 개선을 만들지 않습니다.
 
@@ -67,7 +85,7 @@ python scripts/workshop.py compare --baseline baseline --candidate candidate --v
 
 ## 4. judge 모델 직접 준비
 
-1. 새 환경에서는 같은 Foundry 계정에 **`gpt-5.5` / `2026-04-24`**를 **`workshop-judge`**로 배포합니다.
+1. 새 환경에서는 같은 Foundry 계정에 `gpt-5.5` / `2026-04-24`를 `workshop-judge`로 배포합니다.
 2. 실제 기반 모델·버전·비용·생성 완료를 확인합니다. Judge는 Sol 대상과 **다른 기반 모델이며 다른 배포**여야 합니다.
 3. 해당 별칭을 judge로 등록합니다. 이 읽기/설정 명령은 배포를 생성하지 않습니다.
 
@@ -92,6 +110,8 @@ GPT-5.5는 GPT-6 대상과 다르지만, 이 선택만으로 모든 편향이 �
 
 ## 5. 원문 참조를 감사하는 policy 평가
 
+### 입력 준비·judge calibration
+
 새 입력 label을 사용해 준비합니다. `--policy`는 기존 Skill 입력이나 legacy 평가 결과를 변경하지 않는 별도 모드입니다.
 
 ```bash
@@ -107,9 +127,11 @@ python scripts/workshop.py calibrate-judge --policy --label policy-calibration-k
 | `policy_helpfulness` | 필요한 안내·확인 질문·적절한 근거 부족 응답인가 | 4 이상, 높을수록 좋음 |
 | `policy_compliance` | 규정을 따르고 허위 승인 등을 하지 않는가 | 4 이상, 높을수록 좋음 |
 
-Canonical 출력은 정수 **`result`(1~5)**와 문자열 **`reason`**입니다. 8개 control × 3개 기준은 24개 기대 판정을 점검합니다. 나쁜 답변은 낮은 점수를 받아야 하므로 **24/24 판정 일치는 24개 모두 4점 이상이라는 뜻이 아닙니다**. 올바른 abstention·허위 승인·counterfactual 구분도 읽습니다. 한국어 성공을 영어 calibration의 증거로 사용하지 않습니다.
+Canonical 출력은 정수 `result`(1~5)와 문자열 `reason`입니다. 8개 control × 3개 기준은 24개 기대 판정을 점검합니다. 나쁜 답변은 낮은 점수를 받아야 하므로 **24/24 판정 일치는 24개 모두 4점 이상이라는 뜻이 아닙니다**. 올바른 abstention·허위 승인·counterfactual 구분도 읽습니다. 한국어 성공을 영어 calibration의 증거로 사용하지 않습니다.
 
 이 세 기준은 legacy 일반 Relevance와 다른 고정된 의미를 갖습니다. 적절한 근거 부족 응답은 `policy_helpfulness`에서 유용할 수 있습니다. 이전 Relevance 점수를 새 지표로 이름만 바꾸거나 서로 다른 기준의 숫자를 직접 개선량으로 계산하지 않습니다.
+
+### 저장된 두 결과 평가
 
 앞에서 **새 label로 수집한 완전한 dev 결과**를 평가합니다. 아래 `baseline`/`candidate`는 실제로 선택한 새 이름으로 함께 바꿉니다.
 
@@ -118,7 +140,9 @@ python scripts/workshop.py cloud-evaluate --policy --label baseline --confirm-co
 python scripts/workshop.py cloud-evaluate --policy --label candidate --reference baseline --confirm-cost --timeout 900
 ```
 
-이는 저장된 target 응답의 평가이며 **새 target 추론이 아닙니다**. 출력된 `foundry-policy/`의 원점수·`cloud-evaluation-raw.json`·`cloud-evaluation-results.json`·`policy-reference-audit.json`을 보관합니다. 모든 행에 세 기준이 있고 source hash와 `reference_id`가 제출 원문 및 `reason`과 일치하는지 확인합니다.
+이는 저장된 target 응답의 평가이며 **새 target 추론이 아닙니다**.
+
+**확인:** 출력된 `foundry-policy/`의 원점수·`cloud-evaluation-raw.json`·`cloud-evaluation-results.json`·`policy-reference-audit.json`을 보관합니다. 모든 행에 세 기준이 있고 source hash와 `reference_id`가 제출 원문 및 `reason`과 일치하는지 확인합니다.
 
 이 감사는 **제출 원문과 반환된 참조 ID의 일치**를 확인하며, 숨겨진 judge 요청 본문 전체를 캡처했다고 주장하지 않습니다. `Partial`, 누락·오류 행, 잘못된 reference, `context=response`인 자기 근거를 통과로 바꾸지 않습니다. `--policy`와 `--business-evaluator`는 결합하지 않습니다. 이전 Relevance/grounding 점수나 2개 legacy fixture를 새 policy 결과로 이름만 바꾸지 않습니다.
 
@@ -149,6 +173,12 @@ python scripts/workshop.py compare --baseline model-sol --candidate model-luna -
 | candidate의 실제 policy 점수 | `outputs/candidate/foundry-policy/cloud-evaluation-results.json`의 6행 × 3개 기준 |
 | 평가에 올바른 원문을 썼는가 | 같은 `foundry-policy/`의 `policy-reference-audit.json`. 참조 감사 `valid`와 점수 통과는 별개 |
 
-실제 6행, 전후 비교, judge 결과, 자신의 검토를 남깁니다. **holdout을 아직 열지 않고** candidate와 해당 설정을 보관합니다.
+- [ ] 실제 dev 6행·요청 오류·사례별 업무 검사를 확인했다.
+- [ ] 같은 조건의 전후 비교와 judge calibration·policy 점수·참조 감사를 각각 읽었다.
+- [ ] 실패와 한계를 보관했고, **holdout은 아직 열지 않았다**.
 
-**다음 → [08. Hosted 로컬 실행과 Azure 배포](08-hosted.md)**
+candidate와 해당 설정을 보관합니다.
+
+---
+
+[← 06. 검색](06-search-iq.md) · [전체 과정](../README.ko.md#진행-순서) · [08. 배포 →](08-hosted.md)

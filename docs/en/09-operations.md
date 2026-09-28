@@ -1,12 +1,28 @@
 # 09. Traces, Insights, and operations
 
-**English** | [한국어](../09-operations.md) · [Course home](../../README.md)
+**English** | [한국어](../09-operations.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Create your logging environment and trace your own actual requests in Foundry.
 
 **Prerequisites:** The default path needs **03's inline Prompt Agent name, version, and successful invocation**: the target created with `prompt-agent create`, not the File Search agent. If you have only a Hosted Agent, use section 2's alternative. You prepare Application Insights and Log Analytics here.
 
-**Order:** create/connect logs → send a new request → locate its trace → inspect Insights, costs, and recurring evaluation. Earlier responses are not collected retroactively. If logging was prepared early, verify that connection and its roles instead of creating duplicates.
+**Where you work:** Azure/Foundry portals for connections and observations; terminal for registration and a new request.
+
+> **Important:** responses from before the logging connection are not collected retroactively. **Pause** any recurring evaluation at the planned time, even without a result.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. Connect logs](#1-create-and-connect-logging-resources) | Actual logging resources, connection, and read access |
+| [2. New request](#2-send-a-new-request-after-connecting) | A new post-connection response ID |
+| [3. Trace](#3-interpret-what-you-see) | That request's trace and detailed spans |
+| [4. Insights](#4-agent-insights) | Actual findings or not-run status |
+| [5. Costs](#5-connect-measurements-to-costs) | Service/storage costs beyond tokens |
+| [6. Recurring evaluation](#6-bound-recurring-evaluation) | Actual evaluation results and paused status |
+| [Completion check](#completion-check) | Observed evidence and stop/retention state |
+
+If logging was prepared early, verify that connection and its roles instead of creating duplicates.
 
 ## 1. Create and connect logging resources
 
@@ -63,7 +79,7 @@ python scripts/workshop.py --language en prompt-agent invoke --question "What ar
 
 Do not overwrite an existing file. Choose a new filename if this one is already used.
 
-In **Agents → Traces**, select the agent and a recent time range, then locate the response ID. Collection can take time; wait briefly and refresh.
+**Check:** in **Agents → Traces**, select the agent and a recent time range, then locate the response ID. Collection can take time; wait briefly and refresh.
 
 ## 3. Interpret what you see
 
@@ -110,7 +126,14 @@ If a trace evaluation for your agent has completed, open its recurring settings.
 
 Verify one actual execution and its sampled data, then **pause at the planned time even if evidence is incomplete**. Enabling the schedule is not evaluation success. Do not leave it running indefinitely while waiting for results. Stopping does not erase charges already incurred.
 
-For a small real-time trial, choose **Continuous**, one evaluator such as Coherence, your judge deployment, 100% sampling, and **at most one run per hour**. Send one synthetic question in the portal Playground, match the actual evaluation run to its response ID, and Pause. Workshop code defaults to `store=False`; a continuous evaluator that retrieves responses may not evaluate an unstored response. A trace alone is not proof of an evaluation run. Store synthetic data only.
+For a small real-time trial:
+
+1. Choose **Continuous**, one evaluator such as Coherence, and your judge deployment.
+2. Set 100% sampling and **at most one run per hour**.
+3. Send one synthetic question in the portal Playground.
+4. Match the actual evaluation run to its response ID, then **Pause**.
+
+Workshop code defaults to `store=False`; a continuous evaluator that retrieves responses may not evaluate an unstored response. **A trace alone is not proof of an evaluation run.** Store synthetic data only.
 
 <details>
 <summary>Only for a Coherence initialization error: historical version findings</summary>
@@ -121,6 +144,14 @@ Coherence v1 failed in the earlier NC environment with zero rows and `CoherenceE
 
 CLI, portal, and MCP tools can use different identities. If an error names a different Object ID, check authentication context first. Do not grant new roles to an unknown MCP principal as a workaround.
 
-**Completion:** Record real traces and measurements, whether Insights/recurring evaluation actually ran, and the stop/retention plan.
+## Completion check
 
-**Next → [10. Toolbox, Tool Search, Skills, and OpenAPI](10-toolbox-skills.md)**
+- [ ] I matched a new post-connection response to its actual trace and spans.
+- [ ] I distinguished measured usage, unmeasured `null`, and actual billing.
+- [ ] I recorded whether Insights/recurring evaluation ran and left enabled schedules paused.
+
+Preserve the evidence and review logging/retention costs.
+
+---
+
+[← 08. Deployment](08-hosted.md) · [Course home](../../README.md#curriculum) · [10. Shared tools →](10-toolbox-skills.md)

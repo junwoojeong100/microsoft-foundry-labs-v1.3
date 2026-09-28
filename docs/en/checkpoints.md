@@ -6,6 +6,22 @@ Take one step at a time: **run → inspect → next**. No separate write-up or s
 
 **On a first run, follow the default route in one language.** Historical validation reports and collapsed recovery commands are not additional assignments. If you skipped a chapter, check the next chapter's **prerequisites** before proceeding.
 
+## Find the help you need
+
+| Your question | Go to |
+|---|---|
+| Where do I perform each action? | Follow **Where you work → Chapter map → Completion check** in each chapter. Select a step in the map to jump to it. |
+| Which values do I replace? | [Commands and placeholders](#read-commands-and-placeholders) |
+| What should I read in the output? | [Reading results](#read-results-and-carry-values-into-the-next-command) · [Saved locations](#find-saved-configuration-and-results) |
+| What does this term mean? | [Glossary](#terms-you-will-encounter) |
+| How do I continue yesterday's work? | [Resume instructions](#resume-on-another-day) · [Two terminals](#chapters-with-two-terminals) |
+| There is an error or an existing file | [Interpreting errors](#can-i-continue-after-an-error) · [Rerunning names](#can-i-rerun-the-same-name) |
+| Can I move to the next chapter? | [Completion gates](#before-moving-on) · [Blocked steps](#if-a-stage-is-blocked) |
+| I am stopping for today | **[Stop work and review costs](15-capstone-cleanup.md#4-stop-running-work-first)** |
+| How do I share the materials? | [Package without personal settings](#share-workshop-materials-safely) |
+
+**Check off only what you actually verified.** Preserving a blocked/not-run status is not the same as feature success. You do not need to edit the guide's checkboxes or submit a separate file.
+
 ## Read commands and placeholders
 
 | What you see | What to do |
@@ -74,19 +90,21 @@ File existence is not completion. Compare the chapter's **completion check** wit
 1. Open the existing workshop folder in your editor and start a terminal.
 2. Run **only your OS's** activation command.
 
-macOS / Linux:
+**macOS / Linux**
 
 ```bash
 source .venv/bin/activate
 ```
 
-Windows PowerShell:
+**Windows PowerShell**
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
 If organizational policy blocks activation, use `.\.venv\Scripts\python.exe` instead of `python`; do not weaken policy.
+
+**Then, on every operating system**
 
 3. After chapter 00's `configure` has been completed, run:
 
@@ -181,3 +199,7 @@ python scripts/package_workshop.py
 The bundle is intended to contain code, data, guides, and tests, excluding `.env`, `.selfstudy`, runtime results, and virtual environments. Inspect the generated manifest before distribution, including both `README.md` and `README.ko.md` and the English/Korean guides. A recipient extracts it and starts at [00](00-setup.md).
 
 Do not overwrite an existing ZIP. For a new distribution, use an unused filename such as `--output dist/workshop-new.zip` and inspect its manifest.
+
+---
+
+[Course home](../../README.md#curriculum) · [Help index](#find-the-help-you-need) · [Troubleshooting](troubleshooting.md)

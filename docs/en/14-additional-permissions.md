@@ -1,12 +1,26 @@
 # 14. GitHub OIDC CI/CD lab
 
-**English** | [한국어](../14-additional-permissions.md) · [Course home](../../README.md)
+**English** | [한국어](../14-additional-permissions.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Run the included GitHub Actions workflow using an OIDC managed identity and verify the exact Hosted version's six-case dev business checks and artifacts.
 
 **Prerequisites:** Hosted preparation from 08, Actions/Environment permissions in your own GitHub repository, and the lab's Azure resources and roles. Without the required GitHub access, record CI as not run and continue to 15.
 
-**Order:** repository/Environment → CI identity → variables → federation → authentication-only check → manual release. **Do not run a workflow before its variables exist.**
+**Where you work:** GitHub web Actions/Settings, Azure portal identity/IAM pages, and `gh` in your terminal.
+
+> **Entry condition:** without GitHub permissions, go to [15](15-capstone-cleanup.md). Otherwise, follow **variables → federation → authentication check → release**, in that order.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. Repository and Environment](#1-prepare-the-repository-and-environment) | Checked commit and `foundry-workshop` |
+| [2. CI identity](#2-prepare-the-azure-ci-identity) | Client/principal IDs and scoped roles |
+| [3. Variables](#3-register-environment-variables-before-execution) | Values the workflow reads through `vars.*` |
+| [4. Federation](#4-configure-oidc-federation) | Your repository's actual issuer, subject, and audience |
+| [5. Authentication only](#5-check-authentication-without-deploying) | Real sign-in success, not deployment |
+| [6. Manual release](#6-release-manually-and-inspect-the-exact-version) | Exact new version, six dev rows, and stopped session |
+| [Completion check](#completion-check) | Matching commit, identity, version, and artifact |
 
 OIDC lets GitHub Actions sign in to Azure using short-lived identity evidence rather than a stored client secret. Your local `az login` or subscription Owner access is not automatically inherited by GitHub's runner.
 
@@ -108,6 +122,12 @@ Release is manual, not triggered by every push. On failure, stop further release
 
 ## Completion check
 
-Compare the actual commit, OIDC identity, deployment version, and dev results in the Actions run and downloaded artifacts. In retention mode, do not delete identities, federation, agents, or volumes.
+- [ ] The checked commit matches the actual release commit.
+- [ ] I matched the OIDC identity, deployment version, and six dev rows between Actions and downloaded artifacts.
+- [ ] I verified session stopping and artifact retention, without treating CI business checks as final acceptance.
 
-**Next → [15. Final acceptance and resource lifecycle](15-capstone-cleanup.md)**
+In retention mode, do not delete identities, federation, agents, or volumes.
+
+---
+
+[← 13. Lab safety](13-governance.md) · [Course home](../../README.md#curriculum) · [15. Acceptance and cleanup →](15-capstone-cleanup.md)

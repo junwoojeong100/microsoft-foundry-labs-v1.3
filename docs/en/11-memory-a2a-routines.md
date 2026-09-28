@@ -1,6 +1,6 @@
 # 11. Memory, A2A, and Routines
 
-**English** | [한국어](../11-memory-a2a-routines.md) · [Course home](../../README.md)
+**English** | [한국어](../11-memory-a2a-routines.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Create, use, and verify memory storage, delegation to another agent, and scheduled execution, then explicitly stop, retain, or remove what you own.
 
@@ -16,7 +16,21 @@
 
 Do not recreate all three because one is blocked. Mark only the unavailable experiment not run and check the prerequisites above before proceeding with another.
 
+**Where you work:** terminal for API/CLI calls, editor for Routine JSON, Azure portal for permissions.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. Memory](#1-memory-persist-an-item-and-recall-it-in-a-new-request) | Stored item, scoped reads, update, and retention |
+| [2. A2A](#2-a2a-delegate-to-a-separate-endpoint) | Actual delegation to a separate target |
+| [3. Prepare Routine](#3-routines-prepare-a-disabled-schedule) | Future time, static input, and `enabled: false` |
+| [4. Observe and disable](#4-observe-one-timer-delivery-then-disable) | Original scheduled response and disabled state |
+| [Completion check](#completion-check) | Separate results, costs, and retention for all three |
+
 ## 1. Memory: persist an item and recall it in a new request
+
+### Plan and create a new store
 
 Verify `workshop-embedding` from 06 and select a **new retained-store name under the current prefix**. Replace `YOUR-PREFIX` with your actual `WORKSHOP_PREFIX`. If an older store exists, preserve its settings and records:
 
@@ -35,11 +49,13 @@ python scripts/workshop.py --language en memory create --ttl-seconds 0 --confirm
 python scripts/workshop.py --language en memory put --scope alpha --case D02 --confirm-write --confirm-cost
 ```
 
-Record the **new store name, memory_id, and ownership file**. Verify `default_ttl_seconds: 0` in the creation readback and `automatic_expiration_enabled: false`. This verifies configuration, not a long-duration survival test. Storage charges may continue.
+**Check:** record the new store name, `memory_id`, and ownership file. Verify `default_ttl_seconds: 0` in the creation readback and `automatic_expiration_enabled: false`. This verifies configuration, not a long-duration survival test. Storage charges may continue.
 
 For another **new store** that should expire items, `--ttl-seconds` accepts 1–31,536,000 seconds (365 days). Previously recorded stores keep their original TTL; the new default does not update them. If your selected store already exists with an ownership record, do not create it again: inspect and recall it. For another new run, choose an unused name under the same prefix, without adopting unrecorded remote assets.
 
 `WORKSHOP_MEMORY_STORE_NAME` is a **global selector, not an automatic per-language setting**. Explicitly select `<prefix>-memory-retained-en` for English and `<prefix>-memory-retained-ko` for Korean. Recheck it whenever switching languages; `--language en` alone does not switch an explicitly selected store.
+
+### Read from independent requests
 
 ```bash
 python scripts/workshop.py --language en memory inspect --scope alpha
@@ -48,7 +64,9 @@ python scripts/workshop.py --language en memory recall --scope alpha --label mem
 python scripts/workshop.py --language en memory recall --scope beta --label memory-retained-beta-en --confirm-cost
 ```
 
-Verify that alpha retains the item across independent commands and beta does not contain it. **These scopes are not an authorization boundary between two real users**; the same operator can read both.
+**Check:** alpha retains the item across independent commands and beta does not contain it. **These scopes are not an authorization boundary between two real users**; the same operator can read both.
+
+### Update and retain the same item
 
 Use the **memory_id returned by this new retained store** to explicitly update that item's content. This does not change its TTL or the older store:
 
@@ -63,6 +81,8 @@ For transient 404s or delays, perform bounded reads of the same item; do not rep
 
 ## 2. A2A: delegate to a separate endpoint
 
+### Create the target and inspect its card
+
 ```bash
 python scripts/workshop.py --language en a2a plan
 python scripts/workshop.py --language en a2a target --confirm-create
@@ -70,6 +90,8 @@ python scripts/workshop.py --language en a2a inspect
 ```
 
 Create a target under your prefix and inspect its actual card's `supportedInterfaces` for **1.0 / JSONRPC / the exact URL**. Two local participants are not proof of A2A.
+
+### Create the connection and invoke the caller
 
 Use the returned **target_base and connection_name**. The target is a base path, not the card URL. `--cwd` is the actual Hosted folder prepared in 08:
 
@@ -79,7 +101,7 @@ python scripts/workshop.py --language en a2a caller --confirm-create
 python scripts/workshop.py --language en a2a invoke --label a2a-first-en --confirm-cost
 ```
 
-Verify a real successful A2A call in the caller response. Preserve names, versions, exact 1.0 configuration, and source evidence. Do not automatically downgrade to 0.3 or substitute another agent when unsupported.
+**Check:** verify a real successful A2A call in the caller response. Preserve names, versions, exact 1.0 configuration, and source evidence. Do not automatically downgrade to 0.3 or substitute another agent when unsupported.
 
 <details>
 <summary>Only for an older caller reporting no valid target URL</summary>
@@ -115,6 +137,8 @@ Verify log-read permissions and choose a future UTC time you can observe. Five m
 python -c "from datetime import datetime,timedelta,UTC; print((datetime.now(UTC)+timedelta(minutes=5)).isoformat(timespec='seconds').replace('+00:00','Z'))"
 ```
 
+### Editor: write the schedule file
+
 In your editor, create a **new, nonexistent file** such as `.selfstudy/routine-static-en.json`. Replace the timestamp and actual agent name and save UTF-8 JSON. Omit `conversation` entirely:
 
 ```json
@@ -136,16 +160,20 @@ In your editor, create a **new, nonexistent file** such as `.selfstudy/routine-s
 
 The manifest uses wire type **`invoke_agent_responses_api`**, not CLI alias `agent-response`. Create has no `--input` flag, so persistent input belongs in `action.input`. A manual `dispatch --input` override affects only that one dispatch; it does not configure the timer's stored input.
 
+### Terminal: create and verify the disabled schedule
+
 ```bash
 azd ai routine create "YOUR-PREFIX-timer-static-en" --file .selfstudy/routine-static-en.json --enabled=false --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 azd ai routine show "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 ```
 
-Read back the fresh owned name, agent, future timestamp, **`enabled: false`, static input, and absence of a conversation**. Do not use `--force` or overwrite an existing manifest.
+**Check:** read back the fresh owned name, agent, future timestamp, **`enabled: false`, static input, and absence of a conversation**. Do not use `--force` or overwrite an existing manifest.
 
 <a id="4-dispatch-once-and-always-disable"></a>
 
 ## 4. Observe one timer delivery, then disable
+
+### Enable and observe scheduled execution
 
 Enable only after reviewing cost, timing, and input:
 
@@ -156,7 +184,9 @@ azd ai routine run list "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-P
 
 After the scheduled time, perform bounded reads of the same run list. Record the actual **`timer_delivery`** run's `dispatch_id`, `response_id`, scheduled/triggered times, and `Finished` status. Do not manually dispatch this timer to manufacture scheduled-execution evidence.
 
-**Run disable separately on success, failure, or when ending observation.** Do not make stopping conditional on success:
+### Always disable
+
+> **Stop:** run **disable separately** on success, failure, or when ending observation. Do not make stopping conditional on success.
 
 ```bash
 azd ai routine disable "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-PROJECT-ENDPOINT"
@@ -208,6 +238,15 @@ Do not add `--scheduled` to a manual readback. Manual and timer runs are differe
 
 </details>
 
-**Completion check:** Record creation, execution, readback, and retention separately. Verified timer delivery does not mean every new policy-quality criterion has passed.
+## Completion check
 
-**Next → [12. Conversation evaluation, Optimizer, and deployment quality](12-improvement.md)**
+- [ ] I checked Memory alpha/beta results, item updates, TTL, and ownership.
+- [ ] I verified the actual A2A target/caller versions and delegation, or recorded blocked status.
+- [ ] I distinguished scheduled delivery from the original answer and left the Routine **disabled**.
+- [ ] I preserved creation, execution, readback, retention, and not-run status separately.
+
+Verified timer delivery does not mean every new policy-quality criterion has passed.
+
+---
+
+[← 10. Shared tools](10-toolbox-skills.md) · [Course home](../../README.md#curriculum) · [12. Improvement →](12-improvement.md)

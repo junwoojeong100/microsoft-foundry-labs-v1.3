@@ -1,12 +1,34 @@
 # 12. Conversation evaluation, Optimizer, and deployment quality
 
-**English** | [한국어](../12-improvement.md) · [Course home](../../README.md)
+**English** | [한국어](../12-improvement.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Evaluate whole conversations and compare improvement candidates and actual Hosted versions using evidence.
 
-**Prerequisites:** Judge/dev results and policy calibration from 07, Hosted preparation from 08, the same-account OpenAI endpoint, and logging from 09. The IQ matrix also needs working Search/IQ from 06; the explicitly selected local matrix does not. Check costs for each feature. **Do not open holdout in this chapter.**
+**Prerequisites:** Judge/dev results and policy calibration from 07, Hosted preparation from 08, the same-account OpenAI endpoint, and logging from 09. The IQ matrix also needs working IQ from 06; the explicitly selected local matrix does not.
 
-**Order:** conversations (1) → Optimizer (2–3) → actual Hosted comparison (4–9) → separate diagnostics (11). Section 10 is a local-retrieval alternative, not an additional required matrix. Record zero candidates or no improvement honestly. The Hosted comparison uses the bundled `v1`/`v2`, so do not wait for or automatically apply an Optimizer candidate.
+**Where you work:** Foundry portal for Optimizer, terminal for deployment/evaluation, browser for HTML reports.
+
+> **Comparison conditions:** review each feature's cost. Freeze code, **change only instructions, and leave holdout closed**. Compare Hosted using the bundled `v1`/`v2`; do not wait for or automatically apply an Optimizer candidate.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [First choose retrieval](#choose-the-matrix-retrieval-mode-explicitly) | One fixed IQ or explicit local path |
+| [1. Conversation evaluation](#1-evaluate-conversations) | Turn-level versus whole-conversation judgments |
+| [2. Prepare Optimizer](#2-prepare-optimizer-models-and-data) | Supported model and existing dev/calibration inputs |
+| [3. Optimize instructions](#3-optimize-instructions-only) | Actual candidates, complete scores, and reference audit |
+| [4. Freeze Hosted conditions](#4-freeze-the-hosted-matrix-scope) | Model, profile, and endpoint |
+| [5. Deploy baseline](#5-deploy-the-baseline-profile) | Exact version, roles, and smoke request |
+| [6. Evaluate baseline](#6-collect-evaluate-and-trace-every-dev-row) | Six dev rows, business checks, judge, and traces |
+| [7. Compare candidate](#7-change-only-instructions-for-the-candidate) | New deployment changing only instructions |
+| [8. Calibration and regression](#8-calibrate-the-judge-and-record-regressions) | Matching criteria and actual failure review |
+| [9. Stop sessions](#9-preserve-results-and-stop-compute) | Preserved results and stopped compute |
+| [10. Local matrix — alternative](#local-matrix-alternative) | Instead of 5–9; separate labels and the same quality gates |
+| [11. Complementary diagnostics](#11-separate-eight-case-policy-lab-diagnostics) | Separate eight-case results and stopped session |
+| [Completion check](#completion-check) | Execution versus improvement and acceptance |
+
+Section 10 is a local-retrieval alternative, not an additional required matrix. Record zero candidates or no improvement honestly.
 
 This chapter requires **freezing code first, then collecting a fresh Hosted baseline/candidate pair**. Fix model, corpus, language, retrieval, API, judge catalog, threshold, and generation settings; vary only instructions. If coupled code changes during the comparison, start a new matched pair under fresh labels. Do not edit manifest hashes or weaken comparison checks.
 
@@ -38,7 +60,7 @@ python scripts/workshop.py --language en conversations evaluate --label conversa
 python scripts/workshop.py --language en conversations evaluate --label conversations-first-en --level conversation --confirm-cost
 ```
 
-Evaluate the same real conversation at turn and conversation levels. Do not share Memory or conversation state across independent evaluation cases. Review contradictions, intent resolution, all rows, and errors; record differences between the two levels.
+**Check:** evaluate the same real conversation at turn and conversation levels. Do not share Memory or conversation state across independent evaluation cases. Review contradictions, intent resolution, all rows, and errors; record differences between the two levels.
 
 ## 2. Prepare Optimizer models and data
 
@@ -54,6 +76,8 @@ python scripts/selfstudy.py model --role optimizer
 Inspect the **six dev rows** in `outputs/policy-inputs-en/optimizer-dev.jsonl`, the original-reference envelope in `ground_truth`, `policy-evaluator-definitions.json`, and the manifest. If missing, first complete [07's preparation/calibration](07-evaluation.md#5-evaluate-policies-with-audited-original-references). Do not rerun preparation against an existing folder.
 
 ## 3. Optimize instructions only
+
+### Prepare a separate target
 
 Choose a **new owned name**, separate from 03's agent. Replace `YOUR-PREFIX` with your prefix. If already prepared, reuse its recorded name/version instead of creating it again:
 
@@ -95,15 +119,23 @@ The **historical Sweden Optimizer job** reached baseline 1.0 with zero candidate
 
 </details>
 
+### Portal: submit optimization once
+
+> **Cost warning:** at most **two candidates** does not mean at most **two model requests**. Evaluations and minibatches add requests.
+
 1. In Foundry **Build → Agents**, open the separate Prompt Agent name/version just created.
 2. Select **Optimize / Create optimization run → Agent**.
 3. Pin the actual target version and answer model.
 4. Optimize **instructions only**, with at most **two candidates**.
-5. Upload section 2's `optimizer-dev.jsonl`. Verify the `policy_groundedness`, `policy_helpfulness`, and `policy_compliance` definitions/versions recorded in 07's calibration catalog and the `query`/`response`/`ground_truth` mapping. **Set threshold 4 and `workshop-judge` in each evaluator's configuration.** The current Prompt Agent wizard does not remap column names. The source envelope is evaluator input, never target-agent input.
-6. Review cost and expected call scope, then submit once.
-7. Read instruction differences, all rows, and evaluation results for the baseline and every candidate.
+5. Upload section 2's `optimizer-dev.jsonl`.
+6. Match the `policy_groundedness`, `policy_helpfulness`, and `policy_compliance` definitions/versions to 07's calibration catalog. **Set threshold 4 and `workshop-judge` in each evaluator.**
+7. Check the `query`/`response`/`ground_truth` mapping. The current Prompt Agent wizard does not remap column names. The source envelope is **evaluator input**, never target-agent input.
+8. Review cost and expected call scope, then submit once.
+9. Read instruction differences, all rows, and evaluation results for the baseline and every candidate.
 
-**Two candidates is not a two-request cap.** Evaluations and minibatches add requests. If cost is unacceptable or the required evaluation settings are unavailable, record Optimizer as not run/blocked and continue with Hosted comparison only where its prerequisites are met. Zero candidates or a tie is not demonstrated improvement.
+If cost is unacceptable or the required evaluation settings are unavailable, record Optimizer as not run/blocked and continue with Hosted comparison only where its prerequisites are met. **Zero candidates or a tie is not demonstrated improvement.**
+
+### Terminal: export and audit complete results
 
 Export the exact completed native evaluation/run under a **new export label**. This policy audit uses original source echoes; do not assume hidden judge requests were exposed or use the legacy `--require-judge-inputs` option as a substitute for the audit:
 
@@ -119,7 +151,7 @@ python scripts/audit_optimizer.py --export-directory outputs/evaluation-exports/
 
 This script **audits saved files without contacting Azure**. Keep separate exports/audits for the baseline and each actual full candidate. Do not invent a candidate export if none was produced or copy files/scores from [historical runs](validation-report.md).
 
-Inspect `validation_status: valid`, all six matched rows, and the stated evidence scope:
+**Check:** inspect `validation_status: valid`, all six matched rows, and the stated evidence scope:
 
 ```text
 proof_level: source-echo+reason-reference-id+counterfactual-calibration
@@ -129,9 +161,18 @@ improvement_claimed: false
 candidate_generation_assessed: false
 ```
 
-**Internal judge request bodies were not captured.** Audit success establishes source-echo/reason/counterfactual reference checks, not hidden-request capture or prompt improvement. Record zero candidates/early stopping separately from the actual native job. Preserve existing exports/audit JSON and choose new output names when needed. See [official Optimizer concepts](https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview).
+**Internal judge request bodies were not captured.** Audit success establishes source-echo/reason/counterfactual reference checks, not hidden-request capture or prompt improvement.
 
-**Preserved legacy-run warning:** an earlier Prompt Optimizer + Groundedness v18 run stopped at baseline 1.0, but **all six raw judge inputs used the generated `response` itself as `context`**. That self-grounding was not promoted as quality or improvement evidence. It is not a result of the current three policy criteria. Inspect the new job's references and raw outputs separately, without changing the historical scores or records.
+Record zero candidates/early stopping separately from the actual native job. Preserve existing exports/audit JSON and choose new output names when needed. See [official Optimizer concepts](https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview).
+
+> **Reference-audit warning:** using the generated `response` itself as judge `context` is self-grounding, not valid grounding or improvement evidence.
+
+<details>
+<summary>Reference: self-grounding found in an earlier legacy run</summary>
+
+An earlier Prompt Optimizer + Groundedness v18 run stopped at baseline 1.0, but **all six raw judge inputs used the generated `response` itself as `context`**. It was not promoted as quality or improvement evidence. This is not a result of the current three policy criteria. Inspect the new job's references and raw outputs separately, without changing the historical scores or records.
+
+</details>
 
 ## 4. Freeze the Hosted matrix scope
 
@@ -171,6 +212,8 @@ The preparation helper derives the owned service name from your saved prefix and
 
 ## 5. Deploy the baseline profile
 
+### Package and deploy the profile
+
 Explicitly set the small synthetic corpus's retrieval filter before starting. `0` is an IQ retrieval threshold, not an evaluation passing score. Keep it unchanged after baseline collection:
 
 ```bash
@@ -189,9 +232,21 @@ azd deploy "YOUR-PREFIX-matrix-en" --cwd "ACTUAL-MATRIX-V1-ABSOLUTE-PATH"
 azd ai agent show "YOUR-PREFIX-matrix-en" --cwd "ACTUAL-MATRIX-V1-ABSOLUTE-PATH" --output json
 ```
 
-Verify the real runtime identity and roles as in 08. **This `account-chat` profile calls the parent Foundry account's OpenAI API; project-scoped Foundry User alone is insufficient.** Verify/grant **Cognitive Services OpenAI User on this lab account** (role ID `5e0bd9bd-7b93-4f28-af87-19fc36ad61bd`) to the exact `instance_identity.principal_id` returned by `show`. IQ also requires Search Index Data Reader on this Search service. The default `selfstudy.py roles` Hosted plan covers project access, not this extra account-API role. Do not widen permissions to the subscription or assign them to the wrong user/project identity.
+### Verify this version's runtime roles
+
+As in 08, identify the exact **`instance_identity.principal_id`** returned by `show`, not your user or the project identity.
+
+| Call path | Required role and scope |
+|---|---|
+| Project access | Project roles verified in 08 |
+| `account-chat` → parent account OpenAI API | **Cognitive Services OpenAI User** on this lab's Foundry account |
+| IQ → Search | **Search Index Data Reader** on this Search service |
+
+**Project-scoped Foundry User alone is insufficient for the account API.** Cognitive Services OpenAI User has role ID `5e0bd9bd-7b93-4f28-af87-19fc36ad61bd`. The default `selfstudy.py roles` Hosted plan covers project access only. Verify/grant only missing roles; do not widen permissions to the subscription.
 
 In the rerun, Search returned HTTP 200 while account-chat returned 401 for the missing data action, surfaced as an outer Hosted 500. Original logs/session were preserved; only the exact runtime/account role was added, then **the same version was tested with a fresh smoke label**. No model/API/provider fallback was used.
+
+### Bind the actual version and make one request
 
 Use that exact service/folder to **read and save the active version and actual Invocations endpoint**:
 
@@ -204,22 +259,31 @@ Do not run the matrix if smoke fails.
 
 ## 6. Collect, evaluate, and trace every dev row
 
+### Inspect the plan and collect six rows
+
 ```bash
 python scripts/workshop.py --language en benchmark plan --kind workflow --pattern sequential --retrieval iq --prompt v1 --api account-chat --protocol invocations
 python scripts/workshop.py --language en benchmark collect --label wf-baseline-en --kind workflow --pattern sequential --retrieval iq --prompt v1 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**Check:** collection completeness and errors before proceeding. This single Sol target requires **six core dev rows**; per-role calls, retrieval, and judging add further work. Do not remove failed rows from the denominator.
+
+### Evaluate saved results, report, and inspect traces
+
+```bash
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-baseline-en --confirm-cost
 python scripts/workshop.py --language en benchmark report --label wf-baseline-en
 python scripts/workshop.py --language en benchmark trace-plan --label wf-baseline-en
 python scripts/workshop.py --language en benchmark monitor --label wf-baseline-en
 ```
 
-Check collection completeness and errors before proceeding. This single Sol target requires **six core dev rows**; per-role calls, retrieval, and judging add further work. Do not remove failed rows from the denominator.
-
 `trace-plan` generates KQL; `monitor` actually queries connected Application Insights. A trace ID in a response is not proof of verified trace export.
 
 Open **`outputs/benchmarks/wf-baseline-en/report.html` in a browser** for the business checks and failed cases. In that folder's `business-evaluation.json`, also inspect `expected_rows: 6`, `actual_rows: 6`, `errors`, and `models.primary.checks`. The HTML's business checks, the `foundry-policy/` judge results, and actual traces are separate evidence.
 
 ## 7. Change only instructions for the candidate
+
+### Package v2 and deploy a new version
 
 ```bash
 python scripts/workshop.py --script package-hosted --language en --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations
@@ -233,12 +297,16 @@ azd deploy "YOUR-PREFIX-matrix-en" --cwd "ACTUAL-MATRIX-V2-ABSOLUTE-PATH"
 azd ai agent show "YOUR-PREFIX-matrix-en" --cwd "ACTUAL-MATRIX-V2-ABSOLUTE-PATH" --output json
 ```
 
+### Bind and smoke-test the new version
+
 Verify the actual new version and its runtime permissions, then update the binding to that version and its Invocations endpoint:
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "ACTUAL-MATRIX-V2-FOLDER" --service "YOUR-PREFIX-matrix-en"
 python scripts/workshop.py --language en benchmark smoke --label matrix-v2-smoke-en --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --case D01 --model-key primary --confirm-cost
 ```
+
+### Collect all dev rows and compare
 
 Collect the full dev set only after that exact version's smoke succeeds:
 
@@ -291,6 +359,8 @@ python scripts/workshop.py --language en benchmark stop-session --label wf-candi
 Keep raw results, exact versions, and business/native/trace/calibration status. **Leave holdout for 15.** It is acceptable to record incomplete acceptance rather than relabel a failed candidate as passing. Stopping compute does not delete retained agents or volumes.
 
 For separate smoke sessions, use [08's session listing/stopping](08-hosted.md#6-invoke-the-exact-remote-version). Stop sessions even when collection or evaluation fails.
+
+<a id="local-matrix-alternative"></a>
 
 <details>
 <summary>Alternative only: complete local-retrieval matrix instead of sections 5–9</summary>
@@ -402,7 +472,9 @@ python scripts/workshop.py --language en benchmark policy-report --label policy-
 
 `policy-report` reads stored results without new inference. Review requested, returned, missing, and error counts, all three scores/reasons, source/reference audits, and matching policy calibration. `policy_compliance` is **higher-is-safer**; a score below 4 is the violation direction. Do not reverse that interpretation or rewrite existing provider `attack_success` flags. Unscored/error rows stay in the denominator.
 
-Suite version 2 permits additional support only within **explicit `allowed_citations` for PL05, PL06, and PL07 in both languages**. Lists must contain known, unique IDs and include every mandatory reference; answers missing required references or adding unrelated ones remain rejected. PL06's procedure-only question returned **`limit_krw: null`** under corrected v2 instructions. Frozen version-1 results remain readable unchanged, including the earlier extra-citation failures and `150000` response, scores, sources, and labels.
+Suite version 2 permits additional support only within **explicit `allowed_citations` for PL05, PL06, and PL07 in both languages**. Lists must contain known, unique IDs and include every mandatory reference; answers missing required references or adding unrelated ones remain rejected.
+
+PL06's procedure-only question returned **`limit_krw: null`** under corrected v2 instructions. Frozen version-1 results remain readable unchanged, including the earlier extra-citation failures and `150000` response, scores, sources, and labels.
 
 These eight cases are neither a new holdout nor a managed red-team scan. Stop the session using **the one label you actually ran**, then [archive evidence before expiry](advanced/session-files.md). For the local path, replace the label below with `policy-lab-local-en`:
 
@@ -410,4 +482,13 @@ These eight cases are neither a new holdout nor a managed red-team scan. Stop th
 python scripts/workshop.py --language en benchmark stop-session --label policy-lab-iq-en
 ```
 
-**Next → [13. Lab safety, managed AI red teaming, and Control Plane](13-governance.md)**
+## Completion check
+
+- [ ] I reviewed conversation/Optimizer results and distinguished candidate generation from demonstrated improvement.
+- [ ] I compared the Hosted pair's fixed conditions, all six rows, business checks, policy scores, and traces.
+- [ ] I checked matching calibration/reference audits and distinguished eight-case diagnostics from managed verification.
+- [ ] I stopped collection, smoke, and diagnostic sessions and **left holdout unopened**.
+
+---
+
+[← 11. State and scheduling](11-memory-a2a-routines.md) · [Course home](../../README.md#curriculum) · [13. Lab safety →](13-governance.md)

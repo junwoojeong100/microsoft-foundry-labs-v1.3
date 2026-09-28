@@ -1,14 +1,30 @@
 # 07. Business and Foundry evaluation
 
-**English** | [한국어](../07-evaluation.md) · [Course home](../../README.md)
+**English** | [한국어](../07-evaluation.md) · [Course home](../../README.md#curriculum) · [Help](checkpoints.md)
 
 **Outcome:** Compare instructions on the same cases and apply a Foundry judge to actual responses.
 
-**Prerequisites:** Your configured Sol deployment, Hanbit Technology data, and real SDK responses. This chapter evaluates **direct SDK inference with retrieval performed before generation**. It is not the managed agent from 03 or a later Hosted version.
+**Prerequisites:** Your configured Sol deployment, Hanbit Technology data, and real SDK responses.
 
-Labels below are fresh-lab examples. If results already exist, choose new baseline/candidate labels and use them consistently in every later reference. Never overwrite files or scores from earlier model, judge, or code conditions.
+**Where you work:** terminal for collection/evaluation, editor for results, Foundry for judge deployment.
 
-**Order:** collect/check baseline → collect/compare candidate → prepare judge → calibrate and evaluate policies. First compare the bundled `v1`/`v2` instructions; **do not change code or source documents between runs**. Historical scores and failures are in the separate [validation report](validation-report.md).
+> **Core instruction comparison:** change only the bundled `v1`/`v2` instructions. **Do not change code, sources, or model between runs, and leave holdout closed.** Section 6's optional model comparison uses separate results.
+
+**Chapter map**
+
+| Step | Result to check |
+|---|---|
+| [1. Separate datasets](#1-keep-dev-and-holdout-separate) | Different purposes of dev, holdout, and calibration |
+| [2. Baseline](#2-collect-the-baseline) | Six actual dev rows and business checks |
+| [3. Candidate](#3-collect-a-matched-candidate) | A comparison changing only instructions |
+| [4. Judge](#4-prepare-the-judge-model) | A different base model and deployment from the target |
+| [5. Policy evaluation](#5-evaluate-policies-with-audited-original-references) | Calibration, three criteria, and reference audit |
+| [6. Sol/Luna — optional](#6-optional-solluna-model-comparison) | A separate matched account-API comparison |
+| [Completion check](#completion-check) | Actual result files and row-level judgments |
+
+This chapter evaluates **direct SDK inference with retrieval performed before generation**. It is not the managed agent from 03 or a later Hosted version.
+
+Labels below are fresh-lab examples. If results already exist, choose new baseline/candidate labels and use them consistently in every later reference. Never overwrite files or scores from earlier model, judge, or code conditions. Historical runs are in the [validation report](validation-report.md).
 
 ## 1. Keep dev and holdout separate
 
@@ -28,7 +44,7 @@ python scripts/workshop.py --language en collect --split dev --label baseline-en
 python scripts/workshop.py --language en evaluate --label baseline-en
 ```
 
-Open `manifest.json`, `responses.jsonl`, and `business-evaluation.json` under `outputs/baseline-en/`.
+**Check:** open `manifest.json`, `responses.jsonl`, and `business-evaluation.json` under `outputs/baseline-en/`.
 
 Read `total`, `passed`, `errors`, `business_gate_passed`, and **every check for all six cases**. This is deterministic business validation, not an LLM judge.
 
@@ -61,7 +77,7 @@ python scripts/workshop.py --language en evaluate --label candidate-en
 python scripts/workshop.py --language en compare --baseline baseline-en --candidate candidate-en --variable prompt
 ```
 
-Inspect the conditions, both metrics, and `changed_context_cases` in `outputs/candidate-en/comparison-vs-baseline-en.json`. Do not edit raw responses, scores, or hashes. An unchanged score can legitimately mean “no improvement demonstrated on these six cases.”
+**Check:** inspect the conditions, both metrics, and `changed_context_cases` in `outputs/candidate-en/comparison-vs-baseline-en.json`. Do not edit raw responses, scores, or hashes. An unchanged score can legitimately mean “no improvement demonstrated on these six cases.”
 
 If you changed code, collect a new baseline/candidate pair with that same code. Do not lower the rubric or remove error rows to manufacture improvement.
 
@@ -98,6 +114,8 @@ If baseline and candidate both pass 6/6 dev cases, no business pass-rate improve
 
 ## 5. Evaluate policies with audited original references
 
+### Prepare inputs and calibrate the judge
+
 Prepare a new input label. `--policy` is a separate mode; it does not rewrite earlier Skill inputs or legacy evaluation results.
 
 ```bash
@@ -117,6 +135,8 @@ Canonical evaluator output is integer **`result` (1–5)** and string **`reason`
 
 These criteria have fixed semantics different from legacy generic Relevance. Appropriate abstention can be useful under `policy_helpfulness`. Do not rename old Relevance scores as policy scores or calculate improvement by subtracting numbers from different criteria.
 
+### Evaluate both saved results
+
 Evaluate the complete dev responses **collected under new labels** above. Replace both example labels consistently with your actual new names:
 
 ```bash
@@ -124,7 +144,9 @@ python scripts/workshop.py --language en cloud-evaluate --policy --label baselin
 python scripts/workshop.py --language en cloud-evaluate --policy --label candidate-en --reference baseline-en --confirm-cost --timeout 900
 ```
 
-This judges saved target responses; **it does not perform new target inference**. Preserve the returned `foundry-policy/` results, including `cloud-evaluation-raw.json`, `cloud-evaluation-results.json`, and `policy-reference-audit.json`. Verify all three criteria on every row, source hashes, and the complete `reference_id` echoed in the returned input and `reason`.
+This judges saved target responses; **it does not perform new target inference**.
+
+**Check:** preserve the returned `foundry-policy/` results, including `cloud-evaluation-raw.json`, `cloud-evaluation-results.json`, and `policy-reference-audit.json`. Verify all three criteria on every row, source hashes, and the complete `reference_id` echoed in the returned input and `reason`.
 
 The audit checks **submitted sources and echoed reference IDs**, not a capture of every hidden judge request. Do not turn partial results, errors, missing criteria, wrong references, or self-grounding (`context=response`) into passes. Do not combine `--policy` with `--business-evaluator`, or relabel older Relevance/grounding scores and two-fixture calibration as policy evidence.
 
@@ -155,6 +177,12 @@ For the default labels, open these files. If you changed labels, use those folde
 | Actual candidate policy scores | Six rows × three criteria in `outputs/candidate-en/foundry-policy/cloud-evaluation-results.json` |
 | Whether evaluation used the right sources | `policy-reference-audit.json` in the same `foundry-policy/` folder. A `valid` reference audit is separate from passing scores |
 
-Keep six real rows, a before/after comparison, judge results, and your own review. **Do not open holdout yet.** Preserve the candidate and its exact configuration.
+- [ ] I checked all six actual dev rows, request errors, and case-level business checks.
+- [ ] I reviewed the matched comparison, judge calibration, policy scores, and reference audit separately.
+- [ ] I preserved failures and limitations and **have not opened holdout**.
 
-**Next → [08. Local Hosted execution and Azure deployment](08-hosted.md)**
+Preserve the candidate and its exact configuration.
+
+---
+
+[← 06. Retrieval](06-search-iq.md) · [Course home](../../README.md#curriculum) · [08. Deployment →](08-hosted.md)

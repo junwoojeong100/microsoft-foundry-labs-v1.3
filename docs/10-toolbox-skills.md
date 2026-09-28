@@ -1,12 +1,31 @@
 # 10. Toolbox·Tool Search·Skills·OpenAPI
 
+[English](en/10-toolbox-skills.md) | **한국어** · [전체 과정](../README.ko.md#진행-순서) · [진행 도움말](checkpoints.md)
+
 **완료 목표:** 내가 만든 Search에 keyless 연결을 만들고, 버전 있는 도구와 절차를 실제로 사용합니다.
 
 **시작 조건:** 06의 원래 Search index/조회, 00의 프로젝트 관리 ID, **08의 azd Foundry 확장과 `prepare-hosted`로 만든 실제 준비 폴더**입니다. 확장 설치만으로 `--cwd`에 넣을 폴더가 생기지는 않습니다.
 
 08의 원격 배포를 수행하지 못했어도 **1~3절의 폴더 준비가 성공했다면 이 장의 1~7절은 진행**할 수 있습니다. 폴더가 없다면 [08의 준비 절차](08-hosted.md#3-기존-프로젝트에-연결하는-독립-폴더)부터 마칩니다. 8절 Hosted Toolbox의 원격 배포는 별도로 지원 여부를 확인합니다.
 
-**순서:** Search 연결 → 일반 Toolbox → 도구 발견 → Skill 업로드·연결 → OpenAPI → Hosted Toolbox입니다. **Skill 버전, Toolbox 버전, Hosted agent 버전은 서로 다른 값**입니다. 매번 명령이 반환한 버전을 기록합니다.
+**실행 위치:** 포털에서 역할·연결 확인, 터미널에서 도구·Skill·Hosted 실행. 8절은 터미널 A·B를 사용합니다.
+
+> **버전 구분:** Skill 버전, Toolbox 버전, Hosted agent 버전은 서로 다른 값입니다. 매번 해당 명령이 반환한 버전을 사용합니다.
+
+**진행 지도**
+
+| 단계 | 확인할 결과 |
+|---|---|
+| [1. 프로젝트 권한](#1-프로젝트--search-권한) | 프로젝트 관리 ID의 Search 역할 |
+| [2. keyless 연결](#2-keyless-프로젝트-연결-직접-생성) | 실제 대상과 인증 방식 |
+| [3. 일반 Toolbox](#3-일반-toolbox부터) | 목록 → 실제 검색 → 모델 답변 |
+| [4. 도구 발견](#4-tool-search와-도구-고정) | 새 버전의 발견·고정 도구 목록 |
+| [5. Skill 업로드](#5-skill-준비업로드readback) | 다운로드한 내용과 원본의 일치 |
+| [6. Skill 연결](#6-정확한-skill-버전을-연결) | 실제 Skill load와 도구 결과 |
+| [7. OpenAPI](#7-openapi도-같은-search로) | 별도 호출 주체의 실제 검색 |
+| [8. Hosted Toolbox](#8-같은-toolbox를-hosted로) | 로컬·원격 응답과 보존된 원시 증거 |
+| [9. 기본 버전 선택 — 선택](#9-버전-운영) | 검토한 버전의 명시적 선택 |
+| [완료 확인](#완료-확인) | 버전별 실행·소유권·세션 중지 |
 
 ## 1. 프로젝트 → Search 권한
 
@@ -30,9 +49,9 @@ azd ai connection create "내-prefix-search" --kind cognitive-search --target "�
 python scripts/selfstudy.py set TOOLBOX_SEARCH_CONNECTION_NAME "내-prefix-search"
 ```
 
-Foundry **Project details → Connected resources**에서 같은 연결, 대상, 인증 방식을 읽어 확인합니다. `--force`, API key, 다른 프로젝트 연결을 사용하지 않습니다.
+**확인:** Foundry **Project details → Connected resources**에서 같은 연결, 대상, 인증 방식을 읽어 확인합니다. `--force`, API key, 다른 프로젝트 연결을 사용하지 않습니다.
 
-현재 SDK의 프로젝트 관리 ID 인증 enum은 **`ProjectManagedIdentity`**로 반환될 수 있습니다. 이전 표현인 `AAD`만 기대해 정상 연결을 거부하지 않습니다. CLI의 `--auth-type project-managed-identity`는 그대로 사용하며, enum 차이를 API key나 다른 ID로 우회하지 않습니다.
+현재 SDK의 프로젝트 관리 ID 인증 enum은 `ProjectManagedIdentity`로 반환될 수 있습니다. 이전 표현인 `AAD`만 기대해 정상 연결을 거부하지 않습니다. CLI의 `--auth-type project-managed-identity`는 그대로 사용하며, enum 차이를 API key나 다른 ID로 우회하지 않습니다.
 
 ## 3. 일반 Toolbox부터
 
@@ -80,6 +99,8 @@ python scripts/workshop.py toolbox probe --version "새-selected_version" --labe
 
 ## 5. Skill 준비·업로드·readback
 
+### 입력 준비·업로드
+
 ```bash
 python scripts/workshop.py prepare-extensions --label extensions-ko
 ```
@@ -91,6 +112,8 @@ azd ai skill create "manifest의-skill_name" --file outputs/extensions-ko/policy
 azd ai skill show "manifest의-skill_name" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
+### 같은 버전을 내려받아 원본과 비교
+
 반환된 default_version을 명시해 **아직 없는 새 readback 폴더**로 다운로드합니다.
 
 ```bash
@@ -98,7 +121,7 @@ azd ai skill download "manifest의-skill_name" --version "실제-skill-version" 
 python scripts/selfstudy.py compare-files outputs/extensions-ko/policy-review/SKILL.md .selfstudy/skill-readback/SKILL.md
 ```
 
-bytes가 다르면 맞추려고 다운로드 파일을 편집하지 않습니다. 실패 원인을 확인합니다.
+**확인:** bytes가 다르면 맞추려고 다운로드 파일을 편집하지 않습니다. 실패 원인을 확인합니다.
 
 **처음 만든 Skill의 readback이 일치했다면 바로 6절로 갑니다.** 아래는 이전 Skill의 지침을 실제로 바꿀 때만 사용하는 절차입니다.
 
@@ -140,7 +163,7 @@ python scripts/workshop.py toolbox probe --version "새-Toolbox-version" --label
 python scripts/workshop.py toolbox ask --version "새-Toolbox-version" --label skilled-answer --with-skill --confirm-cost
 ```
 
-`skill_load_verified`, 실제 호출과 정책 결과를 봅니다. 등록했다는 사실만으로 Skill을 읽었다고 하지 않습니다. 이 예제는 Skill의 임의 스크립트를 실행하지 않습니다.
+**확인:** `skill_load_verified`, 실제 호출과 정책 결과를 봅니다. 등록했다는 사실만으로 Skill을 읽었다고 하지 않습니다. 이 예제는 Skill의 임의 스크립트를 실행하지 않습니다.
 
 ## 7. OpenAPI도 같은 Search로
 
@@ -150,7 +173,7 @@ python scripts/workshop.py toolbox ask --version "새-Toolbox-version" --label s
 python scripts/workshop.py openapi plan
 ```
 
-이 경로의 주체는 **Foundry 계정의 system-assigned identity**입니다. Toolbox의 프로젝트 ID가 아닙니다. 계정의 Identity를 켜고 00에서 선택한 **같은 실제 Sol 별칭과 `--expected-model gpt-6-sol`**로 `configure`를 실행해 ID를 새로 읽습니다. 이 ID에 **해당 Search의 Search Index Data Reader**를 부여합니다. `selfstudy.py roles`에서도 구분해 출력합니다.
+이 경로의 주체는 **Foundry 계정의 system-assigned identity**입니다. Toolbox의 프로젝트 ID가 아닙니다. 계정의 Identity를 켜고 00에서 선택한 **같은 실제 Sol 별칭**과 `--expected-model gpt-6-sol`로 `configure`를 실행해 ID를 새로 읽습니다. 이 ID에 **해당 Search의 Search Index Data Reader**를 부여합니다. `selfstudy.py roles`에서도 구분해 출력합니다.
 
 ```bash
 python scripts/workshop.py openapi invoke --label openapi-policy --confirm-cost
@@ -160,6 +183,8 @@ python scripts/workshop.py openapi invoke --label openapi-policy --confirm-cost
 
 ## 8. 같은 Toolbox를 Hosted로
 
+### 패키지·배포 폴더 준비
+
 검증된 **일반 Toolbox 버전**부터 패키징합니다. Skill 포함 버전을 선택했다면 패키징과 serve 양쪽에 `--with-skill`을 추가하고 같은 선택을 유지합니다.
 
 ```bash
@@ -167,11 +192,17 @@ python scripts/workshop.py --script package-toolbox --language ko --version "검
 python scripts/selfstudy.py prepare-hosted --kind toolbox --package "방금-반환한-패키지-경로" --name toolbox-hosted
 ```
 
-08과 같이 생성된 manifest와 실제 프로젝트를 확인합니다. 이전 로컬 서버를 중지한 뒤, 루트의 터미널 A에서 실행한 채 둡니다.
+08과 같이 생성된 manifest와 실제 프로젝트를 확인합니다.
+
+### 터미널 A: 로컬 서버 시작
+
+이전 로컬 서버를 중지한 뒤, 루트의 터미널 A에서 실행한 채 둡니다.
 
 ```bash
 python scripts/workshop.py toolbox serve --version "검증한-Toolbox-version"
 ```
+
+### 터미널 B: 실제 도구 호출
 
 새 터미널 B도 같은 루트에서 `.venv`를 활성화합니다.
 
@@ -180,7 +211,11 @@ python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8
 azd ai agent invoke --cwd "실제-Toolbox-Hosted-절대경로" --local --port 8088 --new-session --new-conversation --timeout 210 "2026년 9월 국내 출장에서 170000원 호텔의 사전 승인 조건은?"
 ```
 
-실제 도구·모델·원문을 확인하고 A를 `Ctrl+C`로 중지합니다. 그 다음 원격 배포를 직접 결정합니다.
+**확인·중지:** 실제 도구·모델·원문을 확인하고 A를 `Ctrl+C`로 중지합니다.
+
+### 원격 배포·원시 응답 검증
+
+그 다음 원격 배포를 직접 결정합니다.
 
 ```bash
 azd deploy "내-prefix-toolbox-hosted" --cwd "실제-Toolbox-Hosted-절대경로"
@@ -208,6 +243,15 @@ python scripts/workshop.py toolbox select --version "검토한-버전" --confirm
 
 이전 버전도 보관해 같은 방법으로 되돌릴 수 있습니다.
 
-**완료:** 목록·실제 검색·모델 답변·Skill readback/load를 각각 기록합니다. 뒤의 실습을 위해 자산과 ledger를 유지하고 최종 정리에서 참조 순서대로 제거합니다.
+## 완료 확인
 
-**다음 → [11. Memory·A2A·Routines](11-memory-a2a-routines.md)**
+- [ ] 목록 조회·실제 검색·모델 답변을 따로 확인했다.
+- [ ] Skill 원본 비교와 실제 load를 확인하고 세 종류의 버전을 구분했다.
+- [ ] OpenAPI·Hosted의 실제 결과 또는 차단 상태를 보관했다.
+- [ ] 로컬 서버와 원격 세션을 중지하고 원시 응답·소유권 기록을 유지했다.
+
+뒤의 실습을 위해 자산과 ledger를 유지합니다. 최종 정리에서 삭제를 선택한 경우에만 참조 순서대로 제거합니다.
+
+---
+
+[← 09. 운영](09-operations.md) · [전체 과정](../README.ko.md#진행-순서) · [11. 기억·위임·예약 →](11-memory-a2a-routines.md)
