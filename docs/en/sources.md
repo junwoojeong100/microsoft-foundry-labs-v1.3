@@ -16,6 +16,8 @@ The repository includes workshop code, synthetic data, packaging tools, and test
 | Search creation/authentication | [Create Search](https://learn.microsoft.com/azure/search/search-create-service-portal), [RBAC](https://learn.microsoft.com/azure/search/search-security-enable-roles) |
 | Retrieval feature plans | [Semantic ranker](https://learn.microsoft.com/azure/search/semantic-how-to-enable-disable), [Knowledge retrieval](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-enable-disable) |
 | Evaluation and tracing | [Evaluation](https://learn.microsoft.com/azure/foundry/how-to/evaluate-generative-ai-app), [Tracing](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-setup) |
+| Managed AI red-teaming regions—conflicting descriptions | [Regional matrix](https://learn.microsoft.com/azure/foundry/concepts/evaluation-regions-limits-virtual-network#supported-regions-for-ai-red-teaming), [Concept overview](https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent#agentic-risks)—NC is common; see [13](13-governance.md) for the discrepancy |
+| Function availability versus execution layer | [Agent Service tool/region/model table](https://learn.microsoft.com/azure/foundry/agents/concepts/limits-quotas-regions#tool-support-by-region-and-model) — distinguish NC Function no from actual local MAF calls |
 | Hosted and CI/CD | [Hosted](https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent), [CI/CD](https://learn.microsoft.com/azure/foundry/agents/quickstarts/set-up-cicd-hosted-agent) |
 | Pricing | [Azure OpenAI](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/), [Search](https://azure.microsoft.com/pricing/details/search/) |
 

@@ -6,6 +6,8 @@
 
 Even when stopping early, **perform the stopping, inventory, and retention decisions below now**. Quality failures are not a reason to leave chargeable resources unattended. Deletion is a separate choice.
 
+**Current transition boundary:** only the explicitly selected old Sweden group was deleted; new NC resources are retained. Keep the mixed managed job's original six rows/**five pass/one fail** separate from the new Task Adherence-only job's **5/5**. Prohibited Actions polarity remains unresolved. Changing regions does not make previously used holdout cases unseen again; do not claim all-native pass, fixed ASR, or production acceptance.
+
 ## Retention mode
 
 If you want to reuse the lab or preserve a validation environment, **do not execute deletion commands**.
@@ -33,19 +35,22 @@ Before unlocking holdout, verify:
 - No errors, omissions, or duplicates remain.
 - The predetermined business gate and all three policy criteria pass, with valid source/reference audits and reviewed native limitations.
 - Required trace and calibration conditions are met.
+- Record chapter 13's **managed run and full row/version/direction audit**, explicitly retaining the Prohibited Actions limitation. Judge a new Task Adherence-only result only within that native scope; filtered old rows or custom `policy-lab` are not substitutes.
 - You did not lower thresholds after seeing failures or edit raw results.
 
-The new **Hosted IQ v1/v2 pair** used a Sol-only map and independently verified six core dev rows per version, 6/6 on all three policy criteria, valid reference audits, and 6/6 actual traces. The same frozen code/corpus allowed comparison. Korean and English policy calibrations each matched 24/24. Preserve the earlier SDK groundedness 5/6 and the SDK comparison rejected for a `code_hash` mismatch as separate history. Equal passing counts in the new pair do not demonstrate pass-rate improvement.
+**Historical Sweden evidence:** preserve its Hosted IQ v1/v2 pair, language calibrations, earlier groundedness 5/6, and rejected comparison under their original conditions. They do not complete NC execution, evaluation, or managed AI red teaming.
 
-**Latest Hosted IQ deployment version 3** verified business checks, all three policy criteria, source audits, and actual traces for six canonical dev rows and eight diagnostic rows (6+8) under suite version 2. Explicit `allowed_citations` preserves mandatory references, and PL06's procedure-only `limit_krw: null` passed under the new runtime/label. Keep earlier failures unchanged; **this is not a new holdout result**.
+**The old Sweden v3 canonical-six/custom-eight passes** are historical complementary evidence. Its native ASR remained unvalidated, and official regional descriptions conflict; unsupported region is not a proven cause. Custom results or a region change cannot replace actual NC managed verification, metric-direction checks, or holdout.
 
-The corrected native Prompt Optimizer job **completed by early stopping at baseline 1.0 with zero new candidates**. [12's local audit](12-improvement.md#3-optimize-instructions-only) verified six original envelopes, three pinned judges/threshold 4, reason reference IDs, and calibration. Its proof is source echo + reason + counterfactual—not captured internal judge requests or generated prompt improvement. Preserve legacy failures separately.
+Preserve **the old Sweden Optimizer and audit** in the archive. The new NC SDK Optimizer failed because required `pass_threshold` initialization was missing, as recorded in 12. Retain new model/trace/evaluation evidence and that failure separately; do not inherit the old success.
 
 If not satisfied, **do not open holdout; record incomplete acceptance**. If unavailable features prevented the Hosted matrix, you may instead select 07's SDK candidate as a separate final target. Do not call that Hosted acceptance.
 
 **Use holdout for only one chosen final target in an experiment.** Cases already seen in an SDK run cannot later be called unseen Hosted test data.
 
 ## 2. Run final acceptance
+
+The NC run `nc-known-final-ko` used four previously seen cases as **known-case regression** on the same frozen v2, passing 4/4, policy, and trace gates. It is not fresh unseen holdout or production approval; its original `split: holdout` record is not rewritten.
 
 Only after all gates in 12 pass, run the block matching your **chosen final target**. Never run the IQ block against a local matrix or count local results as IQ validation.
 

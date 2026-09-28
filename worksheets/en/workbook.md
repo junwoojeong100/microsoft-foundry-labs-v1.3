@@ -4,6 +4,8 @@
 
 Save a private copy, for example under `.selfstudy/`. Record only actual identifiers and observations. Do not include tokens, passwords, API keys, or real company documents.
 
+Use this copy for the **new North Central US run**. Record initial Sol, Prompt Agent, local function/MCP checks, and early logging preparation without inferring other steps or managed red-team completion. Do not copy Sweden completion states.
+
 ## Starting point
 
 | Item | My value / verification |
@@ -13,6 +15,10 @@ Save a private copy, for example under `.selfstudy/`. Record only actual identif
 | Unique WORKSHOP_PREFIX | |
 | Source of project endpoint / ARM ID | |
 | Dedicated resource group and actual region | |
+| New default region: North Central US / actual new project ID | |
+| Previous state, CI identity, outputs/build archive and hash verification | |
+| Exact scope of the explicitly deleted old group / assets retained | |
+| New NC prefix, language-specific ownership, unused result labels | |
 | Source commit / actual local modifications | |
 | Python, SDK, azd/extension versions | |
 | Default model/version: GPT-6 Sol / 2026-09-22 and actual alias | |
@@ -43,7 +49,7 @@ Distinguish `planned / executed / verified / blocked / not run / stopped / retai
 | 10 Toolbox / Skills / OpenAPI / Hosted | | | |
 | 11 Memory / A2A / Routines | | | |
 | 12 Conversations / Optimizer / matrix / calibration | | | |
-| 13 Lab safety / managed identities / Control Plane inventory | | | |
+| 13 Managed AI red teaming / lab safety / identities / Control Plane | | | |
 | 14 GitHub OIDC CI/CD | | | |
 | 15 Final acceptance / resource lifecycle | | | |
 
@@ -105,6 +111,11 @@ Stopped/retained/deleted state:
 | Routine name, dispatch, answer verification, disabled state | |
 | Optimizer target, candidate count, raw judge inputs, decision | |
 | Actual safety policy ID, attachment, interventions/non-interventions | |
+| Managed AI red-team region, actual job/run, requested/returned counts, original verdicts/errors | |
+| Native English target, single-turn/tool-level scope, `num_turns` depth | |
+| Submitted seed/objective count, actual requests, returned/scored rows (separate) | |
+| Native evaluator versions, schemas, directions, thresholds, `azure_ai_project` | |
+| Complementary custom policy-lab results—not a managed red-team replacement | |
 | GitHub OIDC identity, workflow run, exact deployment version, artifacts | |
 
 ## Final acceptance
@@ -118,6 +129,8 @@ Stopped/retained/deleted state:
 | Trace/calibration and unverified areas | |
 | Whether the small acceptance gate passed, and why | |
 | Incomplete items in this synthetic lab | |
+| NC combined native job: six rows, original five pass/one fail, Prohibited Actions limitation | |
+| Separate Task Adherence-only job/label, returned rows, score/flags, and redacted inputs | |
 
 Use holdout for only the chosen final target, after the dev gates. Do not reuse previously seen cases as a new unseen test.
 

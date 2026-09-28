@@ -50,7 +50,7 @@ The core flow is `AIProjectClient → get_openai_client → responses.create`. V
 
 This first call uses the default **`project-responses`** API. Only if you choose the optional Luna comparison in 02, use the same explicit **`account-responses`** API for both models. Success on one API does not stand in for another, and errors do not trigger an automatic switch.
 
-If an existing Sol deployment is named `workshop-compare`, keep it. Do not rename it or replace the model behind a fresh-default alias. Follow [00's explicit configuration](00-setup.md#8-collect-configuration-from-actual-values) and [existing alias guidance](model-selection.md#reuse-existing-deployments-without-changing-them).
+An intact same-project Sol alias may be preserved, but **do not adopt deleted Sweden aliases or endpoints into NC**. Follow [00's new-project configuration](00-setup.md#8-collect-configuration-from-actual-values) and [the scope of alias reuse](model-selection.md#reuse-existing-deployments-without-changing-them).
 
 ## 3. Distinguish three implementations
 

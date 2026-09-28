@@ -4,10 +4,16 @@
 
 **시작 조건:** 03의 업무 이해와 00의 Python 환경. 필요한 MAF·MCP·Hosted 패키지는 이미 같은 실습 환경에 설치되어 있습니다.
 
+**North Central US 사전 확인:** 공식 [Agent Service 도구 리전 표](https://learn.microsoft.com/azure/foundry/agents/concepts/limits-quotas-regions#tool-support-by-region-and-model)는 이 리전의 **Function을 no**로 표시합니다. 이는 그 표가 다루는 서비스 가용성입니다. 로컬 Python 함수 실행과 모델 API의 tool-call 지원은 별도 계층이며, 표 하나로 이 MAF 경로의 성공/실패를 단정하지 않습니다.
+
+**실제 NC 결과:** `FoundryChatClient`를 통한 모델 + 로컬 MAF 경로에서 **`lookup_policy`가 실제 호출되고 유효한 도구 결과가 반환**됐습니다. MCP도 실제 도구 호출과 과거 한도 **120000원** 답변을 확인했습니다. 따라서 이 실습의 로컬 모델/함수 경로는 NC에서 동작했지만, 이것이 표의 모든 관리형 Function 도구를 지원한다고 보장하는 것은 아닙니다.
+
+새 실행도 **bare 모델 → 로컬 함수 → MCP** 순서로 확인하고 실제 응답·`tool_calls`·`tool_execution_verified`를 기록합니다. 로컬 코드의 존재나 다른 계층의 표만으로 결과를 추정하지 않습니다.
+
 ## 1. MAF 에이전트
 
 ```bash
-python scripts/workshop.py maf --question "Foundry와 Agent Framework의 차이를 세 문장으로 설명해 주세요." --output outputs/learner-notes-ko/04-maf.json
+python scripts/workshop.py maf --question "Foundry와 Agent Framework의 차이를 세 문장으로 설명해 주세요." --output outputs/learner-notes-ko/04-nc-maf.json
 ```
 
 `orchestration: local`, `tools: none`과 실제 텍스트를 봅니다. 에이전트 구성은 로컬 Python에 있고 모델은 Azure에서 호출합니다. 도구가 없을 때 구조화 업무 `answer`가 비어 있어도 일반 텍스트 응답은 별도로 확인할 수 있습니다.
@@ -15,7 +21,7 @@ python scripts/workshop.py maf --question "Foundry와 Agent Framework의 차이�
 ## 2. 읽기 전용 함수 연결
 
 ```bash
-python scripts/workshop.py maf --tools --question "2026년 9월 국내 출장 호텔이 170000원인데 예약해도 되나요? 한도와 절차를 알려주세요." --output outputs/learner-notes-ko/04-function.json
+python scripts/workshop.py maf --tools --question "2026년 9월 국내 출장 호텔이 170000원인데 예약해도 되나요? 한도와 절차를 알려주세요." --output outputs/learner-notes-ko/04-nc-function.json
 ```
 
 `lookup_policy`는 동봉한 한빛기술 문서만 조회합니다. **`tool_calls`의 실제 이름·인자·반환값, `tool_execution_verified: true`**와 `answer.decision`, `answer.limit_krw`, `answer.citations`를 봅니다. `tools: function`이라는 설정 표시만으로 실행을 증명하지 않습니다.
@@ -51,6 +57,8 @@ python scripts/workshop.py maf --tools --question "2026년 9월 호텔이 200000
 첫 질문은 날짜를 확인해야 합니다. 두 번째는 승인을 수행하거나 승인됐다고 말하면 안 됩니다. 기대와 다르면 실제 실패로 기록하며 지침·도구 결과·최종 답변 중 어디가 문제인지 구분합니다.
 
 ## 5. Code Interpreter로 실제 파일 만들기
+
+NC에서 실제 Python 실행으로 **6행 CSV를 생성하고 파일/hash를 확인**했습니다. 이는 “파일을 만들었다”는 답변 문구가 아니라 실행 산출물의 증거이며, 다른 도구나 관리형 red-team 완료를 뜻하지 않습니다.
 
 이 도구의 지역/모델 지원과 세션 비용을 포털에서 먼저 확인합니다. 본인 전용 실습에서 생성과 비용을 수락한 뒤 실행합니다.
 

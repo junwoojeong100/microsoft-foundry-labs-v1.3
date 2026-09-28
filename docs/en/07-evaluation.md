@@ -8,11 +8,13 @@
 
 Labels below are fresh-lab examples. If results already exist, choose new baseline/candidate labels and use them consistently in every later reference. Never overwrite files or scores from earlier model, judge, or code conditions.
 
-**Current verified snapshot:** The corrected **Sol + GA IQ SDK candidate** scored **6/6 on each of `policy_groundedness`, `policy_helpfulness`, and `policy_compliance`**, with valid reference audits, using the same frozen GPT-5.5 evaluator catalog and threshold 4. Korean and English policy calibrations **each matched 24/24 expected judgments**. Preserve the original groundedness **5/6** result: it correctly caught D01's team-lead detail when `APPROVAL-01` was absent from the returned evidence.
+**Current NC status:** Korean/English Sol + IQ SDK dev passed 6/6, with policy calibration 24/24 for each language. The first English 5/6 failure remains; a new run passed after explicitly configuring chapter 06's retrieval threshold. Hosted v1/v2 and managed red teaming are separate targets in 12/13. Use fresh labels and verify your own sources, judge, and complete results rather than inheriting recorded scores.
+
+**Historical Sweden Central snapshot:** the Sol + GA IQ SDK candidate passed all three policy criteria 6/6 with valid reference audits; Korean and English calibrations each matched 24/24. Preserve the earlier groundedness 5/6 and D01's unsupported team-lead detail.
 
 **Comparison boundary:** The old/new r2 SDK pair was correctly rejected because coupled code changes altered `code_hash`; do not retroactively call it prompt-only improvement. A **new Hosted IQ v1/v2 pair after code/corpus freeze** independently verified six dev rows per version, 6/6 on all three policy criteria, valid reference audits, and 6/6 actual traces; `benchmark compare` was allowed. Both runs have the same passing counts, so no dev pass-rate improvement is demonstrated. Keep this Hosted evidence, the eight-case diagnostics, and final acceptance distinct.
 
-Subsequent **Hosted IQ deployment version 3** verified business/policy/source-audit/trace checks for six canonical dev rows and eight diagnostic rows under suite version 2. These fresh results do not overwrite the earlier citation-check or PL06 failures, establish prompt-only improvement against different code/case contracts, or constitute new holdout verification.
+Subsequent **Sweden Hosted IQ deployment version 3** verified six canonical and eight diagnostic rows. Those historical custom diagnostics do not verify the new NC run or 13's managed AI red-teaming service, and are not new holdout evidence.
 
 ## 1. Keep dev and holdout separate
 
@@ -79,7 +81,7 @@ A file still named `v2` is not the same frozen instruction if its bytes/hash cha
 python scripts/selfstudy.py model --role judge --deployment workshop-judge
 ```
 
-**Existing lab:** If `workshop-optimizer` is already **GPT-5.5 / 2026-04-24**, explicitly reuse it instead of creating another deployment:
+**Intact same-project resume only:** after freshly verifying that `workshop-optimizer` really is GPT-5.5 / 2026-04-24, this alias may be reused. For the new NC project, prepare `workshop-judge`; do not adopt an archived Sweden deployment:
 
 ```bash
 python scripts/selfstudy.py model --role judge --deployment workshop-optimizer

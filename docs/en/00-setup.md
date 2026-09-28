@@ -6,6 +6,10 @@
 
 Start with a **Microsoft Entra ID account, an Azure subscription, and an active subscription Owner role**. You do not need someone else's preconfigured endpoint or Search service. New resources and model requests can incur charges.
 
+**The current target is a new North Central US (`northcentralus`) project.** Foundation creation, Sol project Responses, Prompt Agent creation/invocation, and local MAF function/MCP calls are now verified. These are path-specific results, not a guarantee for other managed tools or the whole course. Do not recreate resources already prepared.
+
+Subsequent NC evidence includes KO/EN six-file File Search indexing/citations, a real six-row CSV, MAF workflows, Korean/English Search/GA IQ/Hybrid/IQ Chat, Hosted IQ v1/v2 dev 6/6, and an actual scheduled response. **A new Task Adherence-only managed job passed 5/5**; the earlier mixed six-row job still retains five pass/one fail and its Prohibited Actions reason/flag contradiction. This is not an all-ASR fix, and a bounded Group Chat is not convergence. Read the [current results and limits](validation-report.md).
+
 ## 1. Check your permissions
 
 1. Sign in to the [Azure portal](https://portal.azure.com).
@@ -32,6 +36,16 @@ Use an approved development environment. Azure Owner does not override software-
 Your terminal's current directory must contain `README.md`, `scripts/`, and `curriculum.json`.
 
 Do not overwrite a `.venv` created with another Python version or existing personal lab state. Preserve that folder and **extract the ZIP into a new folder**.
+
+### Start a new project without adopting old state
+
+1. Privately archive the previous `.env`, `.selfstudy` configuration/ownership records, CI identity information, `outputs/`, and `.build/`, retaining original hashes. Keep raw recordings unchanged.
+2. In this transition, only the explicitly verified previous Sweden E2E group was deleted. Local state was preserved under `.selfstudy/archives/sweden-20260928-before-northcentral`. This is history, not permission to delete other groups, CI identities, or evidence.
+3. Use a fresh source copy/workspace and terminal. Do not copy old `.env`, active `.selfstudy`, result folders, or azd environments into the new project's active state. If reusing a checkout, verify the archive/hashes first and initialize only fresh active state through the supported setup flow.
+4. Choose a new NC prefix and unused labels, for example `lab-yourname-nc-0928`, `nc-baseline-en`, and `nc-candidate-en`. If replacing example labels, update every collect/evaluate/compare/verify reference consistently.
+5. Never delete or edit `.env`/ownership ledgers to bypass cross-project checks. Retaining a previous CI identity does not establish its roles or access in the new project.
+
+The commands below target **the fresh workspace and new NC resources**. Do not adopt archived Sweden responses, traces, evaluations, or deployment versions as new results.
 
 ### macOS / Linux
 
@@ -77,9 +91,9 @@ Choose your own unique prefix. Replace every `YOUR-...`, `<...>`, and illustrati
 
 | Purpose | Illustrative name—replace it |
 |---|---|
-| Prefix identifying your assets | `lab-yourname-0927` |
-| Resource group | `rg-mf15-yourname-0927` |
-| Foundry project | `mf15-yourname-0927-project` |
+| Prefix identifying your assets | `lab-yourname-nc-0928` |
+| Resource group | `rg-mf15-yourname-nc-0928` |
+| Foundry project | `mf15-nc-project` |
 | Foundry resource | Record the actual name created by the portal. |
 | First model's deployment alias | `workshop-chat` |
 
@@ -89,8 +103,8 @@ The prefix must start with `lab-`, use lowercase letters, numbers, and hyphens, 
 
 1. In the Azure portal, open **Resource groups → Create**.
 2. Select your Owner subscription and a new group name.
-3. Select a region. **Sweden Central is a starting candidate**, not a guarantee that all models and features are available.
-4. Check the [Foundry region table](https://learn.microsoft.com/azure/foundry/reference/region-support) and [Search region table](https://learn.microsoft.com/azure/search/search-region-support) for Hosted, Semantic ranker, and Agentic retrieval.
+3. Select **North Central US**. Project availability is not proof that every model/tool call will work.
+4. Check the [Foundry region table](https://learn.microsoft.com/azure/foundry/reference/region-support) and [Search region table](https://learn.microsoft.com/azure/search/search-region-support). The managed red-teaming [regional matrix](https://learn.microsoft.com/azure/foundry/concepts/evaluation-regions-limits-virtual-network#supported-regions-for-ai-red-teaming) and [concept overview](https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent#agentic-risks) disagree on the wider list, but **both include North Central US**. Keep this region without treating the discrepancy as proof that Sweden was unsupported or caused the ASR error.
 5. Add a nonsecret tag such as `workshop=foundry-v1.5`, then create the group.
 
 Keep only workshop resources in this group. You cannot safely delete an entire existing business resource group at the end.
@@ -98,7 +112,7 @@ Keep only workshop resources in this group. You cannot safely delete an entire e
 For the CLI alternative, replace the subscription ID and names. Do not recreate a group already made in the portal.
 
 ```bash
-az group create --subscription "YOUR-SUBSCRIPTION-ID" --name "rg-mf15-your-lab" --location swedencentral --tags workshop=foundry-v1.5 lifecycle=retain
+az group create --subscription "YOUR-SUBSCRIPTION-ID" --name "rg-mf15-nc-your-lab" --location northcentralus --tags workshop=foundry-v1.5 lifecycle=retain
 ```
 
 `lifecycle=retain` records an intention to keep resources; it is not a deletion lock. Apply [retention mode](15-capstone-cleanup.md#retention-mode) if you want to keep the environment.
@@ -129,8 +143,8 @@ Use the **full ID through `/projects/...`**, not just the parent Foundry account
 Use this instead of the portal route. Do not omit `--assign-identity` or `--allow-project-management true`. Names must be globally unique where required; use the same subscription, group, and region throughout.
 
 ```bash
-az cognitiveservices account create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-your-lab" --name "YOUR-UNIQUE-FOUNDRY-NAME" --custom-domain "YOUR-UNIQUE-FOUNDRY-NAME" --kind AIServices --sku S0 --location swedencentral --assign-identity --allow-project-management true
-az cognitiveservices account project create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-your-lab" --name "YOUR-UNIQUE-FOUNDRY-NAME" --project-name "your-project" --location swedencentral
+az cognitiveservices account create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-nc-your-lab" --name "YOUR-UNIQUE-FOUNDRY-NAME" --custom-domain "YOUR-UNIQUE-FOUNDRY-NAME" --kind AIServices --sku S0 --location northcentralus --assign-identity --allow-project-management true
+az cognitiveservices account project create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-nc-your-lab" --name "YOUR-UNIQUE-FOUNDRY-NAME" --project-name "mf15-nc-project" --location northcentralus
 ```
 
 CLI creation **does not guarantee Foundry User assignments** for the user and project. Verify both identities in section 7.
@@ -169,10 +183,10 @@ Subscription Owner's resource-management permission does not replace data-plane 
 Replace the three values and prefix inside quotes:
 
 ```bash
-python scripts/selfstudy.py configure --project-id "YOUR-PROJECT-ARM-ID" --endpoint "YOUR-PROJECT-ENDPOINT" --deployment "workshop-chat" --expected-model gpt-6-sol --prefix "lab-yourname-0927"
+python scripts/selfstudy.py configure --project-id "YOUR-NEW-NC-PROJECT-ARM-ID" --endpoint "YOUR-NEW-NC-PROJECT-ENDPOINT" --deployment "workshop-chat" --expected-model gpt-6-sol --prefix "lab-yourname-nc-0928"
 ```
 
-**Continuing an existing lab:** If `workshop-compare` already contains Sol, use its actual alias instead of the fresh-environment command above. Keep the **same project, endpoint, and prefix**, and leave the model behind `workshop-chat` unchanged:
+**Only when resuming an intact, unchanged project:** after freshly verifying that `workshop-compare` contains Sol, its alias may be reused with the same project, endpoint, and prefix. **This exception is not the new NC rebuild.** Do not adopt a deleted Sweden project's aliases or archived state into the new project:
 
 ```bash
 python scripts/selfstudy.py configure --project-id "YOUR-PROJECT-ARM-ID" --endpoint "YOUR-PROJECT-ENDPOINT" --deployment workshop-compare --expected-model gpt-6-sol --prefix "YOUR-UNCHANGED-LAB-PREFIX"
@@ -202,6 +216,10 @@ python scripts/workshop.py --language en doctor --cloud
 Check the subscription, tenant, and deployment. `doctor --cloud` checks authentication and metadata, not inference.
 
 **Pass the first real Sol request in the next chapter before creating agents.** Deployment status `Succeeded` is not proof that every tool/API path works. Preserve original errors and use [Troubleshooting](troubleshooting.md) when needed.
+
+Before adding dependent resources, also perform [04's bare MAF model → local function probes](04-tools.md#1-run-a-maf-agent) early. A regional Function table and local Python execution are different evidence layers; record both actual requests separately.
+
+For region-specific checks that need traces from their first requests, **optionally prepare [09's logging resources and connection](09-operations.md#1-create-and-connect-logging-resources) early**. Logging resources were created early in this NC run for that purpose. The normal course still introduces logging in 09; do not assume responses from before connection were backfilled.
 
 ## 9. Generate role-assignment commands when needed
 

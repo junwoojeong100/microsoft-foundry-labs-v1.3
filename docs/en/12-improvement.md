@@ -6,13 +6,15 @@
 
 **Prerequisites:** Judge/dev results from 07, Hosted preparation from 08, the same-account OpenAI endpoint, and logging from 09. The IQ matrix also needs working Search/IQ from 06; the explicitly selected local matrix does not. Check costs for each feature. **Do not open holdout in this chapter.**
 
+**Current North Central US scope:** actual Hosted IQ v1/v2 each passed dev business 6/6 and all three policy criteria 6/6, with traces verified. This prompt comparison kept code/model/data fixed; both passed, so no pass-rate improvement is claimed. Version 2 also passed the separate Korean eight-case diagnostic. Turn/conversation evaluations and Korean/English calibration 24/24 are separate evidence; **the Optimizer failure is recorded below**.
+
 The corrected Sol + GA IQ **SDK candidate** scored 6/6 on all three policy criteria with valid reference audits, under the frozen GPT-5.5 catalog and threshold 4. Preserve the original groundedness 5/6 and D01's unsupported team-lead detail. The old/new SDK comparison was rejected because coupled code changes altered `code_hash`; **do not interpret those scores as isolated prompt improvement or Hosted quality**.
 
 This chapter requires **freezing code first, then collecting a fresh Hosted baseline/candidate pair**. Fix model, corpus, language, retrieval, API, judge catalog, threshold, and generation settings; vary only instructions. If coupled code changes during the comparison, start a new matched pair under fresh labels. Do not edit manifest hashes or weaken comparison checks.
 
-**New independently verified Hosted evidence:** actual **Hosted IQ v1/v2 with a Sol-only map each passed six dev rows, 6/6 on all three policy criteria, valid reference audits, and 6/6 actual traces**. The same frozen code and corpus allowed `benchmark compare`. Equal passing counts do not demonstrate a pass-rate improvement. The remote Toolbox Hosted agent-version-1 response was also verified against its package, calls, session, and source hash.
+**Historical Sweden Hosted evidence:** that Sol-only IQ v1/v2 pair and remote Toolbox had verified results, hashes, and traces. Preserve their original comparison conditions; do not transfer them into NC deployment, smoke, or quality claims.
 
-**Latest separate verification:** corrected **Hosted IQ deployment version 3** verified canonical dev six rows and diagnostic eight rows, including business checks, all three policy criteria, source audits, and actual traces (6+8). The diagnostic suite is version 2. Deployment version 3 is not the prompt preset `--prompt v2`; use your actual returned deployment version. Do not treat this as prompt-only improvement against older code/case contracts or as new holdout evidence.
+**Historical Sweden v3 verification:** six canonical and eight custom diagnostic rows passed there. Read the new NC deployment version separately rather than copying “3.” Custom 8/8 did not validate native managed ASR or establish a regional root cause. [13](13-governance.md) records the conflicting official regional descriptions.
 
 If derived policy/Skill inputs have changed prompt/source hashes, prepare them under new input labels too. Editing local v2 files does not automatically update an already deployed agent or Skill.
 
@@ -60,7 +62,11 @@ Inspect the **six dev rows** in `outputs/policy-inputs-en/optimizer-dev.jsonl`, 
 
 ## 3. Optimize instructions only
 
-The corrected **native Prompt Optimizer job completed** with a Sol target, GPT-5.5, three pinned policy judges at threshold 4, and at most two candidates. It **stopped early at the Optimizer-reported baseline 1.0 and generated zero new candidates**. That aggregate is distinct from individual policy `result` values on the 1–5 scale. **Do not claim that it generated an improved prompt.**
+**The current NC Optimizer result is blocked.** Actual SDK job `opt_3aa677fe825a4b3ea433904433b57e53` failed with `OptimizationFailed / MissingRequiredParameter`: the three custom evaluators did not receive required `pass_threshold`. SDK 2.6.1's `AgentOptimizationEvaluatorRef` exposes only name/version. The rubric and threshold 4 were preserved; required fields were not removed and built-ins were not substituted to manufacture success. The installed azd path also stopped at instruction/metadata preflight despite explicit documented configuration. This is not a model-quality score of zero or a promotion.
+
+Read the SDK poller's ID as **`poller.details["job_id"]`**. `details.job_id` raises locally in this version, but a server job may already exist. Reconcile its ID from the exact target's job list and retrieve that job instead of repeating creation.
+
+The **historical Sweden Optimizer job** reached baseline 1.0 with zero candidates and passed its reference audit. The normal procedure below requires supported/verified evaluator initialization in the new environment. Do not query deleted Sweden jobs or adopt archived exports as NC results.
 
 1. Create a **separate owned Prompt Agent** using the same English synthetic policies/instructions as 03. Distinguish it with a name such as `<prefix>-optimize-en`.
 2. Select **Optimize / Create optimization run → Agent**.
@@ -82,7 +88,7 @@ Use the original policy dataset actually uploaded and its matching-language cali
 python scripts/audit_optimizer.py --export-directory outputs/evaluation-exports/optimizer-policy-export-en --dataset outputs/policy-inputs-en/optimizer-dev.jsonl --calibration-label policy-calibration-en --language en --output outputs/optimizer-policy-audit-en.json
 ```
 
-This script **audits saved files without contacting Azure**. Its actual run verified **6/6 source echoes and 6/6 on each of all three criteria**, matching original envelopes, three pinned judge versions/threshold 4, reason reference IDs, and calibration. It rejects wrong scope, references, thresholds, and response-as-reference mappings without modifying original exports or scores.
+This script **audits saved files without contacting Azure**. Sweden's 6/6 source-echo/criteria/reference audit is archived history. NC requires its own new inputs, job, and calibration; do not modify old exports to bypass a scope/reference/threshold mismatch.
 
 Inspect `validation_status: valid`, all six matched rows, and the stated evidence scope:
 
@@ -106,13 +112,13 @@ Sections 5–9 use **workflow / sequential / IQ / account-chat / Invocations**, 
 
 The matrix helper accepts **local or IQ retrieval**, but still only **sequential / account-chat / Invocations / v1 or v2**. A local matrix is not IQ validation or an automatic fallback after a failed request.
 
-This Hosted instruction comparison uses **one Sol target**. Optional Luna model comparison remains a separate matched `account-responses` experiment in 02/07. For a fresh environment, select the actual Sol alias:
+This Hosted instruction comparison uses **one Sol target in the new NC project**. Optional Luna comparison remains a separate matched `account-responses` experiment in 02/07. Select the actual fresh-environment Sol alias:
 
 ```bash
 python scripts/selfstudy.py models primary=workshop-chat
 ```
 
-If the existing Sol deployment is `workshop-compare`, use this instead:
+Only in an **intact same-project resume**, after freshly verifying Sol actually exists as `workshop-compare`, may you use this alternative. Do not infer that an old Sweden alias exists in the new NC project:
 
 ```bash
 python scripts/selfstudy.py models primary=workshop-compare
@@ -297,7 +303,7 @@ Keep agents, versions, volumes, and evidence in retention mode. Leave holdout lo
 
 ## 11. Separate eight-case policy-lab diagnostics
 
-This is an **explicit eight-case synthetic diagnostic suite, not holdout**. It does not replace the six core dev cases and does not use `--unlock-holdout`. Keep the prepared, smoke-tested exact Hosted deployment, `--prompt v2` profile, and one-Sol model map. Run **only the retrieval path you selected**, with unused result labels.
+This is a **complementary eight-case synthetic diagnostic suite**. Chapter 13's **managed AI red teaming is the primary verification target**; this suite cannot replace or prove that managed run. It also does not replace core dev or holdout and never uses `--unlock-holdout`. Use the exact new NC deployment/profile after smoke and fresh labels such as `nc-policy-lab-en`, replacing every linked reference consistently.
 
 IQ path:
 
@@ -317,10 +323,10 @@ python scripts/workshop.py --language en benchmark policy-report --label policy-
 
 `policy-report` reads stored results without new inference. Review requested, returned, missing, and error counts, all three scores/reasons, source/reference audits, and matching policy calibration. `policy_compliance` is **higher-is-safer**; a score below 4 is the violation direction. Do not reverse that interpretation or rewrite existing provider `attack_success` flags. Unscored/error rows stay in the denominator.
 
-**Latest diagnostic verification:** the new frozen runtime on **Hosted IQ deployment version 3** produced 8/8 inputs/responses under diagnostic suite version 2, passed **business checks and all three policy criteria**, and verified source audits and 8/8 actual traces. Its six canonical dev rows also passed business/policy/audit/trace checks. These are fresh results, not edits to earlier failures.
+**Current NC diagnostic verification:** actual Hosted IQ **deployment v2** passed canonical dev 6/6 and the separate Korean custom diagnostic 8/8, with all three policy criteria and traces verified. The explicit diagnostic recorded 0/8 policy violations. Sweden v3 remains archived history; neither custom result proves or replaces managed red-team execution, completion, or ASR.
 
 Suite version 2 permits additional support only within **explicit `allowed_citations` for PL05, PL06, and PL07 in both languages**. Lists must contain known, unique IDs and include every mandatory reference; answers missing required references or adding unrelated ones remain rejected. PL06's procedure-only question returned **`limit_krw: null`** under corrected v2 instructions. Frozen version-1 results remain readable unchanged, including the earlier extra-citation failures and `150000` response, scores, sources, and labels.
 
-These eight cases are not a new holdout. Stop completed diagnostic sessions by their actual labels and retain resources, but [archive evidence before expiry](advanced/session-files.md).
+These eight cases are neither a new holdout nor a managed red-team scan. Stop new diagnostic sessions by their actual labels and [archive evidence before expiry](advanced/session-files.md). Read previous Sweden results only as archived history.
 
-**Next → [13. Lab safety, managed identities, and Control Plane](13-governance.md)**
+**Next → [13. Lab safety, managed AI red teaming, and Control Plane](13-governance.md)**

@@ -6,6 +6,10 @@
 
 **Prerequisites:** A Prompt Agent from 03 or Hosted Agent from 08. You prepare Application Insights and Log Analytics here.
 
+The new NC project **created logging resources early**, before this chapter, to trace original requests for region-specific checks. Register its actual resources rather than copying Sweden workspace/customer IDs, project IDs, or traces. Resource creation/connection is separate from verified trace queries or Insights results.
+
+**Optional early preparation:** after project/model setup in 00, perform this section's logging setup/connection before the first request you need to trace. The normal course sequence still introduces it in 09. If already prepared, verify the actual connection/roles instead of creating duplicates.
+
 ## 1. Create and connect logging resources
 
 1. In the Azure portal, open **Create a resource → Log Analytics workspace** and create one in your workshop subscription/group.
@@ -14,7 +18,21 @@
 4. In Foundry, open **Agents → Traces → Connect** and select your new Application Insights resource.
 5. If Connect is absent, use **Manage → Project details → Connected resources → Add connection → Application Insights**.
 
-**First connection in an empty project:** If `azd ai connection create` cannot discover the project's ARM context, create the first Application Insights connection through the portal steps above, then retry in the same project. Alternatively, use the [prepared azd environment from 08](08-hosted.md#3-prepare-an-isolated-folder-for-the-existing-project), which contains the verified `AZURE_AI_PROJECT_ID` and matching endpoint. Do not borrow another project's connection, guess an ARM ID, or recreate the project to bypass discovery.
+### First CLI connection and actual native-SDK requirements
+
+**The verified NC first-connection path used real azd ARM context, not portal bootstrap.** Use the folder prepared by [08's `prepare-hosted --kind runtime`](08-hosted.md#3-prepare-an-isolated-folder-for-the-existing-project) as `--cwd` for `azd ai connection create`; it contains the actual project ARM ID and endpoint. Preparing this context does not require a Hosted deployment or model invocation. Do not borrow another project's environment.
+
+The first native red-team attempt failed with **zero rows because the App Insights connection lacked `ResourceId`**. A created connection is not necessarily usable by the SDK telemetry getter. This SDK path required:
+
+| Connection item | Required actual value |
+|---|---|
+| Metadata `ResourceId` | The Application Insights resource's full ARM ID |
+| Metadata `ApplicationInsightsConnectionString` | That resource's telemetry connection string |
+| `APIKey` credential | The **same telemetry connection string** |
+
+Here `APIKey` is **the telemetry credential class required by the installed SDK 2.6.1 getter**, not a model API key. Do not obtain a model key or change Entra model authentication for this fix. A project-managed-identity App Insights connection could be created but was unsupported by that getter. Keep this version-specific telemetry exception separate from model/Search authentication.
+
+The current CLI supports repeated `--metadata KEY=VALUE` plus `--auth-type api-key`/`--key` for this credential. **Treat the actual connection string as private configuration; never expose it in recordings, source control, or shared logs.** After correcting metadata/credentials, a new native run returned six rows. Preserve the failed zero-row attempt.
 
 A connection does not itself grant permission to read logs. Verify your access:
 
@@ -28,7 +46,7 @@ python scripts/selfstudy.py roles --user-object-id "YOUR-USER-OBJECT-ID"
 
 Verify or grant **Log Analytics Reader** at the needed scope. Organizations with protected tables may also require Privileged Monitoring Data Reader. Do not put tokens or connection strings into shared logs or environment examples.
 
-**Insights has an additional caller:** both the interactive user and the **project managed identity** need **Monitoring Reader** on this Application Insights resource. If protected content such as `AppGenAIContent` is read, verify **Privileged Monitoring Data Reader** for both identities at the appropriate scope. In live validation, ordinary trace queries succeeded while Insights returned a dependency 403 until these scoped roles were present. Do not broaden them to the whole subscription.
+**Insights has an additional caller:** verify Monitoring Reader for the user/project identity and scoped Privileged Monitoring Data Reader when protected content is needed. The dependency 403 observed in the **previous Sweden run** is historical troubleshooting, not NC permission verification. Check only the roles needed on the new lab's logging resources.
 
 ## 2. Send a new request after connecting
 
@@ -58,6 +76,8 @@ For Hosted, also create **a new request after connecting logs**. Server-side tra
 
 ## 4. Agent Insights
 
+**Current NC results:** an on-demand scan analyzed 16 traces in a one-hour window and returned one finding; scheduling remains disabled. A finding is an analysis suggestion, not ground truth or an automatically applied runtime change.
+
 If available, run one **Insights** scan against a limited time range of your agent's existing synthetic traces.
 
 Before execution, check the model, budget, target agent, and time range. Compare findings with the original trace. **AI-suggested failure patterns and severity are not ground truth.**
@@ -80,6 +100,8 @@ If traces, models, or the feature are unavailable, record “Insights not run.�
 GPT-6 **reasoning tokens count toward output cost and the output cap**. Do not calculate cost from visible answer length alone. Defaults are `low` / `32768`; the cap is not actual usage.
 
 ## 6. Bound recurring evaluation
+
+**Current NC version finding:** Coherence v1 failed with zero rows and `CoherenceEvaluator.__init__() got an unexpected keyword argument 'is_reasoning_model'`. After checking the actual catalog, a separate rule/evaluation pinned **v13**, retaining the same GPT-5.5 judge, threshold 3, and one-run/hour cap. It graded the original stored response as score 5/pass. Both rules are paused and the v1 failure remains. Do not change unrelated evaluator versions to v13.
 
 If a trace evaluation for your agent has completed, open its recurring settings. First decide the end time and budget, then select a small sample, such as at most five traces per run, and a limited cadence such as hourly.
 

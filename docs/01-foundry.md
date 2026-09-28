@@ -48,7 +48,7 @@ python scripts/workshop.py model --question "처음 국내 출장을 가는 직�
 
 이번 기본 호출은 **`project-responses`**입니다. 02에서 선택적으로 Luna와 비교할 때만 두 모델 모두 같은 명시적 **`account-responses`**를 사용합니다. API 성공을 서로 대신하거나 오류 후 자동 전환하지 않습니다.
 
-이전 환경의 Sol이 `workshop-compare`로 배포되어 있어도 이름을 바꾸거나 새 기본 이름의 모델을 교체하지 않습니다. [00의 명시적 설정](00-setup.md#8-실제-값으로-설정-자동-수집)과 [모델 별칭 안내](model-selection.md#기존-배포를-그대로-재사용하기)를 따릅니다.
+삭제되지 않은 같은 프로젝트의 Sol 별칭은 보존할 수 있지만, **새 NC에서는 삭제된 Sweden 별칭이나 Endpoint를 인수하지 않습니다**. [00의 새 프로젝트 설정](00-setup.md#8-실제-값으로-설정-자동-수집)과 [별칭의 적용 범위](model-selection.md#기존-배포를-그대로-재사용하기)를 따릅니다.
 
 ## 3. 세 가지 구현을 구분
 

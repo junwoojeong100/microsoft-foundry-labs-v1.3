@@ -18,9 +18,11 @@
 | Trace·Insights·지속 평가·비용 | [09](09-operations.md) |
 | Toolbox·Tool Search·Skills·OpenAPI·Hosted Toolbox | [10](10-toolbox-skills.md) |
 | Memory·A2A·Routines | [11](11-memory-a2a-routines.md) |
-| 대화 평가·Optimizer·matrix·calibration·회귀 | [12](12-improvement.md) |
-| 실습 Guardrails·red teaming·관리 ID·Control Plane 자산 | [13](13-governance.md) |
+| 대화 평가·Optimizer·matrix·calibration·보완 policy 진단 | [12](12-improvement.md) |
+| 관리형 AI red teaming(기본 검증)·Guardrails·관리 ID·Control Plane | [13](13-governance.md) |
 | 포함된 GitHub OIDC CI/CD | [14](14-additional-permissions.md) |
 | Holdout·최종 인수·비용 자원 정리 | [15](15-capstone-cleanup.md) |
 
 **실행·검증·차단·미실행**을 구분해서 기록합니다. 실제로 수행하지 않은 단계를 완료로 표시하지 않습니다.
+
+현재 대상은 North Central US입니다. 12의 사용자 지정 진단이나 이전 Sweden 결과는 13의 새 관리형 red-team 실행을 대신하지 않습니다.

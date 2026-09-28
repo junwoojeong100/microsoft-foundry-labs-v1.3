@@ -55,6 +55,8 @@ The helper reuses the saved project ID/location, derives the owned service name 
 
 The generated `azure.yaml` must contain the existing project binding and only the intended Hosted agent service. Do not add new model deployments or turn the whole source repository into a service. There is no need to provision another Foundry project.
 
+This `--kind runtime` folder also supplied actual project ARM context for the first App Insights CLI connection. See [09's native logging requirements](09-operations.md#first-cli-connection-and-actual-native-sdk-requirements); preparing context is not Hosted deployment or inference success.
+
 Record the exact service name and absolute folder path. Check `main.py`, Python 3.13, the Responses protocol, actual endpoint/model, and remote `managed-identity` authentication. Use this same service and folder in subsequent commands.
 
 ## 4. Make a real local request

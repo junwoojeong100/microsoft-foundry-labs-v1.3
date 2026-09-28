@@ -6,10 +6,16 @@
 
 **Prerequisites:** The policy context from 03 and Python environment from 00. The required MAF, MCP, and Hosted packages are installed in that same environment.
 
+**North Central US preflight:** the official [Agent Service regional tool table](https://learn.microsoft.com/azure/foundry/agents/concepts/limits-quotas-regions#tool-support-by-region-and-model) lists **Function as no** here. That is service availability for the surface documented by the table. Local Python execution and model-API tool-call support are different layers; the table alone is not a test of this local MAF path.
+
+**Actual NC result:** this lab's `FoundryChatClient` model + local MAF path **really called `lookup_policy` and returned valid tool results**. MCP also made an actual tool call and returned the correct historical **KRW 120000** answer. The local model/function path therefore worked here; it is **not a blanket guarantee for every managed Function tool** in the table.
+
+For new runs, check **bare model → local function → MCP** in order and retain actual responses, `tool_calls`, and `tool_execution_verified`. Do not infer success from local code existence or a different layer's availability table.
+
 ## 1. Run a MAF agent
 
 ```bash
-python scripts/workshop.py --language en maf --question "Explain the difference between Foundry and Agent Framework in three sentences." --output outputs/learner-notes-en/04-maf.json
+python scripts/workshop.py --language en maf --question "Explain the difference between Foundry and Agent Framework in three sentences." --output outputs/learner-notes-en/04-nc-maf.json
 ```
 
 Check `orchestration: local`, `tools: none`, and the actual text. Python constructs the agent locally; the model runs in Azure. Without tools, the structured business `answer` may be empty while a general text response is still available.
@@ -17,7 +23,7 @@ Check `orchestration: local`, `tools: none`, and the actual text. Python constru
 ## 2. Connect a read-only function
 
 ```bash
-python scripts/workshop.py --language en maf --tools --question "A hotel for my domestic business trip in September 2026 costs KRW 170000 per night. May I book it? Explain the limit and procedure." --output outputs/learner-notes-en/04-function.json
+python scripts/workshop.py --language en maf --tools --question "A hotel for my domestic business trip in September 2026 costs KRW 170000 per night. May I book it? Explain the limit and procedure." --output outputs/learner-notes-en/04-nc-function.json
 ```
 
 `lookup_policy` reads only the bundled Hanbit Technology documents. Inspect each actual **`tool_calls` entry: `name`, `arguments`, `completed`, and `result_text`**, together with **`tool_execution_verified: true`** and `answer.decision`, `answer.limit_krw`, and `answer.citations`. The static configuration label `tools: function` alone does not prove execution.
@@ -53,6 +59,8 @@ python scripts/workshop.py --language en maf --tools --question "My hotel in Sep
 The first answer should ask for the date. The second must not perform or claim approval. Record deviations as real failures, and distinguish instruction, tool-result, and final-answer problems.
 
 ## 5. Generate an actual file with Code Interpreter
+
+The NC run used actual Python execution to **produce a six-row CSV with file/hash verification**. This is artifact evidence, not merely an “I created a file” statement, and does not establish other tool or managed red-team completion.
 
 First verify regional/model support and session pricing in the portal. Once you accept creation and cost in your dedicated lab:
 

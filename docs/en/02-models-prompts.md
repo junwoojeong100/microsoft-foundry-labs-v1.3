@@ -69,7 +69,7 @@ Generate direct SDK answers using the same Hanbit Technology policies and **acco
 | Environment | `ACTUAL-SOL-DEPLOYMENT` | `ACTUAL-LUNA-DEPLOYMENT` |
 |---|---|---|
 | Fresh defaults | `workshop-chat` | `workshop-compare` |
-| Reused earlier lab | `workshop-compare` | `workshop-chat`, only if verified as Luna |
+| Intact same-project reuse only | `workshop-compare` | `workshop-chat`, only if verified as Luna—not an archived Sweden deployment |
 
 ```bash
 python scripts/workshop.py --model-deployment "ACTUAL-SOL-DEPLOYMENT" --language en answer --api account-responses --prompt v2 --retrieval local --question "What are the domestic business-trip lodging limit and pre-booking procedure for September 2026?" --output outputs/learner-notes-en/02-sol-account.json

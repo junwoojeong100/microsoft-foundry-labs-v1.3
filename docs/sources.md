@@ -14,6 +14,8 @@
 | Search 생성·인증 | [Create Search](https://learn.microsoft.com/azure/search/search-create-service-portal), [RBAC](https://learn.microsoft.com/azure/search/search-security-enable-roles) |
 | 검색 기능 플랜 | [Semantic ranker](https://learn.microsoft.com/azure/search/semantic-how-to-enable-disable), [Knowledge retrieval](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-enable-disable) |
 | 평가·추적 | [Evaluation](https://learn.microsoft.com/azure/foundry/how-to/evaluate-generative-ai-app), [Tracing](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-setup) |
+| 관리형 AI red teaming 리전 — 문서 간 불일치 | [리전 표](https://learn.microsoft.com/azure/foundry/concepts/evaluation-regions-limits-virtual-network#supported-regions-for-ai-red-teaming), [개념 개요](https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent#agentic-risks) — NC는 공통, 나머지 차이는 [13](13-governance.md) |
+| Function 표와 실행 계층 | [Agent Service 도구 리전/모델 표](https://learn.microsoft.com/azure/foundry/agents/concepts/limits-quotas-regions#tool-support-by-region-and-model) — NC Function no와 로컬 MAF 실제 호출을 구분 |
 | Hosted·CI/CD | [Hosted](https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent), [CI/CD](https://learn.microsoft.com/azure/foundry/agents/quickstarts/set-up-cicd-hosted-agent) |
 | 가격 | [Azure OpenAI](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/), [Search](https://azure.microsoft.com/pricing/details/search/) |
 

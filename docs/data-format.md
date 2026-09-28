@@ -16,6 +16,14 @@
 
 영문 데이터는 `en/`에 따로 있으며 ID·금액·날짜와 판단 기준을 유지합니다. 서로 다른 언어의 결과를 한 번의 고정 실험으로 합치지 않습니다.
 
+## 프로젝트·리전별 실행 경계
+
+현재 실습은 **새 North Central US 프로젝트**입니다. Sweden의 `.env`·소유권 ledger·실험 결과·패키지는 비공개 hash 보관본으로 남기며 새 활성 workspace에 인수하지 않습니다. 새 프로젝트 ID/Endpoint/prefix를 확인하고 언어별 독립 소유 이름을 사용합니다.
+
+새 label의 예시는 `nc-baseline-ko`, `nc-candidate-ko`, `nc-policy-calibration-ko`, `nc-policy-lab-ko`이며 영어는 `-en`으로 구분합니다. 각 장의 예시를 바꿀 때 입력 준비·수집·평가·compare·report·verify의 모든 참조를 같은 이름으로 맞춥니다. 이전 결과 파일을 새 label로 복사하거나 hash를 바꾸지 않습니다.
+
+아래 Sweden 기록은 역사적 근거입니다. NC 혼합 관리형 job의 원래 6행은 **5 pass/1 fail**이며, 별도 Task Adherence-only job은 **5/5**입니다. 원래 실패 행을 빼거나 custom 진단으로 바꾸지 않습니다. 각 run의 원시 기록·입력 가림·실제 반환 수·판정 방향을 보존하며, 두 job 모두 holdout과 별개입니다.
+
 정책이나 지침을 바꾸면 사용한 버전과 hash를 보관합니다. 원시 응답·평가 점수·holdout을 고쳐 통과시키지 않습니다.
 
 ## 지침 개정의 출처 기록
@@ -36,7 +44,7 @@ Policy calibration의 24/24는 기대 판정의 일치 수이지 나쁜 control�
 
 **진단 suite version 2**는 두 언어 모두 **PL05·PL06·PL07에만** 명시적 `allowed_citations`를 사용합니다. 허용 목록은 필수 `required_citations`를 모두 포함합니다. 사례 목록과 답변의 인용 ID는 알려진 문서 ID이며 중복이 없어야 합니다. 답변도 필수 참조를 빠뜨릴 수 없고, 추가 인용은 허용 목록 안에 있어야 하며 무관한 참조는 거부합니다. 다른 사례 계약은 유지합니다.
 
-Hosted IQ 배포 버전 3에서 이 계약을 검증했습니다. **기존 동결 version 1 결과는 원래 형태 그대로 읽을 수 있으며 수정하지 않습니다.** 과거 결과를 통과시키려고 목록이나 저장된 suite 버전을 사후 변경하지 않습니다.
+이 계약은 **NC Hosted IQ 배포 v2의 별도 진단 8행**에서도 확인했습니다. 이전 Sweden Hosted v3와 동결 suite version 1 기록은 원래 형태 그대로 보관하며 저장된 버전/hash를 수정하지 않습니다. 배포 버전, prompt 키와 suite 버전은 서로 다른 값입니다.
 
 PL06처럼 **절차만 묻는 질문**은 금액을 요구하지 않으므로 `limit_krw`가 **`null`**이어야 합니다. 원문에 150000원이 있더라도 요청하지 않은 한도를 채워 넣지 않습니다. 이 구조화 검사는 의미 judge와 별개이며, 수정된 지침은 새 동결 runtime/label에서 확인했습니다. 이전 `150000` 응답은 수정하지 않습니다.
 

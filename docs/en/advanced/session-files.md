@@ -4,6 +4,8 @@
 
 Use the **actual Hosted folder and session ID** from 08 or 10. Do not guess another session's identity.
 
+NC also retrieved **eight JSON files from a successful Hosted Toolbox session**, checking sizes/SHA256 and the original tool-result digest. The failed SSE and successful canonical capture remain separate records. Read Sweden files from their archive rather than querying the deleted group's sessions.
+
 ## 1. Verify the session
 
 ```bash
@@ -21,7 +23,9 @@ Use paths actually returned by the listing; do not invent a remote path.
 
 ## 2. Archive to absolute paths before expiry
 
-**Files can be downloaded from an already stopped session while they remain available.** Actual remote stopped-session evidence was retrieved and its recorded tool-result hashes matched. Do not restart the session or generate another inference just to obtain evidence.
+In NC, the response reported `/home/session/workshop-evidence/...`, but the CLI file API required a **session-home-relative remote path**. Remove `/home/session/`, list the actual `workshop-evidence/...` directory, and select returned filenames. An absolute remote-path 404 does not establish expiry. In contrast, the **local `--target-path` must be absolute**, as described below.
+
+**Files in the current project's stopped session can be downloaded while still available.** The previous Sweden retrieval/hash match is historical, not a guarantee of remote availability after that group was deleted. Do not generate replacement inference to recreate missing evidence.
 
 Archive only the required request, response, tool result, summary, or failure **before service-managed session/file expiry**. Retaining resources or stopping compute does not guarantee indefinite file retention. Check actual retention conditions; do not substitute a different response for expired evidence.
 

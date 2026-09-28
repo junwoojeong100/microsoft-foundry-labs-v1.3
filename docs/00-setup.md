@@ -4,6 +4,10 @@
 
 출발점은 **Microsoft Entra ID 계정 + Azure 구독 + 활성 구독 Owner**입니다. 이 장에서 다른 사람이 준비한 Endpoint나 Search를 받지 않습니다. 새 리소스와 모델 호출에는 비용이 발생할 수 있습니다.
 
+**현재 대상은 North Central US(`northcentralus`)의 새 프로젝트입니다.** 기반 자원에 이어 Sol project Responses, Prompt Agent 생성/호출, 로컬 MAF 함수와 MCP를 확인했습니다. 이는 이 경로들의 실제 결과이며 다른 관리형 도구나 전체 실습의 성공 보장은 아닙니다. 이미 생성한 자원은 중복 생성하지 않습니다.
+
+후속 NC 확인에는 KO/EN File Search 6파일 인덱싱·인용, 실제 6행 CSV, MAF workflow, 한·영 Search/GA IQ/Hybrid/IQ Chat, Hosted IQ v1/v2 dev 6/6과 실제 예약 응답이 포함됩니다. **새 Task Adherence-only 관리형 job은 5/5 통과**했지만, 이전 혼합 6행의 5 pass/1 fail과 Prohibited Actions 설명/flag 불일치는 유지합니다. 전체 ASR 수정은 아니며 Group Chat의 3라운드 종료도 업무적 합의가 아닙니다. [현재 결과와 제한](validation-report.md)을 구분해 읽습니다.
+
 ## 1. 내 권한 확인
 
 1. [Azure 포털](https://portal.azure.com)에 로그인합니다.
@@ -30,6 +34,16 @@ PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owne
 터미널의 현재 폴더에 `README.md`, `scripts/`, `curriculum.json`이 보여야 합니다.
 
 이미 다른 Python으로 만든 `.venv`나 개인 실습 상태가 있다면 덮어쓰지 않습니다. 기존 폴더를 보관하고 **새 폴더에 ZIP을 풀어 시작**하세요.
+
+### 새 프로젝트에서 이전 상태를 인수하지 않기
+
+1. 이전 프로젝트의 `.env`, `.selfstudy` 설정/소유 기록, CI identity 정보, `outputs/`, `.build/`를 승인된 **비공개 보관 위치**에 원본 hash와 함께 보존합니다. 원시 녹화도 그대로 둡니다.
+2. 이번 전환에서는 이전 Sweden 전용 E2E 그룹 하나만 명시적으로 확인해 삭제했고, 로컬 상태는 `.selfstudy/archives/sweden-20260928-before-northcentral`에 보관했습니다. 이것은 이력이며 다른 그룹·CI ID·기록의 추가 삭제 지시가 아닙니다.
+3. 새 소스 사본/workspace와 새 터미널을 사용합니다. 이전 `.env`, 활성 `.selfstudy`, 결과 폴더나 azd 환경을 새 프로젝트의 활성 상태로 복사하지 않습니다. 같은 checkout을 재사용한다면 보관본/hash를 먼저 확인하고 지원되는 설정 절차로 새 활성 상태만 준비합니다.
+4. 새 NC prefix와 결과 label을 정합니다. 예: `lab-yourname-nc-0928`, `nc-baseline-ko`, `nc-candidate-ko`. 명령의 예시 label을 바꿀 때는 collect/evaluate/compare/verify의 모든 참조도 함께 바꿉니다.
+5. `.env`나 소유권 ledger를 삭제·수정해 프로젝트 혼합 검사를 우회하지 않습니다. 이전 CI ID를 보존한 것만으로 새 프로젝트의 역할·접근이 준비되는 것은 아닙니다.
+
+이하 명령은 **새 workspace와 새 NC 자원**을 대상으로 합니다. 이전 Sweden 응답·trace·평가·배포 버전을 새 결과로 인수하지 않습니다.
 
 ### macOS / Linux
 
@@ -73,9 +87,9 @@ azd auth login
 
 | 용도 | 이름 예시 |
 |---|---|
-| 내 자산을 구분할 접두사 | `lab-jw-0927` |
-| 리소스 그룹 | `rg-mf15-jw-0927` |
-| Foundry 프로젝트 | `mf15-jw-0927-project` |
+| 내 자산을 구분할 접두사 | `lab-yourname-nc-0928` |
+| 리소스 그룹 | `rg-mf15-yourname-nc-0928` |
+| Foundry 프로젝트 | `mf15-nc-project` |
 | Foundry 리소스 | 포털이 생성한 실제 이름을 기록 |
 | 처음 배포할 모델의 별칭 | `workshop-chat` |
 
@@ -85,8 +99,8 @@ azd auth login
 
 1. Azure 포털 **Resource groups → Create**.
 2. 내 Owner 구독과 새 그룹 이름을 선택합니다.
-3. 리전을 정합니다. **Sweden Central은 시작 후보**이지 모든 모델·기능의 제공 보장이 아닙니다.
-4. [Foundry 리전](https://learn.microsoft.com/azure/foundry/reference/region-support)과 [Search 리전](https://learn.microsoft.com/azure/search/search-region-support)에서 이후 사용할 Hosted, Semantic ranker, Agentic retrieval의 지원을 확인합니다.
+3. **North Central US**를 선택합니다. 프로젝트 생성 가능 여부와 모든 모델·도구의 실제 성공은 별개입니다.
+4. [Foundry 리전](https://learn.microsoft.com/azure/foundry/reference/region-support)과 [Search 리전](https://learn.microsoft.com/azure/search/search-region-support)을 확인합니다. 관리형 AI red teaming은 [리전 표](https://learn.microsoft.com/azure/foundry/concepts/evaluation-regions-limits-virtual-network#supported-regions-for-ai-red-teaming)와 [개념 개요](https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent#agentic-risks)의 목록이 다르지만 **North Central US는 두 문서에 모두 포함**됩니다. 이 리전을 유지하되, 문서 불일치만으로 Sweden 미지원이나 ASR 오류의 원인을 단정하지 않습니다.
 5. `workshop=foundry-v1.5` 같은 비밀 아닌 태그를 달고 생성합니다.
 
 이 그룹에는 실습 자원만 넣습니다. 기존 업무용 그룹을 사용하면 마지막에 그룹 전체를 삭제할 수 없습니다.
@@ -94,7 +108,7 @@ azd auth login
 CLI로 만들려면 아래의 구독 ID와 이름을 본인 값으로 바꿉니다. 포털에서 이미 만든 그룹은 다시 만들 필요가 없습니다.
 
 ```bash
-az group create --subscription "내-구독-ID" --name "rg-mf15-my-lab" --location swedencentral --tags workshop=foundry-v1.5 lifecycle=retain
+az group create --subscription "내-구독-ID" --name "rg-mf15-nc-my-lab" --location northcentralus --tags workshop=foundry-v1.5 lifecycle=retain
 ```
 
 `lifecycle=retain`은 보존 의사를 기록하는 태그이지 삭제 방지 잠금은 아닙니다. 자원을 남길 경우 [보존 모드](15-capstone-cleanup.md#보존-모드로-진행할-때)를 적용합니다.
@@ -125,8 +139,8 @@ Azure 포털에서 **프로젝트 리소스 → JSON View**를 열고 `id`도 �
 포털 경로 대신 사용할 수 있습니다. `--assign-identity`와 `--allow-project-management true`를 빠뜨리지 않습니다. 이름은 전역에서 고유해야 하며 모든 명령에 같은 구독·그룹·리전을 지정합니다.
 
 ```bash
-az cognitiveservices account create --subscription "내-구독-ID" --resource-group "rg-mf15-my-lab" --name "내-고유-foundry-이름" --custom-domain "내-고유-foundry-이름" --kind AIServices --sku S0 --location swedencentral --assign-identity --allow-project-management true
-az cognitiveservices account project create --subscription "내-구독-ID" --resource-group "rg-mf15-my-lab" --name "내-고유-foundry-이름" --project-name "my-project" --location swedencentral
+az cognitiveservices account create --subscription "내-구독-ID" --resource-group "rg-mf15-nc-my-lab" --name "내-고유-foundry-이름" --custom-domain "내-고유-foundry-이름" --kind AIServices --sku S0 --location northcentralus --assign-identity --allow-project-management true
+az cognitiveservices account project create --subscription "내-구독-ID" --resource-group "rg-mf15-nc-my-lab" --name "내-고유-foundry-이름" --project-name "mf15-nc-project" --location northcentralus
 ```
 
 CLI 생성은 사용자·프로젝트의 **Foundry User 역할을 자동으로 보장하지 않습니다.** 7절에서 두 주체의 역할을 반드시 확인합니다.
@@ -165,10 +179,10 @@ Azure 포털의 **실제 Foundry 리소스 → IAM → Role assignments**를 봅
 따옴표 안 세 곳과 접두사를 본인의 값으로 바꿉니다.
 
 ```bash
-python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" --endpoint "실제-프로젝트-Endpoint" --deployment "workshop-chat" --expected-model gpt-6-sol --prefix "lab-jw-0927"
+python scripts/selfstudy.py configure --project-id "실제-새-NC-프로젝트-ARM-ID" --endpoint "실제-새-NC-프로젝트-Endpoint" --deployment "workshop-chat" --expected-model gpt-6-sol --prefix "lab-yourname-nc-0928"
 ```
 
-**기존 실습을 이어 할 때:** `workshop-compare`가 이미 Sol이라면 위 새 환경 명령 대신 **같은 프로젝트·Endpoint·prefix**로 다음처럼 실제 별칭을 선택합니다. 기존 `workshop-chat`의 모델은 변경하지 않습니다.
+**삭제되지 않은 같은 프로젝트를 재개할 때만:** `workshop-compare`가 실제로 Sol인지 새로 확인했다면 같은 프로젝트·Endpoint·prefix로 아래 별칭을 재사용할 수 있습니다. **새 NC 재구축에는 이 예외를 적용하지 않으며**, 삭제된 Sweden 프로젝트나 보관본의 별칭을 새 자원으로 인수하지 않습니다.
 
 ```bash
 python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" --endpoint "실제-프로젝트-Endpoint" --deployment workshop-compare --expected-model gpt-6-sol --prefix "기존-lab-접두사"
@@ -198,6 +212,10 @@ python scripts/workshop.py doctor --cloud
 올바른 구독·테넌트·배포가 표시되는지 확인합니다. `doctor --cloud`도 추론 시험이 아니라 메타데이터/인증 확인입니다.
 
 **다음 장에서 Sol의 첫 실제 요청을 통과한 뒤 agent를 만듭니다.** 모델 배포의 `Succeeded`만으로 모든 도구와 API 경로가 지원된다고 판단하지 않습니다. 오류는 [문제 해결](troubleshooting.md)에서 원래 응답과 함께 확인합니다.
+
+추가 의존 자원을 만들기 전에 [04의 bare MAF 모델 → 로컬 함수 순서](04-tools.md#1-maf-에이전트)도 일찍 확인합니다. 지역별 Function 표와 로컬 Python 실행은 같은 검증 계층이 아니므로 실제 두 호출을 구분해 기록합니다.
+
+최초 요청부터 trace가 필요한 리전별 검증에서는 **선택적으로 [09의 로그 생성·연결](09-operations.md#1-로그-환경-생성연결)을 먼저 준비**할 수 있습니다. 이번 NC 검증도 이를 위해 로그 자원을 일찍 만들었습니다. 일반 학습 순서는 09장에서 그대로 다루며, 연결 전 응답이 소급 수집됐다고 가정하지 않습니다.
 
 ## 9. 역할의 실제 명령이 필요할 때
 

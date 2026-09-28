@@ -4,6 +4,8 @@
 
 **시작 조건:** 00의 Owner·Foundry 설정. 이 장에서 Search와 필요 모델을 직접 만듭니다. **Search Basic은 요청하지 않아도 서비스 비용이 발생**합니다.
 
+**현재 NC 범위:** 별도 한·영 소유권 workspace에서 keyword·GA IQ·실제 3072차원 embedding/Hybrid·모델 기반 IQ Chat을 확인했습니다. 영어 첫 dev는 검색에서 `SCOPE-01`이 누락되어 5/6이었고, 아래의 명시적 검색 문턱 0으로 새 label에서 6/6을 확인했습니다. 원래 실패와 Sweden 기록은 보존하며 검색 설정 변경을 지침만의 개선으로 부르지 않습니다.
+
 ## 1. Search 서비스 직접 생성
 
 1. Azure 포털 **Create a resource → Azure AI Search**.
@@ -13,11 +15,11 @@
 5. 가격을 확인한 뒤 생성하고 완료 상태를 기다립니다.
 6. Overview의 **URL**, JSON View의 **전체 리소스 ID**, 실제 SKU·replica·partition과 지속 비용을 기록합니다.
 
-**현재 확인된 상태:** 기존 Sweden Central의 Basic Search는 replica/partition 1개씩, key 인증 비활성화, system-assigned identity, Free semantic plan을 사용합니다. 합성 문서 6개의 keyword index와 조회에 이어 **GA IQ 재시도와 Sol의 IQ 답변도 성공**했습니다. Hybrid index는 **실제 3072차원 embedding**으로 생성했고 query도 성공했습니다.
+**역사적 Sweden Central 결과:** 이전 Basic Search는 replica/partition 1개씩, key 인증 비활성화, system-assigned identity, Free semantic plan을 사용했습니다. 6개 문서의 keyword 조회, GA IQ와 Sol 답변, 실제 3072차원 embedding의 Hybrid 조회가 성공했습니다. 이 자산과 결과는 NC 자산이 아닙니다.
 
-**IQ Chat도 실제 `gpt-5.6-luna`의 `modelQueryPlanning`과 `modelAnswerSynthesis` activity로 확인되었습니다.** 이는 GA IQ 조회와 별도의 계획/합성 증거입니다. OpenAPI의 실제 Search 호출·원문 6개·Sol 답변, 일반 Toolbox v1의 probe/query/ask, v2의 도구 발견 목록, v3의 실제 Skill/검색 호출도 확인되었습니다. 자세한 주체·버전·실행 증거는 [10](10-toolbox-skills.md)에서 구분합니다. 다른 단계나 다른 언어의 결과를 복사해 현재 실행의 성공으로 대신하지 않습니다.
+**이전 Sweden IQ Chat**의 실제 `gpt-5.6-luna` planning/synthesis와 OpenAPI·Toolbox 결과도 보관한 역사적 증거입니다. 자세한 주체·버전은 [10](10-toolbox-skills.md)에서 구분하며, 이를 새 NC나 관리형 AI red-team 결과로 복사하지 않습니다.
 
-**영문 실행도 별도 소유권 workspace에서 독립 검증**했습니다. English Search·GA IQ·Hybrid·IQ Chat과 Sol의 영문 dev 6문항 policy 평가가 모두 통과했습니다. 이는 한국어 결과를 복사한 것이 아니며, 각 언어의 소유 이름·원문 hash·실제 결과 label을 별도로 유지합니다.
+**이전 Sweden의 영문 실행**도 별도 소유권 workspace에서 검증했습니다. English Search·GA IQ·Hybrid·IQ Chat과 Sol dev 6문항의 과거 통과는 NC 영문 실행의 증거가 아닙니다. 각 프로젝트·언어의 소유 이름·hash·label을 분리합니다.
 
 **과거 오류와 새 재시도:** 앞선 Basic/S1의 `ResourcesForSkuUnavailable`과 S2의 `ServiceQuotaExceeded`(`0 out of 0`)는 당시의 용량·구독 quota 오류입니다. 현재의 영구 차단 상태로 해석하지 않습니다. 새 오류가 나면 현재 quota/가용성과 실패 원문을 확인하고 조건이 바뀐 뒤에만 제한적으로 재시도합니다. Owner/RBAC 추가나 같은 Create 반복으로 해결하지 않으며, 고정 리전과 보존 방침을 유지합니다. 다른 그룹을 임의로 삭제하거나 SKU를 자동으로 올리지 않습니다.
 
@@ -58,7 +60,10 @@ python scripts/workshop.py retrieve --provider search --question "2026년 9월 �
 
 ## 5. GA Foundry IQ
 
+합성 문서 6개를 사용하는 이 실습에서는 **reranker 검색 문턱을 0으로 명시**합니다. 기본 필터가 낮은 관련도 문서를 제외하면 범위 밖 질문에 필요한 `SCOPE-01`까지 사라질 수 있습니다. 이는 검색 필터이며 평가 통과 기준 4를 낮추는 설정이 아닙니다. 실제 반환 문서와 인용은 여전히 검사합니다.
+
 ```bash
+python scripts/selfstudy.py set WORKSHOP_IQ_RERANKER_THRESHOLD 0
 python scripts/workshop.py seed-search --iq --confirm-create
 python scripts/workshop.py retrieve --provider iq --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-iq.json
 python scripts/workshop.py answer --prompt v2 --retrieval iq --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-iq-answer.json
@@ -85,7 +90,7 @@ python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "실제-같은-계정의-O
 원래 index는 그대로 두고 **새 hybrid index 이름**을 명시합니다. 예시 접두사는 내 값으로 바꿉니다.
 
 ```bash
-python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "lab-jw-0927-policies-hybrid"
+python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "lab-yourname-nc-0928-policies-hybrid"
 python scripts/workshop.py seed-search --hybrid --confirm-create --confirm-cost
 python scripts/workshop.py retrieve --provider hybrid --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-hybrid.json
 python scripts/workshop.py answer --prompt v2 --retrieval hybrid --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-hybrid-answer.json

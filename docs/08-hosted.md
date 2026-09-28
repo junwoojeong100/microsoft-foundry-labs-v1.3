@@ -47,6 +47,8 @@ python scripts/selfstudy.py prepare-hosted --kind runtime --package "실제-패�
 
 생성된 `azure.yaml`에는 기존 프로젝트 연결과 의도한 Hosted 서비스 하나만 있어야 합니다. 모델 배포 목록을 새로 추가하거나 소스 전체를 서비스로 만들지 않습니다. 별도 Foundry 프로젝트를 또 provision할 필요가 없는 경로입니다.
 
+이 `--kind runtime` 준비 폴더는 실제 프로젝트 ARM ID가 필요한 첫 App Insights CLI 연결에도 사용했습니다. [09의 native logging 조건](09-operations.md#첫-cli-연결과-native-sdk의-실제-요구-조건)을 확인하며, ARM context를 준비했다는 이유만으로 Hosted 배포/추론을 완료로 표시하지 않습니다.
+
 영문 패키지를 준비할 때는 `prepare-hosted`에도 **`--language en`**을 명시합니다. 패키지의 언어와 준비 단계의 언어가 다르면 중단하며 한국어 프로필로 자동 변경하지 않습니다.
 
 명령이 **서비스 이름, 폴더, 다음 배포/조회 명령**을 출력합니다. 이후의 서비스 이름과 Hosted 경로에는 이 값을 사용합니다.

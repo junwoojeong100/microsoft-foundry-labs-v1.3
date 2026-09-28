@@ -20,10 +20,12 @@ For a first pass, [start at 00 and follow the sequence](00-setup.md). Use this t
 | Traces, Insights, recurring evaluation, and cost | [09](09-operations.md) |
 | Toolbox, Tool Search, Skills, OpenAPI, Hosted Toolbox | [10](10-toolbox-skills.md) |
 | Memory, A2A, and Routines | [11](11-memory-a2a-routines.md) |
-| Conversation evaluation, Optimizer, matrix, calibration, regressions | [12](12-improvement.md), [explicit local matrix](12-improvement.md#10-explicit-local-retrieval-matrix) |
-| Lab guardrails, red teaming, managed identities, Control Plane inventory | [13](13-governance.md) |
+| Conversation evaluation, Optimizer, matrix, calibration, complementary policy diagnostics | [12](12-improvement.md), [explicit local matrix](12-improvement.md#10-explicit-local-retrieval-matrix) |
+| Managed AI red teaming (primary verification), guardrails, identities, Control Plane | [13](13-governance.md) |
 | Included GitHub OIDC CI/CD | [14](14-additional-permissions.md) |
 | Holdout, final acceptance, stopping/retaining/deleting resources | [15](15-capstone-cleanup.md) |
 | English data, command routing, and artifact naming | [Data and localization](data-format.md) |
 
 Record **executed, verified, blocked, and not-run** states separately. Do not mark unperformed steps complete.
+
+The current target is North Central US. Custom diagnostics in 12 and historical Sweden results cannot substitute for the new managed red-team run in 13.

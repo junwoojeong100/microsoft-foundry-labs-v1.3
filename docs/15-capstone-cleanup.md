@@ -4,6 +4,8 @@
 
 중도에 실습을 멈추는 경우에도 **아래 중지·목록 확인·보관 결정을 지금 수행**합니다. 품질 실패 때문에 비용 자원을 방치하지 않습니다. 삭제는 별도로 선택하는 작업입니다.
 
+**현재 전환 경계:** 삭제한 것은 명시적으로 지정된 이전 Sweden 그룹뿐이며 새 NC 자원은 보존합니다. 혼합 관리형 job의 원래 6행·**5 pass/1 fail**과 별도 Task Adherence-only job의 **5/5**를 구분합니다. Prohibited Actions polarity는 여전히 미해결입니다. 새 리전이라고 이미 사용한 holdout 문항이 다시 미공개가 되는 것은 아니며, 전체 native 통과·ASR 수정·운영 인수로 표시하지 않습니다.
+
 ## 보존 모드로 진행할 때
 
 다음에 재사용하거나 검증 환경을 남기기로 했다면 **삭제 명령을 실행하지 않습니다.**
@@ -29,17 +31,20 @@ holdout 실행 전 다음을 확인합니다.
 - 오류/누락/중복이 없음.
 - 미리 정한 업무 기준과 세 policy 기준이 통과했고 source/reference 감사 및 native 한계를 검토함.
 - trace 확인과 calibration이 필요한 기준이면 모두 충족.
+- 13의 **관리형 실행과 전체 행/버전/방향 감사**를 기록하고 Prohibited Actions 한계를 공개함. 새 Task Adherence-only 결과는 그 native 범위로만 판단하며 기존 6행 필터나 custom `policy-lab`로 대체하지 않음.
 - 실패를 보고 기준을 낮추거나 원시 결과를 수정하지 않음.
 
-현재 새 **Hosted IQ v1/v2 쌍**은 Sol 한 개의 map으로 각각 core dev 6행, 세 policy 기준 각각 6/6, valid 참조 감사, 실제 trace 6/6을 확인했고 같은 동결 코드/corpus에서 비교가 허용됐습니다. 한국어/영어 policy calibration도 각각 24/24입니다. 이전 SDK groundedness 5/6과 `code_hash` 차이로 거부된 SDK 비교는 별도 역사로 보존합니다. 새 쌍의 통과 수가 같으므로 통과율 개선을 주장하지 않습니다.
+**역사적 Sweden 결과:** 이전 Hosted IQ v1/v2, 두 언어 calibration, SDK groundedness 5/6과 거부된 비교를 원래 조건 그대로 보존합니다. 이는 새 NC 실행·평가·관리형 red teaming이 완료됐다는 뜻이 아닙니다.
 
-**최신 Hosted IQ 배포 버전 3**은 canonical dev 6행과 진단 suite version 2의 8행 모두 업무 검사·세 policy 기준·source 감사·실제 trace(6+8)를 확인했습니다. 필수 참조를 유지하는 명시적 `allowed_citations`와 PL06의 절차 전용 `limit_krw: null`도 새 runtime/label에서 검증했습니다. 이전 실패는 보존하며 **새 holdout 결과로 주장하지 않습니다**.
+**이전 Sweden v3의 canonical 6행/custom 8행 성공**은 역사적 보완 증거입니다. Sweden native ASR은 검증되지 않았고 공식 리전 문서도 서로 다르므로, 리전 미지원이 입증된 원인이라고 하지 않습니다. Custom 결과나 리전 변경은 새 NC 관리형 검증·지표 방향 확인·holdout을 대신하지 않습니다.
 
-수정된 Prompt Optimizer native job은 **baseline 1.0·새 후보 0개로 조기 종료해 완료**됐습니다. [12의 로컬 감사](12-improvement.md#3-지침만-최적화)는 6개 원문 envelope·세 pinned judge/기준점 4·reason 참조 ID와 calibration을 확인했습니다. 증거 수준은 source echo + reason + counterfactual이며 내부 judge 요청 캡처나 지침 개선을 주장하지 않습니다. Legacy 실패도 그대로 보존합니다.
+**이전 Sweden Optimizer와 감사**는 보관본으로 남깁니다. 새 NC SDK Optimizer는 필수 `pass_threshold` 초기화 누락으로 실패했으며 12에 기록했습니다. 새 모델/trace/평가 결과와 이 실패를 각각 보존하고 과거 성공을 인수하지 않습니다.
 
 충족하지 못하면 **holdout을 열지 말고 인수 미완료**로 기록합니다. 추가 기능이 미지원이라 Hosted matrix를 수행하지 않았다면 07의 SDK candidate를 별도 최종 대상으로 선택할 수 있지만, 이를 Hosted 인수라고 표현하지 않습니다.
 
 **holdout은 한 실험의 선택한 최종 대상에만 사용합니다.** SDK에서 이미 본 문항을 Hosted의 “처음 보는 시험”으로 다시 주장하지 않습니다.
+
+이번 NC의 `nc-known-final-ko`는 이전에 사용한 4문항을 같은 고정 v2에서 **알려진 사례의 회귀 확인**으로 실행해 4/4·policy·trace gate를 확인했습니다. 새 미공개 holdout이나 운영 승인이 아니며 원래 `split: holdout` 기록도 수정하지 않습니다.
 
 ## 2. Hosted 최종 확인
 

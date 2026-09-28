@@ -14,6 +14,8 @@
 | Evaluation, fixed conditions, calibration | `evaluation.py`, `cloud_evaluation.py`, `benchmark.py`, `calibration.py` |
 | Toolbox and Hosted | `toolbox.py`, `toolbox_host.py`, `hosted.py`, `packaging.py` |
 | Memory, A2A, Routines | `memory_lab.py`, `a2a_lab.py`, `routines_lab.py` |
+| Managed red-team preparation, resume, and raw-flag audit | `scripts/managed_redteam.py` |
+| Native Routine history when the CLI list is empty | `scripts/routine_runs.py` |
 | Language-specific policies and prompts | `contracts.py`, `materials.py`, `extension_materials.py`, `profiles.py` |
 | Minimal standalone SDK examples | `examples/recipes/` |
 

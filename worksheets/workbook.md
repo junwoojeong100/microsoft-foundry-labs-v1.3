@@ -4,6 +4,8 @@
 
 개인 사본을 `.selfstudy/` 등 비공개 위치에 저장합니다. 실제 ID·관찰만 기록하고 토큰·비밀번호·API key·회사 원문은 넣지 않습니다.
 
+이 사본은 **새 North Central US 실행**에 사용합니다. 초기 Sol·Prompt Agent·로컬 함수/MCP와 조기 로그 준비 결과를 기록하되, 나머지 단계나 관리형 red-team 완료를 추정하지 않습니다. 이전 Sweden 완료 상태는 복사하지 않습니다.
+
 ## 출발점
 
 | 항목 | 내 값/확인 |
@@ -13,6 +15,10 @@
 | 고유 WORKSHOP_PREFIX | |
 | 프로젝트 Endpoint / ARM ID의 출처 | |
 | 전용 리소스 그룹과 실제 리전 | |
+| 새 리전 기본값: North Central US / 실제 새 프로젝트 ID | |
+| 이전 상태·CI ID·outputs/build 보관 위치와 hash 확인 | |
+| 명시적으로 삭제한 이전 그룹의 정확한 범위 / 유지한 자산 | |
+| 새 NC prefix·언어별 소유 이름·사용하지 않은 label | |
 | 현재 원본 commit / 실제 수정 여부 | |
 | Python·SDK·azd/확장 버전 | |
 | 기본 모델/버전 (GPT-6 Sol / 2026-09-22)과 실제 별칭 | |
@@ -41,7 +47,7 @@
 | 10 Toolbox/Skills/OpenAPI/Hosted | | | |
 | 11 Memory/A2A/Routines | | | |
 | 12 대화/Optimizer/matrix/calibration | | | |
-| 13 실습 안전/관리 ID/Control Plane 자산 | | | |
+| 13 관리형 AI red teaming/실습 안전/관리 ID/Control Plane | | | |
 | 14 GitHub OIDC CI/CD | | | |
 | 15 최종 인수/정리 | | | |
 
@@ -100,6 +106,11 @@ reasoning·출력 한도:
 | Routine 이름·dispatch·답변 확인·disabled 상태 | |
 | Optimizer target·후보 수·raw judge 입력·결정 | |
 | Safety policy 실제 ID·연결·개입/비개입 | |
+| 관리형 AI red-team 리전·실제 job/run·요청/반환 수·원래 판정/오류 | |
+| Native 영어 target·single-turn/tool-level 범위·`num_turns` 깊이 | |
+| 제출 seed/objective 수·실제 요청 수·반환/채점 행 수(각각) | |
+| Native evaluator 버전·schema·방향·기준점·`azure_ai_project` | |
+| 보완 custom policy-lab 결과 — 관리형 red teaming의 대체물 아님 | |
 | GitHub OIDC 주체·workflow run·정확한 배포 버전·artifact | |
 
 ## 최종 인수
@@ -113,6 +124,8 @@ reasoning·출력 한도:
 | trace/calibration/미검증 영역 | |
 | 작은 인수 기준 충족 여부와 이유 | |
 | 이번 합성 실습의 미완료 항목 | |
+| NC 결합 native job: 6행·원래 5 pass/1 fail·Prohibited Actions 한계 | |
+| 별도 Task Adherence-only job/label·실제 반환 수·점수/flag·입력 가림 | |
 
 ## 다음 실습 비교
 

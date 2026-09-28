@@ -10,6 +10,12 @@ You need a **Microsoft Entra ID account, an Azure subscription, and an active su
 
 Already started? → [Your workbook](worksheets/en/workbook.md)
 
+**Current region: North Central US (`northcentralus`).** Korean/English Search, IQ, Hybrid, IQ Chat, Hosted IQ v1/v2 dev 6/6, and an actual scheduled response are verified. **A new Task Adherence-only managed job passed 5/5 with consistent native flags.** The earlier mixed job still retains five pass/one fail and the Prohibited Actions inconsistency. This is not an all-ASR fix or production safety certification. Read the [results and remaining limits](docs/en/validation-report.md) and keep the [fresh-workspace/archive boundary](docs/en/00-setup.md#start-a-new-project-without-adopting-old-state).
+
+The primary red-team target is the **managed AI red-teaming service** in chapter 13. The custom eight-case policy diagnostic is complementary, not a replacement or evidence that managed red teaming works.
+
+North Central US appears in **both official regional sources**, although their wider lists currently conflict. [Chapter 13 records that discrepancy](docs/en/13-governance.md#5-managed-ai-red-teaming--the-primary-verification-target). Do not infer that Sweden caused the old ASR problem or that changing regions fixes metric direction.
+
 ## What will you build?
 
 A travel-policy assistant for the fictional company **Hanbit Technology**.
@@ -43,7 +49,7 @@ The shared diagram shows local CLI/MAF code calling Foundry models and agents, r
 | [10 Shared tools](docs/en/10-toolbox-skills.md) | Connect Toolbox, Skills, and OpenAPI | Reusable, versioned tools |
 | [11 State and scheduling](docs/en/11-memory-a2a-routines.md) | Use Memory, A2A, and Routines | State and dispatch records |
 | [12 Improvement](docs/en/12-improvement.md) | Evaluate conversations, optimization, and deployed versions | Reviewed candidates |
-| [13 Lab safety](docs/en/13-governance.md) | Inspect lab guardrails, identities, and resource inventory | Controls and limitations |
+| [13 Lab safety](docs/en/13-governance.md) | Verify managed AI red teaming, lab guardrails, identities, and inventory | Native run evidence and limitations |
 | [14 GitHub OIDC CI/CD](docs/en/14-additional-permissions.md) | Run the included identity-based lab release workflow | Exact version and smoke/dev evidence |
 | [15 Acceptance and cleanup](docs/en/15-capstone-cleanup.md) | Verify the final target and stop, retain, or remove resources | Results and lifecycle records |
 
@@ -78,6 +84,6 @@ Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/`
 | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) |
 | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) |
 
-[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). The recordings preserve an earlier lab snapshot. Follow the current chapters for model defaults and Search prerequisites; an earlier recording is not proof that every current step has passed.
+[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). These linked recordings preserve the **earlier Sweden Central run**, not the North Central US rebuild. Their links and durations remain unchanged until new recordings are integrated; do not rebrand old footage or results as North Central US evidence.
 
 **Help:** [Troubleshooting](docs/en/troubleshooting.md) · [Feature map](docs/en/feature-map.md) · [Checkpoints](docs/en/checkpoints.md) · [Code reading](docs/en/code-reading.md) · [Official sources](docs/en/sources.md) · [Next steps](docs/en/next-steps.md)

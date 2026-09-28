@@ -4,6 +4,8 @@
 
 Take one step at a time: **run → inspect → record → next**.
 
+The current region is North Central US. The mixed native job retains six rows/five pass/one fail; a **separate Task Adherence-only job passed 5/5**. Prohibited Actions polarity remains unresolved. Verify each job/label rather than covering the limitation with Sweden or custom results.
+
 ## Four questions for every chapter
 
 - What am I creating or changing?
@@ -24,6 +26,7 @@ A completed command, an actual response, and a quality pass are different. Recor
 | 07 | GPT-5.5 judge uses a different base model and deployment from the targets; review all dev rows, errors, business checks, and actual evaluation explanations |
 | 08–11 | Exact deployed versions, runtime identities, traces, tools, and state results verified |
 | 12 | Explicitly select IQ or the separately named local matrix; `bind-matrix` reads its actual version/endpoint, and comparisons keep retrieval, generation settings, and data fixed |
+| 13 | NC is common to both official sources, whose wider lists conflict. Verify the actual managed job and metric direction; custom diagnostics or region changes are not substitutes. |
 | 15 | Unlock holdout only after the frozen candidate's gates; stop schedules/sessions and explicitly retain or remove stores/models |
 
 Opening a portal or completing a CLI command does not imply the next chapter's prerequisites exist.
@@ -37,6 +40,8 @@ python scripts/selfstudy.py values
 ```
 
 Read existing results before recreating resources or files. Do not use another person's tokens, responses, or accounts. Keep one corpus language per experiment and separate `-en` labels for English results.
+
+For another project, follow [00's archive/fresh-workspace procedure](00-setup.md#start-a-new-project-without-adopting-old-state). A retained CI identity or old deployment alias does not establish new-project permissions or ownership.
 
 ## Share workshop materials safely
 

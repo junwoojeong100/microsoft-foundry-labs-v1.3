@@ -12,6 +12,8 @@
 | 평가·고정 조건·calibration | `evaluation.py`, `cloud_evaluation.py`, `benchmark.py`, `calibration.py` |
 | Toolbox·Hosted | `toolbox.py`, `toolbox_host.py`, `hosted.py`, `packaging.py` |
 | Memory·A2A·Routines | `memory_lab.py`, `a2a_lab.py`, `routines_lab.py` |
+| 관리형 red team의 생성·재개·원시 판정 감사 | `scripts/managed_redteam.py` |
+| 빈 CLI 목록과 실제 Routine history 대조 | `scripts/routine_runs.py` |
 | 최소 독립 SDK 예제 | `examples/recipes/` |
 
 표의 짧은 파일명도 `src/foundry_workshop/` 아래입니다.

@@ -6,6 +6,8 @@
 
 **Prerequisites:** Configuration and a working project-response deployment from 00–02. Use **only the six synthetic Hanbit Technology documents** below.
 
+**Verified NC scope:** beyond Prompt Agent creation/invocation, **both Korean and English File Search indexed six files and returned actual file citations**. Korean current-limit KRW 150000, historical KRW 120000, and unknown-Tokyo responses were recorded. Inline agents and File Search remain distinct executions; preserve each language/version/file-ID record.
+
 ## 1. Read the original evidence first
 
 Open `data/knowledge/en/policies.json`, the canonical English policy bundle.

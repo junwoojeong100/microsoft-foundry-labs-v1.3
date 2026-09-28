@@ -4,6 +4,8 @@
 
 **The default answer model is `gpt-6-sol` / `2026-09-22`.** Start directly with Sol for the first response, Prompt Agents, tools, and Hosted exercises. Add GPT-6 Luna only if you choose a matched model comparison.
 
+The current default region is **North Central US**. Sol project Responses and initial agent/local-tool calls are verified; other model/tool paths need their own results. Use the fresh aliases below; Sweden model/evaluation success is not support evidence for the new region.
+
 ## Deploy only when needed
 
 These are **fresh-environment aliases**, not guarantees of the model behind an existing name.
@@ -23,7 +25,7 @@ The judge is **GPT-5.5, a different base model from the GPT-6 targets**, and its
 
 ## Reuse existing deployments without changing them
 
-**An alias is not a model identity.** The existing lab environment already has Sol named `workshop-compare` and GPT-5.5 named `workshop-optimizer`. Do not replace models or delete resources to match the fresh defaults.
+**An alias is not a model identity.** Sweden previously used `workshop-compare` for Sol and `workshop-optimizer` for GPT-5.5, but that dedicated group was deleted. Do not assume those deployments exist in NC. The alternatives below apply only to a freshly verified **intact same-project resume**, not this NC rebuild.
 
 Keep the same project, endpoint, and prefix, and explicitly select the actual Sol alias:
 

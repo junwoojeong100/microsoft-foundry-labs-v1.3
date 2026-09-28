@@ -10,6 +10,12 @@
 
 이미 진행 중이라면 → [내 진행표](worksheets/workbook.md)
 
+**현재 기본 리전은 North Central US(`northcentralus`)입니다.** 한·영 Search·IQ·Hybrid·IQ Chat, Hosted IQ v1/v2의 dev 6/6, 실제 예약 응답을 확인했습니다. **새 Task Adherence-only 관리형 실행은 별도 job에서 5/5 통과**했고 원시 판정도 일치합니다. 이전 혼합 job의 5 pass/1 fail과 Prohibited Actions 불일치는 그대로 보존합니다. 전체 ASR 수정이나 운영 안전 인증은 아닙니다. [검증 결과와 남은 제한](docs/validation-report.md), [새 workspace/보관 경계](docs/00-setup.md#새-프로젝트에서-이전-상태를-인수하지-않기)를 확인하세요.
+
+13장의 기본 red-team 검증 대상은 **관리형 AI red-teaming 서비스**입니다. 사용자 지정 8문항 policy 진단은 보완 자료이며 관리형 서비스의 실행 증거를 대신하지 않습니다.
+
+North Central US는 **두 공식 리전 문서에 모두 포함**되지만 전체 목록은 현재 서로 다릅니다. [13장의 문서 불일치](docs/13-governance.md#5-관리형-ai-red-teaming--기본-검증-대상)를 확인하며, 이전 ASR 문제의 원인이 Sweden이거나 리전 변경이 지표 방향을 고친다고 단정하지 않습니다.
+
 ## 무엇을 만드나요?
 
 가상 기업 **한빛기술의 출장 규정 도우미**입니다.
@@ -41,7 +47,7 @@ Foundry는 모델 하나가 아니라 **모델·에이전트·지식·도구·�
 | [10 공유 도구](docs/10-toolbox-skills.md) | Toolbox·Skills·OpenAPI 연결 | 재사용 가능한 도구 |
 | [11 기억·위임·예약](docs/11-memory-a2a-routines.md) | Memory·A2A·Routines 실행 | 상태와 실행 기록 |
 | [12 품질 개선](docs/12-improvement.md) | 대화 평가·Optimizer·배포 평가 | 검토한 개선 후보 |
-| [13 실습 안전](docs/13-governance.md) | 실습 정책·관리 ID·소유 자산 확인 | 통제와 한계 |
+| [13 실습 안전](docs/13-governance.md) | 관리형 AI red teaming·실습 정책·관리 ID·자산 확인 | 실제 관리형 실행 근거와 한계 |
 | [14 GitHub OIDC CI/CD](docs/14-additional-permissions.md) | 포함된 ID 기반 실습 릴리스 workflow 실행 | 정확한 버전과 smoke/dev 근거 |
 | [15 마무리](docs/15-capstone-cleanup.md) | 최종 확인·자원 정리 | 결과물과 정리 기록 |
 
@@ -83,6 +89,6 @@ Owner 역할이 있어도 모델 할당량·지역·제한 제공 기능을 자�
 | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) |
 | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) |
 
-[녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). 영상은 이전 실습 시점의 기록입니다. 현재 모델 기본값과 Search 준비 조건은 최신 본문을 따르며, 과거 녹화만으로 현재 단계의 성공을 판단하지 않습니다.
+[녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). 현재 링크의 영상은 **이전 Sweden Central 실행**이며 North Central US 재구축 영상이 아닙니다. 새 녹화본이 통합되기 전까지 링크·재생 시간은 그대로 두며, 과거 영상이나 결과를 새 리전의 근거로 바꾸지 않습니다.
 
 **도움말:** [문제 해결](docs/troubleshooting.md) · [기능 찾기](docs/feature-map.md) · [코드 읽기](docs/code-reading.md) · [공식 자료](docs/sources.md)

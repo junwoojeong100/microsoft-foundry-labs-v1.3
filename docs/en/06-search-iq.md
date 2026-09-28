@@ -6,6 +6,8 @@
 
 **Prerequisites:** Owner access and Foundry configuration from 00. You create Search and any required models here. **Search Basic—and any explicitly selected Standard tier—incurs ongoing service charges even without requests.**
 
+**Current NC scope:** separate Korean/English ownership workspaces verified keyword, GA IQ, actual 3072-dimensional embeddings/Hybrid, and model-based IQ Chat. The first English dev run scored 5/6 because retrieval omitted `SCOPE-01`; the explicit retrieval threshold below produced 6/6 under a new label. The original failure and Sweden history remain. A retrieval-setting change is not a prompt-only improvement.
+
 ## 1. Create a Search service
 
 1. In the Azure portal, open **Create a resource → Azure AI Search**.
@@ -19,11 +21,11 @@
 
 ### Current setup and historical capacity errors
 
-**Latest verified state:** Basic Search in the existing Sweden Central region has **one replica/partition, key authentication disabled, a system-assigned identity, and a Free semantic plan**. In addition to the six-document keyword index and retrieval, **the GA IQ retry and Sol's IQ answer succeeded**. The Hybrid index was seeded using **actual 3072-dimensional embeddings**, and its query succeeded.
+**Historical Sweden Central results:** the previous Basic Search used one replica/partition, disabled key authentication, a system-assigned identity, and a Free semantic plan. Six-document keyword retrieval, GA IQ with a Sol answer, and Hybrid queries using actual 3072-dimensional embeddings succeeded there. Those assets and results are not NC assets or evidence.
 
-**IQ Chat has now been verified through actual `gpt-5.6-luna` `modelQueryPlanning` and `modelAnswerSynthesis` activities**, separate from GA IQ retrieval. Verified tool results include the OpenAPI six-document Search call and correct Sol answer, standard Toolbox v1 probe/query/ask, v2's discovery listing, and v3's actual Skill/search calls. [10](10-toolbox-skills.md) distinguishes their identities, versions, and execution evidence. Do not copy another step's or language's results as proof of the current run.
+**Historical Sweden IQ Chat** had actual `gpt-5.6-luna` planning/synthesis activities; its OpenAPI and Toolbox results are archived history too. [10](10-toolbox-skills.md) distinguishes their identities and versions. Do not copy them into NC or managed AI red-team claims.
 
-**English was independently verified in a separate ownership workspace:** English Search, GA IQ, Hybrid, IQ Chat, and all policy judges on Sol's six English dev cases passed. These are separate English results, not copied Korean evidence. Keep each language's owned names, source hashes, and actual result labels distinct.
+**Historical English Sweden runs** were independently verified in a separate ownership workspace. Their Search/GA IQ/Hybrid/IQ Chat and six-case policy passes are not evidence of an English NC run. Keep project, language, owned names, hashes, and labels separate.
 
 Earlier Basic/S1 `ResourcesForSkuUnavailable` and S2 `ServiceQuotaExceeded` (`0 out of 0`) errors reflected capacity/quota at that time, not a permanent current blocker. For a new failure, inspect current quota/availability and preserve the original error. Retry only in a bounded way after the relevant condition changes.
 
@@ -68,7 +70,10 @@ Check `provider: azure-ai-search-keyword`, the actual index/endpoint, and source
 
 ## 5. GA Foundry IQ
 
+For this six-document synthetic corpus, explicitly set the **reranker retrieval threshold to 0**. The default filter can discard a lower-ranked document such as `SCOPE-01`, which is needed for an out-of-scope question. This changes retrieval, not the evaluator's passing threshold of 4. Returned sources and citations are still checked.
+
 ```bash
+python scripts/selfstudy.py set WORKSHOP_IQ_RERANKER_THRESHOLD 0
 python scripts/workshop.py --language en seed-search --iq --confirm-create
 python scripts/workshop.py --language en retrieve --provider iq --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-iq.json
 python scripts/workshop.py --language en answer --prompt v2 --retrieval iq --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-iq-answer.json
@@ -95,7 +100,7 @@ python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "YOUR-SAME-ACCOUNT-OPENAI-
 Keep the original index and explicitly name a **new hybrid index**. Replace the illustrative prefix with yours:
 
 ```bash
-python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "lab-yourname-0927-policies-hybrid-en"
+python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "lab-yourname-nc-0928-policies-hybrid-en"
 python scripts/workshop.py --language en seed-search --hybrid --confirm-create --confirm-cost
 python scripts/workshop.py --language en retrieve --provider hybrid --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-hybrid.json
 python scripts/workshop.py --language en answer --prompt v2 --retrieval hybrid --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-hybrid-answer.json

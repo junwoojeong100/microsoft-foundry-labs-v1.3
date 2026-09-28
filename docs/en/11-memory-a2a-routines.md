@@ -6,6 +6,8 @@
 
 **Prerequisites:** Project identity roles from 00, the embedding deployment from 06, and the azd Foundry extension from 08. Review creation and request costs for each feature.
 
+**Current NC status:** original items were read back from Korean/English TTL-zero Memory stores; Korean A2A delegation and the timer's original response telemetry were verified. The timer is disabled, preserving both `Finished/cancelled` and a separate `Killed/cancelled` attempt. CLI history returned an empty list despite an actual run, so use the native-history readback below too. Do not assume Sweden resources remain after their group was deleted.
+
 ## 1. Memory: persist an item and recall it in a new request
 
 Verify `workshop-embedding` from 06 and select a **new retained-store name under the current prefix**. Replace `YOUR-PREFIX` with your actual `WORKSHOP_PREFIX`. Leave the existing one-hour store and its records unchanged:
@@ -27,7 +29,7 @@ python scripts/workshop.py --language en memory put --scope alpha --case D02 --c
 
 Record the **new store name, memory_id, and ownership file**. Verify `default_ttl_seconds: 0` in the creation readback and `automatic_expiration_enabled: false`. This verifies configuration, not a long-duration survival test. Storage charges may continue.
 
-**Separate Korean and English TTL-0 retained stores were both created and recalled**, with separate-process readback and an empty beta scope also verified. One retained item was still readable at an age of **4063 seconds—beyond the old 3600-second hour**. This proves the observed interval for that item/store, not indefinite durability or authorization between real users. Do not infer success for other items or updates.
+**Historical Sweden TTL-0 stores** were created/recalled in both languages, with separate-process reads, an empty beta scope, and a 4063-second item read. This archived observation is not NC persistence/scope verification or proof those remote resources still exist.
 
 For another **new store** that should expire items, `--ttl-seconds` accepts 1–31,536,000 seconds (365 days). Previously recorded stores keep their original TTL; the new default does not update them. If your selected store already exists with an ownership record, do not create it again: inspect and recall it. For another new run, choose an unused name under the same prefix, without adopting unrecorded remote assets.
 
@@ -90,7 +92,7 @@ Use the actual **Prompt Agent name** you invoked in 03—not a model deployment 
 
 **Never pass a user-created conversation to an unattended routine in this lab.** Both project-scoped and agent-endpoint conversations failed with `conversation_not_found` under the routine actor. Preserve those failures and resources. Use a **fresh timer with static `action.input` and no conversation**.
 
-This stateless path produced an actual **`timer_delivery` at the scheduled time with `status: Finished`**, followed by exact-response telemetry verification. The original manual response was also verified separately. Execution/readback success is not an all-criteria policy-quality pass.
+The **new NC stateless timer also delivered at its scheduled time**. Telemetry matched the original response ID, agent version, project, trace, and answer. Earlier Sweden manual/scheduled responses remain separate archived evidence, not new responses.
 
 First register the actual log workspace from 09. Its real `customerId` binds `AZURE_LOG_ANALYTICS_WORKSPACE_ID`, and the actual project ARM ID binds `AZURE_AI_PROJECT_ID`. This does not create a workspace or generate a model response:
 
@@ -153,7 +155,17 @@ azd ai routine run list "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-P
 azd ai routine show "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 ```
 
-In the verified run, disabling changed `phase` from `completed` to **`cancelled`**, while `status: Finished` and the original `response_id` remained. Do not edit that raw phase back to `completed`.
+**In the historical Sweden run**, disabling changed `phase` from `completed` to `cancelled` while `Finished` and the original response ID remained. In NC, preserve the actual raw phase and verify the original completed response rather than rewriting status.
+
+### Recover native history when the CLI list is empty
+
+In NC, `azd ai routine run list` returned `value: null` although SDK history contained the real delivery. Disable the timer as planned, then export its actual IDs without creating another timer or manual dispatch:
+
+```bash
+python scripts/routine_runs.py --name "YOUR-PREFIX-timer-static-en" --label routine-native-history-en
+```
+
+Read **every attempt** in `outputs/routine-runs/routine-native-history-en/runs.json`. Use the actual `Finished` attempt's `dispatch_id` below; retain `Killed`/`cancelled` entries. Listing history does not verify the answer, and export labels are never overwritten.
 
 ### Verify the same scheduled response through telemetry
 
@@ -163,13 +175,13 @@ Use the returned **routine name and `dispatch_id`**, with an unused lowercase la
 python scripts/workshop.py --language en routines inspect --name "RETURNED-ROUTINE" --dispatch-id "RETURNED-DISPATCH-ID" --label routine-static-timer-readback-en --verify-response --response-source telemetry --scheduled
 ```
 
-The verifier checks the timer source and timestamps, **exact original response ID, agent/version/project/trace**, and **completed `invoke_agent` assistant output** in `AppGenAIContent`. The latest run confirmed **both `scheduled_trigger_verified: true` and `agent_answer_verified: true`, with the routine disabled**. Verify your own `routine_enabled: false`, `response_retrieval: verified-telemetry`, and `new_model_request: false` too.
+The verifier checks the timer source/timestamps, original response ID, agent/version/project/trace, and completed `invoke_agent` output. The two verified flags and disabled state from Sweden are historical. Check `scheduled_trigger_verified`, `agent_answer_verified`, `routine_enabled`, retrieval source, and new-inference status in the **new NC result**.
 
 Post-disable evidence must retain **`run_phase: cancelled`**. This exception applies only with `Finished` status and complete telemetry for the same original response; not every cancelled run is successful. If ingestion is delayed, retry reading the same ID—not a new dispatch or replacement model call.
 
 ### Read the original manual response from telemetry
 
-The original manual run can also be read back by its exact IDs. Read existing verification artifacts first; use an unused label if another readback is needed:
+Read back only an original manual run whose logs still exist in the **same currently configured project**. Read deleted Sweden-resource evidence from its archive; do not pass those old IDs to the NC command below. Use an unused label for another readback:
 
 ```bash
 python scripts/workshop.py --language en routines inspect --name "ORIGINAL-MANUAL-ROUTINE-NAME" --dispatch-id "ORIGINAL-MANUAL-DISPATCH-ID" --label routine-manual-telemetry-en --verify-response --response-source telemetry

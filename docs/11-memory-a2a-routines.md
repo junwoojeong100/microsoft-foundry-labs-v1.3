@@ -4,6 +4,8 @@
 
 **시작 조건:** 00의 프로젝트 관리 ID 역할, 06의 embedding 배포, 08의 azd Foundry 확장. 새 agent/Memory/예약과 호출 비용을 본인이 확인합니다.
 
+**현재 NC 상태:** 한·영 TTL 0 Memory의 원래 항목 재조회, 한국어 A2A 위임, 실제 timer 응답의 원본 telemetry 조회를 확인했습니다. Timer는 disabled이며 `Finished/cancelled`와 별도 `Killed/cancelled` 시도를 모두 보존합니다. CLI history가 빈 목록을 반환해도 실제 실행은 존재했으므로 아래 native history 조회를 함께 사용합니다. Sweden의 원격 자산은 그룹 삭제 후 존재한다고 가정하지 않습니다.
+
 ## 1. Memory: 실제 저장과 새 요청에서의 조회
 
 06에서 만든 `workshop-embedding`을 확인하고, 현재 prefix 아래의 **새 보존용 store 이름**을 선택합니다. 아래 `YOUR-PREFIX`는 실제 `WORKSHOP_PREFIX`로 바꿉니다. 기존 1시간 store와 기록은 그대로 둡니다.
@@ -25,7 +27,7 @@ python scripts/workshop.py memory put --scope alpha --case D02 --confirm-write -
 
 반환한 **새 store 이름, `memory_id`, 소유권 파일**을 기록합니다. 생성 readback의 `default_ttl_seconds: 0`과 `automatic_expiration_enabled: false`를 확인합니다. 이는 설정 확인이며 장기간 보관 시험을 수행했다는 뜻은 아닙니다. 저장 비용은 계속 발생할 수 있습니다.
 
-**한국어와 영어의 별도 TTL 0 보존용 store가 모두 생성·recall되었고**, 별도 프로세스 재조회와 빈 beta scope도 확인했습니다. 한 보존 항목은 **4063초 경과 후에도 조회되어 이전 3600초(1시간)를 넘긴 보관**을 실제로 확인했습니다. 이는 관찰한 기간과 해당 store의 증거이지 무기한 내구성이나 실제 사용자 간 인가 검증은 아닙니다. 다른 항목·변경의 성공을 추정하지 않습니다.
+**이전 Sweden의 TTL 0 store**는 두 언어에서 생성/recall, 별도 프로세스 조회, 빈 beta scope와 4063초 항목 조회를 확인했습니다. 이는 보관한 과거 기록이며 NC의 지속성·scope 검증이나 현재 원격 자원의 존재를 뜻하지 않습니다.
 
 다른 **새 store**에 만료가 필요하면 `--ttl-seconds`에 1~31,536,000초(365일)를 명시할 수 있습니다. 이전 store의 TTL은 그 소유 기록을 따르며 새 기본값으로 자동 변경되지 않습니다. 같은 이름이 이미 생성되어 있다면 다시 create하지 말고 기록을 읽어 inspect/recall로 이어갑니다. 다른 새 실행에는 같은 prefix 아래의 사용하지 않은 이름을 선택하며, 원격 자산을 임의로 인수하지 않습니다.
 
@@ -86,7 +88,7 @@ python scripts/workshop.py a2a invoke --label a2a-fixed --confirm-cost
 
 **이 실습의 무인 Routine에는 사용자 생성 conversation을 절대 전달하지 않습니다.** 프로젝트 범위와 agent endpoint에서 만든 conversation 모두 routine actor에서 `conversation_not_found`로 실패했습니다. 기존 실패·대화·Routine은 보존하고, **conversation 없이 고정된 `action.input`을 가진 새 timer**를 사용합니다.
 
-이 stateless 경로에서는 **실제 예약 시각의 `timer_delivery`와 `status: Finished`**, 원래 응답의 telemetry readback이 확인되었습니다. 기존 수동 실행의 원래 응답도 별도로 확인했습니다. 실행·readback 성공은 policy 품질 전체 통과와 다릅니다.
+**새 NC의 stateless timer도 실제 예약 시각에 전달됐습니다.** 원래 response ID·agent 버전·project·trace·답변을 telemetry로 확인했습니다. 이전 Sweden의 수동/예약 응답은 별도 보관 기록이며 새 응답으로 바꾸지 않습니다.
 
 먼저 09에서 만든 실제 로그 workspace를 등록합니다. 실제 `customerId`는 `AZURE_LOG_ANALYTICS_WORKSPACE_ID`, 현재 프로젝트 ARM ID는 `AZURE_AI_PROJECT_ID`에 연결됩니다. 이 명령은 새 workspace나 모델 응답을 만들지 않습니다.
 
@@ -141,6 +143,14 @@ azd ai routine run list "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제
 
 예약 시각 이후 같은 목록을 제한적으로 다시 읽고 실제 **`timer_delivery`** 실행의 `dispatch_id`, `response_id`, 예약/실행 시각과 `Finished` 상태를 기록합니다. 이 timer에 수동 dispatch를 보내 예약 성공처럼 만들지 않습니다.
 
+**CLI 목록이 비어 있을 때:** NC에서 `azd ai routine run list`가 `value: null`을 반환했지만 SDK의 실제 history에는 실행이 있었습니다. 먼저 계획대로 disable한 뒤, 다음 읽기 전용 명령으로 실제 ID를 보관합니다. 새 timer나 수동 dispatch를 만들지 않습니다.
+
+```bash
+python scripts/routine_runs.py --name "YOUR-PREFIX-timer-static-ko" --label routine-native-history-ko
+```
+
+`outputs/routine-runs/routine-native-history-ko/runs.json`의 **모든 시도**를 읽고 `Finished`인 실제 `dispatch_id`를 다음 검사에 사용합니다. 목록 조회는 답변 검증이 아니며 `Killed`·`cancelled` 행을 지우지 않습니다. 같은 label은 덮어쓰지 않습니다.
+
 **성공·실패·관찰 중단 어느 경우에도 disable을 따로 실행**합니다. 성공한 경우에만 정리를 실행하는 조건으로 묶지 않습니다.
 
 ```bash
@@ -149,7 +159,7 @@ azd ai routine run list "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제
 azd ai routine show "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
-실제로 disable 후 `phase`가 `completed`에서 **`cancelled`**로 바뀌었지만 `status: Finished`와 원래 `response_id`는 남았습니다. 원시 phase를 `completed`로 고치지 않습니다.
+**이전 Sweden에서** disable 후 `phase`가 `completed`에서 `cancelled`로 바뀌고 `Finished`/원래 response ID가 남는 현상을 관찰했습니다. 새 NC에서도 원시 phase를 바꾸지 않고 실제 기록과 완전한 응답을 확인합니다.
 
 ### 같은 예약 응답을 telemetry로 검증
 
@@ -159,13 +169,13 @@ azd ai routine show "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프
 python scripts/workshop.py routines inspect --name "RETURNED-ROUTINE" --dispatch-id "RETURNED-DISPATCH-ID" --label routine-static-timer-readback-ko --verify-response --response-source telemetry --scheduled
 ```
 
-검사기는 실제 timer source·예약/실행 시각, **원래 response ID·agent/version/project/trace**, `AppGenAIContent`의 **완료된 `invoke_agent` assistant 출력**을 확인합니다. 최신 실행에서 **`scheduled_trigger_verified: true`와 `agent_answer_verified: true`가 모두 확인되고 Routine은 disabled**였습니다. 자신의 결과도 `routine_enabled: false`, `response_retrieval: verified-telemetry`, `new_model_request: false`와 함께 확인합니다.
+검사기는 실제 timer source·예약/실행 시각, 원래 response ID·agent/version/project/trace와 완료된 `invoke_agent` 출력을 확인합니다. 이전 Sweden의 두 verified 값과 disabled 상태는 역사적 기록입니다. **새 NC 결과**에서 `scheduled_trigger_verified`, `agent_answer_verified`, `routine_enabled`, readback 방식과 새 추론 여부를 확인합니다.
 
 Disable 뒤의 증거는 **`run_phase: cancelled`를 그대로 보존**합니다. 이 예외는 `Finished` 상태와 같은 원래 응답의 완전한 telemetry가 확인될 때만 유효합니다. 모든 cancelled 실행이 성공인 것은 아닙니다. 수집 지연이면 같은 ID를 읽기 재시도하며, 다른 모델 호출이나 새 dispatch로 대체하지 않습니다.
 
 ### 원래 수동 응답을 telemetry에서 읽기
 
-기존 수동 실행도 정확한 원래 ID로 조회할 수 있습니다. 이미 저장한 검증 결과가 있다면 먼저 읽고, 다시 조회할 때는 새 label을 사용합니다.
+현재 설정한 **같은 프로젝트의 로그가 아직 있는 수동 실행만** 원래 ID로 조회합니다. 삭제된 Sweden 자원의 증거는 보관본에서 읽으며 아래 NC 명령에 과거 ID를 넣지 않습니다. 다시 조회할 때는 새 label을 사용합니다.
 
 ```bash
 python scripts/workshop.py routines inspect --name "원래-수동-Routine-이름" --dispatch-id "원래-수동-dispatch-ID" --label routine-manual-telemetry-ko --verify-response --response-source telemetry

@@ -6,6 +6,8 @@
 
 **Prerequisites:** Successful MAF execution in 04. Multiple roles can mean additional model calls.
 
+**NC execution record:** sequential, concurrent, and group-chat patterns all ran. Ending Group Chat at its maximum three rounds demonstrates bounded execution—not business convergence, consensus, or a quality pass.
+
 ## 1. Sequential execution
 
 ```bash

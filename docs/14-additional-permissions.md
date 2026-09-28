@@ -4,6 +4,8 @@
 
 **시작 조건:** 08의 Hosted 준비, 본인 GitHub 저장소의 Actions·Environment 설정 권한, 실습 Azure 자원과 역할. GitHub 권한이 없으면 CI를 미실행으로 기록하고 15로 진행합니다.
 
+NC 재구축에서는 **이전 CI 관리 ID도 삭제된 Sweden 그룹 안에 있었으므로 함께 없어졌습니다.** 보관된 client/principal ID가 유효하다고 가정하지 않습니다. 새 NC 그룹에 전용 관리 ID를 만들고 프로젝트 범위 Foundry Project Manager, 계정 범위 Reader, 실제 immutable 저장소/Environment subject를 연결했습니다. 기존 main-only 보호는 유지합니다. 실제 릴리스 성공은 [검증 보고서](validation-report.md)의 해당 commit/run으로 확인하며 설정 완료만으로 배포 성공을 주장하지 않습니다.
+
 ## 1. 저장소와 실습 ID 준비
 
 1. 이 폴더 전체를 본인이 관리하는 GitHub 저장소에 올립니다. `.env`, `.selfstudy/`, `outputs/`, 자격 증명은 제외합니다.

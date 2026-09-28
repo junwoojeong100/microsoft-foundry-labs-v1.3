@@ -67,7 +67,7 @@ python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "https://YOUR-FOUNDRY-DOMA
 | 환경 | `ACTUAL-SOL-DEPLOYMENT` | `ACTUAL-LUNA-DEPLOYMENT` |
 |---|---|---|
 | 새 기본 환경 | `workshop-chat` | `workshop-compare` |
-| 이전 실습의 배포를 확인해 재사용 | `workshop-compare` | `workshop-chat`이 실제 Luna인 경우 |
+| 삭제되지 않은 같은 프로젝트에서만 확인해 재사용 | `workshop-compare` | `workshop-chat`이 실제 Luna인 경우. Sweden 보관본은 해당하지 않음 |
 
 ```bash
 python scripts/workshop.py --model-deployment "ACTUAL-SOL-DEPLOYMENT" answer --api account-responses --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-sol-account.json

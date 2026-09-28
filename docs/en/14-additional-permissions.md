@@ -6,6 +6,8 @@
 
 **Prerequisites:** Hosted preparation from 08, Actions/Environment permissions in your own GitHub repository, and the lab's Azure resources and roles. Without the required GitHub access, record CI as not run and continue to 15.
 
+The old CI managed identity **was inside the deleted Sweden group and was deleted with it**. Archived client/principal IDs do not establish a usable identity. The NC group now has a dedicated identity with project-scoped Foundry Project Manager, account-scoped Reader, and the exact immutable repository/Environment subject. Existing main-only protection remains. Verify actual release success against the commit/run in the [validation report](validation-report.md); configured identity and variables are not deployment success.
+
 ## 1. Prepare the repository and lab identity
 
 1. Put the complete workshop in a repository you administer. Exclude `.env`, `.selfstudy/`, `outputs/`, and credentials.

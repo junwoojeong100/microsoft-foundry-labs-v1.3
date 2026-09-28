@@ -2,6 +2,8 @@
 
 08 또는 10의 **실제 Hosted 폴더와 세션 ID**를 사용합니다. 다른 세션을 추측하지 않습니다.
 
+현재 NC에서도 **성공한 Hosted Toolbox 세션의 JSON 8개**를 회수하고 크기/SHA256 및 원래 tool-result digest를 대조했습니다. 원래 실패한 SSE와 성공한 canonical capture는 서로 다른 기록입니다. Sweden 세션은 삭제된 그룹에 다시 요청하지 않고 보관본에서 읽습니다.
+
 ## 1. 같은 세션인지 확인
 
 ```bash
@@ -17,9 +19,11 @@ azd ai agent files list "workshop-evidence/toolbox-runs" --cwd "실제-Hosted-�
 
 목록에서 실제 반환된 경로를 사용합니다. 임의로 경로를 조합하지 않습니다.
 
+NC의 응답은 `/home/session/workshop-evidence/...`를 보고했지만 CLI 파일 API는 **session home 상대 경로**를 요구했습니다. `/home/session/`을 제외한 실제 `workshop-evidence/...`로 목록을 확인한 뒤 다운로드합니다. 절대 remote 경로의 404를 파일 만료로 단정하지 않습니다. 아래의 **로컬 `--target-path`는 반대로 절대 경로**여야 합니다.
+
 ## 2. 만료 전에 절대 경로로 보관
 
-**중지된 세션에서도 파일이 아직 남아 있으면 다운로드할 수 있습니다.** 실제 원격 stopped session의 증거를 회수하고 도구 결과의 hash와 일치하는 것을 확인했습니다. 파일을 받기 위해 세션을 다시 실행하거나 새 추론을 만들지 않습니다.
+**현재 프로젝트의 중지된 세션도 파일이 남아 있으면 다운로드할 수 있습니다.** 이전 Sweden에서의 회수/hash 일치는 역사적 기록이며, 그 그룹 삭제 후 원격 가용성을 보장하지 않습니다. 파일을 대신 만들기 위해 새 추론을 실행하지 않습니다.
 
 필요한 request·response·tool result·summary/failure만 **서비스의 세션/파일 만료 전**에 보관합니다. 리소스를 보존하거나 compute를 stop했다고 파일이 무기한 남는 것은 아닙니다. 실제 보존 조건을 확인하고, 이미 만료된 결과를 다른 응답으로 대신하지 않습니다.
 

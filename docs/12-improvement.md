@@ -4,13 +4,15 @@
 
 **시작 조건:** 07의 judge와 dev 결과, 08의 Hosted 준비 방법, 06의 IQ/계정 OpenAI Endpoint, 09의 로그 연결. 수행하는 기능별 비용을 확인합니다. **holdout은 이 장에서도 열지 않습니다.**
 
+**현재 North Central US 범위:** 실제 Hosted IQ v1/v2의 dev는 각각 업무 6/6·세 policy 기준 각각 6/6이며 trace도 확인했습니다. 같은 코드/모델/데이터의 지침 비교이고 둘 다 통과했으므로 통과율 향상은 주장하지 않습니다. v2의 별도 한국어 진단도 8/8입니다. 대화의 turn/conversation 평가와 한·영 calibration 24/24는 별도 증거이며, **Optimizer의 실패는 아래에 분리**합니다.
+
 수정된 Sol + GA IQ **SDK candidate**는 고정 GPT-5.5 catalog·기준점 4에서 세 policy 기준이 각각 6/6이고 참조 감사도 valid입니다. 이전 groundedness 5/6과 `APPROVAL-01` 없이 팀장 정보를 덧붙인 D01 실패는 보관합니다. 그러나 이전/새 SDK 실행은 결합된 코드 변경으로 `code_hash`가 달라 비교가 거부됐으므로 **지침만의 개선이나 Hosted 품질로 해석하지 않습니다**.
 
 이 장의 비교는 **코드를 먼저 동결한 뒤 새 Hosted baseline/candidate 쌍**으로 수행합니다. 모델·원문·언어·retrieval·API·judge catalog·기준점·생성 설정을 고정하고 지침만 바꿉니다. 중간에 결합된 코드가 바뀌면 새 label의 전후 쌍을 다시 만들며, manifest의 hash를 수정하거나 검사를 완화하지 않습니다.
 
-**새로 확인한 Hosted 증거:** Sol 한 개의 model map을 사용한 실제 **Hosted IQ v1/v2가 각각 dev 6행·세 policy 기준 각각 6/6·참조 감사 valid·실제 trace 6/6**을 통과했습니다. 같은 동결 코드와 corpus로 `benchmark compare`가 허용되었습니다. 두 버전의 통과 수는 같으므로 통과율 개선이 입증된 것은 아닙니다. 원격 Toolbox Hosted agent 버전 1의 패키지·호출·session·source hash도 별도로 검증되었습니다.
+**역사적 Sweden Hosted 증거:** 당시 Sol-only IQ v1/v2 쌍과 원격 Toolbox의 결과·hash·trace를 검증했습니다. 이 비교의 조건과 원본은 보존하며, NC의 배포·smoke·품질을 확인한 것으로 옮겨 쓰지 않습니다.
 
-**최신 별도 검증:** 수정된 **Hosted IQ 배포 버전 3**은 canonical dev 6행과 진단 8행 모두 업무 검사·세 policy 기준·source 감사·실제 trace를 확인했습니다(6+8). 진단은 suite version 2입니다. 배포 버전 3과 지침 이름 `--prompt v2`는 다른 식별자이며, 다른 환경에서는 실제 반환된 배포 버전을 사용합니다. 이 결과를 이전 코드/사례 계약과의 지침만의 개선이나 새 holdout 결과로 해석하지 않습니다.
+**이전 Sweden의 별도 v3 검증:** canonical 6행과 custom 진단 8행을 확인한 역사적 기록입니다. 새 NC 배포 버전은 따로 읽어야 하며 숫자 3을 복사하지 않습니다. Custom 8/8은 관리형 native ASR을 검증하거나 리전이 오류 원인이었음을 입증하지 않습니다. 공식 리전 문서의 불일치는 [13](13-governance.md)에서 구분합니다.
 
 파생된 policy/Skill 입력의 prompt/source hash도 달라졌다면 새 입력 label로 다시 준비합니다. 이미 배포된 agent나 Skill이 로컬 v2 수정만으로 자동 갱신됐다고 가정하지 않습니다.
 
@@ -63,7 +65,11 @@ python scripts/workshop.py prepare-extensions --policy --label policy-inputs-ko
 
 ## 3. 지침만 최적화
 
-수정된 원문 참조 데이터의 **native Prompt Optimizer job은 완료**됐습니다. Sol 대상, GPT-5.5, 세 고정 policy judge와 기준점 4, 최대 후보 2를 사용했고, Optimizer가 표시한 **baseline 1.0에서 조기 종료해 새 후보는 0개**였습니다. 이 집계와 개별 policy `result`의 1~5 척도는 구분합니다. **새 지침 개선을 생성했다고 주장하지 않습니다.**
+**현재 NC Optimizer는 차단된 결과입니다.** 실제 SDK job `opt_3aa677fe825a4b3ea433904433b57e53`은 세 custom evaluator에 필요한 `pass_threshold`가 전달되지 않아 `OptimizationFailed / MissingRequiredParameter`로 실패했습니다. SDK 2.6.1의 `AgentOptimizationEvaluatorRef`는 이름/버전만 노출합니다. 같은 rubric·문턱 4를 유지했으며 required 필드를 없애거나 기본 평가기로 바꿔 성공을 만들지 않았습니다. 설치된 azd 경로도 문서의 명시적 instruction/metadata 설정을 읽지 못하는 사전 검사에서 멈췄습니다. 이 실패를 모델 품질 0점으로 해석하거나 승격하지 않습니다.
+
+SDK poller의 ID는 **`poller.details["job_id"]`**로 읽습니다. `details.job_id`는 이 버전에서 로컬 오류를 내지만 이미 서버 job이 생성됐을 수 있으므로 기존 target의 job 목록에서 ID를 확인하고 같은 job을 조회합니다. 생성 명령부터 반복하지 않습니다.
+
+**역사적 Sweden Optimizer job**의 baseline 1.0·후보 0개·참조 감사 성공은 보관본입니다. 아래 정상 절차는 새 환경에서 필수 evaluator 초기화가 지원/검증될 때 수행하며, 삭제된 Sweden job이나 옛 export를 NC 결과로 채택하지 않습니다.
 
 1. 03과 같은 합성 정책·지침을 쓰는 **별도 소유 Prompt Agent**를 만듭니다. 이름은 `<prefix>-optimize`처럼 구분합니다.
 2. **Optimize / Create optimization run → Agent**를 선택합니다.
@@ -85,7 +91,7 @@ python scripts/workshop.py --script export-evaluation --language ko --evaluation
 python scripts/audit_optimizer.py --export-directory outputs/evaluation-exports/optimizer-policy-export-ko --dataset outputs/policy-inputs-ko/optimizer-dev.jsonl --calibration-label policy-calibration-ko --language ko --output outputs/optimizer-policy-audit-ko.json
 ```
 
-이 스크립트는 **Azure 호출 없이 저장된 파일을 읽는 감사**입니다. 실제 실행에서 **6/6 source echo와 세 기준 각각 6/6**, 원본 envelope, 세 pinned judge 버전·기준점 4, reason의 reference ID와 같은 calibration을 검증했습니다. 잘못된 scope·참조·기준점, 자기 응답을 참조로 쓴 매핑은 거부하며 원래 export·점수를 수정하지 않습니다.
+이 스크립트는 **Azure 호출 없이 저장된 파일을 읽는 감사**입니다. 이전 Sweden 감사의 6/6 source echo·세 기준·참조 검증은 보관한 과거 결과입니다. NC에서는 새 원본 입력·job·calibration으로 수행해야 하며, 잘못된 scope/ref/기준점을 고치려고 과거 export를 수정하지 않습니다.
 
 `validation_status: valid`, 6/6 matched와 다음 증거 범위를 읽습니다.
 
@@ -107,13 +113,13 @@ candidate_generation_assessed: false
 
 이번 matrix의 실행 방식은 **workflow / sequential / IQ / account-chat / Invocations**입니다. 08의 기본 Responses 프로필과 다르므로 새 profile·패키지·azd 폴더를 만듭니다.
 
-이 Hosted 지침 비교는 **Sol 대상 한 개**로 진행합니다. 선택적 Luna 모델 비교는 02/07의 일치하는 `account-responses` 경로에서 따로 수행합니다. 새 환경의 실제 Sol 별칭을 설정합니다.
+이 Hosted 지침 비교는 **새 NC의 Sol 대상 한 개**로 진행합니다. 선택적 Luna 모델 비교는 02/07의 일치하는 `account-responses` 경로에서 따로 수행합니다. 새 환경의 실제 Sol 별칭을 설정합니다.
 
 ```bash
 python scripts/selfstudy.py models primary=workshop-chat
 ```
 
-기존 Sol이 `workshop-compare`라면 위 명령 대신 다음을 사용합니다.
+삭제되지 않은 **같은 프로젝트**에 실제 Sol이 `workshop-compare`로 존재함을 다시 확인했을 때만 다음을 대신 사용할 수 있습니다. 새 NC에서 이전 Sweden 별칭을 추정해 사용하지 않습니다.
 
 ```bash
 python scripts/selfstudy.py models primary=workshop-compare
@@ -217,7 +223,7 @@ python scripts/workshop.py benchmark stop-session --label wf-candidate
 
 ## 10. 별도의 policy-lab 진단 8문항
 
-이 suite는 **명시적인 합성 진단 8문항이며 holdout이 아닙니다**. core dev 6문항을 대체하지 않으며 `--unlock-holdout`을 사용하지 않습니다. 준비·smoke 확인한 정확한 Hosted 배포와 `--prompt v2` 프로필, Sol 한 개의 model map을 유지하고 **선택한 검색 경로 하나만** 실행합니다. 아래 label이 이미 있다면 새 label을 사용합니다.
+이 suite는 **보완용 합성 진단 8문항**입니다. 13의 **관리형 AI red teaming이 기본 검증 대상**이며, 이 suite는 관리형 실행의 대체물이나 증거가 아닙니다. Holdout이나 core dev의 대체물도 아니므로 `--unlock-holdout`을 사용하지 않습니다. 새 NC에서 준비·smoke한 정확한 배포와 프로필을 사용하고, `nc-policy-lab-ko` 같은 새 label을 모든 참조에 일치시킵니다.
 
 IQ 경로:
 
@@ -237,10 +243,10 @@ python scripts/workshop.py benchmark policy-report --label policy-lab-local-ko -
 
 `policy-report`는 저장된 결과를 읽으며 새 추론을 하지 않습니다. 요청·반환·누락·오류 행 수, 세 기준의 점수/설명, source/reference 감사와 일치하는 policy calibration을 함께 봅니다. `policy_compliance`는 **높을수록 규정 준수**, 4 미만은 위반 방향입니다. 이를 반대로 읽거나 서비스의 기존 `attack_success` 값을 고치지 않습니다. 오류·미채점 행도 분모에서 빼지 않습니다.
 
-**최신 진단 결과:** 새 동결 runtime의 **Hosted IQ 배포 버전 3**에서 suite version 2의 입력/응답 8/8, **업무 검사와 세 policy 기준 모두 통과**, source 감사와 trace 8/8을 확인했습니다. 같은 배포의 canonical dev 6행도 업무/policy/감사/trace를 확인했습니다. 이는 새로운 실제 결과이며 이전 실패를 수정한 것이 아닙니다.
+**현재 NC 진단 결과:** 실제 Hosted IQ **배포 v2**에서 canonical dev 6/6과 별도 한국어 custom 진단 8/8, 세 policy 기준과 trace를 확인했습니다. 명시적 진단의 규정 위반은 0/8입니다. 이전 Sweden v3 결과는 보관하며, 어느 custom 결과도 관리형 red-team job의 실행·완료·ASR을 대신 입증하지 않습니다.
 
 Suite version 2는 두 언어 모두 **PL05·PL06·PL07의 명시적 `allowed_citations`** 안에서만 추가 근거를 허용합니다. 목록은 알려진 중복 없는 ID로 필수 참조를 모두 포함하며, 답변의 필수 참조 누락과 무관한 인용은 거부합니다. PL06의 절차 전용 질문은 수정된 v2 지침으로 **`limit_krw: null`**을 반환했습니다. 이전 동결 version 1 결과는 그대로 읽을 수 있으며, 추가 인용 거부와 `150000` 응답·점수·source·label은 변경하지 않습니다.
 
-이 8문항은 새 holdout이 아닙니다. 끝난 진단 세션은 실제 label로 중지하고, 자원은 보존하되 [만료 전 증거 보관](advanced/session-files.md)을 진행합니다.
+이 8문항은 새 holdout이나 관리형 red-team scan이 아닙니다. 끝난 새 진단 세션은 실제 label로 중지하고 [만료 전 증거 보관](advanced/session-files.md)을 진행합니다. 이전 Sweden 결과는 보관본으로만 읽습니다.
 
-**다음 → [13. 실습 안전·관리 ID·Control Plane](13-governance.md)**
+**다음 → [13. 실습 안전·관리형 AI red teaming·Control Plane](13-governance.md)**

@@ -6,6 +6,8 @@
 
 **Prerequisites:** The original Search index and successful retrieval from 06, the project managed identity from 00, and the azd Foundry extension from 08. No preprovisioned service is needed.
 
+**Current NC status:** Korean Toolbox v1 and Skill-connected v3 produced actual tool/model calls; v3 also reported `skill_load_verified: true`. OpenAPI and the independent Hosted Toolbox call have separate NC records. Observations explicitly labelled **Sweden** below remain historical; matching version numbers do not establish new-resource ownership or execution.
+
 These steps require the working keyword index from 06. Keyword retrieval alone does not verify Toolbox, OpenAPI, or Hosted Toolbox; check each actual call below. If a prerequisite is missing in your environment, pause that dependent step rather than substituting File Search.
 
 ## 1. Grant project-to-Search access
@@ -57,11 +59,11 @@ python scripts/workshop.py --language en toolbox ask --version "ACTUAL-VERSION" 
 
 A successful tool listing does not prove downstream Search permissions. For a query 403, preserve the error, identify the actual calling identity, and correct only that identity's Search roles.
 
-**Verified scope:** Standard **Toolbox v1** was created with current `ProjectManagedIdentity` handling, and actual probe/query/ask all passed using the **project managed identity**. If your own v1 already exists, use its recorded exact version rather than creating it again. Choose new labels for new requests and preserve earlier failures.
+**Historical Sweden scope:** Toolbox v1 probe/query/ask passed with `ProjectManagedIdentity`. The same version number does not establish ownership or success in NC. Use new labels for new requests and preserve prior failures.
 
 ## 4. Tool Search and pinned tools
 
-Standard v1 success does not verify Tool Search or Skills. The latest lab separately verified that **v2 actually lists `tool_search`, `call_tool`, and `policy_search`**. Keep that listing evidence distinct from v3's actual Skill/search execution.
+Standard v1 success does not verify Tool Search or Skills. NC's separate discovery/Skill path was exercised with its own versions and records. **The previous Sweden run** verified v2's `tool_search`, `call_tool`, and `policy_search` listing; retain that as a separate historical observation.
 
 Check feature availability/Preview status and CLI support:
 
@@ -119,7 +121,7 @@ azd ai skill update "EXISTING-OWNED-SKILL-NAME" --file outputs/skill-update-inpu
 azd ai skill show "EXISTING-OWNED-SKILL-NAME" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 ```
 
-The verified update **returned version 2 while retaining version 1**. In another environment, use the actual returned version rather than assuming it is 2:
+**The historical Sweden update** returned version 2 and retained version 1. Do not copy “2” into NC assumptions; use the actual newly returned version:
 
 ```bash
 azd ai skill download "EXISTING-OWNED-SKILL-NAME" --version "RETURNED-NEW-SKILL-VERSION" --output-dir .selfstudy/skill-readback-v2-en --project-endpoint "YOUR-PROJECT-ENDPOINT"
@@ -139,7 +141,7 @@ python scripts/workshop.py --language en toolbox ask --version "NEW-TOOLBOX-VERS
 
 Check `skill_load_verified`, actual calls, and policy results. Registration alone does not prove the Skill was read. This example does not execute arbitrary Skill scripts.
 
-**Verified v3 execution:** it actually invoked `load_skill`, `tool_search`, and `call_tool`, returned original Search documents and correct Sol JSON, and reported **`skill_load_verified: true`**. Compare your own exact version, raw calls, and returned sources; registration or a v2 tool listing is not a substitute for this execution evidence.
+**Historical Sweden v3 execution** verified `load_skill`, `tool_search`, `call_tool`, Search evidence, and Sol JSON. Check the new NC version, calls, and sources separately.
 
 ## 7. Use OpenAPI against the same Search service
 
@@ -157,11 +159,11 @@ python scripts/workshop.py --language en openapi invoke --label openapi-policy-e
 
 Verify the actual OpenAPI tool call and returned source text. Explain how `lookup_policy`, MCP, OpenAPI, and Code Interpreter are different execution mechanisms.
 
-The latest lab run verified an **actual OpenAPI Search call returning all six original documents and a correct Sol answer**. Keep this account-managed-identity path distinct from Toolbox's project identity. For your own call, inspect the actual tool call, documents, and answer separately.
+**The previous Sweden OpenAPI run** returned six original documents and a Sol answer. That is not NC validation. Distinguish the new account identity from Toolbox's project identity and recheck actual calls, documents, and answers.
 
 ## 8. Host the same Toolbox
 
-**Verified remote execution:** the new **Hosted agent version 1** response matched its package, including actual Search/model calls, the exact agent version and session, and the source hash. This version number is distinct from Toolbox-definition and Skill versions. It is actual remote execution evidence, not merely active status; one verified response does not pass a whole policy-diagnostic suite.
+**Historical Sweden remote execution:** Hosted agent version 1 matched its package, calls, session, and source hash. This is not verification of the new NC Hosted runtime, another version, or managed AI red teaming.
 
 Start with a verified **standard Toolbox version**. If selecting a Skill-enabled version, add `--with-skill` to both packaging and serving; keep that choice consistent.
 

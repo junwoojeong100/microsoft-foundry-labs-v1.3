@@ -6,11 +6,13 @@
 
 아래 label은 새 실습의 예시입니다. 기존 결과가 있다면 새로운 baseline/candidate label을 정하고 모든 후속 참조에 동일하게 사용합니다. 이전 모델·judge·코드 조건의 파일이나 점수를 덮어쓰지 않습니다.
 
-**현재 확인 범위:** 수정된 **Sol + GA IQ의 SDK candidate**는 같은 고정 GPT-5.5 evaluator catalog와 기준점 4에서 `policy_groundedness`·`policy_helpfulness`·`policy_compliance`가 **각각 6/6**, 참조 감사도 valid로 확인되었습니다. 한국어와 영어 policy calibration도 **각각 24/24 기대 판정 일치**를 확인했습니다. 이전 groundedness **5/6** 결과는 그대로 보관하며, D01이 실제 반환 근거에 없는 `APPROVAL-01`의 팀장 정보를 덧붙였던 오류를 숨기지 않습니다.
+**현재 NC 상태:** 한·영 Sol + IQ SDK dev 6/6, 각 언어의 policy calibration 24/24를 확인했습니다. 영어는 첫 5/6 실패를 보존하고 06의 검색 문턱을 명시한 새 실행에서 6/6을 확인했습니다. Hosted v1/v2와 관리형 red team은 각각 12/13의 별도 대상입니다. 학습자는 새 label을 선택하고 자신의 원문·judge·전체 결과를 확인하며 기록된 점수를 인수하지 않습니다.
+
+**역사적 Sweden Central 기록:** 당시 Sol + GA IQ SDK candidate는 세 policy 기준 각각 6/6과 valid 참조 감사를 확인했고, 한국어/영어 calibration은 각각 24/24였습니다. 이전 groundedness 5/6과 `APPROVAL-01` 없는 D01 팀장 정보 오류도 보관합니다.
 
 **비교의 한계:** 이전/새 r2 SDK 쌍은 결합된 코드 변경으로 `code_hash`가 달라 통제 비교가 올바르게 거부되었습니다. 이 과거 쌍을 지침만의 개선 증거로 바꾸지 않습니다. 이후 **동결한 코드·corpus로 새로 실행한 Hosted IQ v1/v2**는 각 6행의 세 policy 기준 6/6, 참조 감사 valid, 실제 trace 6/6을 확인했고 `benchmark compare`도 허용되었습니다. 이는 별도의 실제 Hosted 증거입니다. 두 실행 모두 통과 수가 같으므로 dev 통과율 향상을 주장하지 않으며, 8문항 진단과 최종 인수는 구분합니다.
 
-이후 수정된 **Hosted IQ 배포 버전 3**은 canonical dev 6행과 suite version 2의 진단 8행 모두 업무/policy/source 감사/trace를 확인했습니다. 이 새 결과는 이전 인용 검사·PL06 실패 기록을 덮어쓰지 않으며, 코드·사례 계약이 다른 과거 실행과의 지침만의 개선이나 새로운 holdout 검증을 뜻하지 않습니다.
+이후 **Sweden의 Hosted IQ 배포 버전 3**은 canonical 6행과 진단 8행을 확인했습니다. 이 역사적 custom 진단은 새 NC 실행이나 13의 관리형 AI red teaming 증거가 아니며, 새로운 holdout 검증도 아닙니다.
 
 ## 1. dev와 holdout 분리
 
@@ -77,7 +79,7 @@ python scripts/workshop.py compare --baseline baseline --candidate candidate --v
 python scripts/selfstudy.py model --role judge --deployment workshop-judge
 ```
 
-**기존 실습 환경:** `workshop-optimizer`가 이미 **GPT-5.5 / 2026-04-24**라면 새 배포를 만들지 않고 다음 명시적 설정을 대신 사용합니다. 기존 `workshop-judge`가 Sol이었다면 그 자원을 바꾸거나 삭제하지 않습니다.
+**삭제되지 않은 같은 프로젝트를 재개할 때만:** `workshop-optimizer`가 실제 GPT-5.5 / 2026-04-24인지 다시 확인했다면 아래 별칭을 사용할 수 있습니다. 새 NC에서는 Sweden 보관본의 배포를 인수하지 않고 새 `workshop-judge`를 준비합니다.
 
 ```bash
 python scripts/selfstudy.py model --role judge --deployment workshop-optimizer

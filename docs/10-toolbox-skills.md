@@ -4,6 +4,8 @@
 
 **시작 조건:** 06의 원래 Search index/조회, 00의 프로젝트 관리 ID, 08에서 설치한 azd Foundry 확장. 새 서비스를 미리 제공받을 필요는 없습니다.
 
+**현재 NC 상태:** 한국어 Toolbox v1과 Skill을 연결한 v3에서 실제 도구/모델 호출을 확인했고 v3의 `skill_load_verified`도 true입니다. OpenAPI와 독립 Hosted Toolbox 호출도 별도 NC 기록으로 보관합니다. 아래에서 **Sweden**으로 표시한 버전/갱신 이력은 과거 기록이며, 숫자가 같다는 이유로 새 자산의 소유권이나 실행을 추정하지 않습니다.
+
 ## 1. 프로젝트 → Search 권한
 
 06의 **원래 index 이름**이 현재 설정인지 확인합니다.
@@ -53,11 +55,11 @@ python scripts/workshop.py toolbox ask --version "실제-버전" --label toolbox
 
 목록 조회가 성공해도 Search의 downstream 권한이 맞는 것은 아닙니다. query가 403이면 원래 실패와 실제 호출 ID를 확인하고 그 ID의 Search 역할만 수정합니다.
 
-**현재 확인된 범위:** `ProjectManagedIdentity` 처리를 반영한 일반 **Toolbox v1**을 생성했고, **프로젝트 관리 ID**로 실제 probe/query/ask가 모두 통과했습니다. 본인 v1이 이미 있다면 다시 생성하지 말고 기록된 정확한 버전을 사용합니다. 새 요청에는 새 label을 쓰고 이전 실패 기록도 유지합니다.
+**역사적 Sweden 확인 범위:** `ProjectManagedIdentity`를 사용한 Toolbox v1의 probe/query/ask가 통과했습니다. 새 NC에서 같은 버전 번호만 보고 성공이나 소유권을 추정하지 않습니다. 새 요청에는 새 label을 사용합니다.
 
 ## 4. Tool Search와 도구 고정
 
-일반 v1의 성공은 Tool Search·Skill의 실행 증거가 아닙니다. 최신 실습에서는 **v2 목록에 실제 `tool_search`, `call_tool`, `policy_search`가 표시되는 것**을 별도로 확인했습니다. 목록 확인과 v3의 실제 Skill/검색 실행을 구분합니다.
+일반 v1의 성공은 Tool Search·Skill의 실행 증거가 아닙니다. **이전 Sweden에서** v2 목록의 `tool_search`, `call_tool`, `policy_search`를 확인했습니다. 새 NC 목록·실행은 아직 확인하지 않았습니다.
 
 이 기능의 Preview/제공 상태와 CLI 명령을 먼저 확인합니다.
 
@@ -113,7 +115,7 @@ azd ai skill update "기존-소유-Skill-이름" --file outputs/skill-update-inp
 azd ai skill show "기존-소유-Skill-이름" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
-실제 갱신은 **버전 2를 반환하고 이전 버전 1을 보존**했습니다. 다른 환경에서는 숫자 2를 추측하지 말고 실제 반환 버전을 사용합니다.
+**이전 Sweden 갱신**은 버전 2를 반환하고 버전 1을 보존했습니다. 새 NC에서는 숫자 2를 복사하지 말고 실제 새 반환 버전을 사용합니다.
 
 ```bash
 azd ai skill download "기존-소유-Skill-이름" --version "반환된-새-Skill-버전" --output-dir .selfstudy/skill-readback-v2-ko --project-endpoint "실제-프로젝트-Endpoint"
@@ -133,7 +135,7 @@ python scripts/workshop.py toolbox ask --version "새-Toolbox-version" --label s
 
 `skill_load_verified`, 실제 호출과 정책 결과를 봅니다. 등록했다는 사실만으로 Skill을 읽었다고 하지 않습니다. 이 예제는 Skill의 임의 스크립트를 실행하지 않습니다.
 
-**v3의 실제 확인 결과:** `load_skill`, `tool_search`, `call_tool`이 호출되었고 원래 Search 문서와 올바른 Sol JSON 답변이 반환되었으며 **`skill_load_verified: true`**였습니다. 자신의 정확한 버전·원시 호출·반환 원문을 대조하고, 단순 등록이나 v2 목록을 이 실행 증거로 대신하지 않습니다.
+**역사적 Sweden v3 결과:** `load_skill`, `tool_search`, `call_tool`과 Search 근거·Sol JSON을 확인했습니다. 새 NC에서는 정확한 새 버전·호출·원문을 별도로 대조합니다.
 
 ## 7. OpenAPI도 같은 Search로
 
@@ -151,11 +153,11 @@ python scripts/workshop.py openapi invoke --label openapi-policy --confirm-cost
 
 실제 OpenAPI tool call과 반환 원문을 확인합니다. `lookup_policy`, MCP, OpenAPI, Code Interpreter가 서로 같은 실행이 아니라는 점을 설명합니다.
 
-최신 실습에서는 **실제 OpenAPI Search 호출이 원문 6개를 반환했고 Sol의 올바른 답변도 확인**했습니다. 이 경로의 계정 관리 ID와 Toolbox의 프로젝트 관리 ID를 혼동하지 않습니다. 자신의 호출에서는 실제 tool call·문서·답변을 별도로 대조합니다.
+**이전 Sweden OpenAPI 실행**은 원문 6개와 Sol 답변을 확인했습니다. 이는 NC 검증이 아닙니다. 새 계정 관리 ID와 Toolbox의 새 프로젝트 관리 ID를 구분하고 실제 호출·문서·답변을 다시 확인합니다.
 
 ## 8. 같은 Toolbox를 Hosted로
 
-**현재 확인된 원격 실행:** 새 **Hosted agent 버전 1**의 응답을 패키지와 대조해 실제 Search/model 호출, 정확한 agent 버전·session·source hash를 확인했습니다. 이는 Toolbox 정의 버전이나 Skill 버전과 다른 번호이며, 단순 active 상태가 아닌 실제 원격 실행 증거입니다. 한 응답의 검증을 전체 policy 진단 통과로 확대하지 않습니다.
+**이전 Sweden의 원격 실행:** Hosted agent 버전 1을 패키지·실제 호출·session·source hash로 확인했습니다. 이 역사적 증거는 새 NC Hosted, 다른 버전, 또는 관리형 red teaming의 성공을 뜻하지 않습니다.
 
 검증된 **일반 Toolbox 버전**부터 패키징합니다. Skill 포함 버전을 선택했다면 패키징과 serve 양쪽에 `--with-skill`을 추가하고 같은 선택을 유지합니다.
 

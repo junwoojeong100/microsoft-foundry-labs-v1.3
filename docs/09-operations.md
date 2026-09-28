@@ -4,6 +4,12 @@
 
 **시작 조건:** 03의 Prompt Agent 또는 08의 Hosted. 이 장에서 Application Insights와 Log Analytics를 직접 준비합니다.
 
+새 NC 프로젝트에서는 리전별 검증의 원래 요청을 추적하기 위해 **로그 자원을 이 장보다 일찍 생성**했습니다. 이전 Sweden workspace/customerId·projectId·trace를 복사하지 않고 새 실제 자원을 등록합니다. 자원 생성/연결과 실제 trace 조회·Insights 성공은 별도 확인입니다.
+
+**현재 NC 결과:** Hosted의 dev/진단/알려진 최종 사례 trace를 확인했고, on-demand Insights는 1시간 창의 16개 trace를 분석해 finding 1개를 반환했습니다. 예약은 disabled입니다. Continuous도 Coherence v13의 실제 1행 score 5/pass와 원래 응답 연결을 확인한 뒤 pause했습니다. 아래의 버전별 실패도 보존합니다.
+
+**선택적 조기 준비:** 00의 프로젝트/모델 설정 후, 추적할 첫 요청을 보내기 전에 이 절의 로그 생성·연결을 먼저 수행할 수 있습니다. 일반 학습 순서는 09장에서 유지합니다. 이미 준비했다면 새 자원을 중복 생성하지 않고 실제 연결/권한을 확인합니다.
+
 ## 1. 로그 환경 생성·연결
 
 1. Azure 포털 **Create a resource → Log Analytics workspace**에서 내 실습 구독·그룹에 새 workspace를 만듭니다.
@@ -11,6 +17,22 @@
 3. 두 리소스 각각의 **JSON View → id**를 기록합니다. 다른 그룹에 자동 생성된 자원이 없는지 확인합니다.
 4. Foundry **Agents → Traces → Connect**에서 방금 만든 Application Insights를 선택합니다.
 5. Connect가 없으면 **Manage → Project details → Connected resources → Add connection → Application Insights**를 사용합니다.
+
+### 첫 CLI 연결과 native SDK의 실제 요구 조건
+
+**NC에서 확인한 첫 연결 경로는 포털 bootstrap이 아니라 실제 azd ARM 환경**이었습니다. [08의 `prepare-hosted --kind runtime`](08-hosted.md#3-기존-프로젝트에-연결하는-독립-폴더)이 만든 폴더를 `azd ai connection create`의 `--cwd`로 사용하면 실제 프로젝트 ARM ID와 Endpoint가 있습니다. 이 준비만으로 Hosted를 배포하거나 모델을 호출할 필요는 없습니다. 다른 프로젝트의 환경을 빌리지 않습니다.
+
+첫 native red-team 시도는 App Insights 연결의 **`ResourceId` 누락으로 0행 실패**했습니다. 연결이 생성됐다는 사실만으로 SDK telemetry getter가 사용할 수 있는 것은 아닙니다. 이번 SDK 경로에는 다음 값이 필요했습니다.
+
+| 연결 항목 | 실제로 필요한 값 |
+|---|---|
+| Metadata `ResourceId` | 해당 Application Insights의 전체 ARM resource ID |
+| Metadata `ApplicationInsightsConnectionString` | 해당 리소스의 telemetry connection string |
+| `APIKey` credential | **같은 telemetry connection string**을 담는 credential |
+
+여기의 `APIKey`는 **설치된 SDK 2.6.1 getter가 요구하는 telemetry credential class**입니다. 모델 API key를 받거나 모델의 Entra 인증을 바꾸라는 뜻이 아닙니다. Project Managed Identity App Insights 연결은 생성 가능했지만 이 getter에서는 지원되지 않았습니다. 모델/Search 인증과 이 버전별 telemetry 예외를 구분합니다.
+
+현재 CLI는 `--metadata KEY=VALUE`를 반복 지정하고 `--auth-type api-key`/`--key`로 이 credential을 전달할 수 있습니다. **실제 connection string은 비공개 설정으로 다루고 녹화·저장소·공유 로그에 노출하지 않습니다.** 연결 metadata/credential을 확인한 뒤 새 native 실행에서 6행을 받았으며, 실패한 0행 시도는 보존합니다.
 
 연결만으로 조회 권한까지 부여된 것은 아닙니다. 본인의 로그 조회 권한을 확인합니다.
 
@@ -24,7 +46,7 @@ python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 
 필요한 범위의 **Log Analytics Reader**를 IAM에서 확인/부여합니다. 보호된 테이블을 사용하는 조직은 별도 Privileged Monitoring Data Reader가 필요할 수 있습니다. 토큰이나 connection string을 로그/환경 예제에 넣지 않습니다.
 
-**Insights 분석에는 호출 주체가 하나 더 있습니다.** 사용자뿐 아니라 **프로젝트 관리 ID**에도 이 Application Insights 범위의 **Monitoring Reader**가 필요합니다. `AppGenAIContent` 등 보호된 콘텐츠를 읽는 경우 두 주체 모두 해당 범위의 **Privileged Monitoring Data Reader**도 확인합니다. 실제 검증에서 일반 trace 조회가 성공해도 Insights는 이 의존 권한 때문에 403을 반환했습니다. 역할을 구독 전체로 넓히지 말고 실습 로그 리소스에만 부여합니다.
+**Insights 분석에는 호출 주체가 하나 더 있습니다.** 사용자뿐 아니라 프로젝트 관리 ID의 Monitoring Reader와, 보호 콘텐츠를 읽을 때 필요한 Privileged Monitoring Data Reader 범위를 확인합니다. **이전 Sweden 실행의** 의존 권한 403은 역사적 진단 사례이지 NC의 권한 검증이 아닙니다. 새 실습 로그 자원 범위에서만 필요한 역할을 확인합니다.
 
 ## 2. 연결 이후 새 요청 한 번
 
@@ -82,6 +104,8 @@ GPT-6의 **reasoning 토큰도 출력 비용과 출력 상한에 포함**됩니�
 한 번의 실제 실행·표본을 확인하고 **계획한 시각에는 결과가 부족해도 일시 중지**합니다. 활성화 자체는 평가 성공이 아니며, 결과를 기다리느라 무기한 켜 두지 않습니다. 이미 발생한 비용은 중지로 없어지지 않습니다.
 
 실시간 방식을 시험한다면 **Continuous**, 평가자 하나(예: Coherence), 본인의 judge, 샘플링 100%, **최대 1회/시간**으로 작게 설정합니다. 포털 Playground에서 합성 질문 하나를 보내고, 실제 평가 run과 그 응답 ID를 대조한 뒤 Pause합니다. 실습 코드의 기본 호출은 `store=False`입니다. 연속 평가가 응답을 다시 조회하는 경로에서는 저장되지 않은 응답이 평가되지 않을 수 있으므로, trace 존재만으로 실행 완료를 판단하지 않습니다. 저장할 때도 합성 데이터만 사용합니다.
+
+**Coherence 버전 주의:** NC의 v1 실행은 `CoherenceEvaluator.__init__() got an unexpected keyword argument 'is_reasoning_model'`로 0행 실패했습니다. 실제 catalog의 **v13**을 확인해 새 rule/evaluation에서 같은 GPT-5.5 judge·문턱 3·1회/시간을 유지하자 원래 저장 응답 1개가 score 5/pass로 평가됐습니다. 두 rule은 모두 paused이며 v1 실패를 지우지 않았습니다. 다른 evaluator까지 일괄 v13으로 바꾸지 않습니다.
 
 CLI·포털·MCP가 서로 다른 로그인 주체를 사용할 수 있습니다. 오류의 Object ID가 지정한 사용자와 다르면 먼저 인증 컨텍스트를 확인합니다. 모르는 MCP 주체에 새 역할을 부여해 우회하지 않습니다.
 

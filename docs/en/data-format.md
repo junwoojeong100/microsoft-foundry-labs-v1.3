@@ -23,6 +23,14 @@ English preserves **document/case IDs, currency limits, effective dates, and app
 
 The six `data/policies/*.txt` files are Korean. English File Search does **not** upload these by mistake: with `--language en`, the SDK renders English TXT content from the canonical English JSON, retaining document-ID filenames. There is no prebuilt `data/policies/en/` folder.
 
+## Project and region boundaries
+
+The current lab targets a **new North Central US project**. Keep Sweden `.env`, ownership ledgers, results, and packages in their private hashed archive, not in the new active workspace. Verify the new project ID/endpoint/prefix and use distinct language-specific ownership.
+
+Example new labels are `nc-baseline-en`, `nc-candidate-en`, `nc-policy-calibration-en`, and `nc-policy-lab-en`; use `-ko` for Korean. When replacing chapter examples, update every preparation, collection, evaluation, compare, report, and verify reference consistently. Never copy old results into new labels or rewrite their hashes.
+
+Sweden records below are historical. NC's mixed native job retains its original six rows/**five pass/one fail**; a separate Task Adherence-only job passed **5/5**. No failed row was removed and no custom diagnostic was substituted. Preserve each run's raw evidence, redacted inputs, actual returned counts, and flag direction. Neither job is holdout evidence.
+
 ## Prompt revision provenance
 
 `data/localization.json` preserves the **initial frozen files, hashes, and timestamps**. A separate `active_prompt_revision` records the 2026-09-28 evidence-only/procedure-response revision, previous commit, old/new Korean and English prompt SHA-256 values, and English workflow hash.
@@ -58,7 +66,7 @@ Mode `policy-reference-v1` carries a trusted original-reference envelope in eval
 
 **Diagnostic suite version 2** uses explicit `allowed_citations` only for **PL05, PL06, and PL07 in both languages**. The allowed set must include every mandatory `required_citations` entry. IDs in the case lists and answer citations must be known document IDs without duplicates. Answers still need all required references; extra citations must remain within the allowed set, and unrelated references are rejected. Other case contracts are unchanged.
 
-This contract was verified on Hosted IQ deployment version 3. **Previously frozen version-1 results remain readable unchanged.** Do not retrofit allowed lists or change a stored suite version to make historical results pass.
+The contract was also verified on **NC Hosted IQ deployment v2's separate eight-row diagnostic**. Preserve earlier Sweden Hosted v3 and frozen suite-version-1 records unchanged. Deployment version, prompt key, and suite version are different fields; never rewrite stored versions/hashes.
 
 For **procedure-only queries**, such as PL06's receipt question, `limit_krw` must be **`null`**. A known 150000 limit in the source is not a requested amount. These structured checks are distinct from semantic judging; the corrected instructions were verified through a new frozen runtime/label. Preserve the earlier `150000` response unchanged.
 
