@@ -2,57 +2,68 @@
 
 **English** | [한국어](../validation-report.md) · [Course home](../../README.md)
 
-**The guide was executed in a fresh dedicated environment on September 27–28, 2026.** Execution, business checks, and traces were verified without relabeling Search capacity blockers or inconsistent evaluation results as success.
+**The September 28, 2026 rerun successfully created Search and exercised IQ, Hybrid, and connected tools. GPT-6 Sol is now explicit, with separately verified source-reference and task-aware evaluation contracts.**
 
-The group is `rg-mf15-jw-0927-e2e`, region `swedencentral`, and project `mf15-project`. Created resources were retained as requested. Private subscription/tenant IDs, endpoint configuration, and original evidence remain in `.selfstudy/`, `.env`, and `outputs/`, outside the repository bundle.
+The group is `rg-mf15-jw-0927-e2e`, region `swedencentral`, and project `mf15-project`. Previous resources and failures were not deleted. Private configuration and original evidence remain in `.selfstudy/`, `.env`, and `outputs/`, outside the repository bundle.
 
-## Coverage
+## 1. Remediation outcomes
 
-| Area | Actual outcome |
+| Area | Actual remediation and evidence |
 |---|---|
-| Setup and models | New group, Foundry, project, deployments, and RBAC. Luna account API/Playground worked; its project API returned 400/500. Sol project inference was verified and explicitly selected |
-| Comparison | Same account Responses API, prompts, questions, and evidence: Luna/Sol dev 6/6 each. Prompt baseline/candidate also 6/6, so no pass-rate improvement was established |
-| Files and tools | Six File Search files per language with current/historical/missing-evidence citations. Real function/MCP execution, six-row Code Interpreter CSV, and Skill upload/readback |
-| Workflows | Sequential, concurrent, Group Chat, and actual SDK pause/resume. Simulated approval is not business authorization |
-| Hosted | Real Korean/English versions deployed and remotely invoked; six Hosted evaluation tasks per language and complete output exports. Actual runtime identities were used |
-| State and delegation | Korean/English managed-memory recall, synthetic scope separation, and A2A 1.0/JSONRPC. Not represented as real-user authorization testing |
-| Scheduling | One actual manual dispatch completed and the routine was disabled. Response-readback failure and untested future timer firing remain separate |
-| Operations | Actual App Insights request queries. Insights analyzed seven real traces and returned zero findings, not a health guarantee. One continuous evaluation completed, then paused |
-| Governance | A separate RAI policy preserved 11 default protections and was referenced by a separate Hosted v2. Normal/boundary responses were checked; instruction refusal was not called platform filtering |
-| CI/CD | Dedicated secretless MI, actual immutable OIDC subject, `main`-only environment. The verified commit deployed English agent v1, assigned only its project-scoped runtime role, passed 6/6 dev cases, and stopped the session |
+| Search creation | Basic, one replica/partition, managed identity, and disabled key authentication succeeded after older resources were freed |
+| Search, IQ, Hybrid | Separate Korean/English indexes and ownership ledgers verified keyword, GA IQ, actual 3072-dimensional embeddings/Hybrid, and IQ Chat planning/synthesis |
+| Luna project API | Existing Luna deployments were preserved. Sol was explicitly selected and verified through project Responses and real agents |
+| Judge separation | GPT-5.5 is a different base model from the Sol target, not merely another deployment alias |
+| Optimizer self-grounding | Original documents, expected behavior, and reference IDs travel in `ground_truth` to three custom evaluators. All six returned rows, pinned versions, thresholds, and references were audited |
+| Abstention penalized by Relevance | `policy_helpfulness` distinguishes justified abstention from needless refusal; separate grounding/compliance criteria reject unsupported claims |
+| Inconsistent red-team aggregate | Original provider metrics remain unchanged. Eight explicit saved diagnostic inputs and real response IDs are graded with a calibrated compliance direction |
+| Memory retention | New Korean/English retained stores use TTL `0`; old one-hour stores remain. A Korean item was still readable after 4,063 seconds |
+| Routine response readback | Original manual and actual scheduled responses were verified by exact response ID, agent/version/project/trace and original answer, without substitute inference |
+| Session evidence | Files from the stopped Hosted session were downloaded to a local archive and hash-checked; the session and volume remain |
 
-[GitHub checks](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36336934973) and the [approved OIDC release](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36337095039) succeeded on commit `24ea3be`. Downloaded artifacts were checked for the actual version, six responses, role scope, and `persistent_files_deleted: false`. The video's CI scene records configuration before this release ran.
+This existing environment explicitly reuses the Sol deployment `workshop-compare` and GPT-5.5 deployment `workshop-optimizer`. New learners may use the default aliases in setup; verify the **actual model and version**, not an alias's wording.
 
-## Final Hosted acceptance
+## 2. Final IQ Hosted verification
 
-The provider was explicitly **local** retrieval, with a **sequential** workflow, **account-chat** model API, and remote **Invocations** protocol.
+The provider is **actual Foundry IQ**, workflow **sequential**, model API **account-chat**, remote protocol **Invocations**, and target model **Sol**. Local retrieval was not substituted.
 
-| Evidence | Result |
-|---|---|
-| Baseline v1 dev | 12/12 business checks, zero request errors |
-| Candidate v2 dev | 12/12 business checks, zero request errors |
-| Frozen v2 holdout, executed once | 8/8 business checks, zero request errors |
-| Server-side traces | All 12 + 12 + 8 = 32 exports verified |
-| Judge calibration | 2/2 known good/bad examples distinguished |
-| Native quality | Groundedness passed; D05/H04 Relevance findings retained |
-| Final recommendation | `review-native-findings`, `deployment_approved: false` |
+| Run | Actual responses/business checks | Three policy evaluators | Actual traces |
+|---|---|---|---|
+| IQ Hosted v1 dev | 6/6 | 6/6 each | 6/6 |
+| IQ Hosted v2 dev | 6/6 | 6/6 each | 6/6 |
+| Final v3 dev | 6/6 | 6/6 each | 6/6 |
+| Final v3 diagnostic suite v2 | 8/8 | 8/8 each | 8/8 |
 
-This is acceptance for a small synthetic exercise, not every native metric passing, a statistical model ranking, an SLA, or production approval. The English runtime had separate dev/smoke checks; the shared Korean holdout was not relabeled as a new English test.
+The v1/v2 comparison checked the same code, model, and original evidence. Both passed, so no pass-rate improvement is claimed. Version 3 contains the follow-on response-contract repairs identified by diagnostics.
 
-## Outcomes not labeled successful
+The final diagnostic has eight requested inputs, eight responses, zero missing/error requests, and **0/8 violations under the calibrated policy-compliance criterion**. This is the lab's diagnostic rate, not a rewritten Microsoft managed Red-team UI ASR.
 
-**Search/IQ/Hybrid and Search-based Toolbox/OpenAPI:** Basic and S1 returned regional `ResourcesForSkuUnavailable`; S2 had service quota `0/0`. No other region or shared service was silently substituted. The local matrix is a separate path, not IQ validation.
+The new diagnostic suite's optional `allowed_citations` explicitly permits supported additional citations only for PL05/PL06/PL07. Mandatory references remain mandatory; unknown, unretrieved, or unrelated extras fail. Procedure-only questions require `limit_krw: null`. Previous version-1 failures and frozen datasets remain unchanged.
 
-**Prompt Optimizer:** the instruction-only run stopped at a baseline score of 1.0, but all six judge contexts were the generated responses themselves. That self-grounding is invalid quality evidence. No improvement or promotion was claimed.
+**Evidence:** `outputs/benchmarks/r2-iq-final-dev/` and `outputs/benchmarks/r2-iq-final-lab/`. These diagnostics are not called a new holdout. The earlier holdout remains its original historical run.
 
-**Red teaming:** five seeds were selected in the UI, but only three rows returned. The 100% ASR/`attack_success: true` conflicted with raw explanations reporting no prohibited action. Inputs were also redacted. Counts, scores, and explanations were preserved; the aggregate was not treated as a trustworthy attack-success rate.
+## 3. Evaluation inputs and judgments
 
-**Additional products:** Fabric, Microsoft 365/Work IQ, Agent 365, and similar separately licensed/data-bound integrations were not claimed as implemented. Existing corporate mail, meetings, and business data were not accessed.
+The metrics are `policy_groundedness`, `policy_helpfulness`, and `policy_compliance`, with a **4/5 threshold** and higher scores meaning better-supported, more appropriate responses.
 
-## Improvements incorporated
+For each language, eight controls covered a correct answer, wrong amount, counterfactual reference, justified abstention, irrelevant refusal, false approval, correct approval-boundary guidance, and fabricated citation. **All 24 judgments matched their expected outcomes.** Negative examples were required to fail.
 
-Agent-definition reasoning was separated from invocation options. Explicit account Responses selection, actual tool-execution evidence, A2A `base_url` and owned-version repair, English Hosted preparation/capture, local matrix support, continuous-run export IDs, and non-expiring File Search retention were added. Both language guides and command contracts are checked, and packaging allows only curated videos from the designated media folder.
+Audits verify reference-envelope hashes, returned source echoes, reference IDs in reasons, and score/pass direction. **Internal judge request bodies were not captured.** A counterfactual control also confirmed that changing the reference causes the same answer to fail.
 
-**Retention:** resources, agent versions, files, evaluations, and ownership records remain. Unneeded execution sessions were stopped and schedules/monitors disabled. Memory-item TTLs and managed-session expiration are not indefinite preservation; retained storage and logs may still incur charges.
+The new Sol Optimizer run reached a baseline score of 1.0 and stopped without generating candidates. `scripts/audit_optimizer.py` checked all six original/returned inputs, evaluator versions, thresholds, judge, and references. **Reference transport was verified; prompt improvement and new candidates were not claimed, and nothing was promoted.**
 
-The resource group's Cost Management `ActualCost` query had no posted rows yet. Billing can lag; this does not establish a total cost of zero.
+## 4. Connected tools, English execution, and scheduling
+
+Toolbox v1 performed real Search queries and Sol inference. Tool Search/Skill execution included `load_skill`, `tool_search`, and `call_tool`. Corrected Skill instructions were uploaded as a new version with byte-exact download verification, preserving the previous version. OpenAPI and remote Hosted Toolbox also used actual Search results.
+
+The English path uses a separate prefix/index/ledger in `.selfstudy/r2-en-workspace/`; it never overwrote the Korean index. Six English Sol/IQ dev responses passed all three policy evaluators. English Search, IQ, Hybrid, IQ Chat, and OpenAPI were also exercised.
+
+Routines used a stateless timer with explicit `action.input`. Passing caller-created conversations failed with `conversation_not_found`, and those attempts remain. Disabling a completed timer can change its service phase to `cancelled`; the verifier requires `Finished` plus the exact original completed response trace and preserves that raw phase rather than rewriting it.
+
+## 5. Retention and interpretation
+
+Existing resources, agent versions, evaluations, files, and ownership records were not deleted. Completed compute sessions are stopped and schedules/monitors disabled. Memory/vector-store expiration and managed-session lifetimes are distinct. Downloaded evidence is retained with hashes in `outputs/r2-session-archive/`.
+
+Search Basic, storage, and logs can continue to incur charges. An empty posted-cost query is not proof of zero total cost.
+
+Earlier failures were not overwritten with successful results. Original capacity errors, Luna project errors, self-grounding, contradictory ASR, unavailable caller conversations, and response/citation-contract failures remain separate evidence. This report describes the **latest verified lab scope**.

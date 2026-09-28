@@ -1,45 +1,42 @@
-# 14. 추가 권한 기능의 준비와 경계
+# 14. GitHub OIDC CI/CD 실습
 
-**완료 목표:** Azure Owner로 할 수 있는 일과 추가 계정·라이선스·디렉터리 권한이 필요한 일을 구분합니다.
+**완료 목표:** 포함된 GitHub Actions workflow를 OIDC 관리 ID로 실행하고, 이 실습의 정확한 Hosted 버전과 smoke/dev 결과를 확인합니다.
 
-이 장은 조건부입니다. 필요한 추가 조건이 없다면 **설계·미실행**으로 기록하고 15장으로 갑니다. 기본 경로를 끝내기 위해 회사 데이터에 접근하거나 전역 관리자 권한을 요구하지 않습니다.
+**시작 조건:** 08의 Hosted 준비, 본인 GitHub 저장소의 Actions·Environment 설정 권한, 실습 Azure 자원과 역할. GitHub 권한이 없으면 CI를 미실행으로 기록하고 15로 진행합니다.
 
-## 1. 권한 지도
+## 1. 저장소와 실습 ID 준비
 
-| 기능 | Azure Owner 외에 필요한 것 |
-|---|---|
-| GitHub Actions CI/CD | 본인 GitHub 계정·저장소 관리/Actions/환경 설정 권한 |
-| Entra 앱 등록 방식의 OIDC | 테넌트의 앱 등록 허용 또는 해당 관리자 권한 |
-| 사용자 할당 관리 ID 방식의 OIDC | Azure의 관리 ID/federation 생성 권한. 구독 Owner가 일반적으로 가능하지만 정책 확인 |
-| Fabric Data Agent / Fabric IQ | 지원 capacity, workspace·데이터 접근, 해당 기능의 제공 조건 |
-| Work IQ / Microsoft 365 | 별도 라이선스/사용량 과금·tenant enablement·동의·사용자 데이터 권한 |
-| 사설 Skill catalog | API Center 및 catalog 구성·권한·도구 거버넌스 |
-| Agent 365·음성·멀티모달 등 | 제품별 라이선스·모델·데이터·테넌트 조건 |
+1. 이 폴더 전체를 본인이 관리하는 GitHub 저장소에 올립니다. `.env`, `.selfstudy/`, `outputs/`, 자격 증명은 제외합니다.
+2. 포함된 [로컬 검사 workflow](../.github/workflows/check.yml)가 정확한 commit에서 통과하는지 확인합니다.
+3. Azure 포털에서 실습 그룹에 **User assigned managed identity**를 만들거나, 이 실습에 소유권이 확인된 기존 ID를 사용합니다. 실제 client ID와 principal ID를 기록합니다.
+4. workflow가 요구하는 **프로젝트 범위 Foundry Project Manager**, 계정 metadata 조회용 **Reader** 등 필요한 역할만 부여합니다. Hosted 런타임의 **Foundry User**는 별도입니다.
+5. GitHub 저장소에 `foundry-workshop` 같은 보호된 **Environment**와 실습용 branch/승인 규칙을 지정합니다.
 
-**구독 Owner는 Entra Global Administrator가 아닙니다.** 앱 등록이 기본 허용인 테넌트도 있지만 Owner라는 이유로 보장되지는 않습니다.
+배포 ID에 구독 Owner나 client secret을 주지 않습니다. 조직의 기존 보호 설정을 낮추지 않습니다.
 
-## 2. GitHub OIDC를 직접 준비하는 경로
+## 2. OIDC federation 연결
 
-추가 GitHub 조건이 있고 CI를 실제로 실행할 경우입니다. 배포용 identity에 구독 Owner나 client secret을 주지 않습니다.
+관리 ID의 **Federated credentials**에서 GitHub issuer, 실제 저장소/Environment subject, audience를 연결합니다.
 
-1. 이 폴더 전체를 본인이 관리하는 GitHub 저장소에 올립니다. 개인 `.env`, `outputs/`, `.selfstudy/`는 제외합니다.
-2. 포함된 [로컬 검사 workflow](../.github/workflows/check.yml)가 먼저 통과하는지 확인합니다.
-3. Azure 포털에서 실습 그룹에 **User assigned managed identity**를 만들고 client ID·principal ID를 기록합니다. 이 방식은 새 비밀번호를 만들지 않습니다.
-4. 해당 identity에 **프로젝트 범위 Foundry Project Manager**, 계정 metadata 조회용 **Reader** 등 실제 workflow에 필요한 권한만 부여합니다. 런타임에는 별도 Foundry User를 부여합니다.
-5. GitHub 저장소에 `foundry-workshop` 같은 보호된 **Environment**와 필요한 승인/branch 규칙을 만듭니다.
-6. 관리 ID의 **Federated credentials**에서 GitHub issuer, 실제 저장소/환경 subject, audience를 연결합니다.
+- Issuer: `https://token.actions.githubusercontent.com`
+- Audience: `api://AzureADTokenExchange`
+- Subject: 현재 저장소의 실제 정책과 일치해야 하며, 이름만으로 추측하지 않습니다.
 
-기본 issuer는 `https://token.actions.githubusercontent.com`, audience는 `api://AzureADTokenExchange`입니다. **subject는 예전 이름 전용 문자열로 추측하지 않습니다.**
+다음 읽기 명령은 [GitHub CLI](https://cli.github.com/) 설치와 본인 저장소 계정의 정상 로그인이 필요합니다.
 
 ```bash
-gh api repos/내소유자/내저장소/actions/oidc/customization/sub
+gh auth login
 ```
 
-현재 저장소의 실제 subject 정책과 `azure/login`이 보고하는 issuer/subject/audience를 확인합니다. immutable ID 기반 subject가 사용될 수 있습니다. 오류를 해결하려고 wildcard trust나 client secret으로 우회하지 않습니다.
+```bash
+gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
+```
 
-## 3. 기존 리소스를 쓰는 수동 릴리스
+실제 subject 정책과 `azure/login`이 보고하는 issuer/subject/audience를 대조합니다. immutable ID 기반 subject가 사용될 수 있습니다. 오류를 wildcard trust나 client secret으로 우회하지 않습니다.
 
-이 저장소의 [수동 릴리스 workflow](../.github/workflows/hosted-lab-release.yml)를 읽고 GitHub Environment에 **비밀 아닌 식별자**를 등록합니다.
+## 3. 포함된 수동 릴리스 설정
+
+[수동 릴리스 workflow](../.github/workflows/hosted-lab-release.yml)를 읽고 GitHub Environment에 **비밀 아닌 식별자**를 등록합니다.
 
 ```text
 AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
@@ -48,38 +45,20 @@ AZURE_AI_PROJECT_ENDPOINT, AZURE_AI_PROJECT_ID
 AZURE_AI_MODEL_DEPLOYMENT_NAME, WORKSHOP_PREFIX, WORKSHOP_HOSTED_AGENT_NAME
 ```
 
-값은 00/08에서 직접 만든 리소스와 실제 MI에서 가져옵니다. `.env` 파일 전체나 액세스 토큰을 변수/로그에 붙이지 않습니다.
+00/08에서 확인한 실제 프로젝트·관리 ID·Sol 배포를 사용합니다. 기존 Sol 별칭이 `workshop-compare`이면 그대로 명시합니다. `.env` 전체나 액세스 토큰을 변수/로그에 붙이지 않습니다.
 
-1. 정확한 commit의 선행 검사 workflow가 성공했는지 확인합니다.
-2. 언어·대상·배포/역할/추론 비용 동의를 확인해 **수동 dispatch**합니다.
-3. 패키지 → 실제 배포 버전 → 같은 버전의 smoke/dev gate → 결과 artifact를 확인합니다.
-4. 실패하면 rollout을 멈추고 기존 버전과 실패 artifact를 보존합니다.
-5. 검토된 이전 버전으로 되돌릴 때도 별도 결정을 기록합니다.
+## 4. 같은 버전의 결과 확인
 
-Azure 배포는 수동 실행과 비용 동의가 있어야 시작합니다. 매 push 자동 배포나 운영 승인을 설정하지 않습니다. 필요한 설명은 [공식 Hosted CI/CD](https://learn.microsoft.com/azure/foundry/agents/quickstarts/set-up-cicd-hosted-agent)에서 확인합니다.
+1. 정확한 commit의 선행 검사가 성공했는지 확인합니다.
+2. 언어, 대상, 배포/역할/추론 비용 동의를 확인한 뒤 **수동 dispatch**합니다.
+3. 패키지 → 실제 새 배포 버전 → **같은 버전**의 smoke/dev gate → 결과 artifact를 순서대로 확인합니다.
+4. 실패하면 추가 릴리스를 멈추고 이전 버전과 실패 artifact를 보존합니다.
+5. 검토한 이전 버전으로 되돌릴 때에도 정확한 대상과 별도 결정을 기록합니다.
 
-## 4. Fabric IQ와 Work IQ
+이 workflow는 실습 자원에 대한 수동 릴리스입니다. 매 push마다 자동 배포하지 않습니다. [공식 Hosted CI/CD](https://learn.microsoft.com/azure/foundry/agents/quickstarts/set-up-cicd-hosted-agent).
 
-이 영역은 추가 제품 조건이 필요합니다. 아직 만들지 않은 분석 데이터나 Microsoft 365 연결을 구현했다고 표시하지 않습니다.
+## 완료 확인
 
-| 질문 | 적절한 원본 | 내가 준비해야 할 것 |
-|---|---|---|
-| 출장 숙박 한도는? | 정책 문서 / Foundry IQ | 06에서 만든 합성 지식 |
-| 이번 분기 부서별 출장비 합계는? | Fabric의 분석 모델 | 테스트 workspace/capacity·합성 데이터·Data Agent·접근 권한 |
-| 출장 검토 회의의 합의 내용은? | 승인된 업무 맥락 / Work IQ | 별도 테스트 tenant·계정·동의·라이선스/과금·제한된 합성 자료 |
-
-**Fabric의 준비 순서:** 기능 지원 capacity 확인 → 테스트 workspace → 합성 데이터 → 읽기 가능한 Data Agent/의미 모델 → 자산별 identity 방식 확인 → 승인된 연결 → 합성 질문과 근거 대조 → capacity/연결 정리.
-
-**Work IQ의 준비 순서:** 현재 tenant enablement/과금 조건 확인 → 관리자·사용자 동의 → 필요한 delegated 권한과 테스트 사용자 → 데이터 이동/보존/동작 권한 검토 → 제한된 합성 대상의 별도 승인 실험.
-
-Work IQ는 읽기 외 동작이 가능할 수 있습니다. 회사 계정으로 전체 회의/메일을 탐색하는 것을 기본 실습으로 하지 않습니다. 준비되지 않았다면 라우팅·identity·권한·정리 계획까지만 완료합니다.
-
-공식 근거: [Fabric Data Agent](https://learn.microsoft.com/fabric/data-science/data-agent-end-to-end-tutorial) · [Fabric IQ](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/fabric-iq) · [Work IQ 요구사항](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq).
-
-## 5. 그 밖의 전문 영역
-
-사설 Skill catalog, Agent 365, 음성/멀티모달, fine-tuning, 브라우저/컴퓨터 동작은 추가 데이터·모델·제품 권한을 확인하고 독립 과제로 진행합니다.
-
-파인튜닝을 하지 않았는데 지침 개선을 “모델 재학습”이라고 하지 않고, catalog를 만들지 않았는데 Skill 등록을 사설 catalog 구축이라고 하지 않습니다.
+실제 commit, workflow run, OIDC 주체, 배포 버전, smoke/dev 결과와 artifact를 워크북에 기록합니다. 생성한 세션은 필요에 따라 중지하고, 보존 모드에서는 ID·federation·agent·volume을 삭제하지 않습니다.
 
 **다음 → [15. 최종 인수와 비용 자원 정리](15-capstone-cleanup.md)**

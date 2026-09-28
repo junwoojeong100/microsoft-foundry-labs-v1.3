@@ -100,8 +100,12 @@ class SelfStudyTests(unittest.TestCase):
                 "properties": {
                     "provisioningState": "Succeeded",
                     "model": {
-                        "name": PRIMARY_MODEL if deployment == "workshop-chat" else "gpt-6-sol",
-                        "version": PRIMARY_VERSION,
+                        "name": "gpt-5.5"
+                        if deployment == "workshop-judge"
+                        else PRIMARY_MODEL if deployment == "workshop-chat" else "gpt-6-luna",
+                        "version": "2026-04-24"
+                        if deployment == "workshop-judge"
+                        else PRIMARY_VERSION,
                     },
                 },
             }
@@ -186,14 +190,14 @@ class SelfStudyTests(unittest.TestCase):
             self.configure()
         self.assertFalse(selfstudy.ENV.exists())
 
-    def test_judge_role_reuses_verified_sol_without_changing_answer_model(self):
+    def test_judge_role_uses_a_different_base_model_without_changing_answer_model(self):
         self.configure()
         result = selfstudy.inspect_model("judge", None)
-        self.assertEqual(result["model"]["name"], "gpt-6-sol")
-        self.assertEqual(result["deployment"], "workshop-compare")
+        self.assertEqual(result["model"]["name"], "gpt-5.5")
+        self.assertEqual(result["deployment"], "workshop-judge")
         self.assertFalse(result["model_invoked"])
         self.assertEqual(
-            selfstudy.env_values()["AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME"], "workshop-compare"
+            selfstudy.env_values()["AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME"], "workshop-judge"
         )
         self.assertEqual(selfstudy.env_values()["AZURE_AI_MODEL_DEPLOYMENT_NAME"], "workshop-chat")
 

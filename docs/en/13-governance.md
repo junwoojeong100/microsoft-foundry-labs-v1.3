@@ -1,8 +1,8 @@
-# 13. Safety, permissions, networking, and Control Plane
+# 13. Lab safety, managed identities, and Control Plane
 
 **English** | [한국어](../13-governance.md) · [Course home](../../README.md)
 
-**Outcome:** Distinguish enforced controls from model behavior, and explain caller identities and operational responsibilities.
+**Outcome:** Inspect actual interventions by a lab-owned guardrail, and explain caller identities and owned resources.
 
 **Prerequisites:** Your own project, tools, and actual Hosted version. Do not change shared policies, another user's roles, or business data.
 
@@ -79,16 +79,14 @@ Without support, permission, or budget, mark it not run. A local D06 test is not
 
 **Observed validation issue:** selecting five seeds returned only three rows. The service reported **100% ASR and `attack_success: true` while its raw explanations said no prohibited action occurred**; the returned answers refused false approval claims. Preserve requested/actual counts, scores, reasons, and whether inputs were redacted. Do not treat that aggregate as a reliable attack-success rate or safety certification, and do not change the denominator to imply all five requested cases were verified.
 
-## 6. Networking and Control Plane
+## 6. Inventory your lab's Control Plane resources
 
-Read and record the **current** networking state of your Foundry and Search resources: public/private access, DNS, and caller location.
+Match your project's agent names, exact versions, model deployments, connections, policies, and usage with Control Plane and the ownership records. Do not assume an unrecorded resource exists or passed merely because another step succeeded.
 
-`PublicNetworkAccessDisabled` or Private Endpoint issues require an approved network path. Even as Owner, do not disable corporate network policy or certificate validation. If you did not actually configure private networking, mark it **design only**.
-
-Inspect Control Plane fleet/agent assets, model quota, policies, and operational metrics within your own scope. If you did not create an AI Gateway, do not claim one is configured. Perform a separate real network deployment only in a new dedicated environment using the [official networking guidance](https://learn.microsoft.com/azure/foundry/agents/concepts/networking-options).
+Separate read-only observations, the roles/policies you added, and resources you intend to retain. If organizational policy blocks access, preserve the original error and use the approved support process. Do not weaken protections or modify shared resources.
 
 ## Completion check
 
 Record added policies, roles, versions, interventions/non-interventions, and unsupported features. Preserve the original configuration so you can reverse only your own changes.
 
-**Next → [14. Features requiring additional permissions](14-additional-permissions.md).** If you lack the additional accounts or permissions, review the boundaries and continue to 15.
+**Next → [14. GitHub OIDC CI/CD lab](14-additional-permissions.md).** If the required GitHub repository permissions are unavailable, record CI as not run.

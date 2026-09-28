@@ -42,13 +42,31 @@ class LanguageTests(unittest.TestCase):
             self.assertIsNone(re.search("[가-힣]", path.read_text()))
             self.assertEqual(read_json(path.parent / "business-evaluation.json"), summary)
 
-    def test_original_and_translated_assets_match_the_frozen_bundle(self):
+    def test_original_assets_and_explicit_prompt_revision_preserve_provenance(self):
         manifest = read_json(ROOT / "data/localization.json")
         self.assertTrue(manifest["holdout_prepared"])
         self.assertLess(
             manifest["development_frozen_at"], manifest["holdout_translation_frozen_at"]
         )
-        for item in manifest["files"]:
+        revision = manifest.get("active_prompt_revision")
+        overrides = {}
+        instruction_hashes = dict(manifest["english_workflow_instruction_hashes"])
+        if revision:
+            self.assertTrue(revision["after_initial_holdout"])
+            originals = {item["source"]: item for item in manifest["files"]}
+            for item in revision["files"]:
+                original = originals[item["source"]]
+                self.assertEqual(item["kind"], "prompt")
+                self.assertEqual(original["kind"], "prompt")
+                self.assertEqual(item["translation"], original["translation"])
+                self.assertEqual(item["previous_source_sha256"], original["source_sha256"])
+                self.assertEqual(
+                    item["previous_translation_sha256"], original["translation_sha256"]
+                )
+                overrides[item["source"]] = item
+            instruction_hashes.update(revision["english_workflow_instruction_hashes"])
+        for original in manifest["files"]:
+            item = overrides.get(original["source"], original)
             for path, expected in (
                 ("source", "source_sha256"),
                 ("translation", "translation_sha256"),
@@ -64,7 +82,7 @@ class LanguageTests(unittest.TestCase):
                         ROOT, RuntimeProfile(kind="workflow", prompt=prompt, language="en")
                     )
                 ),
-                manifest["english_workflow_instruction_hashes"][prompt],
+                instruction_hashes[prompt],
             )
 
     def test_document_ids_dates_and_reference_judgments_are_preserved(self):

@@ -6,7 +6,7 @@
 
 **Prerequisites:** The original Search index and successful retrieval from 06, the project managed identity from 00, and the azd Foundry extension from 08. No preprovisioned service is needed.
 
-**If Search is blocked in 06, the Search-based Toolbox, OpenAPI, and Hosted Toolbox steps here are blocked too.** Preparing local Skill files alone does not complete them.
+These steps require the working keyword index from 06. Keyword retrieval alone does not verify Toolbox, OpenAPI, or Hosted Toolbox; check each actual call below. If a prerequisite is missing in your environment, pause that dependent step rather than substituting File Search.
 
 ## 1. Grant project-to-Search access
 
@@ -32,6 +32,8 @@ python scripts/selfstudy.py set TOOLBOX_SEARCH_CONNECTION_NAME "YOUR-PREFIX-sear
 
 In Foundry **Project details → Connected resources**, read back the connection, target, and authentication type. Do not use `--force`, API keys, or another project's connection.
 
+The current SDK can report project-managed-identity authentication as **`ProjectManagedIdentity`**. Do not reject a valid connection merely because earlier code expected only legacy `AAD`. Keep the CLI's `--auth-type project-managed-identity`; do not bypass an enum mismatch with an API key or another identity.
+
 ## 3. Start with a standard Toolbox
 
 ```bash
@@ -55,7 +57,11 @@ python scripts/workshop.py --language en toolbox ask --version "ACTUAL-VERSION" 
 
 A successful tool listing does not prove downstream Search permissions. For a query 403, preserve the error, identify the actual calling identity, and correct only that identity's Search roles.
 
+**Verified scope:** Standard **Toolbox v1** was created with current `ProjectManagedIdentity` handling, and actual probe/query/ask all passed using the **project managed identity**. If your own v1 already exists, use its recorded exact version rather than creating it again. Choose new labels for new requests and preserve earlier failures.
+
 ## 4. Tool Search and pinned tools
+
+Standard v1 success does not verify Tool Search or Skills. The latest lab separately verified that **v2 actually lists `tool_search`, `call_tool`, and `policy_search`**. Keep that listing evidence distinct from v3's actual Skill/search execution.
 
 Check feature availability/Preview status and CLI support:
 
@@ -80,7 +86,7 @@ Verify `tool_search`, `call_tool`, and `policy_search` in the actual list. Tool 
 python scripts/workshop.py --language en prepare-extensions --label extensions-en
 ```
 
-If already prepared for this prefix/language, inspect and reuse the existing manifest. Read `policy-review/SKILL.md`, `manifest.json`, and source hashes under `outputs/extensions-en/`. **Upload only `policy-review/`**, because its parent also contains evaluation references.
+Reuse existing inputs only when their prefix, language, and prompt/source hashes match the selected instructions. If v2 changed, use the fresh-label update path below. Read `policy-review/SKILL.md`, `manifest.json`, and source hashes under `outputs/extensions-en/`. **Upload only `policy-review/`**, because its parent also contains evaluation references.
 
 The generated `skill_name` is `<prefix>-policy-review-en`. Use the exact value from the manifest:
 
@@ -98,6 +104,30 @@ python scripts/selfstudy.py compare-files outputs/extensions-en/policy-review/SK
 
 If bytes differ, investigate. Do not edit the downloaded file to force a match.
 
+### Update an existing Skill non-destructively
+
+The strengthened v2 limits **the facts in the answer, not just citation IDs**, to actual evidence. Do not edit an old input folder. Prepare a new label and inspect the new `SKILL.md`:
+
+```bash
+python scripts/workshop.py --language en prepare-extensions --label skill-update-inputs-en
+```
+
+Verify the new manifest's `skill_name` matches the existing owned Skill and the content is the intended v2 before updating:
+
+```bash
+azd ai skill update "EXISTING-OWNED-SKILL-NAME" --file outputs/skill-update-inputs-en/policy-review --project-endpoint "YOUR-PROJECT-ENDPOINT"
+azd ai skill show "EXISTING-OWNED-SKILL-NAME" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
+```
+
+The verified update **returned version 2 while retaining version 1**. In another environment, use the actual returned version rather than assuming it is 2:
+
+```bash
+azd ai skill download "EXISTING-OWNED-SKILL-NAME" --version "RETURNED-NEW-SKILL-VERSION" --output-dir .selfstudy/skill-readback-v2-en --project-endpoint "YOUR-PROJECT-ENDPOINT"
+python scripts/selfstudy.py compare-files outputs/skill-update-inputs-en/policy-review/SKILL.md .selfstudy/skill-readback-v2-en/SKILL.md
+```
+
+Never overwrite an existing input label or readback directory. Explicitly bind the new Skill version into a **new Toolbox version** in section 6, then verify new calls. Updating a Skill does not rewrite an older Toolbox's pinned version or its previous execution evidence.
+
 ## 6. Attach the exact Skill version
 
 ```bash
@@ -109,6 +139,8 @@ python scripts/workshop.py --language en toolbox ask --version "NEW-TOOLBOX-VERS
 
 Check `skill_load_verified`, actual calls, and policy results. Registration alone does not prove the Skill was read. This example does not execute arbitrary Skill scripts.
 
+**Verified v3 execution:** it actually invoked `load_skill`, `tool_search`, and `call_tool`, returned original Search documents and correct Sol JSON, and reported **`skill_load_verified: true`**. Compare your own exact version, raw calls, and returned sources; registration or a v2 tool listing is not a substitute for this execution evidence.
+
 ## 7. Use OpenAPI against the same Search service
 
 Instead of creating a business API, use the read API of your own synthetic Search index. First review the plan, actual caller, and target:
@@ -117,7 +149,7 @@ Instead of creating a business API, use the read API of your own synthetic Searc
 python scripts/workshop.py --language en openapi plan
 ```
 
-This path uses the **Foundry account's system-assigned identity**, not the Toolbox's project identity. Enable the account identity, then reread its actual ID using the same `selfstudy.py configure` command as 00/01, including your explicit Sol deployment/`--expected-model` if selected. Grant this identity **Search Index Data Reader on the relevant Search service**. `selfstudy.py roles` distinguishes these identities.
+This path uses the **Foundry account's system-assigned identity**, not the Toolbox's project identity. Enable it, then reread the actual ID using `selfstudy.py configure` with the **same actual Sol alias and `--expected-model gpt-6-sol`** selected in 00. Grant this identity **Search Index Data Reader on the relevant Search service**. `selfstudy.py roles` distinguishes these identities.
 
 ```bash
 python scripts/workshop.py --language en openapi invoke --label openapi-policy-en --confirm-cost
@@ -125,7 +157,11 @@ python scripts/workshop.py --language en openapi invoke --label openapi-policy-e
 
 Verify the actual OpenAPI tool call and returned source text. Explain how `lookup_policy`, MCP, OpenAPI, and Code Interpreter are different execution mechanisms.
 
+The latest lab run verified an **actual OpenAPI Search call returning all six original documents and a correct Sol answer**. Keep this account-managed-identity path distinct from Toolbox's project identity. For your own call, inspect the actual tool call, documents, and answer separately.
+
 ## 8. Host the same Toolbox
+
+**Verified remote execution:** the new **Hosted agent version 1** response matched its package, including actual Search/model calls, the exact agent version and session, and the source hash. This version number is distinct from Toolbox-definition and Skill versions. It is actual remote execution evidence, not merely active status; one verified response does not pass a whole policy-diagnostic suite.
 
 Start with a verified **standard Toolbox version**. If selecting a Skill-enabled version, add `--with-skill` to both packaging and serving; keep that choice consistent.
 
@@ -176,7 +212,7 @@ python scripts/workshop.py --script verify-toolbox-response --file "ABSOLUTE-PAT
 
 The verifier derives language from the package; it has no `--language` option. It checks actual SSE completion, version, package, and tool/Skill evidence. Capturing stdout is not itself verification. On failure, inspect the preserved raw/error files and that same session's original logs.
 
-After verification, use 08's session listing/stopping procedure. Detailed remote evidence is under the session home's `workshop-evidence/toolbox-runs/`; [retrieve session files](advanced/session-files.md) before any optional deletion.
+After verification, use 08's session listing/stopping procedure. Detailed evidence is under the session home's `workshop-evidence/toolbox-runs/`. Retrieval and tool-result hash matching were verified from an actual stopped session. Even without deletion, [archive with an absolute `--target-path`](advanced/session-files.md) **before service expiry**, preserving the original package, response, session, and version together.
 
 ## 9. Manage versions deliberately
 

@@ -72,4 +72,4 @@ python scripts/workshop.py code-interpreter cleanup --label code-policy-table --
 
 함수, MCP, Code Interpreter가 각각 무엇을 실행했는지 설명하고 실제 ID/결과를 워크북에 기록합니다. **OpenAPI는 06에서 만들 Search가 필요하므로 10에서 이어서 수행**합니다.
 
-**다음 → [05. 워크플로와 승인·복구](05-workflows.md)**
+**다음 → [05. 워크플로와 모의 승인·중단/재개](05-workflows.md)**

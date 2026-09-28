@@ -1,4 +1,4 @@
-# 05. 워크플로와 승인·복구
+# 05. 워크플로와 모의 승인·중단/재개
 
 **완료 목표:** 순차·병렬·Group Chat의 결과를 구분하고, 중단·재개와 실제 업무 승인의 차이를 경험합니다.
 
@@ -40,7 +40,7 @@ python scripts/workshop.py workflow-agent --pattern sequential --retrieval local
 
 ## 5. 실제 SDK의 중단·재개 실험
 
-이 부분은 **모델·Azure 호출 없이 미리 작성한 합성 작업**으로 승인 게이트와 checkpoint를 배웁니다. 실험 결과를 실제 사람의 업무 인가나 Hosted 장애 복구 증거로 사용하지 않습니다.
+이 부분은 **모델·Azure 호출 없이 미리 작성한 합성 작업**으로 로컬 SDK의 모의 승인 게이트와 checkpoint를 배웁니다. 이 결과는 실제 사람의 업무 승인이나 외부 업무 실행이 아닙니다.
 
 먼저 고정 SDK를 확인합니다.
 

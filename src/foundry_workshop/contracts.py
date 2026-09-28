@@ -200,8 +200,10 @@ def validate_cases(
             "expected_limit_krw",
             "required_citations",
         }
-        if not isinstance(case, dict) or set(case) != required:
-            raise ValueError("Evaluation cases must contain exactly the documented case fields.")
+        if not isinstance(case, dict) or not required <= set(case) <= required | {"allowed_citations"}:
+            raise ValueError(
+                "Evaluation cases require the documented fields and only optional allowed_citations."
+            )
         if not isinstance(case.get("case_id"), str):
             raise ValueError("Each case must have a string case_id.")
         safe_label(case["case_id"].lower())
@@ -216,6 +218,19 @@ def validate_cases(
         )
         if not set(case["required_citations"]) <= known_documents:
             raise ValueError(f"Unknown reference document in {case['case_id']}.")
+        if "allowed_citations" in case:
+            allowed = case["allowed_citations"]
+            if not isinstance(allowed, list) or any(
+                not isinstance(value, str) or not value.strip() for value in allowed
+            ):
+                raise ValueError("allowed_citations must be a list of nonempty document IDs.")
+            if (
+                len(allowed) != len(set(allowed))
+                or not set(case["required_citations"]) <= set(allowed) <= known_documents
+            ):
+                raise ValueError(
+                    "allowed_citations must contain unique known IDs and include every required citation."
+                )
         ids.append(case["case_id"])
     if len(ids) != len(set(ids)):
         raise ValueError("Dataset has duplicate case IDs.")

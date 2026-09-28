@@ -24,11 +24,22 @@ class MemoryContractTests(unittest.TestCase):
     def test_plan_has_explicit_retention_and_two_synthetic_scopes(self):
         value = memory_lab.plan(settings())
         self.assertFalse(value["azure_requests_sent"])
-        self.assertEqual(value["default_ttl_seconds"], 3600)
+        self.assertEqual(value["default_ttl_seconds"], 0)
         self.assertEqual(value["scopes"], ["lab-unit-en-alpha", "lab-unit-en-beta"])
         self.assertNotIn("userId", str(value))
         with self.assertRaises(ValueError):
             memory_lab.scope_name(settings(), "real-customer")
+
+    def test_retention_and_explicit_store_name_are_validated(self):
+        self.assertEqual(memory_lab.plan(settings(), ttl_seconds=3600)["default_ttl_seconds"], 3600)
+        for ttl in (-1, True, 31_536_001):
+            with self.subTest(ttl=ttl), self.assertRaises(ValueError):
+                memory_lab.plan(settings(), ttl_seconds=ttl)
+        with patch.dict(os.environ, {"WORKSHOP_MEMORY_STORE_NAME": "lab-unit-retained-en"}):
+            self.assertEqual(memory_lab.store_name(settings()), "lab-unit-retained-en")
+        with patch.dict(os.environ, {"WORKSHOP_MEMORY_STORE_NAME": "someone-else-store"}):
+            with self.assertRaises(ValueError):
+                memory_lab.store_name(settings())
 
     def test_memory_content_comes_from_the_original_dev_question_not_gold(self):
         for language in ("en", "ko"):

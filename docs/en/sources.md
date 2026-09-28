@@ -10,7 +10,7 @@ The repository includes workshop code, synthetic data, packaging tools, and test
 | Project creation | [Create projects](https://learn.microsoft.com/azure/foundry/how-to/create-projects) |
 | Roles and managed identities | [Foundry RBAC](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry) |
 | Models and regions | [Models sold by Azure](https://learn.microsoft.com/azure/ai-foundry/foundry-models/concepts/models-sold-directly-by-azure), [Regions](https://learn.microsoft.com/azure/foundry/reference/region-support) |
-| GPT-6 selection, pricing, reasoning | [Model roles and rationale](model-selection.md), [Reasoning](https://learn.microsoft.com/azure/foundry/openai/how-to/reasoning) |
+| Default Sol, optional Luna, GPT-5.5 judge | [Model roles and actual aliases](model-selection.md), [Reasoning](https://learn.microsoft.com/azure/foundry/openai/how-to/reasoning) |
 | SDK and Responses API | [Quickstart](https://learn.microsoft.com/azure/foundry/quickstarts/get-started-code) |
 | File Search and functions | [File Search](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search), [Function calling](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/function-calling) |
 | Search creation/authentication | [Create Search](https://learn.microsoft.com/azure/search/search-create-service-portal), [RBAC](https://learn.microsoft.com/azure/search/search-security-enable-roles) |

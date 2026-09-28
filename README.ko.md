@@ -20,7 +20,7 @@
 
 Foundry는 모델 하나가 아니라 **모델·에이전트·지식·도구·평가·운영을 연결하는 Azure 플랫폼**입니다. 이 흐름을 같은 업무 사례로 직접 경험합니다.
 
-기본 모델은 **GPT-6 Luna**, 비교·평가는 **GPT-6 Sol**을 사용합니다. 역할별 배포 이름과 선택 이유는 [모델 안내](docs/model-selection.md)에 한 번만 정리했습니다. Luna는 시작 후보이며, 프로젝트 API 호환성 문제가 있으면 [01의 명시적 Sol 경로](docs/01-foundry.md#프로젝트-api와-계정-api를-구분하기)를 사용합니다.
+처음부터 **GPT-6 Sol**로 시작합니다. **GPT-6 Luna 비교는 선택 사항**, judge는 대상과 기반 모델이 다른 **GPT-5.5**를 사용합니다. 새 환경의 배포 이름은 각각 `workshop-chat`, `workshop-compare`, `workshop-judge`입니다. 기존 이름이 다르더라도 모델을 몰래 바꾸거나 삭제하지 않습니다. [모델 역할과 기존 별칭 사용법](docs/model-selection.md)을 확인하세요.
 
 ![실습 구조](docs/assets/architecture.svg)
 
@@ -30,7 +30,7 @@ Foundry는 모델 하나가 아니라 **모델·에이전트·지식·도구·�
 |---|---|---|
 | [00 준비](docs/00-setup.md) | 개발 환경·프로젝트·모델·권한 만들기 | 내 실습 환경 |
 | [01 첫 응답](docs/01-foundry.md) | 포털과 코드에서 모델 호출 | 실제 응답 |
-| [02 모델·지침](docs/02-models-prompts.md) | 프롬프트·모델·Router 비교 | 선택 이유 |
+| [02 모델·지침](docs/02-models-prompts.md) | 지침 비교, 선택적으로 Luna·Router 비교 | 선택 이유 |
 | [03 에이전트·파일](docs/03-knowledge.md) | Prompt Agent와 File Search | 저장 버전·문서 인용 |
 | [04 도구](docs/04-tools.md) | 함수·MCP·Code Interpreter 실행 | 실제 도구 결과 |
 | [05 워크플로](docs/05-workflows.md) | 순차·병렬·대화·중단/재개 | 작업 흐름 |
@@ -41,8 +41,8 @@ Foundry는 모델 하나가 아니라 **모델·에이전트·지식·도구·�
 | [10 공유 도구](docs/10-toolbox-skills.md) | Toolbox·Skills·OpenAPI 연결 | 재사용 가능한 도구 |
 | [11 기억·위임·예약](docs/11-memory-a2a-routines.md) | Memory·A2A·Routines 실행 | 상태와 실행 기록 |
 | [12 품질 개선](docs/12-improvement.md) | 대화 평가·Optimizer·배포 평가 | 검토한 개선 후보 |
-| [13 안전](docs/13-governance.md) | 정책·권한·네트워크 확인 | 통제와 한계 |
-| [14 추가 통합](docs/14-additional-permissions.md) | 필요한 추가 권한과 연결 확인 | 실행 또는 설계 결과 |
+| [13 실습 안전](docs/13-governance.md) | 실습 정책·관리 ID·소유 자산 확인 | 통제와 한계 |
+| [14 GitHub OIDC CI/CD](docs/14-additional-permissions.md) | 포함된 ID 기반 실습 릴리스 workflow 실행 | 정확한 버전과 smoke/dev 근거 |
 | [15 마무리](docs/15-capstone-cleanup.md) | 최종 확인·자원 정리 | 결과물과 정리 기록 |
 
 각 장의 **실행 → 확인 → 다음**만 따라가세요. 별도 학습 경로를 고르거나 다른 저장소를 받을 필요가 없습니다.
@@ -69,10 +69,10 @@ python scripts/selfstudy.py values
 - `data/policies/`의 합성 문서 6개만 사용합니다.
 - 새 서비스는 해당 장에서 필요할 때 만듭니다.
 - 오류나 빈 응답을 예시 답변으로 대체하지 않습니다.
-- 좋은 답변 한 건, 높은 점수 한 번을 운영 승인으로 보지 않습니다.
+- 좋은 답변 한 건, 높은 점수 한 번으로 실습 전체가 통과했다고 보지 않습니다.
 - **중간에 멈출 때도 [15의 정리](docs/15-capstone-cleanup.md)를 확인**합니다.
 
-Owner 역할이 있어도 모델 할당량·지역·조직 정책·제한 제공 기능을 자동으로 사용할 수 있는 것은 아닙니다. GitHub·Fabric·Microsoft 365 등의 추가 조건은 14장에서 구분합니다.
+Owner 역할이 있어도 모델 할당량·지역·제한 제공 기능을 자동으로 사용할 수 있는 것은 아닙니다. 조직의 보호 설정을 유지합니다. 14장은 포함된 GitHub OIDC CI/CD 실습에 필요한 저장소·환경 권한만 다룹니다.
 
 ## 포털·CLI 요약 영상
 
@@ -83,6 +83,6 @@ Owner 역할이 있어도 모델 할당량·지역·조직 정책·제한 제공
 | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) |
 | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) |
 
-[녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). Search 용량 차단과 native 평가의 경고를 숨기지 않으며, 영상은 생산 운영 승인을 뜻하지 않습니다.
+[녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). 영상은 이전 실습 시점의 기록입니다. 현재 모델 기본값과 Search 준비 조건은 최신 본문을 따르며, 과거 녹화만으로 현재 단계의 성공을 판단하지 않습니다.
 
 **도움말:** [문제 해결](docs/troubleshooting.md) · [기능 찾기](docs/feature-map.md) · [코드 읽기](docs/code-reading.md) · [공식 자료](docs/sources.md)

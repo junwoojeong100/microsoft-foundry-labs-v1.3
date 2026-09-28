@@ -14,7 +14,7 @@ Start with a **Microsoft Entra ID account, an Azure subscription, and an active 
 4. Record the subscription ID and associated tenant ID in your private workbook.
 5. Check permitted regions, services, and network policies. Owner cannot bypass management-group deny policies.
 
-**Important:** Subscription Owner is not Entra Global Administrator. Preparing the Azure resources in this course does not require directory-wide administration or a new client secret. Chapter 14 covers additional integrations separately.
+**Important:** Subscription Owner is not Entra Global Administrator. Preparing the Azure resources in this course does not require directory-wide administration or a new client secret. Chapter 14 covers the included GitHub OIDC workflow's lab permissions.
 
 ## 2. Get the files and development tools
 
@@ -137,17 +137,17 @@ CLI creation **does not guarantee Foundry User assignments** for the user and pr
 
 ## 6. Deploy the first model
 
-1. In Foundry **Discover → Models**, find **`gpt-6-luna`**.
-2. Check version **`2026-09-22`**, capabilities, regions, and quota. It is a starting choice for responsive, cost-efficient repeated requests and tool exercises. See [Model roles and selection](model-selection.md).
+1. In Foundry **Discover → Models**, find **`gpt-6-sol`**.
+2. Check version **`2026-09-22`**, capabilities, regions, and quota. Start directly with Sol for the first response and subsequent agent/tool exercises. See [Model roles and selection](model-selection.md).
 3. Under **Deploy / Use this model**, name the deployment `workshop-chat`.
 4. Select a pay-as-you-go Standard variant permitted by your policies. Choose Global Standard only if global processing is allowed. No PTU contract is required.
 5. Wait for **Succeeded** and record the actual base model, version, deployment type, and region.
 
-If quota is unavailable or the model is not offered, **do not repeatedly click Create**. Check regional limits in model deployment/Quota, request an increase, or explicitly choose another supported region/model and record why. The code does not switch automatically.
+If quota is unavailable or the model is not offered, **do not repeatedly click Create**. Check current availability, request the required quota, or pause until it is available. Keep a required region and the Sol selection fixed; do not substitute another model and present it as the same success.
 
-Luna remains the starting candidate. Sol is used for comparison in 02 and judging in 07; compatibility may require selecting it earlier in 01. Prepare dedicated IQ Chat and Optimizer models only in their respective chapters.
+Sol is the default answer model. The GPT-6 Luna comparison in 02 is optional; the judge in 07 is **GPT-5.5 / 2026-04-24**. Prepare IQ Chat's separate `gpt-5.6-luna` model and Optimizer only in their respective chapters.
 
-If a different model already uses the same deployment name, create a new deployment and switch explicitly. The setup helper does not hide GPT-6 model/version mismatches. Do not relabel existing agents or evaluations as results from a new model.
+If a different model already uses the same deployment name, **do not replace or delete it**. Explicitly reuse the actual existing Sol deployment or choose a new unique name. The setup helper checks the real model/version. Do not relabel existing agents or evaluations as results from a new model.
 
 ## 7. Verify data-access roles
 
@@ -169,8 +169,16 @@ Subscription Owner's resource-management permission does not replace data-plane 
 Replace the three values and prefix inside quotes:
 
 ```bash
-python scripts/selfstudy.py configure --project-id "YOUR-PROJECT-ARM-ID" --endpoint "YOUR-PROJECT-ENDPOINT" --deployment "workshop-chat" --prefix "lab-yourname-0927"
+python scripts/selfstudy.py configure --project-id "YOUR-PROJECT-ARM-ID" --endpoint "YOUR-PROJECT-ENDPOINT" --deployment "workshop-chat" --expected-model gpt-6-sol --prefix "lab-yourname-0927"
 ```
+
+**Continuing an existing lab:** If `workshop-compare` already contains Sol, use its actual alias instead of the fresh-environment command above. Keep the **same project, endpoint, and prefix**, and leave the model behind `workshop-chat` unchanged:
+
+```bash
+python scripts/selfstudy.py configure --project-id "YOUR-PROJECT-ARM-ID" --endpoint "YOUR-PROJECT-ENDPOINT" --deployment workshop-compare --expected-model gpt-6-sol --prefix "YOUR-UNCHANGED-LAB-PREFIX"
+```
+
+Keep earlier result labels, files, and agent versions immutable. Use new names/labels for changed model or evaluation conditions. See [existing deployment aliases](model-selection.md#reuse-existing-deployments-without-changing-them).
 
 This helper **only reads subscription, project, account, and deployment metadata** through Azure CLI. After verifying ID/endpoint consistency and deployment state, it records:
 
@@ -193,7 +201,7 @@ python scripts/workshop.py --language en doctor --cloud
 
 Check the subscription, tenant, and deployment. `doctor --cloud` checks authentication and metadata, not inference.
 
-**Pass the first real request in the next chapter before creating agents.** In a new Sweden Central project tested on 2026-09-27, Luna succeeded through the account API but returned 400/500 through the project API; Sol succeeded in the same project. For that symptom, follow [01's explicit compatibility path](01-foundry.md#distinguish-project-and-account-apis). Deployment status `Succeeded` is not proof of support for every API path.
+**Pass the first real Sol request in the next chapter before creating agents.** Deployment status `Succeeded` is not proof that every tool/API path works. Preserve original errors and use [Troubleshooting](troubleshooting.md) when needed.
 
 ## 9. Generate role-assignment commands when needed
 

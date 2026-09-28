@@ -17,11 +17,11 @@ A completed command, an actual response, and a quality pass are different. Recor
 
 | Stage | Gate |
 |---|---|
-| 00–02 | Verify `workshop-chat` is GPT-6 Luna / 2026-09-22, then obtain actual responses. If its project API fails, explicitly select/probe Sol as in 01 and record actual model/API; never claim Luna agent validation. |
+| 00–02 | Verify the actual Sol alias is GPT-6 Sol / 2026-09-22 and obtain a response. Fresh labs use `workshop-chat`; Luna comparison is optional. |
 | 03 | Six indexed files, real File Search calls, and citations to your files |
 | 04–05 | Actual function/MCP executions and results; simulated approval is not real authorization |
 | 06 | Your Search, embeddings, and IQ roles verified; the answer model and Search planning model are separate |
-| 07 | Judge deployment is separate from every target; all dev rows, errors, business checks, and actual Sol judge results reviewed without claiming all metrics passed |
+| 07 | GPT-5.5 judge uses a different base model and deployment from the targets; review all dev rows, errors, business checks, and actual evaluation explanations |
 | 08–11 | Exact deployed versions, runtime identities, traces, tools, and state results verified |
 | 12 | Explicitly select IQ or the separately named local matrix; `bind-matrix` reads its actual version/endpoint, and comparisons keep retrieval, generation settings, and data fixed |
 | 15 | Unlock holdout only after the frozen candidate's gates; stop schedules/sessions and explicitly retain or remove stores/models |

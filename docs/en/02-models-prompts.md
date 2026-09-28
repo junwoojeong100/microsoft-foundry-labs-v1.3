@@ -1,4 +1,4 @@
-# 02. Models, prompts, comparison, and Router
+# 02. Sol prompts and optional model/Router comparison
 
 **English** | [한국어](../02-models-prompts.md) · [Course home](../../README.md)
 
@@ -40,27 +40,40 @@ Saying it does not know is an appropriate boundary. If the model gives an amount
 
 **Prompts guide behavior; retrieval supplies evidence; fine-tuning changes model weights.** Editing instructions and connecting documents in this course is not fine-tuning.
 
-## 3. Prepare the comparison model
+<a id="3-prepare-the-comparison-model"></a>
 
-Repeat the model-deployment procedure from 00:
+## 3. Optionally compare Luna
 
-1. In the same Foundry resource's catalog, find **`gpt-6-sol` / `2026-09-22`**.
+This section is **optional**. Sol alone is sufficient for the main path. If you choose comparison, use the deployment procedure from 00:
+
+1. In the same Foundry resource's catalog, find **`gpt-6-luna` / `2026-09-22`**.
 2. Check Responses, Structured Outputs, regional availability, and quota.
-3. Use a **new deployment name**, `workshop-compare`, instead of changing an existing deployment.
+3. Fresh labs use `workshop-compare`. If that name already contains Sol or another model, leave it unchanged and select a verified existing Luna deployment or a new unique name.
 4. Record successful creation and the actual model/version.
 5. If unavailable or outside your budget, mark model comparison as not run and continue where prerequisites permit. Two aliases for the same model are not a model-performance comparison.
 
-Verify the actual deployed model/version. In 07, this Sol deployment may be reused as judge **only when it is not a target deployment**. If Sol is the configured answer model or part of the evaluated model matrix, prepare the separate `workshop-judge` deployment described there:
+Verify the actual deployed model/version. Insert your **actual Luna alias** below: `workshop-compare` in a fresh environment, or the existing `workshop-chat` only if it actually contains Luna. Luna is not the judge.
 
 ```bash
-python scripts/selfstudy.py model --role comparison
+python scripts/selfstudy.py model --role comparison --deployment "ACTUAL-LUNA-DEPLOYMENT"
 ```
 
-First generate direct SDK answers with Hanbit Technology's policies. Set the same account's `AZURE_OPENAI_ENDPOINT` as checked in 01, and use **account Responses for both models**. Name both deployments explicitly, even if you selected Sol as the configured default:
+Find the same Foundry account's **Azure OpenAI service-root endpoint**. If the displayed value ends in `/openai/v1`, omit that path:
 
 ```bash
-python scripts/workshop.py --model-deployment workshop-chat --language en answer --api account-responses --prompt v2 --retrieval local --question "What are the domestic business-trip lodging limit and pre-booking procedure for September 2026?" --output outputs/learner-notes-en/02-model-a.json
-python scripts/workshop.py --model-deployment workshop-compare --language en answer --api account-responses --prompt v2 --retrieval local --question "What are the domestic business-trip lodging limit and pre-booking procedure for September 2026?" --output outputs/learner-notes-en/02-model-b.json
+python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "https://YOUR-FOUNDRY-DOMAIN.openai.azure.com"
+```
+
+Generate direct SDK answers using the same Hanbit Technology policies and **account Responses for both models**. Replace both placeholders with aliases whose actual base models you verified:
+
+| Environment | `ACTUAL-SOL-DEPLOYMENT` | `ACTUAL-LUNA-DEPLOYMENT` |
+|---|---|---|
+| Fresh defaults | `workshop-chat` | `workshop-compare` |
+| Reused earlier lab | `workshop-compare` | `workshop-chat`, only if verified as Luna |
+
+```bash
+python scripts/workshop.py --model-deployment "ACTUAL-SOL-DEPLOYMENT" --language en answer --api account-responses --prompt v2 --retrieval local --question "What are the domestic business-trip lodging limit and pre-booking procedure for September 2026?" --output outputs/learner-notes-en/02-sol-account.json
+python scripts/workshop.py --model-deployment "ACTUAL-LUNA-DEPLOYMENT" --language en answer --api account-responses --prompt v2 --retrieval local --question "What are the domestic business-trip lodging limit and pre-booking procedure for September 2026?" --output outputs/learner-notes-en/02-luna-account.json
 ```
 
 Keep instructions, question, language, and local evidence identical. `--model-deployment` changes **only this request**, not `.env` or an Azure default. Compare answers, evidence, errors, and usage without ranking models from a single question. Chapter 07 expands to the full dev set.

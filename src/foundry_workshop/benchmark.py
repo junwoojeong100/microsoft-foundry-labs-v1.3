@@ -66,9 +66,12 @@ def grade_strict(row: dict[str, Any], case: dict[str, Any]) -> dict[str, Any]:
             if value == value.to_integral_value():
                 numbers.add(str(int(value)))
         expected = case["expected_limit_krw"]
-        allowed = set(case["required_citations"])
-        if any(value.startswith("TRAVEL-") for value in allowed):
-            allowed.update(RUBRIC["related_lodging_citations"])
+        if "allowed_citations" in case:
+            allowed = set(case["allowed_citations"])
+        else:
+            allowed = set(case["required_citations"])
+            if any(value.startswith("TRAVEL-") for value in allowed):
+                allowed.update(RUBRIC["related_lodging_citations"])
         checks["answer_contains_limit"] = expected is None or str(expected) in numbers
         checks["citations_relevant"] = set(answer["citations"]) <= allowed
     return {"case_id": case["case_id"], "passed": all(checks.values()), "checks": checks}
@@ -175,9 +178,28 @@ def load_matrix(root: Path, label: str):
         raise ValueError("This command requires an explicitly recorded live Hosted matrix.")
     if manifest.get("status") not in {"completed", "completed_with_errors"}:
         raise ValueError("An incomplete matrix cannot be scored or used as a candidate.")
+    if manifest.get("suite", "canonical") != "canonical":
+        from .policy_evaluation import LAB_SUITE, SUPPORTED_LAB_SUITE_VERSIONS
+
+        if (
+            manifest.get("suite") != LAB_SUITE
+            or type(manifest.get("suite_version")) is not int
+            or manifest["suite_version"] not in SUPPORTED_LAB_SUITE_VERSIONS
+            or manifest.get("split") != "dev"
+            or manifest.get("holdout_eligible") is not False
+        ):
+            raise ValueError("Only the explicit versioned dev-diagnostic policy LAB suite is supported.")
     cases = read_json(path / "dataset.json")
     corpus = read_json(path / "corpus.json")
     validate_cases(cases, corpus)
+    if (
+        manifest.get("suite") == "policy-lab"
+        and manifest["suite_version"] == 1
+        and any("allowed_citations" in case for case in cases)
+    ):
+        raise ValueError(
+            "Policy LAB suite version 1 cannot add allowed_citations; collect a new version/label."
+        )
     rows = read_jsonl(path / "responses.jsonl")
     for key, value in (
         ("dataset_hash", digest(cases)),
@@ -243,6 +265,7 @@ def collect_matrix(
     candidate: str | None = None,
     unlock_holdout: bool = False,
     regressions: str | None = None,
+    suite: str = "canonical",
     transport_factory=HostedTransport,
     recoverable_errors: tuple[type[Exception], ...] = (ValueError, TimeoutError),
 ) -> dict[str, Any]:
@@ -254,6 +277,14 @@ def collect_matrix(
         )
     if type(concurrency) is not int or not 1 <= concurrency <= 4:
         raise ValueError("Matrix concurrency must be 1-4.")
+    from .policy_evaluation import LAB_SUITE, LAB_SUITE_VERSION, lab_counts, load_lab_cases
+
+    if suite not in {"canonical", LAB_SUITE}:
+        raise ValueError("Choose the canonical or explicit policy-lab suite.")
+    if suite == LAB_SUITE and (
+        split != "dev" or candidate or unlock_holdout or regressions
+    ):
+        raise ValueError("The policy-lab suite is diagnostic dev only; it cannot open or become holdout.")
     contract = runtime_contract(root, settings, profile)
     selected = sorted(contract["models"]) if model_keys is None else model_keys
     if (
@@ -269,6 +300,8 @@ def collect_matrix(
                 "Freeze a dev candidate and unlock holdout explicitly; no regression harvesting."
             )
         previous, old_rows, old_cases = load_matrix(root, candidate)
+        if previous.get("suite", "canonical") != "canonical":
+            raise ValueError("A diagnostic policy LAB matrix cannot be a frozen holdout candidate.")
         old_grade = summarize_matrix(old_rows, old_cases, previous["model_keys"])
         if previous["split"] != "dev" or not set(selected) <= set(previous["model_keys"]):
             raise ValueError("Holdout models must be selected from the frozen dev matrix.")
@@ -283,7 +316,11 @@ def collect_matrix(
         frozen = {"label": candidate, "manifest_hash": digest(previous), "model_keys": selected}
     elif split != "dev" or candidate or unlock_holdout:
         raise ValueError("Use dev for development, or an explicitly frozen holdout.")
-    cases = load_cases(root, split, profile.language)
+    cases = (
+        load_lab_cases(root, profile.language)
+        if suite == LAB_SUITE
+        else load_cases(root, split, profile.language)
+    )
     row_ids = [f"{key}-{case['case_id']}" for key in selected for case in cases]
     if len(row_ids) != len(set(row_ids)):
         raise ValueError(
@@ -291,6 +328,8 @@ def collect_matrix(
         )
     if len(cases) * len(selected) > 160:
         raise ValueError("Review the request budget before exceeding 160 matrix rows.")
+    if suite == LAB_SUITE and len(cases) * len(selected) > 32:
+        raise ValueError("Policy LAB diagnostics are capped at 32 requested responses, not load tests.")
     reviewed = reviewed_regressions(root, regressions, cases)
     path = directory(root, label)
     path.mkdir(parents=True, exist_ok=False)
@@ -315,6 +354,11 @@ def collect_matrix(
         "frozen_candidate": frozen,
         "reviewed_regressions": reviewed,
         "session_retained_at_collection_end": True,
+        **(
+            {"suite": LAB_SUITE, "suite_version": LAB_SUITE_VERSION, "holdout_eligible": False}
+            if suite == LAB_SUITE
+            else {}
+        ),
     }
     write_json(path / "dataset.json", cases)
     write_json(path / "corpus.json", load_documents(root, profile.language))
@@ -383,6 +427,9 @@ def collect_matrix(
     write_json(path / "manifest.json", manifest)
     summary = summarize_matrix(rows, cases, selected)
     write_json(path / "business-evaluation.json", summary)
+    if suite == LAB_SUITE:
+        summary["policy_lab_counts"] = lab_counts(rows)
+        write_json(path / "policy-lab-collection.json", summary["policy_lab_counts"])
     return {
         **summary,
         "label": label,
@@ -410,6 +457,10 @@ def compare_matrices(root: Path, baseline: str, candidate: str) -> dict[str, Any
     new_grade = summarize_matrix(new_rows, cases, new["model_keys"])
     if old["split"] != "dev" or new["split"] != "dev":
         raise ValueError("Do not rank or develop prompts on holdout results.")
+    if (old.get("suite", "canonical"), old.get("suite_version")) != (
+        new.get("suite", "canonical"), new.get("suite_version")
+    ):
+        raise ValueError("Controlled comparison cannot mix canonical and diagnostic suites.")
     for key in ("dataset_hash", "corpus_hash", "model_keys", "concurrency", "rubric_hash"):
         if old[key] != new[key]:
             raise ValueError(f"Controlled matrix comparison requires identical {key}.")
@@ -597,13 +648,21 @@ def report_matrix(root: Path, label: str) -> Path:
     return target
 
 
-def native_items(root: Path, label: str):
+def native_items(root: Path, label: str, *, policy: bool = False):
     manifest, rows, cases = load_matrix(root, label)
     if any(row["status"] != "ok" for row in rows):
-        raise ValueError(
-            "Native evaluation requires every actual target response, not a success-only subset."
-        )
+        if not policy or manifest.get("suite") != "policy-lab":
+            raise ValueError(
+                "Native evaluation requires every actual target response, not a success-only subset."
+            )
+        # Diagnostic transport failures stay in the matrix and report denominator, never synthetic answers.
+        rows = [row for row in rows if row["status"] == "ok"]
     by_case = {case["case_id"]: case for case in cases}
+    if policy:
+        from .policy_evaluation import policy_item
+
+        corpus = read_json(directory(root, label) / "corpus.json")
+        return manifest, [policy_item(row, by_case[row["case_id"]], corpus) for row in rows]
     items = [
         {
             "case_id": row["row_id"],
@@ -626,11 +685,23 @@ def evaluate_matrix(
     timeout: int,
     reference: str | None = None,
     retry_failed: bool = False,
+    policy: bool = False,
 ) -> dict[str, Any]:
     from .native import evaluate_items
 
-    manifest, items = native_items(root, label)
-    catalog = directory(root, reference) / "evaluator-catalog.json" if reference else None
+    if not confirmed or not 5 <= timeout <= 900:
+        raise ValueError("Native evaluation requires --confirm-cost and a timeout of 5-900 seconds.")
+    manifest, items = native_items(root, label, policy=policy)
+    if not items:
+        raise ValueError("No real target responses were returned; retain all errors, not fabricated judge inputs.")
+    from .policy_evaluation import POLICY_DIRECTORY, POLICY_EVALUATORS
+
+    path = directory(root, label) / POLICY_DIRECTORY if policy else directory(root, label)
+    reference_path = (
+        directory(root, reference) / POLICY_DIRECTORY if policy else directory(root, reference)
+    ) if reference else None
+    catalog = reference_path / "evaluator-catalog.json" if reference_path else None
+    reference_state = None
     if reference:
         previous, _, _ = load_matrix(root, reference)
         if (
@@ -638,22 +709,102 @@ def evaluate_matrix(
             != manifest["runtime_contract"]["project_endpoint"]
         ):
             raise ValueError("The reference evaluator must belong to the same project.")
+        if policy:
+            from .native import verified_native
+
+            if reference == label:
+                raise ValueError("Use a different reference label.")
+            verified_native(reference_path)
+            if manifest["split"] == "dev":
+                if (
+                    previous["split"] != "dev"
+                    or previous["dataset_hash"] != manifest["dataset_hash"]
+                    or previous.get("suite", "canonical") != manifest.get("suite", "canonical")
+                ):
+                    raise ValueError("Policy dev comparisons require the same frozen dev suite and dataset.")
+                reference_state = reference_path / "cloud-evaluation.json"
     if settings.project_endpoint != manifest["runtime_contract"]["project_endpoint"]:
         raise ValueError("Do not evaluate this matrix in a different project.")
-    return evaluate_items(
+    custom = None
+    if policy and reference is None and not (path / "evaluator-catalog.json").exists():
+        from .cloud import project_clients
+        from .policy_evaluation import ensure_policy_evaluators
+        from .settings import owned_prefix, require_env
+
+        with project_clients(settings, preview=True) as (project, _client):
+            custom = ensure_policy_evaluators(
+                project, owned_prefix(), require_env("AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME")
+            )
+    result = evaluate_items(
         settings,
-        directory(root, label),
+        path,
         items,
         label=label,
         source_run_id=manifest["run_id"],
         dataset_hash=manifest["dataset_hash"],
         forbidden_deployments=set(manifest["runtime_contract"]["models"].values()),
-        evaluator_names=("groundedness", "relevance"),
+        evaluator_names=POLICY_EVALUATORS if policy else ("groundedness", "relevance"),
         confirmed=confirmed,
         timeout=timeout,
         reference_catalog=catalog,
         retry_failed=retry_failed,
+        **(
+            {
+                "custom_catalog": custom,
+                "reference_state": reference_state,
+                "policy_reference_audit": True,
+                "policy_source_corpora": [read_json(directory(root, label) / "corpus.json")],
+            }
+            if policy
+            else {}
+        ),
     )
+    if policy and manifest.get("suite") == "policy-lab":
+        from .policy_evaluation import lab_counts
+
+        _, rows, _ = load_matrix(root, label)
+        result["policy_lab_counts"] = lab_counts(rows)
+        result["note"] += " Transport errors are unscored and remain in the policy LAB denominator."
+    return result
+
+
+def report_policy_lab(
+    root: Path, label: str, calibration_label: str, *, provider_results: Path | None = None
+) -> dict[str, Any]:
+    from .calibration import verify_calibration
+    from .native import verified_native
+    from .policy_evaluation import LAB_SUITE, POLICY_DIRECTORY, policy_lab_summary
+
+    manifest, rows, _ = load_matrix(root, label)
+    if manifest.get("suite") != LAB_SUITE or manifest["split"] != "dev":
+        raise ValueError("Policy LAB reports require the explicitly selected diagnostic suite, never holdout.")
+    path = directory(root, label) / POLICY_DIRECTORY
+    state, results = verified_native(path)
+    _, items = native_items(root, label, policy=True)
+    if (
+        state["source_run_id"] != manifest["run_id"]
+        or state["input_hash"] != digest(items)
+        or state.get("dataset_hash") != manifest["dataset_hash"]
+    ):
+        raise ValueError("The policy LAB judge results do not match these actual target responses.")
+    calibration = verify_calibration(root, calibration_label, path, policy=True)
+    summary = policy_lab_summary(
+        rows, results, calibrated=calibration["gate_passed"],
+        provider=read_json(provider_results) if provider_results else None,
+    )
+    result = {
+        **summary, "label": label, "calibration_label": calibration_label,
+        "calibration": calibration, "source_run_id": manifest["run_id"],
+        "responses_hash": manifest["responses_hash"],
+        "policy_reference_audit_hash": state["policy_reference_audit_hash"],
+    }
+    output = path / "policy-lab-report.json"
+    if output.exists():
+        if read_json(output) != result:
+            raise ValueError("Preserve the earlier policy LAB report; do not overwrite changed evidence.")
+    else:
+        write_json(output, result, overwrite=False)
+    return result
 
 
 def verify_release(
@@ -667,13 +818,23 @@ def verify_release(
     calibration_label: str | None = None,
     require_native_pass: bool = False,
     require_regressions: bool = False,
+    policy: bool = False,
 ) -> dict[str, Any]:
     from .calibration import verify_calibration
     from .native import verified_native
     from .observability import verified_traces
+    from .policy_evaluation import POLICY_DIRECTORY, POLICY_MODE
+
+    if policy and not calibration_label:
+        raise ValueError("Policy acceptance requires --calibration from fresh matching policy controls.")
+
+    def native_directory(label):
+        return directory(root, label) / POLICY_DIRECTORY if policy else directory(root, label)
 
     compare_matrices(root, baseline, candidate)
     runs = {label: load_matrix(root, label) for label in (baseline, candidate, holdout)}
+    if any(manifest.get("suite", "canonical") != "canonical" for manifest, _, _ in runs.values()):
+        raise ValueError("Diagnostic policy LAB suites are not held-out release acceptance evidence.")
     selected, final = runs[candidate][0], runs[holdout][0]
     if final["split"] != "holdout" or final["frozen_candidate"] != {
         "label": candidate,
@@ -711,14 +872,16 @@ def verify_release(
     if require_native or require_native_pass or calibration_label:
         evaluator_hashes = set()
         for label, (manifest, _, _) in runs.items():
-            state, results = verified_native(directory(root, label))
-            _, submitted = native_items(root, label)
+            state, results = verified_native(native_directory(label))
+            _, submitted = native_items(root, label, policy=policy)
             if (
                 state["source_run_id"] != manifest["run_id"]
                 or state["input_hash"] != digest(submitted)
                 or state.get("dataset_hash") != manifest["dataset_hash"]
             ):
                 raise ValueError("A native run is not bound to this frozen response matrix.")
+            if state.get("policy_mode") != (POLICY_MODE if policy else None):
+                raise ValueError("Native acceptance requires the explicitly selected evaluation mode/version.")
             evaluator_hashes.add(state["evaluator_hash"])
             native_status[label] = {
                 "evaluation_id": state["evaluation_id"],
@@ -735,7 +898,7 @@ def verify_release(
             raise ValueError("The cohorts did not use the same frozen evaluator/judge/thresholds.")
     traces = {label: verified_traces(root, label) for label in runs} if require_traces else {}
     calibration = (
-        verify_calibration(root, calibration_label, directory(root, candidate))
+        verify_calibration(root, calibration_label, native_directory(candidate), policy=policy)
         if calibration_label
         else None
     )
@@ -773,6 +936,7 @@ def verify_release(
         else "reject",
         "deployment_approved": False,
         "holdout": "Final acceptance only; the bundled teaching set is already exposed.",
+        **({"policy_mode": POLICY_MODE} if policy else {}),
     }
-    write_json(directory(root, holdout) / "release-verification.json", report)
+    write_json(native_directory(holdout) / "release-verification.json", report)
     return report

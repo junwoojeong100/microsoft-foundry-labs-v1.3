@@ -140,6 +140,10 @@ def execute(root: Path, args) -> dict[str, Any]:
         return benchmark.compare_matrices(root, args.baseline, args.candidate)
     if action == "report":
         return {"report": str(benchmark.report_matrix(root, args.label)), "azure_called": False}
+    if action == "policy-report":
+        return benchmark.report_policy_lab(
+            root, args.label, args.calibration, provider_results=args.provider_results
+        )
     if action == "regression":
         if not args.confirm_review:
             raise ValueError(
@@ -162,6 +166,7 @@ def execute(root: Path, args) -> dict[str, Any]:
             calibration_label=args.calibration,
             require_native_pass=args.require_native_pass,
             require_regressions=args.require_regressions,
+            policy=args.policy,
         )
     load_environment(root)
     if action == "monitor":
@@ -172,7 +177,13 @@ def execute(root: Path, args) -> dict[str, Any]:
         if profile.protocol != "invocations":
             raise ValueError("The evaluation matrix uses the typed Invocations profile.")
         contract = runtime_contract(root, settings, profile)
-        count = len(load_cases(root, "dev", profile.language)) * len(contract["models"])
+        from .policy_evaluation import load_lab_cases
+
+        cases = (
+            load_lab_cases(root, profile.language) if args.suite == "policy-lab"
+            else load_cases(root, "dev", profile.language)
+        )
+        count = len(cases) * len(contract["models"])
         multiplier = 1 if profile.kind == "policy" else 3 if profile.pattern == "sequential" else 4
         return {
             "azure_called": False,
@@ -181,6 +192,8 @@ def execute(root: Path, args) -> dict[str, Any]:
             "dev_rows": count,
             "logical_model_calls_per_dev_matrix": count * multiplier,
             "native_evaluation_items": count * 2,
+            "policy_evaluation_judgments": count * 3,
+            "suite": args.suite,
             "holdout_opened": False,
             "note": "Logical counts exclude retries/retrieval/judge internals. Verify actual deployments and costs before collection.",
         }
@@ -203,6 +216,7 @@ def execute(root: Path, args) -> dict[str, Any]:
                 candidate=args.candidate,
                 unlock_holdout=args.unlock_holdout,
                 regressions=args.regressions,
+                suite=args.suite,
                 recoverable_errors=(ValueError, AzureError, httpx.HTTPError, TimeoutError),
             )
         if action == "smoke":
@@ -226,6 +240,7 @@ def execute(root: Path, args) -> dict[str, Any]:
                 timeout=args.timeout,
                 reference=args.reference,
                 retry_failed=args.retry_failed,
+                policy=args.policy,
             )
         if action == "stop-session":
             return stop_matrix_session(root, settings, args.label)

@@ -19,13 +19,33 @@ azd ai agent files list "workshop-evidence/toolbox-runs" --cwd "YOUR-HOSTED-ABSO
 
 Use paths actually returned by the listing; do not invent a remote path.
 
-## 2. Download only the required files
+## 2. Archive to absolute paths before expiry
+
+**Files can be downloaded from an already stopped session while they remain available.** Actual remote stopped-session evidence was retrieved and its recorded tool-result hashes matched. Do not restart the session or generate another inference just to obtain evidence.
+
+Archive only the required request, response, tool result, summary, or failure **before service-managed session/file expiry**. Retaining resources or stopping compute does not guarantee indefinite file retention. Check actual retention conditions; do not substitute a different response for expired evidence.
+
+From the README folder, create a new private archive directory. If it exists, choose a new name:
 
 ```bash
-azd ai agent files download "REMOTE-FILE-FROM-THE-LIST" --target-path "NEW-LOCAL-FILE-PATH" --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --session-id "YOUR-ACTUAL-SESSION-ID"
+python -c "from pathlib import Path; p=Path('.selfstudy/session-archive-en').resolve(); p.mkdir(parents=True,exist_ok=False); print(p)"
 ```
 
-Preserve the request, response, tool result, summary, or failure. Confirm that each downloaded file belongs to the intended request/version. This command does not invoke the model again.
+Use a new file inside that printed absolute directory as `--target-path`. **A relative target can resolve against azd's `--cwd`, not the terminal's current folder**, so always supply an absolute target:
+
+```bash
+azd ai agent files download "REMOTE-FILE-FROM-THE-LIST" --target-path "ABSOLUTE-NEW-LOCAL-FILE-PATH" --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --session-id "YOUR-ACTUAL-SESSION-ID"
+```
+
+Replace the target with a real absolute path, such as `/.../session-archive-en/file.json` on macOS/Linux or `C:/.../session-archive-en/file.json` on Windows. Record session ID, agent version, remote/local paths, and download time.
+
+Record the local file's byte SHA-256 with:
+
+```bash
+python -c "import hashlib,sys; from pathlib import Path; print(hashlib.sha256(Path(sys.argv[1]).read_bytes()).hexdigest())" "ABSOLUTE-DOWNLOADED-FILE-PATH"
+```
+
+Compare against recorded tool results using the **same payload and hash algorithm**. File-byte SHA-256 differs from canonical JSON digests such as `tool_results_hash`; check whether the recorded hash covers the whole JSON or an inner payload. Never edit raw evidence to force a match. Privately retain the original package, SSE capture, and verification results alongside the archive.
 
 ## 3. Stop compute and decide retention
 
@@ -33,6 +53,6 @@ Preserve the request, response, tool result, summary, or failure. Confirm that e
 azd ai agent sessions stop "YOUR-ACTUAL-SESSION-ID" --cwd "YOUR-HOSTED-ABSOLUTE-PATH"
 ```
 
-Stopping ends running compute but retains the persistent volume. Only consider session deletion after retrieving the files and deciding they no longer need to remain remotely. Deleting a session also removes its files. In retention mode, **stop only; keep the session's retained volume and agent resources**.
+Stop only your running session; an already stopped session may still support the retrieval above. Compute stopping, volume retention, and service expiry are separate. In retention mode, **do not delete the session/volume**. Completing a local archive does not authorize removal of shared resources.
 
 [08 Deployment](../08-hosted.md) · [10 Shared tools](../10-toolbox-skills.md) · [15 Cleanup and retention](../15-capstone-cleanup.md)

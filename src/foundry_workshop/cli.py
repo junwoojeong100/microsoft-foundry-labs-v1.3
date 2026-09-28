@@ -153,6 +153,11 @@ def parser() -> argparse.ArgumentParser:
         operation = benchmark_actions.add_parser(action)
         runtime_arguments(operation)
         operation.set_defaults(protocol="invocations")
+        if action in {"plan", "collect"}:
+            operation.add_argument(
+                "--suite", choices=("canonical", "policy-lab"), default="canonical",
+                help="policy-lab is a separate eight-case dev diagnostic, never a holdout.",
+            )
         if action == "collect":
             operation.add_argument("--label", required=True)
             operation.add_argument("--split", choices=("dev", "holdout"), default="dev")
@@ -179,6 +184,19 @@ def parser() -> argparse.ArgumentParser:
     matrix_eval.add_argument("--timeout", type=int, default=300)
     matrix_eval.add_argument("--retry-failed", action="store_true")
     matrix_eval.add_argument("--confirm-cost", action="store_true")
+    matrix_eval.add_argument(
+        "--policy", action="store_true",
+        help="Use three source-bound custom policy criteria (pass >=4), not builtin Relevance.",
+    )
+    policy_report = benchmark_actions.add_parser(
+        "policy-report", help="Audit diagnostic counts and calibrated policy violations; no Azure call."
+    )
+    policy_report.add_argument("--label", required=True)
+    policy_report.add_argument("--calibration", required=True)
+    policy_report.add_argument(
+        "--provider-results", type=Path,
+        help="Optional JSON with requested_count and original items bound by case_id/response_id.",
+    )
     matrix_compare = benchmark_actions.add_parser("compare")
     matrix_compare.add_argument("--baseline", required=True)
     matrix_compare.add_argument("--candidate", required=True)
@@ -201,12 +219,25 @@ def parser() -> argparse.ArgumentParser:
     verify.add_argument("--require-native-pass", action="store_true")
     verify.add_argument("--require-regressions", action="store_true")
     verify.add_argument("--calibration")
+    verify.add_argument(
+        "--policy", action="store_true",
+        help="Require audited policy-mode evidence and matching policy calibration.",
+    )
     calibration = commands.add_parser(
         "calibrate-judge",
         help="LIVE judge over bundled calibration fixtures; no target-agent responses.",
     )
     calibration.add_argument("--label", required=True)
-    calibration.add_argument("--reference")
+    calibration_reference = calibration.add_mutually_exclusive_group()
+    calibration_reference.add_argument("--reference", help="Use this benchmark label's frozen catalog.")
+    calibration_reference.add_argument(
+        "--reference-catalog", type=Path,
+        help="Pin an explicit existing cloud/benchmark evaluator-catalog.json.",
+    )
+    calibration.add_argument(
+        "--policy", action="store_true",
+        help="Use eight positive/negative/counterfactual policy controls, not legacy grounding fixtures.",
+    )
     calibration.add_argument("--timeout", type=int, default=300)
     calibration.add_argument("--confirm-cost", action="store_true")
     batch = commands.add_parser(
@@ -267,6 +298,10 @@ def parser() -> argparse.ArgumentParser:
         help="Retry this label's failed/invalid attempt; the attempt stays in native-attempts/.",
     )
     judge.add_argument("--confirm-cost", action="store_true")
+    judge.add_argument(
+        "--policy", action="store_true",
+        help="Separate opt-in source-bound policy grounding/helpfulness/compliance; pass >=4.",
+    )
     tool_judge = commands.add_parser(
         "maf-evaluate",
         help="LIVE Preview: run the MAF function-tool agent on dev and score tool calls in Foundry.",
@@ -376,6 +411,10 @@ def parser() -> argparse.ArgumentParser:
         help="Derive advanced lab inputs from bundled dev/policies only; no Azure calls.",
     )
     materials.add_argument("--label", required=True)
+    materials.add_argument(
+        "--policy", action="store_true",
+        help="Prepare optimizer ground_truth source envelopes and custom evaluator definitions.",
+    )
     conversations = commands.add_parser(
         "conversations",
         help="Dev-only multi-turn collection and separate turn/conversation native evaluation.",
@@ -401,6 +440,12 @@ def parser() -> argparse.ArgumentParser:
     memory_actions.add_parser("plan")
     memory_create = memory_actions.add_parser("create")
     memory_create.add_argument("--confirm-create", action="store_true")
+    memory_create.add_argument(
+        "--ttl-seconds",
+        type=int,
+        default=0,
+        help="Memory-item TTL: 0 preserves memories without automatic expiration (default).",
+    )
     for action in ("put", "update"):
         operation = memory_actions.add_parser(action)
         operation.add_argument("--scope", choices=("alpha", "beta"), required=True)
@@ -447,6 +492,15 @@ def parser() -> argparse.ArgumentParser:
     routines_inspect.add_argument("--dispatch-id", required=True)
     routines_inspect.add_argument("--label", required=True)
     routines_inspect.add_argument("--verify-response", action="store_true")
+    routines_inspect.add_argument(
+        "--response-source",
+        choices=("api", "telemetry"),
+        default="api",
+        help="Read the original response through the API or explicitly selected telemetry.",
+    )
+    routines_inspect.add_argument(
+        "--scheduled", action="store_true", help="Require a matching scheduled routine delivery."
+    )
     code_tool = commands.add_parser(
         "code-interpreter",
         help="Generate and verify a CSV using only six synthetic policy records.",
@@ -580,6 +634,8 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
                     args.dispatch_id,
                     args.label,
                     verify_response=args.verify_response,
+                    response_source=args.response_source,
+                    scheduled=args.scheduled,
                 )
         if args.command == "memory":
             from . import memory_lab
@@ -588,7 +644,13 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
                 return memory_lab.plan(settings)
             with project_clients(settings, preview=True) as (project, client):
                 if args.memory_action == "create":
-                    return memory_lab.create(project, root, settings, confirmed=args.confirm_create)
+                    return memory_lab.create(
+                        project,
+                        root,
+                        settings,
+                        confirmed=args.confirm_create,
+                        ttl_seconds=args.ttl_seconds,
+                    )
                 if args.memory_action in {"put", "update"}:
                     return memory_lab.put(
                         project,
@@ -703,6 +765,14 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
         if args.command == "calibrate-judge":
             from .benchmark import directory
             from .calibration import calibrate
+            from .policy_evaluation import POLICY_DIRECTORY
+
+            reference_catalog = args.reference_catalog
+            if args.reference:
+                reference_directory = directory(root, args.reference)
+                if args.policy:
+                    reference_directory /= POLICY_DIRECTORY
+                reference_catalog = reference_directory / "evaluator-catalog.json"
 
             return calibrate(
                 root,
@@ -710,9 +780,8 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
                 args.label,
                 confirmed=args.confirm_cost,
                 timeout=args.timeout,
-                reference_catalog=directory(root, args.reference) / "evaluator-catalog.json"
-                if args.reference
-                else None,
+                reference_catalog=reference_catalog,
+                policy=args.policy,
             )
         if args.command == "workflow-agent":
             from .runtime import run_pipeline
@@ -750,6 +819,7 @@ def cloud_command(root: Path, args: argparse.Namespace) -> dict[str, Any] | None
                 business_evaluator=args.business_evaluator,
                 reference=args.reference,
                 retry_failed=args.retry_failed,
+                policy=args.policy,
             )
         if args.command == "maf-evaluate":
             from .tool_evaluation import evaluate_tool_use
@@ -946,7 +1016,7 @@ def main(root: Path, argv: list[str] | None = None) -> int:
             from .settings import load_environment, owned_prefix
 
             load_environment(root)
-            result = prepare(root, args.language, owned_prefix(), args.label)
+            result = prepare(root, args.language, owned_prefix(), args.label, policy=args.policy)
         elif args.command == "cleanup-plan":
             ledger_path = root / "outputs/azure-objects.json"
             result = {

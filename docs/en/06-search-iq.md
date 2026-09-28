@@ -11,27 +11,29 @@
 1. In the Azure portal, open **Create a resource → Azure AI Search**.
 2. Choose the workshop subscription, **dedicated lab group**, and a unique service name.
 3. Verify both **Semantic ranker and Agentic retrieval** in the [regional support table](https://learn.microsoft.com/azure/search/search-region-support).
-4. Start with **Basic**, compute type **Default**, and a small replica/partition configuration. A higher SKU or Confidential compute is not the default for this lab.
+4. Start with **Basic**, compute type **Default**, **one replica and one partition**. A higher SKU or Confidential compute is not the default for this lab.
 5. Review pricing, create, and wait for completion.
 6. Record the **URL** from Overview, the **full resource ID** from JSON View, and the actual SKU, replica count, partition count, and ongoing price.
 
-### If regional capacity or quota blocks creation
+<a id="if-regional-capacity-or-quota-blocks-creation"></a>
 
-**Observed on 2026-09-27 in Sweden Central:** Both **Basic and Standard S1** creation returned `ResourcesForSkuUnavailable`. This is **regional service capacity**, not a missing Owner or RBAC role. Repeating Create or assigning more permissions does not resolve it.
+### Current setup and historical capacity errors
 
-The one explicitly chosen **Standard S2 attempt, with one replica and one partition**, also failed: **`ServiceQuotaExceeded`, `0 out of 0`**. This is a separate blocker: the subscription's service quota for that SKU is zero. **No Search service was created in this fixed Sweden Central run.**
+**Latest verified state:** Basic Search in the existing Sweden Central region has **one replica/partition, key authentication disabled, a system-assigned identity, and a Free semantic plan**. In addition to the six-document keyword index and retrieval, **the GA IQ retry and Sol's IQ answer succeeded**. The Hybrid index was seeded using **actual 3072-dimensional embeddings**, and its query succeeded.
 
-**Keep Sweden Central fixed and stop tier escalation.** More Owner/RBAC permissions do not solve either blocker. Use the official Search quota-increase process where needed, and resume only when the required regional capacity or SKU quota is available. Do not keep repeating Create, silently upgrade again, or switch regions.
+**IQ Chat has now been verified through actual `gpt-5.6-luna` `modelQueryPlanning` and `modelAnswerSynthesis` activities**, separate from GA IQ retrieval. Verified tool results include the OpenAPI six-document Search call and correct Sol answer, standard Toolbox v1 probe/query/ask, v2's discovery listing, and v3's actual Skill/search calls. [10](10-toolbox-skills.md) distinguishes their identities, versions, and execution evidence. Do not copy another step's or language's results as proof of the current run.
 
-Record each attempted SKU and its outcome. Before any later approved higher-tier deployment, record the **actual SKU, replica/partition configuration, and higher ongoing service cost**; do not keep describing it as Basic. Free retrieval-feature allowances do not remove a provisioned service's charge.
+**English was independently verified in a separate ownership workspace:** English Search, GA IQ, Hybrid, IQ Chat, and all policy judges on Sol's six English dev cases passed. These are separate English results, not copied Korean evidence. Keep each language's owned names, source hashes, and actual result labels distinct.
 
-Preserve original errors and any resource/ownership IDs. Mark this chapter's **Azure Search, IQ, and Hybrid**, and [10's Search-based Toolbox/OpenAPI](10-toolbox-skills.md), **BLOCKED**. File Search and local retrieval are separate results, not substitutes for Azure Search completion. Continue independent exercises whose prerequisites are available.
+Earlier Basic/S1 `ResourcesForSkuUnavailable` and S2 `ServiceQuotaExceeded` (`0 out of 0`) errors reflected capacity/quota at that time, not a permanent current blocker. For a new failure, inspect current quota/availability and preserve the original error. Retry only in a bounded way after the relevant condition changes.
 
-An explicitly selected, separately named **[local-retrieval Hosted matrix](12-improvement.md#10-explicit-local-retrieval-matrix)** can be prepared without Search. It is not IQ validation: actual deployment, smoke, native evaluation, traces, and acceptance must still pass for that precise local profile. Keep its results distinct from IQ and leave the Search-dependent exercises blocked. In retention mode, continue skipping all deletion; do not delete retained resources to work around these failures.
+More Owner/RBAC roles or repeated Create clicks do not solve capacity/quota. Keep the required region and retention choices; do not arbitrarily delete other groups or automatically escalate tiers. Record the actual chosen SKU/configuration and ongoing cost.
+
+Pause dependent steps only if your Search service is not actually ready. File Search and local retrieval are separate features, not evidence of Azure Search success. An explicitly selected [local Hosted matrix](12-improvement.md#10-explicit-local-retrieval-matrix) remains a different retrieval profile, not IQ validation.
 
 ## 2. Configure token authentication and managed identity
 
-Under Search **Settings → Keys → API access control**, select **Role-based access control**, or **Both** during a transition. Change only your new personal service; do not copy an API key.
+Under Search **Settings → Keys → API access control**, select **Role-based access control** and disable key authentication. Apply this only to your lab service; do not copy an API key.
 
 Select **Identity → System assigned → On → Save**. This identity is used later when Search calls the IQ Chat model.
 
@@ -113,7 +115,7 @@ This configuration change does not delete the hybrid index. Both remain in the o
 
 This experiment uses **`gpt-5.6-luna` / `2026-07-09`** and Search's system-assigned identity.
 
-Keep your configured answer model—Luna initially, or the explicitly selected Sol compatibility deployment. The model here is **a separate model used by Search for planning/synthesis**, governed by a [separate support list](model-selection.md).
+Keep **GPT-6 Sol** as the configured answer model. **GPT-5.6 Luna** here is Search's separate planning/synthesis model, not optional comparison model GPT-6 Luna. Keep these [model roles](model-selection.md) distinct.
 
 1. Check availability and quota for the required model/version.
 2. Deploy it in the same Foundry account with deployment name **`gpt-5.6-luna`**. Do not change the answer deployment.
@@ -127,7 +129,7 @@ python scripts/workshop.py --language en iq-chat setup --confirm-create
 python scripts/workshop.py --language en iq-chat ask --label iq-chat-first-en --confirm-cost
 ```
 
-Inspect `model_planning_verified`, `model_synthesis_verified`, actual planning/synthesis activity, and source evidence. If the required model cannot be deployed, mark this preset **blocked**. Do not disguise another model under its name or submit GA retrieval as IQ Chat success.
+Inspect `model_planning_verified`, `model_synthesis_verified`, the actual **`modelQueryPlanning` / `modelAnswerSynthesis` activities and `gpt-5.6-luna` model records**, and source evidence. If the required model cannot be deployed, mark this preset **blocked**. Do not disguise another model under its name or submit GA retrieval as IQ Chat success.
 
 ## Completion and retention
 

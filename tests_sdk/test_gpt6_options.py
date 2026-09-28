@@ -38,12 +38,14 @@ class GenerationTests(unittest.IsolatedAsyncioTestCase):
         )
 
     def test_model_roles_and_defaults_are_explicit(self):
-        self.assertEqual(PRIMARY_MODEL, "gpt-6-luna")
+        self.assertEqual(PRIMARY_MODEL, "gpt-6-sol")
         self.assertEqual(PRIMARY_VERSION, "2026-09-22")
-        self.assertEqual(
+        self.assertNotEqual(
             MODEL_ROLES["judge"]["deployment"], MODEL_ROLES["comparison"]["deployment"]
         )
-        self.assertEqual(MODEL_ROLES["judge"]["model"], "gpt-6-sol")
+        self.assertEqual(MODEL_ROLES["comparison"]["model"], "gpt-6-luna")
+        self.assertEqual(MODEL_ROLES["judge"]["model"], "gpt-5.5")
+        self.assertNotEqual(MODEL_ROLES["judge"]["model"], PRIMARY_MODEL)
         with patch.dict(os.environ, {}, clear=True):
             generation = GenerationConfig.from_env()
         self.assertEqual(generation.max_output_tokens, 32768)

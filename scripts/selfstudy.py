@@ -60,6 +60,7 @@ MUTABLE_KEYS = {
     "WORKSHOP_HOSTED_AGENT_NAME",
     "WORKSHOP_HOSTED_AGENT_VERSION",
     "WORKSHOP_HOSTED_AGENT_ENDPOINT",
+    "WORKSHOP_MEMORY_STORE_NAME",
 }
 ROLE_IDS = {
     "Foundry User": "53ca6127-db72-4b80-b1b0-d745d6d5456d",
@@ -597,6 +598,11 @@ def set_value(key: str, value: str) -> None:
         threshold = float(value)
         if not math.isfinite(threshold) or not 0 <= threshold <= 4:
             raise SetupError("IQ 검색 필터는 유한한 0~4 값이어야 합니다.")
+    elif key == "WORKSHOP_MEMORY_STORE_NAME":
+        if not re.fullmatch(r"[a-z0-9-]{1,100}", value) or not value.startswith(
+            state["prefix"] + "-"
+        ):
+            raise SetupError("Memory 저장소는 현재 실습 접두사 아래의 고유한 이름이어야 합니다.")
     elif key == "WORKSHOP_MODEL_DEPLOYMENTS_JSON":
         models = json.loads(value)
         if (
@@ -644,6 +650,12 @@ def register_resource(kind: str, resource_id: str, endpoint: str | None) -> dict
         if not record["app_id"]:
             raise SetupError("Application Insights 응답에 AppId가 없습니다.")
         updates["AZURE_APPLICATION_INSIGHTS_APP_ID"] = uuid_value(record["app_id"])
+    elif kind == "logs":
+        customer_id = (value.get("properties") or {}).get("customerId")
+        if not customer_id:
+            raise SetupError("Log Analytics 응답에 실제 customerId가 없습니다.")
+        updates["AZURE_LOG_ANALYTICS_WORKSPACE_ID"] = uuid_value(customer_id)
+        updates["AZURE_AI_PROJECT_ID"] = state["project_id"]
     if updates:
         update_env(updates)
     state["resources"][record["id"].casefold()] = record
@@ -993,6 +1005,8 @@ def main() -> None:
                 "AZURE_SEARCH_ENDPOINT",
                 "AZURE_SEARCH_RESOURCE_GROUP",
                 "AZURE_APPLICATION_INSIGHTS_APP_ID",
+                "AZURE_LOG_ANALYTICS_WORKSPACE_ID",
+                "AZURE_AI_PROJECT_ID",
             }
         )
         result = {

@@ -32,10 +32,11 @@ class Reply(HttpResponse):
 
 
 class ToolboxTransport(HttpTransport):
-    def __init__(self, *, existing=False):
+    def __init__(self, *, existing=False, authentication="AAD"):
         self.requests = []
         self.versions = {"1": toolbox.definition()} if existing else {}
         self.default = "1" if existing else None
+        self.authentication = authentication
 
     def open(self):
         return self
@@ -63,7 +64,7 @@ class ToolboxTransport(HttpTransport):
                     "type": "CognitiveSearch",
                     "target": "https://unit.search.windows.net",
                     "is_default": False,
-                    "credentials": {"type": "AAD"},
+                    "credentials": {"type": self.authentication},
                     "metadata": {},
                 },
             )
@@ -148,6 +149,19 @@ class ToolboxSDKTests(unittest.TestCase):
             "unit-connection-id",
         )
         self.assertTrue(all("api-version=" in request.url for request in transport.requests))
+
+    def test_project_managed_identity_connection_is_accepted_without_credentials(self):
+        transport = ToolboxTransport(authentication="ProjectManagedIdentity")
+        with workspace() as root:
+            seed_ledger(root)
+            with AIProjectClient(
+                endpoint=settings().project_endpoint,
+                credential=DummyCredential(),
+                transport=transport,
+            ) as project:
+                result = toolbox.create_version(project, root, settings(), confirmed=True)
+            self.assertEqual(result["connection"]["authentication"], "ProjectManagedIdentity")
+            self.assertEqual(result["selected_version"], "1")
 
     def test_existing_unowned_toolbox_never_produces_a_write(self):
         transport = ToolboxTransport(existing=True)

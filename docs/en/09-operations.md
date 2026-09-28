@@ -24,6 +24,8 @@ python scripts/selfstudy.py resource --kind logs --id "YOUR-LOG-ANALYTICS-ARM-ID
 python scripts/selfstudy.py roles --user-object-id "YOUR-USER-OBJECT-ID"
 ```
 
+`resource --kind logs` reads the actual Azure **`customerId`** and automatically sets **`AZURE_LOG_ANALYTICS_WORKSPACE_ID`**, also recording the current project ARM ID. The workspace GUID is not its resource ARM ID. Do not guess it from a name or put an ARM ID in that variable. Registration does not grant log access or generate a model response.
+
 Verify or grant **Log Analytics Reader** at the needed scope. Organizations with protected tables may also require Privileged Monitoring Data Reader. Do not put tokens or connection strings into shared logs or environment examples.
 
 **Insights has an additional caller:** both the interactive user and the **project managed identity** need **Monitoring Reader** on this Application Insights resource. If protected content such as `AppGenAIContent` is read, verify **Privileged Monitoring Data Reader** for both identities at the appropriate scope. In live validation, ordinary trace queries succeeded while Insights returned a dependency 403 until these scoped roles were present. Do not broaden them to the whole subscription.

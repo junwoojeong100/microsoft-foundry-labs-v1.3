@@ -12,11 +12,14 @@ If you want to reuse the lab or preserve a validation environment, **do not exec
 
 - Skip `--confirm-delete`, all Memory `forget`/`cleanup`, other cleanup operations, `azd down`, and resource-group deletion.
 - Create File Search in 03 with `--retain` so the vector store has no automatically configured expiry.
+- In 11, explicitly select a new language-specific Memory store and use **`memory create --ttl-seconds 0 --confirm-create`** for no automatic item expiry. Do not delete or modify the existing one-hour store.
 - Stop local servers and leave Routines/recurring evaluation **disabled/paused**. **Stop only** unnecessary Hosted compute sessions; do not delete agents, versions, or persistent volumes.
 - Privately retain `.env`, `.selfstudy/azure.json`, actual IDs, and `outputs/` ownership records in an approved location. Do not upload them to a public repository.
 - Record remaining Search Basic, file/volume, and logging costs and the next review date. `lifecycle=retain` is an administrative tag, not a deletion lock or a budget cap.
 
-This is **intentional retention**, not a promise to retain Memory items or managed sessions indefinitely. Memory items still have their **one-hour TTL**, even when the store is retained. Treat the deletion sections below as reference only, and record “retained, not deleted” in the final checklist.
+Memory's new default **`default_ttl_seconds=0` means no automatic item expiry**. Positive TTLs can be at most 365 days, and previously recorded stores retain their original settings. `WORKSHOP_MEMORY_STORE_NAME` is global: use `<prefix>-memory-retained-en` for English and `<prefix>-memory-retained-ko` for Korean, checking the selector before each language's run. Follow [11's retained-store procedure](11-memory-a2a-routines.md#1-memory-persist-an-item-and-recall-it-in-a-new-request).
+
+Keep every owned store's name, TTL, IDs, and records. Do not silently update or adopt older assets under the new setting. Managed-session expiry is separate from Memory-item TTL. Treat deletion sections as reference only and record “retained, not deleted.”
 
 Read-only `status` and `cleanup-plan` may still be used for inventory; they do not authorize deletion.
 
@@ -26,11 +29,17 @@ The recommended target is 12's **actual Hosted candidate**: `wf-candidate-en` fo
 
 Before unlocking holdout, verify:
 
-- Every expected dev matrix row exists: 12 rows for two models.
+- Every expected dev matrix row exists: six core rows for this guide's single Sol target.
 - No errors, omissions, or duplicates remain.
-- The predetermined business gate passes, and native results/limitations have been reviewed.
+- The predetermined business gate and all three policy criteria pass, with valid source/reference audits and reviewed native limitations.
 - Required trace and calibration conditions are met.
 - You did not lower thresholds after seeing failures or edit raw results.
+
+The new **Hosted IQ v1/v2 pair** used a Sol-only map and independently verified six core dev rows per version, 6/6 on all three policy criteria, valid reference audits, and 6/6 actual traces. The same frozen code/corpus allowed comparison. Korean and English policy calibrations each matched 24/24. Preserve the earlier SDK groundedness 5/6 and the SDK comparison rejected for a `code_hash` mismatch as separate history. Equal passing counts in the new pair do not demonstrate pass-rate improvement.
+
+**Latest Hosted IQ deployment version 3** verified business checks, all three policy criteria, source audits, and actual traces for six canonical dev rows and eight diagnostic rows (6+8) under suite version 2. Explicit `allowed_citations` preserves mandatory references, and PL06's procedure-only `limit_krw: null` passed under the new runtime/label. Keep earlier failures unchanged; **this is not a new holdout result**.
+
+The corrected native Prompt Optimizer job **completed by early stopping at baseline 1.0 with zero new candidates**. [12's local audit](12-improvement.md#3-optimize-instructions-only) verified six original envelopes, three pinned judges/threshold 4, reason reference IDs, and calibration. Its proof is source echo + reason + counterfactual—not captured internal judge requests or generated prompt improvement. Preserve legacy failures separately.
 
 If not satisfied, **do not open holdout; record incomplete acceptance**. If unavailable features prevented the Hosted matrix, you may instead select 07's SDK candidate as a separate final target. Do not call that Hosted acceptance.
 
@@ -44,9 +53,9 @@ Only after all gates in 12 pass, run the block matching your **chosen final targ
 
 ```bash
 python scripts/workshop.py --language en benchmark collect --split holdout --label wf-final-en --candidate wf-candidate-en --unlock-holdout --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
-python scripts/workshop.py --language en benchmark evaluate --label wf-final-en --reference wf-baseline-en --confirm-cost
+python scripts/workshop.py --language en benchmark evaluate --policy --label wf-final-en --reference wf-baseline-en --confirm-cost
 python scripts/workshop.py --language en benchmark monitor --label wf-final-en
-python scripts/workshop.py --language en benchmark verify --baseline wf-baseline-en --candidate wf-candidate-en --holdout wf-final-en --require-native --require-traces --calibration judge-calibration-en
+python scripts/workshop.py --language en benchmark verify --policy --baseline wf-baseline-en --candidate wf-candidate-en --holdout wf-final-en --require-native --require-traces --calibration policy-calibration-en
 ```
 
 ### Local-retrieval Hosted target
@@ -55,14 +64,14 @@ For 12's separately named `matrix-local-en`, keep the frozen local profile throu
 
 ```bash
 python scripts/workshop.py --language en benchmark collect --split holdout --label wf-local-final-en --candidate wf-local-candidate-en --unlock-holdout --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
-python scripts/workshop.py --language en benchmark evaluate --label wf-local-final-en --reference wf-local-baseline-en --confirm-cost
+python scripts/workshop.py --language en benchmark evaluate --policy --label wf-local-final-en --reference wf-local-baseline-en --confirm-cost
 python scripts/workshop.py --language en benchmark monitor --label wf-local-final-en
-python scripts/workshop.py --language en benchmark verify --baseline wf-local-baseline-en --candidate wf-local-candidate-en --holdout wf-local-final-en --require-native --require-traces --calibration judge-local-calibration-en
+python scripts/workshop.py --language en benchmark verify --policy --baseline wf-local-baseline-en --candidate wf-local-candidate-en --holdout wf-local-final-en --require-native --require-traces --calibration policy-calibration-local-en
 ```
 
 `benchmark verify` checks the stored run contracts and exact versions; it does **not** accept `--retrieval`. Verify the selected manifests contain `retrieval: local` and retain their original hashes. The explicit local collection and local-only labels determine which profile is verified; do not override, edit, or substitute IQ results.
 
-For either Hosted path, inspect every row and error after each step. Four holdout cases per model means **eight rows for two models**. Read `gate_passed`, native quality, recommendations, and `deployment_approved: false` together. A local Hosted pass does not complete blocked Search/IQ/Hybrid or Toolbox/OpenAPI work.
+For either Hosted path, inspect every row and error after each step. This guide's single Sol target requires **four core holdout rows**. Read `gate_passed`, native quality, recommendations, and `deployment_approved: false` together. A local Hosted pass does not complete Search/IQ/Hybrid or Toolbox/OpenAPI work.
 
 ### SDK-only target
 
@@ -71,8 +80,11 @@ For either Hosted path, inspect every row and error after each step. Four holdou
 ```bash
 python scripts/workshop.py --language en collect --split holdout --label final-holdout-en --prompt v2 --retrieval local --candidate candidate-en --unlock-holdout
 python scripts/workshop.py --language en evaluate --label final-holdout-en
+python scripts/workshop.py --language en cloud-evaluate --policy --label final-holdout-en --confirm-cost --timeout 900
 python scripts/workshop.py --language en accept --candidate candidate-en --holdout final-holdout-en
 ```
+
+The business-only `accept` result does not itself verify policy grading or reference audits. Review those actual artifacts and matching policy calibration separately. Do not substitute renamed legacy calibration or scores.
 
 Choose **one path only**. If you modify the system after observing holdout failures, you need a new final test set; do not tune against this holdout or edit it.
 
@@ -85,10 +97,10 @@ Foundry is a platform for ______.
 Instructions, knowledge, and tools are responsible for ______.
 Prompt Agents, local MAF, and Hosted differ in ______.
 I judged improvement using the actual evidence ______.
-Before production use, I still need to address ______.
+Within this synthetic lab, I have not yet verified ______.
 ```
 
-Learning completion, passing a small quality gate, and production approval are distinct states. Real business use needs authorized data, broader evaluation, user authorization, and failure/cost handling.
+Learning completion and passing the small lab quality gate are different states. Record only actual targets, versions, results, and unverified areas. Do not fill unperformed steps with success.
 
 ## 4. Stop running work first
 
@@ -111,6 +123,8 @@ python scripts/workshop.py --language en benchmark stop-session --label wf-local
 ```
 
 Do not invent missing experiment labels. Identify separate smoke/manual sessions using `azd ai agent sessions list` in the appropriate Hosted folder and stop only your sessions.
+
+**Archive evidence before session/file expiry.** Files may still be retrieved from a stopped session while available. Follow [session-file retrieval](advanced/session-files.md) with an **absolute `--target-path`**, matching the original request/version and recorded tool-result hashes. Stopping or retaining resources does not guarantee indefinite file retention.
 
 **Stopping does not delete volumes.** In retention mode, keep those volumes. Otherwise, after deciding they are no longer needed, inspect the current session-deletion UI/CLI before removing them. Never terminate other people's processes in bulk by name.
 
@@ -181,4 +195,4 @@ Azure soft-delete and retention policies can make API deletion different from im
 
 If you created resources outside this folder's workflow, include their inventory too. Do not remove unrelated personal records or shared resources.
 
-**End of course. [Course home](../../README.md) · [Your workbook](../../worksheets/en/workbook.md) · [Before using this at work](next-steps.md)**
+**End of course. [Course home](../../README.md) · [Your workbook](../../worksheets/en/workbook.md) · [Review the lab](next-steps.md)**

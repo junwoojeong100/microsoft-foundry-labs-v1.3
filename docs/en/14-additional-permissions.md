@@ -1,47 +1,44 @@
-# 14. Prerequisites and boundaries for additional features
+# 14. GitHub OIDC CI/CD lab
 
 **English** | [한국어](../14-additional-permissions.md) · [Course home](../../README.md)
 
-**Outcome:** Distinguish what Azure Owner permits from work requiring additional accounts, licenses, or directory permissions.
+**Outcome:** Run the included GitHub Actions workflow using an OIDC managed identity and verify this lab's exact Hosted version and smoke/dev results.
 
-This chapter is conditional. Without the extra prerequisites, record **design only / not run** and continue to 15. Do not access corporate data or demand Global Administrator just to finish the core course.
+**Prerequisites:** Hosted preparation from 08, Actions/Environment permissions in your own GitHub repository, and the lab's Azure resources and roles. Without the required GitHub access, record CI as not run and continue to 15.
 
-## 1. Permission map
+## 1. Prepare the repository and lab identity
 
-| Feature | Requirements beyond Azure Owner |
-|---|---|
-| GitHub Actions CI/CD | Your GitHub account plus repository administration, Actions, and environment permissions |
-| OIDC using an Entra app registration | Tenant permission to register apps or the appropriate administrator |
-| OIDC using a user-assigned managed identity | Permission to create managed identity/federation in Azure; Owner generally permits this, subject to policy |
-| Fabric Data Agent / Fabric IQ | Supported capacity, workspace/data access, and feature availability |
-| Work IQ / Microsoft 365 | Separate licensing/usage billing, tenant enablement, consent, and user data permissions |
-| Private Skill catalog | API Center, catalog configuration/access, and tool governance |
-| Agent 365, voice, multimodal, and similar features | Product-specific licenses, models, data permissions, and tenant prerequisites |
+1. Put the complete workshop in a repository you administer. Exclude `.env`, `.selfstudy/`, `outputs/`, and credentials.
+2. Verify the included [local-check workflow](../../.github/workflows/check.yml) passes on the exact commit.
+3. Create a **user-assigned managed identity** in the lab group, or use an existing identity whose ownership and lab scope are verified. Record its actual client ID and principal ID.
+4. Grant only workflow-required roles, such as **Foundry Project Manager at project scope** and **Reader** for account metadata. The Hosted runtime's **Foundry User** role is separate.
+5. Configure a protected GitHub **Environment**, such as `foundry-workshop`, with the lab's branch/approval rules.
 
-**Subscription Owner is not Entra Global Administrator.** App registration may be allowed by default in some tenants, but Owner does not guarantee it.
+Do not give the deployment identity subscription Owner or a client secret. Keep organizational protections in place.
 
-## 2. Prepare GitHub OIDC
+## 2. Configure OIDC federation
 
-Use this path only if you have the GitHub prerequisites and choose to run CI. Do not give the deployment identity subscription Owner or a client secret.
+In the managed identity's **Federated credentials**, configure the GitHub issuer, actual repository/Environment subject, and audience.
 
-1. Put the complete workshop into a repository you administer. Exclude personal `.env`, `outputs/`, and `.selfstudy/`.
-2. First verify the bundled [local-check workflow](../../.github/workflows/check.yml) passes.
-3. In the Azure portal, create a **user-assigned managed identity** in your lab group and record its client ID/principal ID. No new password is needed.
-4. Grant only roles actually required by the workflow, such as **Foundry Project Manager at project scope** and **Reader** for account metadata. The runtime separately needs Foundry User.
-5. Create a protected GitHub **Environment**, such as `foundry-workshop`, with the needed approval/branch rules.
-6. In the identity's **Federated credentials**, configure the GitHub issuer, actual repository/environment subject, and audience.
+- Issuer: `https://token.actions.githubusercontent.com`
+- Audience: `api://AzureADTokenExchange`
+- Subject: Must match the repository's current policy; do not guess it from names alone.
 
-The standard issuer is `https://token.actions.githubusercontent.com`; the audience is `api://AzureADTokenExchange`. **Do not guess an older name-only subject format.**
+The following read-only query requires [GitHub CLI](https://cli.github.com/) and normal sign-in with your repository account:
+
+```bash
+gh auth login
+```
 
 ```bash
 gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
 ```
 
-Check the repository's actual subject policy and issuer/subject/audience reported by `azure/login`. Immutable-ID subjects may apply. Do not bypass errors with wildcard trust or a client secret.
+Match the actual subject policy with issuer/subject/audience reported by `azure/login`. Immutable-ID subjects may apply. Do not bypass errors with wildcard trust or a client secret.
 
-## 3. Manually release to existing resources
+## 3. Configure the included manual release
 
-Read the bundled [manual release workflow](../../.github/workflows/hosted-lab-release.yml) and register its **nonsecret identifiers** in the GitHub Environment:
+Read the [manual release workflow](../../.github/workflows/hosted-lab-release.yml) and register its **nonsecret identifiers** in the GitHub Environment:
 
 ```text
 AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
@@ -50,38 +47,20 @@ AZURE_AI_PROJECT_ENDPOINT, AZURE_AI_PROJECT_ID
 AZURE_AI_MODEL_DEPLOYMENT_NAME, WORKSHOP_PREFIX, WORKSHOP_HOSTED_AGENT_NAME
 ```
 
-Use the actual resources and managed identity from 00/08. Do not paste an entire `.env` or access token into variables/logs.
+Use the actual project, managed identity, and Sol deployment from 00/08. If your existing Sol alias is `workshop-compare`, specify that name unchanged. Do not paste an entire `.env` or access token into variables/logs.
 
-1. Verify that the prerequisite check workflow passed for the exact commit.
+## 4. Verify the same deployed version
+
+1. Verify prerequisite checks passed for the exact commit.
 2. Confirm **language `en`**, target, and deployment/role/inference-cost consent, then **dispatch manually**.
-3. Verify package → actual deployed version → smoke/dev gate on that same version → result artifacts.
-4. On failure, stop rollout and preserve the previous version and failure artifacts.
-5. Record a separate decision when reverting to a reviewed previous version.
+3. Verify package → actual new deployment version → smoke/dev gate on **that same version** → result artifacts.
+4. On failure, stop further releases and preserve the previous version and failure artifacts.
+5. Record the exact target and a separate decision when returning to a reviewed earlier version.
 
-Azure deployment requires manual execution and cost consent. This does not configure deployment on every push or grant production approval. See [official Hosted CI/CD guidance](https://learn.microsoft.com/azure/foundry/agents/quickstarts/set-up-cicd-hosted-agent).
+This workflow manually releases to lab resources; it does not deploy on every push. See [official Hosted CI/CD guidance](https://learn.microsoft.com/azure/foundry/agents/quickstarts/set-up-cicd-hosted-agent).
 
-## 4. Fabric IQ and Work IQ
+## Completion check
 
-These require additional products. Do not claim analytics data or Microsoft 365 connections exist when you have not created them.
-
-| Question | Appropriate source | What you must prepare |
-|---|---|---|
-| What is the lodging limit? | Policy documents / Foundry IQ | Synthetic knowledge created in 06 |
-| What are this quarter's travel totals by department? | Fabric analytical model | Test workspace/capacity, synthetic data, Data Agent, and access |
-| What was agreed in the travel-review meeting? | Approved work context / Work IQ | Separate test tenant/account, consent, licensing/billing, and limited synthetic content |
-
-**Fabric sequence:** Verify supported capacity → create a test workspace → add synthetic data → expose a readable Data Agent/semantic model → identify each asset's identity mechanism → create an approved connection → compare synthetic questions with source evidence → review capacity/connection lifecycle.
-
-**Work IQ sequence:** Verify current tenant enablement and billing → obtain admin/user consent → configure required delegated permissions and a test user → review data movement, retention, and action authority → run a separately approved experiment on narrowly scoped synthetic content.
-
-Work IQ may support actions beyond reading. Broadly exploring real company meetings/mail is not a default lab exercise. Without prerequisites, complete only routing, identity, permission, and lifecycle planning.
-
-Official references: [Fabric Data Agent](https://learn.microsoft.com/fabric/data-science/data-agent-end-to-end-tutorial) · [Fabric IQ](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/fabric-iq) · [Work IQ requirements](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq).
-
-## 5. Other specialist areas
-
-Private Skill catalogs, Agent 365, voice/multimodal, fine-tuning, and browser/computer actions require additional data, models, and product permissions. Treat them as independent follow-on projects.
-
-Do not describe instruction optimization as model retraining without fine-tuning. Registering a Skill is not the same as building a private catalog.
+Record the actual commit, workflow run, OIDC identity, deployment version, smoke/dev results, and artifacts. Stop sessions when no longer needed. In retention mode, do not delete identities, federation, agents, or volumes.
 
 **Next → [15. Final acceptance and resource lifecycle](15-capstone-cleanup.md)**

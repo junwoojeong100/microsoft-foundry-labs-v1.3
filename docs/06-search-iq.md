@@ -9,17 +9,23 @@
 1. Azure 포털 **Create a resource → Azure AI Search**.
 2. 실습 구독과 **실습 전용 그룹**, 고유한 서비스 이름을 선택합니다.
 3. [리전 표](https://learn.microsoft.com/azure/search/search-region-support)에서 **Semantic ranker와 Agentic retrieval**을 모두 확인합니다.
-4. **Basic**, Compute type **Default**, 작은 replica/partition 구성으로 시작합니다. 상위 SKU나 Confidential compute가 이 실습의 기본은 아닙니다.
+4. **Basic**, Compute type **Default**, **replica 1개 / partition 1개**로 시작합니다. 상위 SKU나 Confidential compute가 이 실습의 기본은 아닙니다.
 5. 가격을 확인한 뒤 생성하고 완료 상태를 기다립니다.
-6. Overview의 **URL**, JSON View의 **전체 리소스 ID**를 기록합니다.
+6. Overview의 **URL**, JSON View의 **전체 리소스 ID**, 실제 SKU·replica·partition과 지속 비용을 기록합니다.
 
-**리전 용량 오류:** `ResourcesForSkuUnavailable`은 권한 오류와 다릅니다. 2026-09-27 Sweden Central에서는 Basic과 Standard S1 생성이 모두 이 오류를 반환했고, S2는 구독의 서비스 quota가 0이어서 생성되지 않았습니다. 같은 Create를 반복하거나 SKU를 자동으로 올리지 않습니다. 리전 고정 조건이 있다면 그대로 유지하고, 해당 리전의 용량 또는 필요한 SKU의 quota가 확보될 때 재개합니다. 상위 SKU를 선택하기로 했다면 **실제 SKU·replica·partition과 더 높은 상시 비용**을 먼저 기록합니다.
+**현재 확인된 상태:** 기존 Sweden Central의 Basic Search는 replica/partition 1개씩, key 인증 비활성화, system-assigned identity, Free semantic plan을 사용합니다. 합성 문서 6개의 keyword index와 조회에 이어 **GA IQ 재시도와 Sol의 IQ 답변도 성공**했습니다. Hybrid index는 **실제 3072차원 embedding**으로 생성했고 query도 성공했습니다.
 
-Search를 만들 수 없으면 이 장의 Azure Search/IQ/Hybrid와 10의 Search 기반 Toolbox/OpenAPI는 **차단**으로 남깁니다. 03의 File Search 또는 로컬 검색은 별도 성공으로 기록하되 Azure Search 성공으로 대신하지 않습니다. 나머지 독립 실습은 계속할 수 있습니다.
+**IQ Chat도 실제 `gpt-5.6-luna`의 `modelQueryPlanning`과 `modelAnswerSynthesis` activity로 확인되었습니다.** 이는 GA IQ 조회와 별도의 계획/합성 증거입니다. OpenAPI의 실제 Search 호출·원문 6개·Sol 답변, 일반 Toolbox v1의 probe/query/ask, v2의 도구 발견 목록, v3의 실제 Skill/검색 호출도 확인되었습니다. 자세한 주체·버전·실행 증거는 [10](10-toolbox-skills.md)에서 구분합니다. 다른 단계나 다른 언어의 결과를 복사해 현재 실행의 성공으로 대신하지 않습니다.
+
+**영문 실행도 별도 소유권 workspace에서 독립 검증**했습니다. English Search·GA IQ·Hybrid·IQ Chat과 Sol의 영문 dev 6문항 policy 평가가 모두 통과했습니다. 이는 한국어 결과를 복사한 것이 아니며, 각 언어의 소유 이름·원문 hash·실제 결과 label을 별도로 유지합니다.
+
+**과거 오류와 새 재시도:** 앞선 Basic/S1의 `ResourcesForSkuUnavailable`과 S2의 `ServiceQuotaExceeded`(`0 out of 0`)는 당시의 용량·구독 quota 오류입니다. 현재의 영구 차단 상태로 해석하지 않습니다. 새 오류가 나면 현재 quota/가용성과 실패 원문을 확인하고 조건이 바뀐 뒤에만 제한적으로 재시도합니다. Owner/RBAC 추가나 같은 Create 반복으로 해결하지 않으며, 고정 리전과 보존 방침을 유지합니다. 다른 그룹을 임의로 삭제하거나 SKU를 자동으로 올리지 않습니다.
+
+Search가 실제로 준비되지 않은 경우에만 해당 의존 단계를 멈춥니다. File Search와 로컬 검색은 별도 기능이며 Search 성공 증거가 아닙니다.
 
 ## 2. 토큰 인증과 관리 ID
 
-Search의 **Settings → Keys → API access control**을 **Role-based access control** 또는 전환 중 **Both**로 설정합니다. 새 개인 서비스에서만 변경하고 API key를 복사하지 않습니다.
+Search의 **Settings → Keys → API access control**을 **Role-based access control**로 설정하고 key 인증을 비활성화합니다. 본인 실습 서비스에만 적용하며 API key를 복사하지 않습니다.
 
 **Identity → System assigned → On → Save**를 수행합니다. 이 ID는 뒤에서 Search가 IQ Chat 모델을 호출할 때 사용합니다.
 
@@ -99,7 +105,7 @@ python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "4절에서-기록한-�
 
 이 실험은 **`gpt-5.6-luna` / `2026-07-09`**, Search system-assigned identity를 사용합니다.
 
-기본 답변 모델은 계속 GPT-6 Luna입니다. 여기의 모델은 **Search가 계획/합성에 사용하는 별도 모델**이며, [별도의 지원 목록](model-selection.md)에 맞춥니다.
+기본 답변 모델은 계속 **GPT-6 Sol**입니다. 여기의 **GPT-5.6 Luna**는 Search가 계획/합성에 사용하는 별도 모델이며, 선택적 비교용 GPT-6 Luna와도 다릅니다. [모델 역할](model-selection.md)을 혼동하지 않습니다.
 
 1. 카탈로그에서 해당 모델/버전의 가용성과 할당량을 확인합니다.
 2. 같은 Foundry 계정에 배포 이름 **`gpt-5.6-luna`**로 만듭니다. 기본 답변 모델은 바꾸지 않습니다.
@@ -113,7 +119,7 @@ python scripts/workshop.py iq-chat setup --confirm-create
 python scripts/workshop.py iq-chat ask --label iq-chat-first --confirm-cost
 ```
 
-`model_planning_verified`, `model_synthesis_verified`, 실제 planning/synthesis activity와 원문을 확인합니다. 배포가 불가능하면 이 preset만 **차단**으로 기록합니다. 다른 모델을 같은 이름으로 위장하거나 GA 조회를 IQ Chat 성공으로 대신하지 않습니다.
+`model_planning_verified`, `model_synthesis_verified`뿐 아니라 실제 **`modelQueryPlanning` / `modelAnswerSynthesis` activity와 `gpt-5.6-luna` 모델 기록**, 반환 원문을 확인합니다. 배포가 불가능하면 이 preset만 **차단**으로 기록합니다. 다른 모델을 같은 이름으로 위장하거나 GA 조회를 IQ Chat 성공으로 대신하지 않습니다.
 
 ## 완료와 유지
 

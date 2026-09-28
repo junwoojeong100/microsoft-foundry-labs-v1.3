@@ -3,10 +3,10 @@
 import os
 from dataclasses import dataclass
 
-PRIMARY_MODEL = "gpt-6-luna"
+PRIMARY_MODEL = "gpt-6-sol"
 PRIMARY_VERSION = "2026-09-22"
 PRIMARY_DEPLOYMENT = "workshop-chat"
-COMPARISON_MODEL = "gpt-6-sol"
+COMPARISON_MODEL = "gpt-6-luna"
 COMPARISON_VERSION = "2026-09-22"
 COMPARISON_DEPLOYMENT = "workshop-compare"
 DEFAULT_MAX_OUTPUT_TOKENS = 32768
@@ -54,9 +54,9 @@ MODEL_ROLES = {
         "environment": None,
     },
     "judge": {
-        "model": COMPARISON_MODEL,
-        "version": COMPARISON_VERSION,
-        "deployment": COMPARISON_DEPLOYMENT,
+        "model": "gpt-5.5",
+        "version": "2026-04-24",
+        "deployment": "workshop-judge",
         "environment": "AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME",
     },
     "embedding": {

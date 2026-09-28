@@ -39,7 +39,7 @@ Foundry **Build → Agents**에서 같은 이름·버전·모델·지침을 확�
 
 ## 3. 실제 File Search 에이전트 만들기
 
-포털의 업로드 버튼 위치/노출에 의존하지 않고 **포함된 SDK 명령**으로 진행합니다. 01에서 프로젝트 호출을 확인한 기본 배포를 사용하고, 인라인 agent와 다른 이름을 자동으로 생성합니다. Sol 호환 경로를 선택했다면 실제 모델도 Sol입니다.
+포털의 업로드 버튼 위치/노출에 의존하지 않고 **포함된 SDK 명령**으로 진행합니다. 01에서 프로젝트 호출을 확인한 실제 Sol 배포를 사용하고, 인라인 agent와 다른 이름을 자동으로 생성합니다.
 
 ```bash
 python scripts/workshop.py file-search create --confirm-create

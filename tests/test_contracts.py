@@ -11,6 +11,7 @@ from foundry_workshop.contracts import (
     load_documents,
     parse_json,
     safe_label,
+    validate_cases,
 )
 from foundry_workshop.knowledge import evidence, local_retrieve
 from foundry_workshop.settings import Settings, azure_endpoint, require_uuid
@@ -204,6 +205,61 @@ class ContractTests(unittest.TestCase):
         self.assertIn('"needs_approval"', instructions)
         self.assertIn('"insufficient_evidence"', instructions)
         self.assertIn('"limit_krw"', instructions)
+
+
+class AllowedCitationContractTests(unittest.TestCase):
+    def setUp(self):
+        self.documents = load_documents(ROOT, "en")
+        self.case = {
+            "case_id": "UNIT-SCOPE",
+            "question": "What travel date is needed to select the domestic lodging policy?",
+            "expected_decision": "insufficient_evidence",
+            "expected_limit_krw": None,
+            "required_citations": ["SCOPE-01"],
+        }
+
+    def test_optional_allowlist_accepts_known_unique_supersets_without_mutating_cases(self):
+        case = {
+            **self.case,
+            "allowed_citations": ["SCOPE-01", "TRAVEL-2025", "TRAVEL-2026"],
+        }
+        cases = [case]
+        before = digest(cases)
+        self.assertIs(validate_cases(cases, self.documents), cases)
+        self.assertEqual(digest(cases), before)
+        self.assertEqual(case["required_citations"], ["SCOPE-01"])
+        self.assertEqual(case["allowed_citations"], ["SCOPE-01", "TRAVEL-2025", "TRAVEL-2026"])
+
+    def test_malformed_unknown_duplicate_or_incomplete_allowlists_are_rejected(self):
+        for allowed in (
+            None,
+            "SCOPE-01",
+            {"SCOPE-01": True},
+            ("SCOPE-01",),
+            ["SCOPE-01", "SCOPE-01"],
+            ["SCOPE-01", "UNKNOWN-01"],
+            ["TRAVEL-2025", "TRAVEL-2026"],
+            ["SCOPE-01", 1],
+            ["SCOPE-01", ""],
+            ["SCOPE-01", {}],
+            [],
+        ):
+            with self.subTest(allowed=allowed), self.assertRaises(ValueError):
+                validate_cases([{**self.case, "allowed_citations": allowed}], self.documents)
+
+    def test_legacy_five_field_cases_and_rejection_of_other_extensions_are_unchanged(self):
+        cases = [self.case]
+        before = digest(cases)
+        self.assertIs(validate_cases(cases, self.documents), cases)
+        self.assertEqual(digest(cases), before)
+        self.assertEqual(len(self.case), 5)
+        for case in (
+            {**self.case, "unapproved_extension": []},
+            {key: value for key, value in self.case.items() if key != "question"},
+            {**self.case, "required_citations": ["UNKNOWN-01"]},
+        ):
+            with self.subTest(case=case), self.assertRaises(ValueError):
+                validate_cases([case], self.documents)
 
 
 if __name__ == "__main__":

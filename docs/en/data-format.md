@@ -10,9 +10,11 @@
 | `prompts/en/v1.txt`, `prompts/en/v2.txt` | English instruction variants | Matched prompt comparison |
 | `data/evaluation/en/dev.jsonl` | Six development cases | Iterative improvement |
 | `data/evaluation/en/holdout.jsonl` | Four final-test cases | One final check after freezing a candidate |
-| `data/evaluation/en/calibration.jsonl` | Known good/bad answers | Judge calibration |
+| `data/evaluation/en/calibration.jsonl` | Two legacy grounding examples | Legacy checks only; not policy calibration |
+| `data/evaluation/en/policy-calibration.json` | Eight policy controls | 24 expected judgments across three criteria |
+| `data/evaluation/en/policy-lab.jsonl` | Eight explicit synthetic diagnostics | Separate `policy-lab` suite, not holdout |
 | `data/fixtures/en/answers.json` | Prewritten responses | Offline checker practice |
-| `data/localization.json` | Translation contract and source hashes | Localization provenance |
+| `data/localization.json` | Original freeze and active prompt revision | Localization provenance |
 | `outputs/` | Results you actually generated | Review, comparison, and lifecycle records |
 
 The `demo` fixture is not a newly generated model answer. Do not use it as evidence of live inference, citations, usage, or traces.
@@ -21,11 +23,17 @@ English preserves **document/case IDs, currency limits, effective dates, and app
 
 The six `data/policies/*.txt` files are Korean. English File Search does **not** upload these by mistake: with `--language en`, the SDK renders English TXT content from the canonical English JSON, retaining document-ID filenames. There is no prebuilt `data/policies/en/` folder.
 
+## Prompt revision provenance
+
+`data/localization.json` preserves the **initial frozen files, hashes, and timestamps**. A separate `active_prompt_revision` records the 2026-09-28 evidence-only/procedure-response revision, previous commit, old/new Korean and English prompt SHA-256 values, and English workflow hash.
+
+The original corpus, core dev, and holdout hashes are unchanged. Checks validate the current prompt revision alongside historical provenance—not by rewriting old experiment hashes. New runs record the active revision and actual hashes while preserving earlier evidence.
+
 ## Command placement
 
 ```bash
 python scripts/workshop.py --language en doctor
-python scripts/workshop.py --model-deployment workshop-chat --language en model --question "Say hello in English."
+python scripts/workshop.py --model-deployment "ACTUAL-SOL-DEPLOYMENT" --language en model --question "Say hello in English."
 python scripts/workshop.py --script package-hosted --language en
 ```
 
@@ -37,6 +45,28 @@ python scripts/workshop.py --script package-hosted --language en
 - An English question alone does not select English policies, dev cases, or instructions.
 
 `--api account-responses` is accepted only by direct `model`, `answer`, and `collect`; the default stays `project-responses`. It is not a universal option for agents, tools, or Hosted profiles. Both sides of a model-only comparison must use the same API.
+
+## Policy evaluation inputs and results
+
+`prepare-extensions --policy` creates a new labeled input set with a source-bound `optimizer-dev.jsonl`, `policy-evaluator-definitions.json`, and manifest. It does not rewrite existing `extensions-en` inputs or evaluation evidence.
+
+Mode `policy-reference-v1` carries a trusted original-reference envelope in evaluator input `ground_truth`. Do not pass it to the target agent or upload the whole evaluator-input directory as a Skill. Audit source hashes, complete `reference_id` values, and canonical `result` (integer 1–5) and `reason`.
+
+`policy_groundedness`, `policy_helpfulness`, and `policy_compliance` all use **threshold 4, higher-is-better**. Calibration's 24/24 counts agreement with expected judgments, not high scores for intentionally bad controls. Eight `policy-lab` diagnostics are separate from six core dev cases and four holdout cases. Input preparation, calibration success, and real target-grading success are distinct.
+
+### Diagnostic citations and structured fields
+
+**Diagnostic suite version 2** uses explicit `allowed_citations` only for **PL05, PL06, and PL07 in both languages**. The allowed set must include every mandatory `required_citations` entry. IDs in the case lists and answer citations must be known document IDs without duplicates. Answers still need all required references; extra citations must remain within the allowed set, and unrelated references are rejected. Other case contracts are unchanged.
+
+This contract was verified on Hosted IQ deployment version 3. **Previously frozen version-1 results remain readable unchanged.** Do not retrofit allowed lists or change a stored suite version to make historical results pass.
+
+For **procedure-only queries**, such as PL06's receipt question, `limit_krw` must be **`null`**. A known 150000 limit in the source is not a requested amount. These structured checks are distinct from semantic judging; the corrected instructions were verified through a new frozen runtime/label. Preserve the earlier `150000` response unchanged.
+
+### Optimizer export audit
+
+`scripts/audit_optimizer.py` is a standalone local helper with `--export-directory`, original `--dataset`, `--calibration-label`, its own `--language`, and a new `--output` path. Use [12's command](12-improvement.md#3-optimize-instructions-only), not an invented `workshop.py --script` alias.
+
+It reads the original `definition.json`, `run.json`, `output-items.json`, `summary.json`, source data, and calibration without rewriting their hashes. Its `proof_level` is source echo + reason reference ID + counterfactual calibration, with **`internal_judge_requests_captured: false`**. A valid audit is not a claim of generated candidates or prompt improvement.
 
 ## Artifact conventions
 
@@ -50,12 +80,29 @@ python scripts/workshop.py --script package-hosted --language en
 | Skill readback | `.selfstudy/skill-readback-en/` |
 | Default Hosted package | `.build/hosted-en/`; other English profiles end in `-en` |
 | Hosted names/folders | Distinct owned names such as `<prefix>-hosted-en` and `<prefix>-matrix-en` |
+| Retained Memory store | `<prefix>-memory-retained-en`; Korean uses a separate `-ko` store |
+| Memory ownership record | `outputs/memory/<store-name>/ownership.json` |
 
 For the explicit Search-independent Hosted path, use `<prefix>-matrix-local-en` with `wf-local-baseline-en`, `wf-local-candidate-en`, and `wf-local-final-en`. Keep `--retrieval local` in every profile-bearing package, plan, smoke, and collection command; stored-result commands use those exact labels. Do not relabel this as IQ validation.
 
 The extension material directory also contains evaluator references: do not upload the whole directory as a Skill. Reuse the existing manifest only when its prefix, language, and hashes match.
 
 Languages are separate datasets, **never fallbacks**. Do not merge Korean and English results into one frozen experiment. A shared Search ownership ledger is corpus-specific; preserve existing state and use a fresh lab copy with distinct owned names for a separate language run.
+
+## Memory selector and retention
+
+`WORKSHOP_MEMORY_STORE_NAME` is a **global selector for the current run**. An explicit name is not automatically changed by `--language en`. Choose distinct names under the current prefix: `<prefix>-memory-retained-en` for English and `<prefix>-memory-retained-ko` for Korean. Set and check the correct selector whenever switching languages.
+
+Replace `YOUR-PREFIX` with your actual prefix:
+
+```bash
+python scripts/selfstudy.py set WORKSHOP_MEMORY_STORE_NAME "YOUR-PREFIX-memory-retained-en"
+python scripts/workshop.py --language en memory plan
+```
+
+Use [11's creation sequence](11-memory-a2a-routines.md#1-memory-persist-an-item-and-recall-it-in-a-new-request) with `memory create --ttl-seconds 0 --confirm-create`. **0 is the new default and means no automatic item expiry**; a positive TTL may be at most 31,536,000 seconds (365 days).
+
+Selecting a name or viewing a local plan does not create or update a remote store. Preserve its actual name, language, TTL, and IDs in the ownership record. Older one-hour stores retain their original settings and records: no silent update, adoption, or deletion. Use new labels for the new store's results.
 
 Keep versions and hashes when policies or instructions change. Do not edit raw responses, evaluation scores, or holdout to force a pass. Do not open holdout questions/answers before final acceptance.
 

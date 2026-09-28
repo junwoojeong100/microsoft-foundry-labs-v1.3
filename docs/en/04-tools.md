@@ -74,4 +74,4 @@ If the model/tool is unsupported, mark the step blocked. Do not submit a file ge
 
 Explain what functions, MCP, and Code Interpreter each executed. Record actual IDs and results in your workbook. **OpenAPI needs the Search service created in 06, so it continues in 10.**
 
-**Next → [05. Workflows, approval gates, and recovery](05-workflows.md)**
+**Next → [05. Workflows, simulated approval, and local SDK pause/resume](05-workflows.md)**

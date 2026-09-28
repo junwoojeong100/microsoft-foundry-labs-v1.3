@@ -1,4 +1,4 @@
-# 05. Workflows, approval gates, and recovery
+# 05. Workflows, simulated approval, and local SDK pause/resume
 
 **English** | [한국어](../05-workflows.md) · [Course home](../../README.md)
 
@@ -42,7 +42,7 @@ This path uses real MAF orchestration, a validated business answer, and call lin
 
 ## 5. Pause and resume with the actual SDK
 
-This section uses **prewritten synthetic work without model or Azure calls** to teach approval gates and checkpoints. It is not evidence of real human authorization or Hosted incident recovery.
+This section uses **prewritten synthetic work without model or Azure calls** to teach local SDK simulated approval gates and checkpoints. It neither grants real business approval nor executes external business actions.
 
 Check the pinned SDK:
 

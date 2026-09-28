@@ -134,6 +134,7 @@ def evaluate_cloud(
     business_evaluator: bool = False,
     reference: str | None = None,
     retry_failed: bool = False,
+    policy: bool = False,
 ) -> dict[str, Any]:
     from .native import evaluate_items
 
@@ -141,11 +142,13 @@ def evaluate_cloud(
         raise ValueError("Cloud judges are billable. Explicitly pass --confirm-cost.")
     if not 5 <= timeout <= 900:
         raise ValueError("Evaluation timeout must be 5-900 seconds.")
+    if policy and business_evaluator:
+        raise ValueError("--policy is a separate frozen evaluator set, not a relabelled business run.")
     label = safe_label(label)
     manifest, rows, cases = load_run(root, label)
     if manifest["mode"] != "live" or any(row["status"] != "ok" for row in rows):
         raise ValueError("Cloud evaluation requires a complete real run with no collection errors.")
-    if manifest.get("retrieval") == "none":
+    if manifest.get("retrieval") == "none" and not policy:
         raise ValueError(
             "A no-evidence diagnostic stays local: with empty context, Groundedness skips rows, "
             "and a skipped row is not a pass. No cloud job was submitted."
@@ -172,6 +175,17 @@ def evaluate_cloud(
         items.append(item)
     names = (*EVALUATORS, BUSINESS_EVALUATOR) if business_evaluator else EVALUATORS
     subdirectory = BUSINESS_DIRECTORY if business_evaluator else ""
+    corpora = None
+    if policy:
+        from .contracts import digest, load_documents
+        from .policy_evaluation import POLICY_DIRECTORY, POLICY_EVALUATORS, policy_item
+
+        corpus = load_documents(root, manifest.get("language", "ko"))
+        if digest(corpus) != manifest["corpus_hash"]:
+            raise ValueError("Policy evaluation requires the unchanged original corpus.")
+        items = [policy_item(row, by_id[row["case_id"]], corpus) for row in rows]
+        corpora = [corpus]
+        names, subdirectory = POLICY_EVALUATORS, POLICY_DIRECTORY
     directory = root / "outputs" / label / subdirectory
     reference_directory = None
     if reference is not None:
@@ -188,17 +202,24 @@ def evaluate_cloud(
             )
     custom_catalog = None
     if (
-        business_evaluator
+        (business_evaluator or policy)
         and reference is None
         and not (directory / "evaluator-catalog.json").exists()
     ):
         from .cloud import project_clients
-        from .settings import owned_prefix
+        from .settings import owned_prefix, require_env
 
         with project_clients(settings, preview=True) as (project, _client):
-            custom_catalog = {
-                BUSINESS_EVALUATOR: ensure_business_evaluator(project, owned_prefix())
-            }
+            if policy:
+                from .policy_evaluation import ensure_policy_evaluators
+
+                custom_catalog = ensure_policy_evaluators(
+                    project, owned_prefix(), require_env("AZURE_AI_EVALUATION_MODEL_DEPLOYMENT_NAME")
+                )
+            else:
+                custom_catalog = {
+                    BUSINESS_EVALUATOR: ensure_business_evaluator(project, owned_prefix())
+                }
     result = evaluate_items(
         settings,
         directory,
@@ -219,6 +240,11 @@ def evaluate_cloud(
         reference_state=reference_directory / "cloud-evaluation.json"
         if reference_directory
         else None,
+        **(
+            {"policy_reference_audit": True, "policy_source_corpora": corpora}
+            if policy
+            else {}
+        ),
     )
     if business_evaluator:
         local = {item["case_id"]: item["passed"] for item in summarize(rows, cases)["checks"]}

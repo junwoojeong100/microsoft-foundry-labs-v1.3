@@ -1,4 +1,6 @@
 import json
+import os
+import re
 import time
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
@@ -12,7 +14,11 @@ from .settings import Settings, owned_prefix, require_env
 
 
 def store_name(settings: Settings) -> str:
-    return f"{owned_prefix()}-memory-{settings.language}"
+    value = os.environ.get("WORKSHOP_MEMORY_STORE_NAME", "").strip()
+    value = value or f"{owned_prefix()}-memory-{settings.language}"
+    if not re.fullmatch(r"[a-z0-9-]{1,100}", value) or not value.startswith(owned_prefix() + "-"):
+        raise ValueError("The memory store name must stay within WORKSHOP_PREFIX.")
+    return value
 
 
 def scope_name(settings: Settings, scope: str) -> str:
@@ -25,14 +31,16 @@ def ownership_path(root: Path, settings: Settings) -> Path:
     return root / "outputs/memory" / store_name(settings) / "ownership.json"
 
 
-def plan(settings: Settings) -> dict[str, Any]:
+def plan(settings: Settings, *, ttl_seconds: int = 0) -> dict[str, Any]:
+    if type(ttl_seconds) is not int or not 0 <= ttl_seconds <= 31_536_000:
+        raise ValueError("Memory TTL must be 0 (no expiration) or at most 31536000 seconds.")
     return {
         "mode": "local-memory-plan",
         "name": store_name(settings),
         "project_endpoint": settings.project_endpoint,
         "chat_model": settings.deployment,
         "embedding_model": require_env("AZURE_AI_EMBEDDING_DEPLOYMENT_NAME"),
-        "default_ttl_seconds": 3600,
+        "default_ttl_seconds": ttl_seconds,
         "scopes": [scope_name(settings, scope) for scope in ("alpha", "beta")],
         "azure_requests_sent": False,
         "note": "Synthetic scope partitioning is not an authorization test between two real users.",
@@ -44,7 +52,10 @@ def load_ownership(root: Path, settings: Settings) -> dict[str, Any]:
     if not path.is_file():
         raise ValueError("Create this owned memory store from the same workshop copy first.")
     value = read_json(path)
-    expected = plan(settings)
+    configuration = value.get("plan")
+    if not isinstance(configuration, dict):
+        raise ValueError("The memory ownership record has no configuration.")
+    expected = plan(settings, ttl_seconds=configuration.get("default_ttl_seconds"))
     if value.get("plan") != expected or not isinstance(value.get("items"), dict):
         raise ValueError("The memory ownership/configuration changed.")
     return value
@@ -77,7 +88,8 @@ def verify_store(project: Any, settings: Settings, ownership: dict[str, Any]) ->
     if (
         definition.get("chat_model") != settings.deployment
         or definition.get("embedding_model") != require_env("AZURE_AI_EMBEDDING_DEPLOYMENT_NAME")
-        or definition.get("options", {}).get("default_ttl_seconds") != 3600
+        or definition.get("options", {}).get("default_ttl_seconds")
+        != ownership["plan"]["default_ttl_seconds"]
     ):
         raise ValueError(
             "Memory model bindings or retention changed; do not silently accept drift."
@@ -85,16 +97,26 @@ def verify_store(project: Any, settings: Settings, ownership: dict[str, Any]) ->
     return actual
 
 
-def create(project: Any, root: Path, settings: Settings, *, confirmed: bool) -> dict[str, Any]:
+def create(
+    project: Any,
+    root: Path,
+    settings: Settings,
+    *,
+    confirmed: bool,
+    ttl_seconds: int = 0,
+) -> dict[str, Any]:
     if not confirmed:
         raise ValueError("Creating a memory store requires --confirm-create.")
     from azure.ai.projects.models import MemoryStoreDefaultDefinition, MemoryStoreDefaultOptions
     from azure.core.exceptions import ResourceNotFoundError
 
-    configuration = plan(settings)
+    configuration = plan(settings, ttl_seconds=ttl_seconds)
     path = ownership_path(root, settings)
     if path.exists():
-        raise ValueError("Preserve the existing memory ownership record; use a new prefix.")
+        raise ValueError(
+            "Preserve the existing memory ownership record; select a new owned "
+            "WORKSHOP_MEMORY_STORE_NAME instead of changing or deleting the old store."
+        )
     next(iter(project.agents.list(limit=1)), None)
     try:
         project.beta.memory_stores.get(name=store_name(settings))
@@ -113,7 +135,7 @@ def create(project: Any, root: Path, settings: Settings, *, confirmed: bool) -> 
                 user_profile_enabled=True,
                 chat_summary_enabled=False,
                 procedural_memory_enabled=False,
-                default_ttl_seconds=timedelta(hours=1),
+                default_ttl_seconds=timedelta(seconds=ttl_seconds),
             ),
         ),
         metadata={"workshop_owner": owner, "language": settings.language},
@@ -125,6 +147,7 @@ def create(project: Any, root: Path, settings: Settings, *, confirmed: bool) -> 
         "store": verify_store(project, settings, ownership),
         "ledger": str(path),
         "memory_items_created": False,
+        "automatic_expiration_enabled": ttl_seconds != 0,
         "ttl_expiry_tested": False,
     }
 

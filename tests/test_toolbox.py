@@ -131,7 +131,7 @@ class ToolboxTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     toolbox.require_synthetic_index(root, settings())
 
-    def test_connection_checks_metadata_only_and_requires_aad(self):
+    def test_connection_checks_metadata_only_and_requires_keyless_authentication(self):
         project = MagicMock()
         connection = SimpleNamespace(
             name="lab-unit-search",
@@ -146,8 +146,12 @@ class ToolboxTests(unittest.TestCase):
         project.connections.get.assert_called_once_with(
             name="lab-unit-search", include_credentials=False
         )
+        connection.credentials.type = "ProjectManagedIdentity"
+        self.assertEqual(
+            toolbox.connection_scope(project)["authentication"], "ProjectManagedIdentity"
+        )
         connection.credentials.type = "ApiKey"
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegex(ValueError, "keyless"):
             toolbox.connection_scope(project)
 
     def test_every_side_effect_requires_its_own_explicit_gate(self):

@@ -38,6 +38,37 @@ class CliTests(unittest.TestCase):
                     "account-responses",
                 )
 
+    def test_routine_response_source_and_scheduled_flags_reach_inspection(self):
+        command = [
+            "routines", "inspect", "--name", "lab-unit-routine",
+            "--dispatch-id", "unit-dispatch", "--label", "unit-routine", "--verify-response",
+        ]
+        default = parser().parse_args(command)
+        self.assertEqual(default.response_source, "api")
+        self.assertFalse(default.scheduled)
+        for options, source, scheduled in (
+            ([], "api", False),
+            (["--response-source", "telemetry"], "telemetry", False),
+            (["--response-source", "telemetry", "--scheduled"], "telemetry", True),
+        ):
+            with (
+                self.subTest(source=source, scheduled=scheduled),
+                workspace() as root,
+                patch("foundry_workshop.settings.Settings.from_env") as settings,
+                patch("foundry_workshop.cloud.project_clients") as clients,
+                patch("foundry_workshop.routines_lab.inspect_run", return_value={"mode": "unit-test"}) as inspect,
+            ):
+                project, client = object(), object()
+                clients.return_value.__enter__.return_value = (project, client)
+                status, stdout, stderr = self.run_cli(root, [*command, *options])
+                self.assertEqual(status, 0, stderr)
+                self.assertEqual(json.loads(stdout), {"mode": "unit-test"})
+                inspect.assert_called_once_with(
+                    project, client, root, settings.return_value,
+                    "lab-unit-routine", "unit-dispatch", "unit-routine",
+                    verify_response=True, response_source=source, scheduled=scheduled,
+                )
+
     def test_model_api_selection_reaches_the_actual_client_factory(self):
         for api in ("project-responses", "account-responses"):
             with (

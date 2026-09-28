@@ -208,7 +208,6 @@ def connection_scope(project: Any) -> dict[str, str]:
     if (
         connection.name != name
         or category != "CognitiveSearch"
-        or authentication != "AAD"
         or not isinstance(connection.target, str)
         or connection.target.rstrip("/") != search_configuration()["endpoint"]
         or not isinstance(connection.id, str)
@@ -216,6 +215,11 @@ def connection_scope(project: Any) -> dict[str, str]:
     ):
         raise ValueError(
             "The project Search connection does not target the configured synthetic Search service."
+        )
+    if authentication not in {"AAD", "ProjectManagedIdentity"}:
+        raise ValueError(
+            "The Search connection must use keyless AAD or ProjectManagedIdentity authentication; "
+            f"received {authentication}. No credential fallback is allowed."
         )
     return {
         "name": name,

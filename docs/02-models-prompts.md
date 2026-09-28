@@ -1,4 +1,4 @@
-# 02. 모델·프롬프트·비교·Router
+# 02. Sol 지침과 선택적 모델·Router 비교
 
 **완료 목표:** 지침과 지식의 차이를 경험하고, 모델 선택을 고정 조건으로 비교합니다.
 
@@ -38,27 +38,40 @@ Playground에서 같은 배포를 유지하고 **각 실험 전에 새 대화**�
 
 **프롬프트는 행동, 검색은 근거, 파인튜닝은 모델 가중치 변경**입니다. 이 과정의 지침 수정·문서 연결은 파인튜닝이 아닙니다.
 
-## 3. 비교 모델을 직접 준비
+<a id="3-비교-모델을-직접-준비"></a>
 
-두 번째 모델을 비교하려면 00의 모델 배포 절차를 반복합니다.
+## 3. 선택적으로 Luna와 비교
 
-1. 같은 Foundry 리소스의 모델 카탈로그에서 **`gpt-6-sol` / `2026-09-22`**를 찾습니다.
+이 절은 **선택 사항**입니다. 기본 Sol만으로 이후 실습을 진행할 수 있습니다. 비교를 선택했다면 00과 같은 배포 절차를 사용합니다.
+
+1. 같은 Foundry 리소스의 모델 카탈로그에서 **`gpt-6-luna` / `2026-09-22`**를 찾습니다.
 2. Responses·Structured Outputs·지역·할당량을 확인합니다.
-3. 기존 배포를 바꾸지 않고 `workshop-compare` 같은 **새 배포 이름**을 지정합니다.
+3. 새 환경은 `workshop-compare`를 사용합니다. 이미 그 이름이 Sol 등 다른 모델이면 변경하지 말고, 확인한 기존 Luna 배포나 새 고유 이름을 선택합니다.
 4. 생성 완료와 실제 모델/버전을 기록합니다.
 5. 비용이 부담되거나 지원되지 않으면 모델 비교는 미실행으로 기록하고 다음 장으로 갑니다. 같은 모델을 다른 이름으로 배포한 것을 성능 비교라고 하지 않습니다.
 
-생성한 실제 모델/버전을 확인합니다. 이 Sol 배포는 07에서 judge로도 사용합니다.
+생성한 실제 모델/버전을 확인합니다. 아래 자리에는 **실제 Luna 별칭**을 넣습니다. 새 환경은 `workshop-compare`, 이전 실습의 `workshop-chat`이 실제로 Luna라면 그 이름을 재사용할 수 있습니다. Luna는 judge가 아닙니다.
 
 ```bash
-python scripts/selfstudy.py model --role comparison
+python scripts/selfstudy.py model --role comparison --deployment "ACTUAL-LUNA-DEPLOYMENT"
 ```
 
-처음에는 한빛기술 규정도 함께 쓰는 직접 SDK 응답을 만들어 봅니다. 01에서 확인한 같은 계정의 `AZURE_OPENAI_ENDPOINT`를 설정하고, **두 모델 모두 계정 Responses API**를 사용합니다. 기본 배포를 Sol로 바꿨더라도 두 호출의 모델을 각각 명시합니다.
+같은 Foundry 홈에서 **Azure OpenAI endpoint의 서비스 루트**를 확인합니다. 화면 값이 `/openai/v1`으로 끝나면 그 경로 부분을 제외합니다.
 
 ```bash
-python scripts/workshop.py --model-deployment workshop-chat answer --api account-responses --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-model-a.json
-python scripts/workshop.py --model-deployment workshop-compare answer --api account-responses --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-model-b.json
+python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "https://YOUR-FOUNDRY-DOMAIN.openai.azure.com"
+```
+
+한빛기술 규정과 같은 질문으로 **두 모델 모두 계정 Responses API**를 사용합니다. 다음 두 자리에는 이름이 아니라 **실제 기반 모델까지 확인한 별칭**을 넣습니다.
+
+| 환경 | `ACTUAL-SOL-DEPLOYMENT` | `ACTUAL-LUNA-DEPLOYMENT` |
+|---|---|---|
+| 새 기본 환경 | `workshop-chat` | `workshop-compare` |
+| 이전 실습의 배포를 확인해 재사용 | `workshop-compare` | `workshop-chat`이 실제 Luna인 경우 |
+
+```bash
+python scripts/workshop.py --model-deployment "ACTUAL-SOL-DEPLOYMENT" answer --api account-responses --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-sol-account.json
+python scripts/workshop.py --model-deployment "ACTUAL-LUNA-DEPLOYMENT" answer --api account-responses --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-luna-account.json
 ```
 
 같은 지침·질문·로컬 근거를 사용합니다. `--model-deployment`는 **이 요청만** 바꾸며 `.env`나 Azure의 기본 배포를 변경하지 않습니다. 응답·근거·오류·사용량을 비교하되 한 질문으로 모델 순위를 확정하지 않습니다. 전체 dev 비교는 07에서 진행합니다.

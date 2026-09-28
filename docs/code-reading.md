@@ -28,4 +28,4 @@ python scripts/workshop.py doctor
 
 작은 예제를 보려면 [examples/recipes](../examples/recipes/)를 엽니다. 입력 한 가지를 바꾸고 관련 테스트를 실행해 차이를 확인하세요. 로컬 테스트는 실제 모델 품질의 증거가 아닙니다.
 
-[전체 과정](../README.md)
+[전체 과정](../README.ko.md)

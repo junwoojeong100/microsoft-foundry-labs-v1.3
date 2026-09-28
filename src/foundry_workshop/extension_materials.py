@@ -14,7 +14,7 @@ CONVERSATIONS = (
 )
 
 
-def files_for(root: Path, language: str, prefix: str) -> dict[str, bytes]:
+def files_for(root: Path, language: str, prefix: str, *, policy: bool = False) -> dict[str, bytes]:
     if not re.fullmatch(r"lab-[a-z0-9]+(?:-[a-z0-9]+)*", prefix) or len(prefix) > 32:
         raise ValueError("Use the same owned WORKSHOP_PREFIX as the prepared environment.")
     documents = load_documents(root, language)
@@ -67,6 +67,11 @@ def files_for(root: Path, language: str, prefix: str) -> dict[str, bytes]:
                 ),
             }
         )
+    if policy:
+        from .policy_evaluation import POLICY_MODE, criteria_hash, optimizer_items
+
+        optimizer_rows = optimizer_items(root, language)
+        source.update(policy_mode=POLICY_MODE, policy_criteria_hash=criteria_hash())
     table = io.StringIO(newline="")
     writer = csv.DictWriter(
         table,
@@ -98,6 +103,22 @@ def files_for(root: Path, language: str, prefix: str) -> dict[str, bytes]:
         "policy-records.csv": table.getvalue().encode("utf-8-sig"),
         "policy-review/SKILL.md": skill.encode(),
     }
+    if policy:
+        from .policy_evaluation import (
+            POLICY_EVALUATORS,
+            owned_evaluator_name,
+            policy_evaluator_version,
+        )
+
+        files["policy-evaluator-definitions.json"] = (
+            json.dumps(
+                {
+                    metric: policy_evaluator_version(owned_evaluator_name(prefix, metric), metric)
+                    for metric in POLICY_EVALUATORS
+                },
+                ensure_ascii=False, indent=2,
+            ) + "\n"
+        ).encode()
     files["manifest.json"] = (
         json.dumps(
             {
@@ -116,8 +137,10 @@ def files_for(root: Path, language: str, prefix: str) -> dict[str, bytes]:
     return files
 
 
-def prepare(root: Path, language: str, prefix: str, label: str) -> dict[str, Any]:
-    files = files_for(root, language, prefix)
+def prepare(
+    root: Path, language: str, prefix: str, label: str, *, policy: bool = False
+) -> dict[str, Any]:
+    files = files_for(root, language, prefix, policy=policy)
     destination = root / "outputs" / safe_label(label)
     destination.mkdir(parents=True, exist_ok=False)
     for name, content in files.items():
@@ -131,6 +154,7 @@ def prepare(root: Path, language: str, prefix: str, label: str) -> dict[str, Any
         "files": sorted(files),
         "azure_requests_sent": False,
         "holdout_loaded": False,
+        "policy_evaluators": policy,
         "note": "Prepared inputs only. No agent response, evaluation, deployment or recording has been performed.",
     }
     write_json(destination / "preparation.json", result)

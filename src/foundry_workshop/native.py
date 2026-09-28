@@ -26,6 +26,8 @@ def evaluate_items(
     custom_catalog: dict[str, dict[str, Any]] | None = None,
     reference_state: Path | None = None,
     retry_advice: bool = False,
+    policy_reference_audit: bool = False,
+    policy_source_corpora: list[list[dict[str, Any]]] | None = None,
 ) -> dict[str, Any]:
     from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
 
@@ -71,6 +73,26 @@ def evaluate_items(
         raise ValueError(
             "The judge deployment must be explicitly separate from every target deployment."
         )
+    if policy_reference_audit:
+        from .policy_evaluation import (
+            POLICY_EVALUATORS,
+            POLICY_MODE,
+            audit_policy_results,
+            criteria_hash,
+            validate_policy_catalog,
+            validate_policy_items,
+        )
+
+        if messages_input or evaluator_names != POLICY_EVALUATORS:
+            raise ValueError("Policy reference mode requires the three query-response policy metrics.")
+        validate_policy_items(items, policy_source_corpora or [])
+    elif policy_source_corpora is not None:
+        raise ValueError("Policy source corpora require explicit policy reference-audit mode.")
+    else:
+        from .policy_evaluation import POLICY_EVALUATORS
+
+        if set(evaluator_names) & set(POLICY_EVALUATORS):
+            raise ValueError("Policy metric names require explicit source-reference audit mode.")
     directory.mkdir(parents=True, exist_ok=True)
     state_path = directory / "cloud-evaluation.json"
     catalog_path = directory / "evaluator-catalog.json"
@@ -83,11 +105,21 @@ def evaluate_items(
     }
     if messages_input:
         identity.update(input_format="messages", evaluation_level=evaluation_level)
+    if policy_reference_audit:
+        identity.update(
+            policy_mode=POLICY_MODE,
+            policy_criteria_hash=criteria_hash(),
+            policy_source_corpora_hash=digest(policy_source_corpora),
+        )
     reference_run = None
     if reference_state is not None:
         if messages_input:
             raise ValueError("A shared reference evaluation applies to a query-response run.")
         reference_run = read_json(reference_state)
+        if reference_run.get("policy_mode") != identity.get("policy_mode"):
+            raise ValueError("Reference evaluation policy mode/version differs from this request.")
+        if policy_reference_audit:
+            verified_native(reference_state.parent)
         if (
             reference_run.get("status") != "completed"
             or reference_run.get("validation_status") != "valid"
@@ -105,6 +137,8 @@ def evaluate_items(
             raise ValueError("Compare a different run; do not reuse the reference's own responses.")
         identity["reference_run_id"] = reference_run["run_id"]
     state = read_json(state_path) if state_path.exists() else dict(identity)
+    if state.get("policy_mode") != identity.get("policy_mode"):
+        raise ValueError("Do not replace a saved evaluation with a different policy mode; use a new label.")
     if retry_failed and state.get("reference_run_id") != identity.get("reference_run_id"):
         raise ValueError(
             "Retry with the same reference as the failed attempt; the retry then joins that evaluation."
@@ -158,6 +192,7 @@ def evaluate_items(
             "cloud-evaluation.json",
             "cloud-evaluation-raw.json",
             "cloud-evaluation-results.json",
+            "policy-reference-audit.json",
         ):
             path = directory / name
             if path.exists():
@@ -173,6 +208,26 @@ def evaluate_items(
                 "attempt": number,
             },
         }
+    if policy_reference_audit:
+        for name, value in (
+            ("policy-evaluation-inputs.json", items),
+            ("policy-source-corpora.json", policy_source_corpora),
+        ):
+            path = directory / name
+            if path.exists():
+                if read_json(path) != value:
+                    raise ValueError("Frozen policy inputs or source corpora changed; use a new label.")
+            else:
+                write_json(path, value, overwrite=False)
+        if state.get("validation_status") == "valid":
+            if reference_catalog is not None:
+                reference = [
+                    item for item in read_json(reference_catalog) if item["name"] in evaluator_names
+                ]
+                if digest(reference) != digest(read_json(catalog_path)):
+                    raise ValueError("The requested reference catalog differs from this frozen evaluation.")
+            saved, normalized = verified_native(directory)
+            return evaluation_result(saved, normalized, label, directory)
     with project_clients(settings, preview=True) as (project, client):
         if catalog_path.exists():
             catalog = read_json(catalog_path)
@@ -197,7 +252,14 @@ def evaluate_items(
                             "name": name,
                             "evaluator_name": custom["evaluator_name"],
                             "definition": custom["definition"],
-                            "parameters": {"deployment_name": judge, "pass_threshold": 1.0},
+                            "parameters": custom.get(
+                                "parameters", {"deployment_name": judge, "pass_threshold": 1.0}
+                            ),
+                            **(
+                                {"data_mapping": custom["data_mapping"]}
+                                if "data_mapping" in custom
+                                else {}
+                            ),
                         }
                     )
                     continue
@@ -239,6 +301,8 @@ def evaluate_items(
             models = [parameters[key] for key in ("model", "deployment_name") if key in parameters]
             if models != [judge]:
                 raise ValueError("The frozen evaluator catalog uses a different judge deployment.")
+        if policy_reference_audit:
+            validate_policy_catalog(catalog, judge)
         if state.get("evaluator_hash", digest(catalog)) != digest(catalog):
             raise ValueError("The evaluator catalog changed after job creation.")
         write_json(catalog_path, catalog)
@@ -259,7 +323,9 @@ def evaluate_items(
                     evaluator_version=item["definition"]["version"],
                     initialization_parameters=item["parameters"],
                     **(
-                        {}
+                        {"data_mapping": item["data_mapping"]}
+                        if "data_mapping" in item
+                        else {}
                         if "evaluator_name" in item
                         else {
                             "data_mapping": {"messages": "{{item.messages}}"}
@@ -347,8 +413,29 @@ def evaluate_items(
         write_json(directory / "cloud-evaluation-raw.json", raw_items)
         try:
             normalized = normalize_results(raw_items, ids, evaluator_names)
+            if policy_reference_audit:
+                audit = audit_policy_results(
+                    items, raw_items, normalized, policy_source_corpora, catalog
+                )
+                write_json(directory / "policy-reference-audit.json", audit)
+                state["policy_reference_audit_hash"] = digest(audit)
         except ValueError as error:
             state["validation_status"] = "invalid"
+            if policy_reference_audit:
+                audit = {
+                    "mode": POLICY_MODE,
+                    "status": "invalid",
+                    "error": str(error),
+                    "input_hash": digest(items),
+                    "source_corpora_hash": digest(policy_source_corpora),
+                    "raw_results_hash": digest(raw_items),
+                    "evaluator_hash": digest(catalog),
+                    "expected_rows": len(items),
+                    "actual_rows": len(raw_items),
+                    "judge_request_bodies_captured": False,
+                }
+                write_json(directory / "policy-reference-audit.json", audit)
+                state["policy_reference_audit_hash"] = digest(audit)
             write_json(state_path, state)
             if retry_advice:
                 raise ValueError(f"{error} {kept_attempt_advice(state)}") from error
@@ -357,6 +444,12 @@ def evaluate_items(
         state["results_hash"] = digest(normalized)
         write_json(directory / "cloud-evaluation-results.json", normalized)
         write_json(state_path, state)
+    return evaluation_result(state, normalized, label, directory)
+
+
+def evaluation_result(
+    state: dict[str, Any], normalized: list[dict[str, Any]], label: str, directory: Path
+) -> dict[str, Any]:
     return {
         "mode": "live",
         "label": label,
@@ -372,8 +465,23 @@ def evaluate_items(
         ),
         **({"run_name": state["run_name"]} if "run_name" in state else {}),
         **(
-            {"input_format": "messages", "evaluation_level": evaluation_level}
-            if messages_input
+            {"input_format": "messages", "evaluation_level": state["evaluation_level"]}
+            if state.get("input_format") == "messages"
+            else {}
+        ),
+        **(
+            {
+                "policy_mode": state["policy_mode"],
+                "validation_status": state["validation_status"],
+                "policy_reference_audit": {
+                    "path": str(directory / "policy-reference-audit.json"),
+                    "hash": state["policy_reference_audit_hash"],
+                    "status": "valid",
+                    "judge_request_bodies_captured": False,
+                },
+                "catalog_path": str(directory / "evaluator-catalog.json"),
+            }
+            if state.get("policy_mode")
             else {}
         ),
         "native_pass_counts": {
@@ -386,7 +494,7 @@ def evaluate_items(
                 ),
                 "total": len(normalized),
             }
-            for name in evaluator_names
+            for name in state["evaluator_names"]
         },
         "note": "Native judge scores remain separate from business checks and target-agent execution.",
     }
@@ -408,6 +516,38 @@ def verified_native(directory: Path) -> tuple[dict[str, Any], list[dict[str, Any
         raise ValueError("A completed and row-validated native evaluation is required.")
     if state.get("results_hash") != digest(results):
         raise ValueError("Native evaluation results changed after validation.")
-    if state["evaluator_hash"] != digest(read_json(directory / "evaluator-catalog.json")):
+    catalog = read_json(directory / "evaluator-catalog.json")
+    if state["evaluator_hash"] != digest(catalog):
         raise ValueError("The native evaluator definition changed.")
+    from .policy_evaluation import POLICY_EVALUATORS, POLICY_MODE
+
+    if state.get("policy_mode") or any(item["name"] in POLICY_EVALUATORS for item in catalog):
+        from .cloud_evaluation import normalize_results
+        from .policy_evaluation import (
+            audit_policy_results,
+            criteria_hash,
+            validate_policy_catalog,
+        )
+
+        if (
+            state.get("policy_mode") != POLICY_MODE
+            or state.get("policy_criteria_hash") != criteria_hash()
+            or state.get("evaluator_names") != list(POLICY_EVALUATORS)
+        ):
+            raise ValueError("A policy evaluation requires its explicit, unchanged mode/version.")
+        validate_policy_catalog(catalog, state["judge_deployment"])
+        inputs = read_json(directory / "policy-evaluation-inputs.json")
+        corpora = read_json(directory / "policy-source-corpora.json")
+        raw = read_json(directory / "cloud-evaluation-raw.json")
+        audit = read_json(directory / "policy-reference-audit.json")
+        if (
+            state["input_hash"] != digest(inputs)
+            or state.get("policy_source_corpora_hash") != digest(corpora)
+            or state.get("policy_reference_audit_hash") != digest(audit)
+            or audit.get("status") != "valid"
+        ):
+            raise ValueError("The policy reference audit/input/source artifacts changed or are missing.")
+        normalized = normalize_results(raw, [item["case_id"] for item in inputs], POLICY_EVALUATORS)
+        if results != normalized or audit != audit_policy_results(inputs, raw, results, corpora, catalog):
+            raise ValueError("The saved policy reference audit no longer verifies every original row.")
     return state, results

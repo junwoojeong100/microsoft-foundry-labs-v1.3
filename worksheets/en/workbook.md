@@ -15,27 +15,27 @@ Save a private copy, for example under `.selfstudy/`. Record only actual identif
 | Dedicated resource group and actual region | |
 | Source commit / actual local modifications | |
 | Python, SDK, azd/extension versions | |
-| Starting model/version: GPT-6 Luna / 2026-09-22 | |
-| Actual configured default: Luna or explicitly selected Sol | |
-| Comparison/judge model/version: GPT-6 Sol / 2026-09-22 | |
-| Actual judge deployment, separate from every target (`workshop-judge` when Sol is a target) | |
-| Project versus account API observations / compatibility decision | |
+| Default model/version: GPT-6 Sol / 2026-09-22 and actual alias | |
+| Optional comparison: GPT-6 Luna / 2026-09-22 and actual alias | |
+| Judge: GPT-5.5 / 2026-04-24 and actual alias | |
+| Judge base model and deployment differ from the targets | |
+| Project API / optional matched account API observations | |
 | Language: en / separate labels and corpus | |
 | Reasoning effort / output-token cap | |
 | Budget and stopping/retention/deletion plan | |
 
 ## Progress
 
-Distinguish `planned / executed / verified / blocked / additional permission needed / design only / stopped / retained / deleted`.
+Distinguish `planned / executed / verified / blocked / not run / stopped / retained / deleted`.
 
 | Chapter | Actual status | Result file / ID | Next action |
 |---|---|---|---|
 | 00 Prepare my environment | | | |
 | 01 First model response | | | |
-| 02 Models, prompts, Router | | | |
+| 02 Sol prompts, optional Luna comparison, Router | | | |
 | 03 Prompt Agent / File Search | | | |
 | 04 MAF / functions / MCP / Code Interpreter | | | |
-| 05 Workflows / simulated approval and recovery | | | |
+| 05 Workflows / local SDK simulated approval and pause/resume | | | |
 | 06 Search / IQ / Hybrid / IQ Chat | | | |
 | 07 Business / native evaluation | | | |
 | 08 Hosted locally / remotely | | | |
@@ -43,8 +43,8 @@ Distinguish `planned / executed / verified / blocked / additional permission nee
 | 10 Toolbox / Skills / OpenAPI / Hosted | | | |
 | 11 Memory / A2A / Routines | | | |
 | 12 Conversations / Optimizer / matrix / calibration | | | |
-| 13 Safety / roles / networking | | | |
-| 14 Additional-permission features | | | |
+| 13 Lab safety / managed identities / Control Plane inventory | | | |
+| 14 GitHub OIDC CI/CD | | | |
 | 15 Final acceptance / resource lifecycle | | | |
 
 ## Result card — copy for each exercise
@@ -91,21 +91,21 @@ Stopped/retained/deleted state:
 | Trace / calibration | | |
 | Remaining issues and selection rationale | | |
 
-**Inline, SDK, MAF, and Hosted are different targets.** Use each target's own actual results. The judge deployment must differ from every target deployment. When Sol both answers and judges through separate deployments, record the remaining model-family self-evaluation bias.
+**Inline, SDK, MAF, and Hosted are different targets.** Use each target's own actual results. The GPT-5.5 judge has a different base model from the GPT-6 targets and must use a different deployment. Do not assume all bias is eliminated. Existing labels and raw results remain immutable.
 
-**Local-retrieval Hosted is not IQ validation.** Use distinct local labels and exact versions, retain Search-dependent blockers, and choose only one final target before unlocking holdout.
+**Local-retrieval Hosted is not IQ validation.** Use distinct local labels and exact versions, record each retrieval path's actual status, and choose only one final target before unlocking holdout.
 
 ## Additional-feature records
 
 | Item | Actual value / observation |
 |---|---|
 | Skill source/readback hashes and actual load | |
-| Memory IDs/scopes, update/deletion, one-hour TTL | |
+| Memory IDs/scopes, update/deletion, recorded store TTL | |
 | A2A target/caller/card and real delegation | |
 | Routine name, dispatch, answer verification, disabled state | |
 | Optimizer target, candidate count, raw judge inputs, decision | |
 | Actual safety policy ID, attachment, interventions/non-interventions | |
-| Features needing additional permissions and whether obtained | |
+| GitHub OIDC identity, workflow run, exact deployment version, artifacts | |
 
 ## Final acceptance
 
@@ -117,19 +117,19 @@ Stopped/retained/deleted state:
 | Expected/actual rows, errors, business/native quality | |
 | Trace/calibration and unverified areas | |
 | Whether the small acceptance gate passed, and why | |
-| Additional work required before production | |
+| Incomplete items in this synthetic lab | |
 
 Use holdout for only the chosen final target, after the dev gates. Do not reuse previously seen cases as a new unseen test.
 
-## Apply this to my own work
+## Next lab comparison
 
-- Recurring problem and current business metric:
-- Approved source documents and update owner:
-- Read-only tools:
-- Actions prohibited without real human authorization:
-- Questions that must pass:
-- User authorization, networking, and log minimization:
-- Cost, incident, rollback, and deletion owner:
+- Synthetic question and actual failure to examine:
+- Fixed sources, models, API, and judge:
+- One instruction or lab setting to change:
+- Read-only tools to use:
+- New baseline/candidate labels and preserved earlier results:
+- Dev cases to review:
+- Stopped/retained state and remaining costs:
 
 ## Resource lifecycle card
 
@@ -146,12 +146,10 @@ Use holdout for only the chosen final target, after the dev gates. Do not reuse 
 | Additional roles/managed identities/federation | | | |
 | Other groups/earlier attempts | | | |
 
-**Retention reminder:** No cleanup, forget, `--confirm-delete`, `azd down`, or group deletion. Keep File Search with `--retain`, disable routines, and stop compute without deleting resources or volumes. Memory store retention does not extend its one-hour item TTL.
+**Retention reminder:** No cleanup, forget, `--confirm-delete`, `azd down`, or group deletion. Keep File Search with `--retain`, disable routines, and stop compute without deleting resources or volumes. Retaining a Memory store does not change its recorded TTL.
 
 **Learning completion status:**
 
 **Final quality judgment:**
-
-**Production approval:** Separate decision
 
 **Remaining charges and next review date:**

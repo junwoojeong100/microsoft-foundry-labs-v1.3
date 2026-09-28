@@ -12,7 +12,7 @@
 4. 구독 ID와 연결된 Tenant ID를 개인 워크북에 기록합니다.
 5. 조직의 허용 리전·서비스·네트워크 정책을 확인합니다. Owner도 관리 그룹의 거부 정책을 우회할 수 없습니다.
 
-**중요:** 구독 Owner와 Entra Global Administrator는 다릅니다. 이 과정의 Azure 리소스 준비에는 디렉터리 전체 관리자나 새 client secret이 필요하지 않습니다. 추가 통합의 권한은 14장에서 별도로 다룹니다.
+**중요:** 구독 Owner와 Entra Global Administrator는 다릅니다. 이 과정의 Azure 리소스 준비에는 디렉터리 전체 관리자나 새 client secret이 필요하지 않습니다. GitHub OIDC workflow의 실습 권한은 14장에서 다룹니다.
 
 ## 2. 실습 파일과 개발 도구
 
@@ -133,17 +133,17 @@ CLI 생성은 사용자·프로젝트의 **Foundry User 역할을 자동으로 �
 
 ## 6. 첫 모델 배포
 
-1. Foundry **Discover → Models**에서 **`gpt-6-luna`**를 찾습니다.
-2. 버전 **`2026-09-22`**, 지원 기능·리전·할당량을 확인합니다. 반복 질의·도구 실습의 응답성과 비용을 고려한 선택입니다. [모델 역할과 기준](model-selection.md).
+1. Foundry **Discover → Models**에서 **`gpt-6-sol`**을 찾습니다.
+2. 버전 **`2026-09-22`**, 지원 기능·리전·할당량을 확인합니다. 첫 응답부터 에이전트·도구 실습까지 Sol로 직접 진행합니다. [모델 역할과 기준](model-selection.md).
 3. **Deploy / Use this model**에서 배포 이름을 `workshop-chat`으로 지정합니다.
 4. 본인 정책에 맞는 종량제 Standard 계열을 고릅니다. Global Standard는 글로벌 처리 정책이 허용할 때만 선택합니다. PTU 계약은 필요하지 않습니다.
 5. 상태가 **Succeeded**가 될 때까지 기다립니다. 실제 기반 모델·버전·유형·리전을 기록합니다.
 
-할당량이 없거나 모델이 제공되지 않으면 **Create를 반복하지 않습니다**. 모델 배포 화면/Quota 메뉴에서 해당 리전의 한도를 확인해 증가를 요청하거나, 필요한 기능을 지원하는 다른 리전/모델을 명시적으로 선택하고 변경 이유를 기록합니다. 코드가 자동으로 바꿔 주지는 않습니다.
+할당량이 없거나 모델이 제공되지 않으면 **Create를 반복하지 않습니다**. 모델 배포 화면/Quota 메뉴에서 현재 가용성을 확인하고 필요한 증가를 요청하거나 준비될 때까지 멈춥니다. 고정 리전과 Sol 선택을 유지하며, 다른 모델로 바꿔 성공처럼 표시하지 않습니다.
 
-여기서는 Luna를 기본으로 진행합니다. Sol은 02의 비교와 07의 judge에 사용합니다. IQ Chat·Optimizer의 전용 모델은 해당 장에서만 준비합니다.
+기본 답변 모델은 Sol입니다. 02의 GPT-6 Luna 비교는 선택 사항이며, 07의 judge는 **GPT-5.5 / 2026-04-24**입니다. IQ Chat의 별도 `gpt-5.6-luna`와 Optimizer는 해당 장에서만 준비합니다.
 
-같은 배포 이름으로 다른 모델을 이미 사용하고 있다면 새 배포를 만들어 명시적으로 전환합니다. 설정 도구는 GPT-6 모델/버전 불일치를 숨기지 않습니다. 기존 agent·평가를 새 모델의 결과로 재사용하지 마세요.
+같은 배포 이름으로 다른 모델을 이미 사용하고 있다면 **그 모델을 바꾸거나 삭제하지 않습니다**. 실제 Sol 배포의 기존 이름을 명시적으로 재사용하거나 새 고유 이름을 선택합니다. 설정 도구는 실제 모델/버전을 확인합니다. 기존 agent·평가를 새 모델의 결과로 재사용하지 마세요.
 
 ## 7. 데이터 접근 역할 확인
 
@@ -165,8 +165,16 @@ Azure 포털의 **실제 Foundry 리소스 → IAM → Role assignments**를 봅
 따옴표 안 세 곳과 접두사를 본인의 값으로 바꿉니다.
 
 ```bash
-python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" --endpoint "실제-프로젝트-Endpoint" --deployment "workshop-chat" --prefix "lab-jw-0927"
+python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" --endpoint "실제-프로젝트-Endpoint" --deployment "workshop-chat" --expected-model gpt-6-sol --prefix "lab-jw-0927"
 ```
+
+**기존 실습을 이어 할 때:** `workshop-compare`가 이미 Sol이라면 위 새 환경 명령 대신 **같은 프로젝트·Endpoint·prefix**로 다음처럼 실제 별칭을 선택합니다. 기존 `workshop-chat`의 모델은 변경하지 않습니다.
+
+```bash
+python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" --endpoint "실제-프로젝트-Endpoint" --deployment workshop-compare --expected-model gpt-6-sol --prefix "기존-lab-접두사"
+```
+
+예전에 사용한 결과 label·파일·agent 버전은 그대로 보관합니다. 새로운 모델/평가 조건에는 새 이름과 label을 사용합니다. [기존 별칭 안내](model-selection.md#기존-배포를-그대로-재사용하기).
 
 이 도구는 Azure CLI로 **구독·프로젝트·계정·배포를 읽기만** 합니다. ID/Endpoint 일치와 배포 상태를 확인한 뒤 다음을 기록합니다.
 
@@ -189,7 +197,7 @@ python scripts/workshop.py doctor --cloud
 
 올바른 구독·테넌트·배포가 표시되는지 확인합니다. `doctor --cloud`도 추론 시험이 아니라 메타데이터/인증 확인입니다.
 
-**다음 장의 첫 실제 요청을 통과한 뒤 agent를 만듭니다.** 2026-09-27 Sweden Central의 새 프로젝트 검증에서는 Luna의 계정 API는 성공했지만 프로젝트 API는 400/500을 반환했고, 같은 프로젝트의 Sol은 성공했습니다. 동일 증상이 있으면 [01의 명시적 호환 경로](01-foundry.md#프로젝트-api와-계정-api를-구분하기)를 적용합니다. 모델 배포의 `Succeeded`만으로 모든 경로가 지원된다고 판단하지 않습니다.
+**다음 장에서 Sol의 첫 실제 요청을 통과한 뒤 agent를 만듭니다.** 모델 배포의 `Succeeded`만으로 모든 도구와 API 경로가 지원된다고 판단하지 않습니다. 오류는 [문제 해결](troubleshooting.md)에서 원래 응답과 함께 확인합니다.
 
 ## 9. 역할의 실제 명령이 필요할 때
 

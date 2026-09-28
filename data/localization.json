@@ -62,5 +62,26 @@
     }
   ],
   "holdout_translation_frozen_at": "2026-09-15T08:45:08.905018+00:00",
-  "holdout_policy": "Prepared after freezing English development inputs; use only for final acceptance, never prompt tuning or regression harvesting."
+  "holdout_policy": "Prepared after freezing English development inputs; use only for final acceptance, never prompt tuning or regression harvesting.",
+  "active_prompt_revision": {
+    "revision": "20260928-evidence-and-procedure",
+    "revised_on": "2026-09-28",
+    "previous_commit": "28e3984",
+    "after_initial_holdout": true,
+    "reason": "Restrict factual claims to actually provided evidence and leave procedure-only monetary limits null. Original corpus, dev, holdout and their historical hashes are unchanged; new diagnostics are recorded separately.",
+    "files": [
+      {
+        "source": "prompts/v2.txt",
+        "translation": "prompts/en/v2.txt",
+        "kind": "prompt",
+        "previous_source_sha256": "2b4a2b5e322a85349559fd55436521edf29334b8e69556bfbb4b43239edb9e25",
+        "previous_translation_sha256": "05c0d23b0f56b08077cbb436cae4b51fdb438f41493ca476bb02394938043ea8",
+        "source_sha256": "acbc93e7e6bc214bc8591738579925032631dcbd71def51d73c91cd0035f56b8",
+        "translation_sha256": "51e48b293f687e7ba8ba6f015a6ffb2b0b369898968b2054d125dbcee0311eb9"
+      }
+    ],
+    "english_workflow_instruction_hashes": {
+      "v2": "4776488bf7c1c7b611d9b5341ca2151ae61431e0f0d720406d97d297abe3f5f3"
+    }
+  }
 }

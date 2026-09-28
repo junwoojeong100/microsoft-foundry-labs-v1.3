@@ -20,6 +20,8 @@ python scripts/selfstudy.py resource --kind logs --id "실제-Log-Analytics-ARM-
 python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 ```
 
+`resource --kind logs`는 실제 Azure 응답의 **`customerId`**를 읽어 **`AZURE_LOG_ANALYTICS_WORKSPACE_ID`를 자동 설정**하고 현재 프로젝트 ARM ID도 기록합니다. Workspace GUID와 리소스 ARM ID는 다릅니다. 이름으로 GUID를 추측하거나 ARM ID를 이 변수에 넣지 않습니다. 이 등록은 조회 역할을 부여하거나 새 모델 응답을 만들지 않습니다.
+
 필요한 범위의 **Log Analytics Reader**를 IAM에서 확인/부여합니다. 보호된 테이블을 사용하는 조직은 별도 Privileged Monitoring Data Reader가 필요할 수 있습니다. 토큰이나 connection string을 로그/환경 예제에 넣지 않습니다.
 
 **Insights 분석에는 호출 주체가 하나 더 있습니다.** 사용자뿐 아니라 **프로젝트 관리 ID**에도 이 Application Insights 범위의 **Monitoring Reader**가 필요합니다. `AppGenAIContent` 등 보호된 콘텐츠를 읽는 경우 두 주체 모두 해당 범위의 **Privileged Monitoring Data Reader**도 확인합니다. 실제 검증에서 일반 trace 조회가 성공해도 Insights는 이 의존 권한 때문에 403을 반환했습니다. 역할을 구독 전체로 넓히지 말고 실습 로그 리소스에만 부여합니다.

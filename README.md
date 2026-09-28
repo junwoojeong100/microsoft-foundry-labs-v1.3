@@ -20,7 +20,7 @@ The intended answer explains the **KRW 150,000 limit, team-lead approval require
 
 Foundry connects **models, agents, knowledge, tools, evaluation, and operations** in one Azure platform. You will explore that lifecycle through the same synthetic business case.
 
-**GPT-6 Luna** is the starting model candidate; **GPT-6 Sol** is used for comparison and judging. Deployment roles and observed API limitations are in [Model selection](docs/en/model-selection.md). If Luna's project API fails, use the [explicit Sol compatibility path](docs/en/01-foundry.md#distinguish-project-and-account-apis)—not an automatic fallback or a claim of validated Luna agent support.
+Start directly with **GPT-6 Sol**. **GPT-6 Luna is an optional comparison**, and **GPT-5.5 is the judge**, using a different base model and a separate target/judge deployment. Fresh deployments use `workshop-chat`, `workshop-compare`, and `workshop-judge` respectively. Existing aliases may differ: never replace the model behind an existing name or delete it to match these examples. See [Model roles and existing aliases](docs/en/model-selection.md).
 
 ![Workshop architecture: models, knowledge, tools, evaluation, and operations](docs/assets/architecture.svg)
 
@@ -32,7 +32,7 @@ The shared diagram shows local CLI/MAF code calling Foundry models and agents, r
 |---|---|---|
 | [00 Setup](docs/en/00-setup.md) | Prepare tools, a project, a model, and permissions | Your environment |
 | [01 First response](docs/en/01-foundry.md) | Call a model in the portal and from code | An actual response |
-| [02 Models and prompts](docs/en/02-models-prompts.md) | Compare instructions, models, and Router | A reasoned selection |
+| [02 Models and prompts](docs/en/02-models-prompts.md) | Compare instructions; optionally compare Luna and Router | A reasoned selection |
 | [03 Agents and files](docs/en/03-knowledge.md) | Create a Prompt Agent and use File Search | Exact versions and citations |
 | [04 Tools](docs/en/04-tools.md) | Run functions, MCP, and Code Interpreter | Actual tool results |
 | [05 Workflows](docs/en/05-workflows.md) | Run sequential, parallel, chat, and pause/resume flows | Execution records |
@@ -43,8 +43,8 @@ The shared diagram shows local CLI/MAF code calling Foundry models and agents, r
 | [10 Shared tools](docs/en/10-toolbox-skills.md) | Connect Toolbox, Skills, and OpenAPI | Reusable, versioned tools |
 | [11 State and scheduling](docs/en/11-memory-a2a-routines.md) | Use Memory, A2A, and Routines | State and dispatch records |
 | [12 Improvement](docs/en/12-improvement.md) | Evaluate conversations, optimization, and deployed versions | Reviewed candidates |
-| [13 Governance](docs/en/13-governance.md) | Inspect policies, identities, and networking | Controls and limitations |
-| [14 Additional integrations](docs/en/14-additional-permissions.md) | Check extra permissions and product prerequisites | Execution or design-only status |
+| [13 Lab safety](docs/en/13-governance.md) | Inspect lab guardrails, identities, and resource inventory | Controls and limitations |
+| [14 GitHub OIDC CI/CD](docs/en/14-additional-permissions.md) | Run the included identity-based lab release workflow | Exact version and smoke/dev evidence |
 | [15 Acceptance and cleanup](docs/en/15-capstone-cleanup.md) | Verify the final target and stop, retain, or remove resources | Results and lifecycle records |
 
 Follow each chapter's **run → verify → next** sequence. No second repository or separate learning path is required.
@@ -65,8 +65,8 @@ Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/`
 ## Ground rules
 
 - Use only the six synthetic policies in `data/knowledge/en/policies.json`; no real company data, secrets, tokens, bookings, payments, or approvals.
-- Create services only when needed. Owner does not guarantee quota, regional availability, preview access, or other products' licenses.
-- Never replace errors or empty responses with fixtures, and never treat one good answer as production approval.
+- Create services only when needed. Owner does not guarantee quota, regional availability, or preview access; keep organizational protections in place.
+- Never replace errors or empty responses with fixtures, or treat one good answer as evidence that the whole lab passed.
 - **Even when stopping early, follow [chapter 15](docs/en/15-capstone-cleanup.md).** In retention mode, keep resources and ownership records, disable routines, and stop compute without deleting agents or volumes.
 
 ## Portal and CLI summary videos
@@ -78,6 +78,6 @@ Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/`
 | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) |
 | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) |
 
-[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). Search capacity blockers and native-quality warnings remain explicit; the videos do not imply production approval.
+[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). The recordings preserve an earlier lab snapshot. Follow the current chapters for model defaults and Search prerequisites; an earlier recording is not proof that every current step has passed.
 
 **Help:** [Troubleshooting](docs/en/troubleshooting.md) · [Feature map](docs/en/feature-map.md) · [Checkpoints](docs/en/checkpoints.md) · [Code reading](docs/en/code-reading.md) · [Official sources](docs/en/sources.md) · [Next steps](docs/en/next-steps.md)

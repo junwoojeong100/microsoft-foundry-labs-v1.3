@@ -112,7 +112,8 @@ class MemorySDKTests(unittest.TestCase):
     def test_actual_option_serialization_and_complete_owned_item_lifecycle(self):
         with workspace() as root:
             created = memory_lab.create(self.project, root, settings(), confirmed=True)
-            self.assertEqual(created["store"]["definition"]["options"]["default_ttl_seconds"], 3600)
+            self.assertEqual(created["store"]["definition"]["options"]["default_ttl_seconds"], 0)
+            self.assertFalse(created["automatic_expiration_enabled"])
             item = memory_lab.put(
                 self.project,
                 root,
@@ -188,6 +189,22 @@ class MemorySDKTests(unittest.TestCase):
             self.client.responses.create.assert_not_called()
             self.assertTrue((root / "outputs/memory-runs/leak/search.json").exists())
             self.assertFalse((root / "outputs/memory-runs/leak/summary.json").exists())
+
+    def test_previous_expiring_store_is_not_silently_reconfigured(self):
+        with workspace() as root:
+            created = memory_lab.create(
+                self.project, root, settings(), confirmed=True, ttl_seconds=3600
+            )
+            self.assertTrue(created["automatic_expiration_enabled"])
+            ownership = memory_lab.load_ownership(root, settings())
+            self.assertEqual(ownership["plan"]["default_ttl_seconds"], 3600)
+            self.assertEqual(
+                memory_lab.verify_store(self.project, settings(), ownership)["definition"]["options"]["default_ttl_seconds"],
+                3600,
+            )
+            self.operations.store["definition"]["options"]["default_ttl_seconds"] = 0
+            with self.assertRaisesRegex(ValueError, "retention changed"):
+                memory_lab.verify_store(self.project, settings(), ownership)
 
     def test_wrong_owner_marker_does_not_delete_or_change_the_store(self):
         with workspace() as root:

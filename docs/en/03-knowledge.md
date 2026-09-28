@@ -43,7 +43,7 @@ In Foundry **Build → Agents**, verify the same name, version, model, and instr
 
 ## 3. Create a real File Search agent
 
-Use the **bundled SDK commands** rather than depending on the portal's upload-button location. Use the configured deployment whose project call passed in 01; an independent name is generated for this agent. If you selected the Sol compatibility path, the actual model is Sol.
+Use the **bundled SDK commands** rather than depending on the portal's upload-button location. Use the actual Sol deployment whose project call passed in 01; an independent name is generated for this agent.
 
 ```bash
 python scripts/workshop.py --language en file-search create --confirm-create
