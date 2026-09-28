@@ -10,10 +10,13 @@ OIDC는 GitHub Actions가 짧게 유효한 신원 증명으로 Azure에 로그�
 
 ## 1. 저장소와 Environment 준비
 
-1. 이 폴더의 소스를 본인이 관리하는 GitHub 저장소의 `main`에 올립니다. `.github/workflows/`와 `.gitignore`도 포함하며, `.env`, `.selfstudy/`, `.build/`, `outputs/`, 자격 증명은 제외합니다.
-2. **Actions → Workshop checks**에서 [포함된 검사](../.github/workflows/check.yml)가 그 commit에서 통과하는지 확인합니다.
-3. **Settings → Environments → New environment**에서 이름을 정확히 **`foundry-workshop`**으로 만듭니다. 두 workflow가 이 이름을 고정해서 사용하므로 예시로 보고 다른 이름을 넣지 않습니다.
-4. 조직 정책에 맞는 `main` 배포 branch 제한과 승인 규칙을 설정합니다. 메뉴·권한·요금제 제약이 있으면 보호를 낮추지 말고 이 장을 차단/미실행으로 남깁니다.
+1. 이미 본인이 관리하는 실습 저장소가 있으면 사용합니다. ZIP으로 시작했고 아직 없다면 [원본 저장소](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5)에서 **Fork → 본인 Owner 선택 → Create fork**로 자신의 사본을 만듭니다. [브라우저 Fork 절차](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo?tool=webui)에는 로컬 Git 작업이 필요하지 않습니다.
+2. **본인 저장소**의 `main`에서 `.github/workflows/`와 `.gitignore`를 확인하고 사용할 commit을 기록합니다. Fork는 원격에 저장된 소스만 복사하며 내 PC의 변경은 포함하지 않습니다. 로컬 코드를 바꿨다면 검토한 소스 변경만 반영하고, 실습 폴더나 ZIP 전체를 업로드하지 않습니다. `.env`, `.selfstudy/`, `.build/`, `outputs/`, 자격 증명은 제외합니다.
+3. **Actions**에서 fork의 workflow 활성화 안내가 나오면 본인 저장소와 조직 정책을 확인한 뒤 활성화합니다. **Workshop checks → Run workflow → main**으로 [포함된 검사](../.github/workflows/check.yml)를 수동 실행하고 그 commit의 통과를 확인합니다. 이 검사는 Azure 배포/모델 호출을 하지 않습니다.
+4. **Settings → Environments → New environment**에서 이름을 정확히 **`foundry-workshop`**으로 만듭니다. 두 workflow가 이 이름을 고정해서 사용하므로 예시로 보고 다른 이름을 넣지 않습니다.
+5. 조직 정책에 맞는 `main` 배포 branch 제한과 승인 규칙을 설정합니다. Fork·메뉴·권한·요금제 제약이 있으면 저장소를 공개로 바꾸거나 보호를 낮추지 말고 이 장을 차단/미실행으로 남깁니다.
+
+이후 모든 **Actions·Settings 작업과 OIDC 값은 본인 저장소 기준**입니다. `Run workflow`가 없으면 `main`에 해당 workflow 파일이 있는지와 실행 권한을 먼저 확인합니다. GitHub Actions 실행 시간/저장소 과금은 Azure 비용과 별도입니다.
 
 ## 2. Azure CI 관리 ID 준비
 
@@ -47,22 +50,37 @@ CI agent는 08/12의 수동 실습·고정 matrix와 다른 이름을 사용합�
 
 ## 4. OIDC federation 연결
 
-CI 관리 ID의 **Federated credentials → Add credential**에서 GitHub Actions 연결을 준비합니다. 본인의 저장소와 **Environment `foundry-workshop`**을 대상으로 합니다.
+먼저 본인 저장소의 OIDC 정책과 식별자를 읽습니다. [GitHub CLI](https://cli.github.com/) 설치와 정상 로그인이 필요하며 `YOUR-OWNER/YOUR-REPOSITORY`를 실제 **본인 저장소**로 바꿉니다.
+
+```bash
+gh auth login
+gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
+gh api repos/YOUR-OWNER/YOUR-REPOSITORY --jq '{repository: .full_name, owner_id: .owner.id, repository_id: .id}'
+```
+
+`repository`는 `OWNER/REPOSITORY` 이름이며 `owner_id`와 `repository_id`는 **GitHub의 숫자 ID**입니다. Azure Tenant ID나 관리 ID의 Object ID를 여기에 넣지 않습니다.
+
+CI 관리 ID의 **Federated credentials → Add credential**에서 그 저장소와 **Environment `foundry-workshop`**에 대한 신뢰를 설정합니다. GitHub 템플릿이 실제와 다른 subject를 자동 생성한다면 **Other issuer** 방식으로 정확한 값을 입력합니다. 기존 credential을 무조건 덮어쓰지 않습니다.
 
 | 항목 | 값 |
 |---|---|
 | Issuer | `https://token.actions.githubusercontent.com` |
 | Audience | `api://AzureADTokenExchange` |
-| Subject | **본인 저장소의 현재 OIDC 정책과 정확히 일치하는** Environment subject |
+| Subject | 아래 형식을 구분한 뒤 **본인 저장소가 실제 발급하는** Environment subject |
 
-정책 확인에는 [GitHub CLI](https://cli.github.com/)와 본인 저장소 계정의 정상 로그인이 필요합니다. `YOUR-OWNER/YOUR-REPOSITORY`를 실제 저장소로 바꿉니다.
+**Subject 형식 읽기 — 아래 문자열 자체를 복사하지 않습니다.**
 
-```bash
-gh auth login
-gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
-```
+| 저장소 정책 | `foundry-workshop` Environment의 형식 |
+|---|---|
+| 이전 이름 기반 기본값 | `repo:OWNER/REPOSITORY:environment:foundry-workshop` |
+| Immutable ID 기반 기본값 | `repo:OWNER@OWNER-ID/REPOSITORY@REPOSITORY-ID:environment:foundry-workshop` |
+| 조직/저장소 custom 정책 | `include_claim_keys` 등 실제 정책과 발급된 subject를 그대로 대조 |
 
-기본 이름 기반 subject와 immutable ID 기반/custom subject는 다를 수 있습니다. 이 조회의 정책과 다음 단계 `azure/login`이 보고하는 **issuer·subject·audience**를 대조합니다. 불일치하면 그 정확한 신뢰 설정만 검토하며 wildcard나 client secret으로 우회하지 않습니다. 저장소를 바꾸거나 이름을 변경했다면 재확인합니다. [검증 보고서의 subject](validation-report.md)를 복사하지 않습니다.
+[현재 GitHub 규칙](https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims)에서는 새 저장소나 이름/소유자 변경 후 immutable 형식을 사용할 수 있습니다. `use_default: true`만 보고 이름 기반이라고 가정하지 않습니다. 이 workflow는 Environment를 사용하므로 `ref:refs/heads/main` 형식을 대신 넣지 않습니다.
+
+정책 조회만으로 확정할 수 없다면 **3절 변수가 준비된 상태에서 인증 전용 workflow만 한 번 실행**해 `azure/login` 단계의 **issuer·subject·audience**를 확인할 수 있습니다. 신뢰를 아직 등록하지 않았다면 토큰 교환 실패가 예상되며 인증 성공으로 기록하지 않습니다. 표시된 값과 본인 저장소·Environment를 대조해 정확한 credential을 등록한 뒤 5절에서 다시 인증을 확인합니다. **raw token은 복사하거나 출력하지 않습니다.**
+
+불일치는 정확한 신뢰 설정만 수정하며 wildcard나 client secret으로 우회하지 않습니다. 저장소를 바꾸거나 이름을 변경했다면 재확인합니다. [검증 보고서의 subject](validation-report.md)를 복사하지 않습니다.
 
 ## 5. 배포 없이 인증만 확인
 
@@ -86,6 +104,6 @@ gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
 
 ## 완료 확인
 
-실제 commit, workflow run, OIDC 주체, 배포 버전, dev 결과와 artifact를 워크북에 기록합니다. 보존 모드에서는 ID·federation·agent·volume을 삭제하지 않습니다.
+Actions 실행 화면과 내려받은 artifact에서 실제 commit, OIDC 주체, 배포 버전과 dev 결과를 대조합니다. 보존 모드에서는 ID·federation·agent·volume을 삭제하지 않습니다.
 
 **다음 → [15. 최종 인수와 비용 자원 정리](15-capstone-cleanup.md)**

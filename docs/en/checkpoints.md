@@ -2,7 +2,7 @@
 
 **English** | [한국어](../checkpoints.md) · [Course home](../../README.md)
 
-Take one step at a time: **run → inspect → record → next**.
+Take one step at a time: **run → inspect → next**. No separate write-up or submission is required. Keep the configuration and result files produced by the commands.
 
 ## Read commands and placeholders
 
@@ -17,6 +17,37 @@ Take one step at a time: **run → inspect → record → next**.
 | Optional, alternative, or collapsed recovery section | Do not execute it in addition to every default command. Use it only when its condition applies. |
 
 `--confirm-create`, `--confirm-cost`, and `--confirm-delete` explicitly acknowledge creation, charges, and deletion. **Model requests without these options can still incur charges.** Check the target and cost before running them.
+
+## Read results and carry values into the next command
+
+Open the printed path in your editor's file explorer. A created folder or a printed path alone does not establish success.
+
+| Output/file | How to read it |
+|---|---|
+| `.json` | Uses `"name": value`. Copy **the value, not the field name**, into the next command. |
+| `.jsonl` | One case per line. For six cases, check all six rows and their errors; do not convert the file into a JSON array. |
+| `true` / `false` / `null` | True / false / no value. `null` usage does not mean zero cost or no request. |
+| `manifest.json` | Records the run's model, instructions, data, and settings. Read the actual answer in its response file. |
+| `result_directory` or a saved path | Open that folder/file. Responses, evaluations, and ownership records are different artifacts. |
+
+**Names have different roles too.** In `prepare-hosted --name hosted-en`, `hosted-en` is a **suffix after your prefix**. Use the full service name printed by the helper in subsequent `azd deploy` commands. In contrast, `prompt-agent create --name` takes the **full agent name including your prefix**. Do not substitute the same string into every `--name`.
+
+From 08 onward, use [08's value-copying table](08-hosted.md#3-prepare-an-isolated-folder-for-the-existing-project) to copy the package path, preparation folder, service, and version **directly from command output into the next command**. `--cwd` selects the target folder for one azd command; it does not change your terminal's working directory. Keep the terminal in the README folder.
+
+## Find saved configuration and results
+
+| Value/result needed | Existing location or lookup |
+|---|---|
+| Your project, prefix, and model | `python scripts/selfstudy.py values` or `status`, reading `.env` and `.selfstudy/azure.json` |
+| Responses from 01, 04, 05, and similar exercises | Chapter-numbered JSON files in `outputs/learner-notes-en/` |
+| 03's agent names, versions, and file IDs | Creation/ownership records under `outputs/agents/` and `outputs/file-search/` |
+| 06's original Search index | `configuration.index` in `outputs/learner-notes-en/06-search.json` |
+| 07's before/after evaluations | `outputs/baseline-en/` and `outputs/candidate-en/`, or the actual labels you chose |
+| 08/10/12's deployment folder and service | `name` and `services` in the relevant `.selfstudy/` `azure.yaml`; query the actual version using `azd ai agent show` with that folder |
+| 12's Hosted evaluations and calibration | `outputs/benchmarks/` and `outputs/judge-calibration/` |
+| Portal-only work | The relevant Foundry agent, Traces, or evaluation page; GitHub Actions logs and downloaded artifacts |
+
+File existence is not completion. Compare the chapter's **completion check** with actual row counts, errors, and verdicts. Do not assume every portal-only action is saved locally.
 
 ## Terms you will encounter
 
@@ -61,7 +92,7 @@ python scripts/selfstudy.py values
 
 Check `PASS` and **your project, prefix, and model**. `values` and `status` read saved settings, not the current existence or health of Azure resources. If prompted to run Lab 00's configure, return to [configuration](00-setup.md#8-collect-configuration-from-actual-values). For expired sign-in, use 00's normal `az login`/`azd auth login` process. `values` uses Korean field labels even in the English edition; it has no global language flag.
 
-4. Read the **last verified result and next command** in your private workbook and continue there. To inspect an existing answer, open its file rather than calling the model again.
+4. Locate the chapter's saved result using the table above, compare it with the **completion check**, and continue at the next unperformed step. To inspect an existing answer, open its file rather than calling the model again.
 
 ### Chapters with two terminals
 
@@ -110,9 +141,19 @@ Opening a portal or completing a CLI command does not imply the next chapter's p
 
 Without Search, stop Search-dependent work in 06 and Toolbox/OpenAPI in 10. Work that does not require Search, such as 07's `local` retrieval evaluation, can continue. A deliberately chosen local matrix in 12 is not Search/IQ success. If Hosted is unavailable, record remote work in 08/12 as not run and distinguish 15's SDK target.
 
+| Blocked feature | What can proceed |
+|---|---|
+| 00–01's primary Sol deployment/first call | Stop Azure exercises without substituting a model; inventory any created resources in 15. |
+| Only File Search in 03 or Code Interpreter in 04 | Record that tool as not run. With a working primary model, local MAF/functions/MCP in 04 and workflows in 05 can proceed. |
+| Only Hybrid or IQ Chat in 06 | Keep keyword/IQ evidence separate. 07 uses local retrieval; 10 needs the original keyword index, not successful Hybrid/IQ Chat. |
+| Only remote Hosted deployment in 08 | If local preparation succeeds, retain sections 1–3's folder for connections. Continue with 09's Prompt Agent trace, 10's non-Hosted tools, and independently prepared features in 11. |
+| Optimizer unavailable or no candidates in 12 | Record the outcome; continue with bundled Hosted `v1`/`v2` comparison if its prerequisites exist. Do not change sources or criteria to force a candidate. |
+| Hosted guardrail exercise unavailable in 13 | Mark sections 2–4 not run. Section 5's managed verification can be checked separately with its Prompt Agent, judge, and logging prerequisites. |
+| No GitHub permissions in 14 | Continue to 15. Skipping 14 does not waive other quality gates. |
+
 For another project, follow [00's archive/fresh-workspace procedure](00-setup.md#start-a-new-project-without-adopting-old-state). A retained CI identity or old deployment alias does not establish new-project permissions or ownership.
 
-**Record failures and unsupported features; do not mark them complete.** The [validation report](validation-report.md) is reference evidence, not your run. When stopping, jump to [15's stopping steps](15-capstone-cleanup.md#4-stop-running-work-first). Search Basic can incur charges without requests, and retained storage can cost money after compute stops.
+**Keep failure output; do not treat unsupported or unperformed work as complete.** The [validation report](validation-report.md) is reference evidence, not your run. When stopping, jump to [15's stopping steps](15-capstone-cleanup.md#4-stop-running-work-first). Search Basic can incur charges without requests, and retained storage can cost money after compute stops.
 
 ## Share workshop materials safely
 
@@ -122,6 +163,6 @@ To package teaching materials without personal settings:
 python scripts/package_workshop.py
 ```
 
-The bundle is intended to contain code, data, guides, and tests, excluding `.env`, `.selfstudy`, runtime results, and virtual environments. Inspect the generated manifest before distribution, including both `README.md` and `README.ko.md`, the English/Korean guides, and worksheets. A recipient extracts it and starts at [00](00-setup.md).
+The bundle is intended to contain code, data, guides, and tests, excluding `.env`, `.selfstudy`, runtime results, and virtual environments. Inspect the generated manifest before distribution, including both `README.md` and `README.ko.md` and the English/Korean guides. A recipient extracts it and starts at [00](00-setup.md).
 
 Do not overwrite an existing ZIP. For a new distribution, use an unused filename such as `--output dist/workshop-new.zip` and inspect its manifest.

@@ -15,7 +15,7 @@ Names in this guide are examples. Do not copy resource groups or IDs from valida
 1. Sign in to the [Azure portal](https://portal.azure.com).
 2. Open **Subscriptions → your subscription → Access control (IAM) → View my access** and verify Owner.
 3. If your PIM role is only eligible, activate it through your organization's normal process. Eligibility is not an active assignment.
-4. Record the subscription ID and associated tenant ID in your private workbook.
+4. Locate **Overview → Subscription ID** and **Properties → Directory/Tenant ID** for that subscription. Copy values directly into commands when needed; section 8's helper also collects and saves them.
 5. Check permitted regions, services, and network policies. Owner cannot bypass management-group deny policies.
 
 **Important:** Subscription Owner is not Entra Global Administrator. Preparing the Azure resources in this course does not require directory-wide administration or a new client secret. Chapter 14 covers the included GitHub OIDC workflow's lab permissions.
@@ -25,6 +25,8 @@ Names in this guide are examples. Do not copy resource groups or IDs from valida
 1. Extract the **workshop ZIP** you received. Otherwise, open [this repository](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5) and select **Code → Download ZIP**. A private repository requires access.
 2. Find the extracted folder containing **`README.md`, `scripts/`, and `curriculum.json` together**. Do not work inside the ZIP or its parent folder.
 3. Open that entire folder using your editor's **File → Open Folder**. In VS Code, choose **Terminal → New Terminal** to enter commands.
+
+Read the guide in your browser or open the Markdown file in VS Code and select **Open Preview** (`Cmd+Shift+V` on macOS, `Ctrl+Shift+V` on Windows/Linux). This renders tables, links, and collapsed optional sections. Paste commands into the **terminal**, not the preview.
 
 All code and data are included. A ZIP provided to you requires neither a GitHub account nor Git.
 
@@ -101,7 +103,9 @@ Check the installation's `No broken requirements found.` and doctor's `language:
 
 **Activate `.venv` in every new terminal.** Run all commands from the folder containing `README.md`.
 
-Create a `.selfstudy` folder in your editor and use **Save As** to copy `worksheets/en/workbook.md` to `.selfstudy/workbook-en.md`. Record values and progress in this private copy, not in the repository's blank workbook.
+Continue without creating a separate notes file. Section 8 saves configuration in `.env` and `.selfstudy/azure.json`; later commands identify their result files. The helpers create the required directories too.
+
+Names beginning with a dot, such as `.selfstudy`, `.env`, and `.build`, may be hidden by your file manager. Find them in the editor's file explorer and keep the leading dot. **Section 8's `configure` creates `.env`; you do not need to copy `.env.example` or supply keys now.**
 
 English workshop commands use `--language en` **before the subcommand**. Wrapper options (`--model-deployment`, `--script`) go before `--language en`. The shared `selfstudy.py` helper has no global language flag; its later `prepare-hosted` and `capture` subcommands accept their own `--language en`. Keep English labels and results separate from Korean runs; see [Data and localization](data-format.md).
 
@@ -115,7 +119,7 @@ azd auth login
 
 Follow normal MFA procedures. Check that the browser, Azure CLI, and azd use the same tenant. The configuration helper explicitly supplies the subscription ID; it does not automatically switch your default subscription.
 
-Choose your own unique prefix. Replace every `YOUR-...`, `<...>`, and illustrative name in this guide with the actual value before execution.
+Choose your own unique prefix. Replace `YOUR-...`, `<...>`, and personal resource-name placeholders with actual values before execution.
 
 | Purpose | Illustrative name—replace it |
 |---|---|
@@ -126,6 +130,8 @@ Choose your own unique prefix. Replace every `YOUR-...`, `<...>`, and illustrati
 | First model's deployment alias | `workshop-chat` |
 
 The prefix must start with `lab-`, use lowercase letters, numbers, and hyphens, and contain at most 32 characters. Keep it unchanged throughout the lab so ownership remains clear.
+
+**Replace:** resource names containing `yourname` and `YOUR-...`/`ACTUAL-...` placeholders. **Keep on a first run:** deployment alias `workshop-chat`, result labels such as `baseline-en`/`candidate-en`, and file paths. Keep the guide's selected models, versions, and region too. If a name already exists, preserve that asset and follow the relevant fresh-name/resume instructions instead.
 
 ## 4. Create a dedicated resource group
 
@@ -158,7 +164,7 @@ You can set a personal budget alert under the subscription or group's **Cost Man
 2. Open the project selector at the upper left → **Create new project**.
 3. Enter a project name and open **Advanced options**.
 4. Select your subscription, **the dedicated group you just created**, and the verified region; then create.
-5. The Foundry resource name may be generated automatically. Record the actual name instead of assuming an example.
+5. The Foundry resource name may be generated automatically. Verify the actual name instead of assuming an example.
 6. Copy the **Project endpoint** from the project home.
 
 Its format is `https://<your-domain>.services.ai.azure.com/api/projects/<your-project>`. It is different from the model's `.openai.azure.com` endpoint. If the displayed URL differs from the format accepted by this pinned runtime, check Libraries/API for the project endpoint. Do not invent a different domain.
@@ -193,7 +199,7 @@ CLI creation **does not guarantee Foundry User assignments** for the user and pr
 2. Check version **`2026-09-22`**, capabilities, regions, and quota. Start directly with Sol for the first response and subsequent agent/tool exercises. See [Model roles and selection](model-selection.md).
 3. Under **Deploy / Use this model**, name the deployment `workshop-chat`.
 4. Select a pay-as-you-go Standard variant permitted by your policies. Choose Global Standard only if global processing is allowed. No PTU contract is required.
-5. Wait for **Succeeded** and record the actual base model, version, deployment type, and region.
+5. Wait for **Succeeded** and verify the actual base model, version, deployment type, and region.
 
 If quota is unavailable or the model is not offered, **do not repeatedly click Create**. Check current availability, request the required quota, or pause until it is available. Keep a required region and the Sol selection fixed; do not substitute another model and present it as the same success.
 

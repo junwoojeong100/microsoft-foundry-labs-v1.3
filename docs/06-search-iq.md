@@ -53,7 +53,7 @@ python scripts/workshop.py seed-search --confirm-create
 python scripts/workshop.py retrieve --provider search --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-search.json
 ```
 
-`seed-search`는 새 서비스가 아니라 **내 Prefix의 index와 합성 문서**를 생성합니다. 실제 index 이름을 워크북에 **“06 원래 index”**로 적고 `outputs/azure-objects.json`을 보관합니다. 6절 후 이 이름으로 복귀합니다.
+`seed-search`는 새 서비스가 아니라 **내 Prefix의 index와 합성 문서**를 생성합니다. 원래 index 이름은 방금 저장한 `outputs/learner-notes-ko/06-search.json`의 **`configuration.index`**에서 다시 읽을 수 있습니다. `outputs/azure-objects.json`도 보관하며, 6절 후 이 원래 이름으로 복귀합니다.
 
 `provider: azure-ai-search-keyword`, 실제 index/Endpoint, 원문 ID와 내용을 확인합니다. 로컬 검색은 의미 검색이나 Azure 서비스 호출이 아닙니다.
 
@@ -97,10 +97,10 @@ python scripts/workshop.py answer --prompt v2 --retrieval hybrid --question "202
 
 실제 embedding 호출과 차원, text+vector 검색, 반환 근거를 확인합니다. 0 벡터를 넣거나 키워드 검색의 이름만 바꾸지 않습니다.
 
-**다음 단계 전에 원래 index로 복귀**합니다. 4절에서 실제 출력된 index 이름을 사용합니다.
+**다음 단계 전에 원래 index로 복귀**합니다. 4절의 `outputs/learner-notes-ko/06-search.json`을 열고 **`configuration` 안의 `index` 값**을 아래 따옴표 안에 넣습니다. 방금 만든 hybrid 결과 파일의 index가 아닙니다.
 
 ```bash
-python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "4절에서-기록한-원래-index"
+python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "06-search.json의-configuration.index-값"
 ```
 
 이 설정 변경은 hybrid index를 삭제하지 않습니다. 둘 다 소유권 ledger에 남으며 최종 정리 때 확인합니다.

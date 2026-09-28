@@ -49,7 +49,7 @@ Record actual failed IDs and reasons; do not copy a hypothetical failure ID:
 python scripts/workshop.py --language en feedback --label baseline-en --case "ACTUAL-FAILED-CASE-ID" --reason "Explain the actual response and failed check."
 ```
 
-This creates a pending-review record, not business approval. If all cases pass, record that review in the workbook instead of inventing a failure.
+This creates a pending-review record, not business approval. If `business-evaluation.json` shows every case passed, skip this `feedback` command instead of inventing a failure.
 
 ## 3. Collect a matched candidate
 

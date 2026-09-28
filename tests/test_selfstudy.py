@@ -554,6 +554,7 @@ class SelfStudyTests(unittest.TestCase):
                 ".selfstudy/private.json",
                 ".cache/private/.env",
                 "outputs/private.json",
+                "worksheets/workbook.md",
             ):
                 destination = self.root / name
                 destination.parent.mkdir(parents=True, exist_ok=True)
@@ -568,7 +569,10 @@ class SelfStudyTests(unittest.TestCase):
                 self.assertFalse(any("unreviewed-recording.mp4" in name for name in names))
                 self.assertFalse(
                     any(
-                        "/.reference/" in name or "/outputs/" in name or name.endswith("/.env")
+                        "/.reference/" in name
+                        or "/outputs/" in name
+                        or "/worksheets/" in name
+                        or name.endswith("/.env")
                         for name in names
                     )
                 )
@@ -582,5 +586,6 @@ class SelfStudyTests(unittest.TestCase):
                 self.assertFalse(manifest["runtime_download_required"])
                 self.assertTrue(manifest["runtime_included"])
                 self.assertEqual(manifest["pacing"], "self-paced")
+                self.assertIn("worksheets", manifest["excluded"])
             with self.assertRaises(FileExistsError):
                 bundler.build(output)

@@ -10,6 +10,8 @@
 | 후보를 고정했고 모든 선행 기준을 충족 | 1절 확인 → 2절에서 **선택한 대상 하나만** 평가 → 3~7절 |
 | 다음에 재사용하려고 자원을 남김 | 아래 보존 모드 + 4·5·7절. 삭제 명령과 6절은 생략 |
 
+**00장의 `configure` 전에 멈췄어도 정리할 수 있습니다.** 00에서 사용한 구독과 실습 그룹을 Azure 포털에서 직접 확인하세요. 아직 생성하지 않은 agent·label의 명령은 생략하며, `.selfstudy/azure.json`이 없으면 `selfstudy.py status`도 실행하지 않습니다. 로컬 설정 파일이 없다는 것이 Azure 자원도 없다는 뜻은 아닙니다.
+
 **참고 검증은 최종 인수 보류 상태입니다.** 새 관리형 Task Adherence의 6행·5 pass/1 fail에 severity/flag 불일치가 있어 새 holdout을 열지 않았습니다. [보고서의 결과·정리 이력](validation-report.md)은 본인의 완료나 삭제 지시가 아닙니다. **실습 실행과 최종 품질 인수는 별개**입니다.
 
 ## 보존 모드로 진행할 때
@@ -20,7 +22,7 @@
 - 03의 File Search는 처음 만들 때 `--retain`을 사용해 vector store 자동 만료도 설정하지 않습니다.
 - 11의 Memory는 언어별 새 store를 명시하고 **`memory create --ttl-seconds 0 --confirm-create`**로 항목의 자동 만료 없이 생성합니다. 이전 store가 있다면 그 TTL을 임의로 변경하지 않습니다.
 - 로컬 서버는 중지하고 Routines·반복 평가는 disabled/paused로 둡니다. 필요 없는 Hosted 실행 세션은 **stop만** 하며 agent·버전·volume은 삭제하지 않습니다.
-- `.env`, `.selfstudy/azure.json`, `outputs/`의 실제 ID와 소유권 기록을 개인의 승인된 위치에 보관합니다. 공개 저장소에 올리지 않습니다.
+- `.env`, `.selfstudy/` 전체, `.build/`와 `outputs/`의 실제 ID·배포 준비·소유권 기록을 개인의 승인된 위치에 보관합니다. 공개 저장소에 올리지 않습니다.
 - Search Basic, 파일/volume, 로그 등 남는 비용과 다음 확인 일자를 기록합니다. `lifecycle=retain` 태그는 관리용 표시일 뿐 삭제 방지 잠금이나 비용 상한이 아닙니다.
 
 Memory의 새 기본값 **`default_ttl_seconds=0`은 항목 자동 만료 없음**입니다. 양수 TTL은 최대 365일이며, 이전 store는 기록된 원래 TTL을 유지합니다. `WORKSHOP_MEMORY_STORE_NAME`은 전역 선택값이므로 한국어의 `<prefix>-memory-retained-ko`와 영어의 `<prefix>-memory-retained-en`을 구분하고, 각 실행 전에 해당 언어의 선택값을 확인합니다. [11의 보존용 store 절차](11-memory-a2a-routines.md#1-memory-실제-저장과-새-요청에서의-조회)를 따릅니다.
@@ -76,24 +78,16 @@ python scripts/workshop.py accept --candidate candidate --holdout final-holdout
 
 둘 중 **선택한 하나만** 수행합니다. holdout 실패를 보고 수정했다면 새 최종 데이터가 필요합니다.
 
-## 3. 내 말로 설명
+## 3. 결과 해석
 
-워크북의 인수 카드에 다음을 씁니다.
+2절에서 확인한 실제 대상·버전·전체 행·업무/policy 판정과 남은 오류를 함께 봅니다. 07의 SDK와 12의 Hosted는 다른 대상이며, 전후 조건이 다른 점수로 개선을 주장하지 않습니다.
 
-```text
-Foundry는 ______를 위한 플랫폼이다.
-지침, 지식, 도구는 각각 ______를 담당한다.
-Prompt Agent, 로컬 MAF, Hosted는 ______가 다르다.
-개선 여부는 ______라는 실제 근거로 판단했다.
-이번 합성 실습에서 아직 확인하지 못한 것은 ______이다.
-```
-
-학습 수행과 작은 실습 품질 기준 통과는 다른 상태입니다. 실제 실행한 대상·버전·결과와 미확인 항목만 기록하고, 미실행 단계를 성공으로 채우지 않습니다.
+학습 수행과 작은 실습 품질 기준 통과는 다른 상태입니다. 별도 보고서를 작성하지 않아도 되지만, 원시 결과와 실패는 그대로 보관하고 미실행 단계를 성공으로 판단하지 않습니다.
 
 ## 4. 먼저 실행 중인 것을 멈추기
 
 1. 내가 실행한 로컬 `serve`/복구 서버는 해당 터미널에서 `Ctrl+C`로 종료합니다.
-2. Routines와 반복 평가를 **disabled/paused**로 확인합니다.
+2. 생성한 Routines와 반복 평가만 **disabled/paused**로 확인합니다. 만들지 않았다면 이 항목은 해당 없음입니다.
 3. Hosted matrix를 실행했다면 **존재하는 label의 세션만** 중지합니다. holdout을 실행하지 않았다면 아래 `wf-final` 줄은 생략합니다.
 
 ```bash
@@ -110,12 +104,14 @@ python scripts/workshop.py benchmark stop-session --label wf-final
 
 ## 5. 소유 자산 목록 대조
 
+00의 `configure`를 마친 경우에만 첫 명령을 실행합니다. 아직 설정하지 않았다면 첫 줄은 생략하고 Azure 포털의 실제 실습 그룹과 생성한 자원을 확인합니다. Python 설치도 마치지 못했다면 두 명령 모두 생략하고 포털에서 확인합니다. 두 번째 명령은 로컬 기록 확인이며 **Azure 전체 자산을 자동 탐색하지 않습니다**.
+
 ```bash
 python scripts/selfstudy.py status
 python scripts/workshop.py cleanup-plan
 ```
 
-둘 다 **삭제하지 않습니다**. 워크북, 실제 포털, `outputs/`의 소유권 기록과 대조합니다.
+둘 다 **삭제하지 않습니다**. 출력된 자산을 실제 포털과 `outputs/`의 소유권 기록에 대조합니다.
 
 | 자산 | 확인/정리 |
 |---|---|
@@ -133,7 +129,7 @@ python scripts/workshop.py cleanup-plan
 
 주요 소유권 기록은 `outputs/` 아래에 있습니다. 지우면 정리가 쉬워지는 것이 아니라 어떤 자산이 내 것인지 확인하기 어려워집니다.
 
-03의 SDK File Search 자산은 먼저 삭제 계획을 봅니다.
+**03의 SDK File Search 소유 기록이 있는 경우에만** 아래 계획을 봅니다. File Search를 만들지 않았다면 두 cleanup 명령은 생략합니다. 부분 실패로 파일/저장소만 남았다면 소유 기록과 포털을 먼저 대조합니다.
 
 ```bash
 python scripts/workshop.py file-search cleanup
@@ -173,4 +169,4 @@ Azure의 soft delete/보관 정책은 API 삭제와 즉시 물리 삭제를 다�
 
 이 폴더 밖에서도 실습 자원을 만들었다면 그 기록을 함께 확인합니다. 다른 개인 기록이나 공유 자원을 임의로 삭제하지 않습니다.
 
-**과정 종료. [전체 지도](../README.ko.md) · [내 워크북](../worksheets/workbook.md) · [실습 복습](next-steps.md)**
+**과정 종료. [전체 지도](../README.ko.md) · [저장한 결과 찾기](checkpoints.md#설정과-결과를-다시-찾는-곳) · [실습 복습](next-steps.md)**

@@ -198,7 +198,13 @@ python scripts/workshop.py --script verify-toolbox-response --file "capture가-�
 
 ## 9. 버전 운영
 
-검토 후 default를 변경하려면 `toolbox select --version "검토한-버전" --confirm-update`를 사용합니다. 이전 버전도 보관해 같은 방법으로 되돌릴 수 있습니다.
+**선택 사항:** 실제 호출을 검토한 버전을 이후 기본값으로 선택할 때만 실행합니다. 새 버전을 만드는 명령은 아닙니다.
+
+```bash
+python scripts/workshop.py toolbox select --version "검토한-버전" --confirm-update
+```
+
+이전 버전도 보관해 같은 방법으로 되돌릴 수 있습니다.
 
 **완료:** 목록·실제 검색·모델 답변·Skill readback/load를 각각 기록합니다. 뒤의 실습을 위해 자산과 ledger를 유지하고 최종 정리에서 참조 순서대로 제거합니다.
 

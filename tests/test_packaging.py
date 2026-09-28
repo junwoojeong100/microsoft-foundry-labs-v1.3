@@ -1,10 +1,15 @@
 import importlib.util
+import io
+import json
 import shlex
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
+from unittest.mock import patch
 
-from foundry_workshop.cli import parser
-from foundry_workshop.contracts import read_json
+from foundry_workshop.cli import main, parser
+from foundry_workshop.contracts import load_cases, read_json
 from foundry_workshop.profiles import RuntimeProfile, packaged_profile
+from scripts.workshop import command_arguments
 
 from . import ROOT, workspace
 
@@ -84,6 +89,76 @@ class PackagingTests(unittest.TestCase):
             self.assertIn("150000", (destination / "TRAVEL-2026.txt").read_text())
             with self.assertRaises(FileExistsError):
                 exporter.export(root)
+
+
+class GuideFlowTests(unittest.TestCase):
+    def test_documented_first_offline_commands_work_without_azure_configuration(self):
+        for language, edition in (("ko", ""), ("en", "en/")):
+            commands = []
+            for chapter in ("00-setup.md", "06-search-iq.md"):
+                text = (ROOT / "docs" / edition / chapter).read_text(encoding="utf-8")
+                for line in text.splitlines():
+                    if not line.startswith("python scripts/workshop.py "):
+                        continue
+                    entry, arguments, _ = command_arguments(shlex.split(line)[2:])
+                    if entry != "scripts/workshop.py":
+                        continue
+                    args = parser().parse_args(arguments)
+                    if (
+                        args.command == "doctor" and not args.cloud
+                        or args.command == "retrieve" and args.provider == "local"
+                    ):
+                        commands.append((args, arguments))
+            with (
+                self.subTest(language=language),
+                workspace() as root,
+                patch("foundry_workshop.cli.cloud_command") as cloud,
+            ):
+                self.assertEqual(len(commands), 2)
+                self.assertFalse((root / ".env").exists())
+                self.assertFalse((root / ".selfstudy").exists())
+                for args, arguments in commands:
+                    stdout, stderr = io.StringIO(), io.StringIO()
+                    with redirect_stdout(stdout), redirect_stderr(stderr):
+                        status = main(root, arguments)
+                    self.assertEqual(status, 0, stderr.getvalue())
+                    result = json.loads(stdout.getvalue())
+                    if args.command == "doctor":
+                        self.assertEqual(result["language"], language)
+                        self.assertEqual(
+                            [result[key] for key in ("documents", "dev_cases", "holdout_cases")],
+                            [6, 6, 4],
+                        )
+                        self.assertEqual(result["result"], "PASS")
+                        self.assertFalse(result["azure_tested"])
+                    else:
+                        self.assertEqual(result["provider"], "local-keyword")
+                        self.assertIn("TRAVEL-2026", result["source_ids"])
+                        self.assertEqual(read_json(root / args.output), result)
+                cloud.assert_not_called()
+
+    def test_guardrail_questions_match_dev_cases_and_pin_independent_sessions(self):
+        for language, edition in (("ko", ""), ("en", "en/")):
+            cases = {case["case_id"]: case for case in load_cases(ROOT, "dev", language)}
+            text = (ROOT / "docs" / edition / "13-governance.md").read_text(encoding="utf-8")
+            invocations = [
+                shlex.split(line)
+                for line in text.splitlines()
+                if line.startswith("azd ai agent invoke ")
+            ]
+            with self.subTest(language=language):
+                self.assertEqual(
+                    [command[-1] for command in invocations],
+                    [cases["D01"]["question"], cases["D06"]["question"]],
+                )
+                for command in invocations:
+                    for option in ("--cwd", "--version", "--new-session", "--new-conversation"):
+                        self.assertIn(option, command)
+                    self.assertNotIn("--local", command)
+                for option in ("--cwd", "--version"):
+                    self.assertEqual(
+                        len({command[command.index(option) + 1] for command in invocations}), 1
+                    )
 
 
 if __name__ == "__main__":

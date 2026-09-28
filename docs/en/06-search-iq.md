@@ -61,7 +61,7 @@ python scripts/workshop.py --language en seed-search --confirm-create
 python scripts/workshop.py --language en retrieve --provider search --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-search.json
 ```
 
-`seed-search` creates **your prefix's index and synthetic documents**, not a new service. Record its actual name as **“06 original index”** in your workbook and retain `outputs/azure-objects.json`. Restore this name after section 6.
+`seed-search` creates **your prefix's index and synthetic documents**, not a new service. Read the original index name from **`configuration.index`** in the saved `outputs/learner-notes-en/06-search.json` when needed. Keep `outputs/azure-objects.json` too, and restore that original name after section 6.
 
 Check `provider: azure-ai-search-keyword`, the actual index/endpoint, and source IDs and text. Local retrieval is neither semantic search nor an Azure service call.
 
@@ -105,10 +105,10 @@ python scripts/workshop.py --language en answer --prompt v2 --retrieval hybrid -
 
 Verify real embedding calls and dimensions, text-plus-vector retrieval, and returned evidence. Do not insert zero vectors or rename keyword search as Hybrid.
 
-**Restore the original index before continuing.** Use the exact name printed in section 4:
+**Restore the original index before continuing.** Open section 4's `outputs/learner-notes-en/06-search.json` and copy the **`index` value inside `configuration`** into the quotes below. Do not use the index from the new hybrid result:
 
 ```bash
-python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "YOUR-ORIGINAL-INDEX-FROM-SECTION-4"
+python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "INDEX-VALUE-FROM-06-SEARCH-JSON"
 ```
 
 This configuration change does not delete the hybrid index. Both remain in the ownership ledger for the final lifecycle review.

@@ -95,7 +95,7 @@ python scripts/workshop.py file-search ask --question "도쿄 출장 호텔비 �
 
 ## 5. 저장할 것
 
-인라인 agent와 File Search agent 각각의 이름·버전·응답 ID, 파일/저장소 ID, 원문 대조 결과를 워크북에 기록합니다. 파일 저장과 검색은 모델 토큰 외 과금이 있을 수 있습니다.
+생성·응답 JSON과 `outputs/agents/`, `outputs/file-search/`의 소유 기록을 보관합니다. 실제 이름·버전·응답 ID·파일/저장소 ID는 이 파일에서 다시 확인할 수 있으므로 따로 옮겨 적지 않습니다. 파일 저장과 검색은 모델 토큰 외 과금이 있을 수 있습니다.
 
 같은 label은 덮어쓰지 않습니다. 필요한 재시도에는 `current-2`처럼 새 label을 사용하고 원래 실패도 보관합니다. 이 단계의 삭제는 15장에서 소유 기록을 확인한 뒤 진행합니다.
 

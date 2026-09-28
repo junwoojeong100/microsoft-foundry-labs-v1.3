@@ -62,11 +62,11 @@ An intact same-project Sol alias may be preserved, but **do not adopt deleted Sw
 
 They use the same synthetic scenario but are different executions. Local results do not prove remote deployment success.
 
-## Record and verify
+## Completion check
 
-Record the project, actual model/version, deployment alias, API, response ID, and new result file in your workbook.
+Inspect the actual response, model, API, and response ID in `outputs/learner-notes-en/01-sol-model.json`. Use `python scripts/selfstudy.py values` to recheck the saved project and deployment settings.
 
-**Explain it yourself:** “Foundry is ______. Beyond model inference, it also handles ______.”
+**Key point:** Foundry connects models, agents, knowledge, tools, evaluation, and operations. This chapter verified only model inference.
 
 For 401/403, check identity, tenant, and data roles. For 404, check the project endpoint and actual deployment name. For 429, check quota. See [Troubleshooting](troubleshooting.md).
 

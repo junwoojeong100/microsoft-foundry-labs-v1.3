@@ -12,10 +12,13 @@ OIDC lets GitHub Actions sign in to Azure using short-lived identity evidence ra
 
 ## 1. Prepare the repository and Environment
 
-1. Put this source on `main` in a repository you administer. Include `.github/workflows/` and `.gitignore`; exclude `.env`, `.selfstudy/`, `.build/`, `outputs/`, and credentials.
-2. Under **Actions → Workshop checks**, verify the [included checks](../../.github/workflows/check.yml) pass on that exact commit.
-3. Open **Settings → Environments → New environment** and use the exact name **`foundry-workshop`**. Both workflows require this fixed name; it is not an interchangeable example.
-4. Apply the `main` deployment-branch restriction and approval rules required by your organization. If menus, permissions, or plan support are missing, record this chapter blocked/not run rather than weakening protections.
+1. Use an existing lab repository you administer. If you started from ZIP and have none, open [the source repository](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5), then select **Fork → your Owner → Create fork**. The [browser fork procedure](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo?tool=webui) requires no local Git work.
+2. On **your repository's** `main`, verify `.github/workflows/` and `.gitignore`, then record the chosen commit. Forking copies committed remote source, not changes on your PC. If you changed local code, publish only reviewed source changes, never the whole working folder or ZIP. Exclude `.env`, `.selfstudy/`, `.build/`, `outputs/`, and credentials.
+3. If **Actions** asks you to enable workflows in the fork, review your repository and organizational policy before enabling them. Run **Workshop checks → Run workflow → main** and verify the [included checks](../../.github/workflows/check.yml) pass on that commit. These checks do not deploy to Azure or invoke models.
+4. Open **Settings → Environments → New environment** and use the exact name **`foundry-workshop`**. Both workflows require this fixed name; it is not an interchangeable example.
+5. Apply the `main` deployment-branch restriction and approval rules required by your organization. If forking, menus, permissions, or plan support are unavailable, record this chapter blocked/not run; do not make a repository public or weaken protections to proceed.
+
+All subsequent **Actions, Settings, and OIDC values refer to your repository**. If `Run workflow` is missing, first check that the workflow file is on `main` and that you have execution permission. GitHub Actions runtime/storage charges are separate from Azure costs.
 
 ## 2. Prepare the Azure CI identity
 
@@ -49,22 +52,37 @@ Use a different CI agent from 08's manual agent and 12's frozen matrix. These ar
 
 ## 4. Configure OIDC federation
 
-Under the CI identity's **Federated credentials → Add credential**, prepare a GitHub Actions connection for your repository and **Environment `foundry-workshop`**.
+First read your repository's OIDC policy and identifiers. Install [GitHub CLI](https://cli.github.com/) and sign in normally. Replace `YOUR-OWNER/YOUR-REPOSITORY` with **your own repository**:
+
+```bash
+gh auth login
+gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
+gh api repos/YOUR-OWNER/YOUR-REPOSITORY --jq '{repository: .full_name, owner_id: .owner.id, repository_id: .id}'
+```
+
+`repository` gives the `OWNER/REPOSITORY` names; `owner_id` and `repository_id` are **GitHub numeric IDs**. They are not Azure tenant IDs or managed-identity Object IDs.
+
+Under the CI identity's **Federated credentials → Add credential**, configure trust for that repository and **Environment `foundry-workshop`**. If the GitHub template generates a different subject, use **Other issuer** to enter the exact values. Do not blindly overwrite an existing credential.
 
 | Field | Value |
 |---|---|
 | Issuer | `https://token.actions.githubusercontent.com` |
 | Audience | `api://AzureADTokenExchange` |
-| Subject | An Environment subject **exactly matching your repository's current OIDC policy** |
+| Subject | The Environment subject **actually issued by your repository**, distinguishing the formats below |
 
-To inspect that policy, install [GitHub CLI](https://cli.github.com/) and sign in normally with your repository account. Replace `YOUR-OWNER/YOUR-REPOSITORY`:
+**Read the subject format; do not paste these placeholder strings:**
 
-```bash
-gh auth login
-gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
-```
+| Repository policy | Format for the `foundry-workshop` Environment |
+|---|---|
+| Previous name-based default | `repo:OWNER/REPOSITORY:environment:foundry-workshop` |
+| Immutable-ID default | `repo:OWNER@OWNER-ID/REPOSITORY@REPOSITORY-ID:environment:foundry-workshop` |
+| Organization/repository custom policy | Match `include_claim_keys` and other actual policy settings against the issued subject |
 
-Default name-based subjects can differ from immutable-ID/custom subjects. Compare this policy with the **issuer, subject, and audience** reported by `azure/login` in the next step. Review only the exact trust configuration on mismatch; do not use wildcard trust or client secrets. Recheck after changing repositories or renaming one. Do not copy a subject from the [validation report](validation-report.md).
+[Current GitHub rules](https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims) can use immutable subjects for new repositories and after renames/transfers. `use_default: true` alone does not establish the name-based format. This workflow uses an Environment; do not substitute a `ref:refs/heads/main` subject.
+
+If the policy response is insufficient, **after registering section 3's variables, run only the authentication workflow once** to inspect the **issuer, subject, and audience** reported by `azure/login`. Token exchange is expected to fail if trust is not registered yet; do not record authentication success. Match those values to your repository/Environment, register the exact credential, then repeat section 5's authentication check. **Never print or copy the raw token.**
+
+Correct only the exact trust relationship on mismatch; do not use wildcards or client secrets. Recheck after changing repositories or renaming one. Do not copy a subject from the [validation report](validation-report.md).
 
 ## 5. Check authentication without deploying
 
@@ -88,6 +106,6 @@ Release is manual, not triggered by every push. On failure, stop further release
 
 ## Completion check
 
-Record the actual commit, workflow run, OIDC identity, deployment version, dev results, and artifacts. In retention mode, do not delete identities, federation, agents, or volumes.
+Compare the actual commit, OIDC identity, deployment version, and dev results in the Actions run and downloaded artifacts. In retention mode, do not delete identities, federation, agents, or volumes.
 
 **Next → [15. Final acceptance and resource lifecycle](15-capstone-cleanup.md)**

@@ -13,8 +13,12 @@
 | `먼저 Lab 00의 configure` | `values`는 첫 설치 명령이 아님. 00의 프로젝트·배포·configure까지 완료 |
 | `YOUR-...`/`실제-...`를 거부함 | 자리표시자를 앞 단계의 실제 값으로 변경. Endpoint와 ARM ID 구분 |
 | 서버 명령 뒤 입력 프롬프트가 안 돌아옴 | 정상 대기일 수 있음. A를 둔 채 같은 환경의 터미널 B에서 상태 확인 |
+| `azd`가 `azure.yaml`을 못 찾거나 엉뚱한 서비스를 표시함 | 08 준비 명령이 출력한 **준비 폴더 절대 경로**를 `--cwd`에 지정. `.build` 패키지나 저장소 루트가 아님 |
 | Windows에서 `No module named 'fcntl'` | 05의 로컬 SDK 실험만 macOS/Linux 필요. 승인된 WSL/Linux 사용 또는 해당 절 미실행 기록 |
 | CI preflight가 식별자 누락을 보고함 | 14의 **정확한 `foundry-workshop` Environment → Variables**에 먼저 입력. Secret만 등록하면 안 됨 |
+| Fork 뒤 검사 실행이 없거나 `Run workflow`가 안 보임 | 본인 저장소의 Actions 활성화·`main`의 workflow 파일·실행 권한 확인. 14의 Workshop checks 수동 실행부터 진행 |
+| OIDC에 일치하는 federated credential이 없다고 나옴 | 14의 실제 issuer/subject/audience 대조. 새 저장소의 immutable ID와 Environment subject를 확인하고 client secret으로 우회하지 않음 |
+| 준비 도중 중단했는데 `status`가 configure를 요구함 | 설정 파일이 없어도 Azure 자원은 남을 수 있음. 15의 설정 전 중단 안내에 따라 실제 포털에서 확인 |
 | `azure.yaml` JSON 문법 오류 | 13의 `policies`를 실제 agent 서비스 안에 추가했는지, 쉼표·괄호와 JSON/YAML 혼합 여부 확인 |
 | native 점수 실패인데 예전 인수 결과는 `gate_passed: true` | 15의 `--require-native-pass` 포함 명령으로 저장 증거를 다시 검사. 관리형 red-team 감사는 별도 확인 |
 

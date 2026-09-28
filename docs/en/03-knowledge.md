@@ -99,7 +99,7 @@ Compare raw responses in `result_directory` with the English policy source and u
 
 ## 5. Keep the evidence
 
-For both the inline and File Search agents, record names, versions, response IDs, file/store IDs, and source comparisons in your workbook. File storage and retrieval may incur charges beyond model tokens.
+Keep the creation/response JSON and ownership records under `outputs/agents/` and `outputs/file-search/`. Read actual names, versions, response IDs, and file/store IDs from these files when needed; no separate transcription is required. File storage and retrieval may incur charges beyond model tokens.
 
 Do not overwrite labels. Use a new label such as `current-en-2` for a necessary retry, preserving the original failure. Review ownership in chapter 15 before choosing deletion.
 

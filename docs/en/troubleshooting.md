@@ -15,8 +15,12 @@ For first-time setup or returning to the lab, start with [command/resume guidanc
 | Asked to run Lab 00's configure | `values` is not an installation command; complete project/deployment/configure in 00 |
 | Rejected `YOUR-...` / `ACTUAL-...` | Replace placeholders with preceding steps' actual values; distinguish endpoint and ARM ID |
 | No prompt after a server command | This can be normal; leave A running and use B in the same environment for checks |
+| `azd` cannot find `azure.yaml` or shows the wrong service | Use the absolute **preparation folder** printed in 08 as `--cwd`, not the `.build` package or repository root |
 | Windows: `No module named 'fcntl'` | 05's local SDK experiment needs macOS/Linux; use approved WSL/Linux or record that section not run |
 | CI preflight reports missing identifiers | First populate **the exact `foundry-workshop` Environment → Variables** in 14, not only Secrets |
+| No checks after forking or no `Run workflow` button | Check Actions enablement, workflow files on your repository's `main`, and execution permission; start with 14's manual Workshop checks |
+| OIDC reports no matching federated credential | Match 14's actual issuer/subject/audience, including immutable IDs and the Environment subject; do not bypass with a client secret |
+| Stopping during setup but `status` requires configure | Azure resources may exist without local settings; use 15's pre-configuration stopping path and inspect the actual portal |
 | JSON syntax error in `azure.yaml` | Put 13's `policies` inside the actual agent service; check commas/braces and do not mix YAML into JSON |
 | Failed native score but an old acceptance report says `gate_passed: true` | Recheck saved evidence using 15's command with `--require-native-pass`; managed red-team audit remains separate |
 

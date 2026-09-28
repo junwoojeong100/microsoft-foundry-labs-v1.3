@@ -76,6 +76,6 @@ If the model/tool is unsupported, mark the step blocked. Do not submit a file ge
 
 ## Completion check
 
-Explain what functions, MCP, and Code Interpreter each executed. Record actual IDs and results in your workbook. **OpenAPI needs the Search service created in 06, so it continues in 10.**
+Open each command's saved results and verify what functions, MCP, and Code Interpreter actually executed. **OpenAPI needs the Search service created in 06, so it continues in 10.**
 
 **Next → [05. Workflows, simulated approval, and local SDK pause/resume](05-workflows.md)**

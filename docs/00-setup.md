@@ -13,7 +13,7 @@
 1. [Azure 포털](https://portal.azure.com)에 로그인합니다.
 2. **Subscriptions → 사용할 구독 → Access control (IAM) → View my access**에서 Owner를 확인합니다.
 3. PIM의 “할당 가능” 상태라면 조직의 정상 절차로 활성화합니다. 활성 역할과 자격만 있는 상태는 다릅니다.
-4. 구독 ID와 연결된 Tenant ID를 개인 워크북에 기록합니다.
+4. 같은 구독의 **Overview → Subscription ID**, **Properties → Directory/Tenant ID** 위치를 확인합니다. 필요한 값은 해당 화면에서 명령에 직접 복사하며, 8절의 설정 도구가 다시 수집·저장합니다.
 5. 조직의 허용 리전·서비스·네트워크 정책을 확인합니다. Owner도 관리 그룹의 거부 정책을 우회할 수 없습니다.
 
 **중요:** 구독 Owner와 Entra Global Administrator는 다릅니다. 이 과정의 Azure 리소스 준비에는 디렉터리 전체 관리자나 새 client secret이 필요하지 않습니다. GitHub OIDC workflow의 실습 권한은 14장에서 다룹니다.
@@ -23,6 +23,8 @@
 1. 받은 **실습 ZIP**을 압축 해제합니다. ZIP이 없다면 [이 저장소](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5)의 **Code → Download ZIP**을 사용합니다. 비공개 저장소라면 접근 권한이 필요합니다.
 2. 압축을 푼 폴더 중 **`README.md`, `scripts/`, `curriculum.json`이 함께 있는 폴더**를 찾습니다. 압축파일 안이나 그 상위 폴더에서 실행하지 않습니다.
 3. 편집기의 **File → Open Folder**로 그 폴더 전체를 엽니다. VS Code라면 **Terminal → New Terminal**로 명령 입력 창을 엽니다.
+
+가이드는 브라우저에서 읽거나, VS Code에서 Markdown 파일을 연 뒤 **Open Preview**(macOS `Cmd+Shift+V`, Windows/Linux `Ctrl+Shift+V`)로 읽습니다. 그래야 표·링크·접힌 선택 절이 보입니다. 명령은 미리보기 화면이 아니라 **터미널**에 붙여 넣습니다.
 
 코드와 데이터가 모두 포함되어 있으므로 추가 저장소는 필요하지 않습니다. 전달받은 ZIP으로 시작하면 GitHub 계정과 Git도 필요하지 않습니다.
 
@@ -99,7 +101,9 @@ python scripts/workshop.py doctor
 
 **새 터미널마다 `.venv`를 활성화**합니다. 이후 모든 명령은 README.md가 있는 폴더에서 실행합니다.
 
-편집기에서 `.selfstudy` 폴더를 만들고 `worksheets/workbook.md`를 **다른 이름으로 저장**하여 `.selfstudy/workbook-ko.md` 사본을 준비합니다. 이후 값·완료 상태는 이 개인 사본에 기록합니다. 원본 진행표를 채워 저장소에 올리지 않습니다.
+별도 기록 파일을 만들지 않고 다음 절로 진행합니다. 설정은 8절에서 `.env`와 `.selfstudy/azure.json`에 저장되고, 이후 결과는 각 명령에 표시된 파일에서 확인합니다. 필요한 폴더도 도구가 생성합니다.
+
+`.selfstudy`, `.env`, `.build`처럼 점으로 시작하는 이름은 숨김 파일/폴더일 수 있습니다. 편집기의 파일 탐색기에서 확인하고 앞의 점을 빼지 않습니다. **`.env`는 8절의 `configure`가 만들므로 지금 `.env.example`을 복사하거나 key를 채울 필요가 없습니다.**
 
 ## 3. 로그인과 이름 계획
 
@@ -122,6 +126,8 @@ azd auth login
 | 처음 배포할 모델의 별칭 | `workshop-chat` |
 
 접두사는 `lab-`로 시작하는 소문자·숫자·하이픈, 최대 32자로 정합니다. 모든 자산을 내 것과 구분하는 이름이므로 실습 도중 바꾸지 않습니다.
+
+**내 값으로 바꿀 것:** `yourname`이 들어간 자원 이름, `YOUR-...`/`실제-...` 자리표시자. **처음에는 그대로 쓸 것:** 모델 배포 별칭 `workshop-chat`, 결과 label `baseline`/`candidate`, 파일 경로. 모델/버전·리전도 이 가이드의 선택을 유지합니다. 단, 이미 같은 이름이 사용 중이면 기존 자원을 바꾸지 말고 해당 절의 새 이름/재개 안내를 따릅니다.
 
 ## 4. 실습 전용 리소스 그룹 만들기
 
@@ -154,7 +160,7 @@ az group create --subscription "내-구독-ID" --name "rg-mf15-yourname-nc-0928"
 2. 왼쪽 위 프로젝트 선택 영역 → **Create new project**.
 3. 프로젝트 이름을 입력하고 **Advanced options**를 엽니다.
 4. 사용할 구독, **방금 만든 실습 그룹**, 확인한 리전을 지정하고 생성합니다.
-5. Foundry 리소스 이름은 자동 생성될 수 있습니다. 예시 이름을 추측하지 말고 실제 이름을 기록합니다.
+5. Foundry 리소스 이름은 자동 생성될 수 있습니다. 예시 이름을 추측하지 말고 실제 이름을 확인합니다.
 6. 프로젝트 홈에서 **Project endpoint**를 복사합니다.
 
 형식은 `https://<실제-domain>.services.ai.azure.com/api/projects/<실제-project>`입니다. 모델의 `.openai.azure.com` Endpoint와 다릅니다. 고정 실행 코드가 받는 형식과 다른 URL만 보이면 Libraries/API 영역에서 프로젝트 Endpoint를 다시 확인하고, 도메인을 임의로 바꾸지 않습니다.
@@ -189,7 +195,7 @@ CLI 생성은 사용자·프로젝트의 **Foundry User 역할을 자동으로 �
 2. 버전 **`2026-09-22`**, 지원 기능·리전·할당량을 확인합니다. 첫 응답부터 에이전트·도구 실습까지 Sol로 직접 진행합니다. [모델 역할과 기준](model-selection.md).
 3. **Deploy / Use this model**에서 배포 이름을 `workshop-chat`으로 지정합니다.
 4. 본인 정책에 맞는 종량제 Standard 계열을 고릅니다. Global Standard는 글로벌 처리 정책이 허용할 때만 선택합니다. PTU 계약은 필요하지 않습니다.
-5. 상태가 **Succeeded**가 될 때까지 기다립니다. 실제 기반 모델·버전·유형·리전을 기록합니다.
+5. 상태가 **Succeeded**가 될 때까지 기다립니다. 실제 기반 모델·버전·유형·리전을 확인합니다.
 
 할당량이 없거나 모델이 제공되지 않으면 **Create를 반복하지 않습니다**. 모델 배포 화면/Quota 메뉴에서 현재 가용성을 확인하고 필요한 증가를 요청하거나 준비될 때까지 멈춥니다. 고정 리전과 Sol 선택을 유지하며, 다른 모델로 바꿔 성공처럼 표시하지 않습니다.
 

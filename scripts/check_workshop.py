@@ -32,6 +32,10 @@ REMOVED_READER_PATTERNS = (
     r"[.]reference[/\\]",
     r"prepare_v12",
     r"scripts/v12",
+    r"\b(?:workbooks?|worksheets?)\b",
+    r"\uc6cc\ud06c\ubd81",
+    r"\uc9c4\ud589\ud45c",
+    r"\uc2e4\uc2b5\uc9c0\b",
 )
 
 
@@ -98,7 +102,6 @@ def check() -> dict[str, object]:
     documents = [
         *ROOT.glob("*.md"),
         *(ROOT / "docs").rglob("*.md"),
-        *(ROOT / "worksheets").rglob("*.md"),
         *(ROOT / "data").rglob("*.md"),
         *(ROOT / "examples").rglob("*.md"),
     ]

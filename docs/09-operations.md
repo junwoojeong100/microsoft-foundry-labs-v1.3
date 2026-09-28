@@ -71,7 +71,7 @@ Foundry **Agents → Traces**에서 최근 시간 범위와 agent를 선택하�
 | Token/지연/오류 | 측정된 사용량·경과 시간·실패 |
 | Conversation/Session | 대화 이력과 Hosted 실행 세션. 같은 개념이 아님 |
 
-본인 Trace ID, 연결된 Response ID, 관찰한 단계 하나를 워크북에 적습니다. 로컬 JSON 파일이 있다는 이유로 서버 측 trace를 확인했다고 하지 않습니다.
+포털의 Trace ID와 연결된 Response ID를 2절 응답과 대조하고, 실행 단계 하나를 펼쳐 확인합니다. 로컬 JSON 파일이 있다는 이유로 서버 측 trace를 확인했다고 하지 않습니다.
 
 Hosted도 같은 방식으로 **연결 후의 새 요청**을 만들어 봅니다. 서버 측 trace가 내 Python 함수 내부 전체를 보여 주는 것은 아니며, 필요하면 별도 client-side OpenTelemetry 계측을 추가합니다.
 

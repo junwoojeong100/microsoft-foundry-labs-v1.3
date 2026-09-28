@@ -47,7 +47,7 @@ python scripts/workshop.py evaluate --label baseline
 python scripts/workshop.py feedback --label baseline --case "실제-실패-case-ID" --reason "실제 응답과 실패 검사에 근거한 이유"
 ```
 
-이 명령은 검토 대기 기록을 만들 뿐 업무 승인을 하지 않습니다. 모두 통과했다면 가짜 실패를 만들지 말고 전체 통과 검토를 워크북에 남깁니다.
+이 명령은 검토 대기 기록을 만들 뿐 업무 승인을 하지 않습니다. `business-evaluation.json`에서 모두 통과했다면 가짜 실패를 만들지 말고 이 `feedback` 명령을 생략합니다.
 
 ## 3. 같은 조건으로 candidate
 

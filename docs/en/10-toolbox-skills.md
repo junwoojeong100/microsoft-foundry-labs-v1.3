@@ -217,7 +217,7 @@ After verification, use 08's session listing/stopping procedure. Detailed eviden
 
 ## 9. Manage versions deliberately
 
-After review, change the selected default with:
+**Optional:** select a version as the default for later calls only after reviewing its actual execution. This does not create a new version:
 
 ```bash
 python scripts/workshop.py --language en toolbox select --version "REVIEWED-VERSION" --confirm-update

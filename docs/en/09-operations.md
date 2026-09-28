@@ -73,7 +73,7 @@ In **Agents → Traces**, select the agent and a recent time range, then locate 
 | Tokens/latency/errors | Measured usage, duration, and failures |
 | Conversation/session | Conversation history and a Hosted runtime session—not the same concept |
 
-Record your trace ID, linked response ID, and one observed step. A local JSON file is not proof of a server-side trace.
+Match the portal's trace and linked response IDs to section 2's response, then expand one execution step. A local JSON file is not proof of a server-side trace.
 
 For Hosted, also create **a new request after connecting logs**. Server-side traces do not necessarily show every internal Python function; add client-side OpenTelemetry instrumentation separately when needed.
 
