@@ -80,15 +80,17 @@ python scripts/selfstudy.py values
 
 Owner 역할이 있어도 모델 할당량·지역·제한 제공 기능을 자동으로 사용할 수 있는 것은 아닙니다. 조직의 보호 설정을 유지합니다. 14장은 포함된 GitHub OIDC CI/CD 실습에 필요한 저장소·환경 권한만 다룹니다.
 
-## 포털·CLI 요약 영상
+<a id="포털cli-요약-영상"></a>
 
-**R2 개정판: 각 3분 52초, 음성 없이 자막으로 설명합니다.** 실제 포털 조작과 실시간 CLI 출력을 녹화·편집했으며 모델 응답을 시뮬레이션하지 않았습니다.
+## North Central US CLI 요약 영상
+
+**NC 개정판: 각 3분 28초, 음성 없이 자막으로 설명합니다.** 새 실제 CLI 실행과 원본 증거의 읽기 전용 조회를 편집했으며 모델 응답을 시뮬레이션하지 않았습니다. **인증된 포털 재녹화는 새 로그인이 필요해 보류했으며, 이번 영상은 CLI 전용입니다.**
 
 | 한국어 | English |
 |---|---|
 | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) |
 | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) |
 
-[녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). 현재 링크의 영상은 **이전 Sweden Central 실행**이며 North Central US 재구축 영상이 아닙니다. 새 녹화본이 통합되기 전까지 링크·재생 시간은 그대로 두며, 과거 영상이나 결과를 새 리전의 근거로 바꾸지 않습니다.
+[녹화 범위와 출처](docs/videos.md) · [실제 검증 결과와 제한](docs/validation-report.md). 현재 링크는 **새 NC CLI 편집본**입니다. 이전 Sweden 영상은 `0a8ab50` revision에 보존하며 새 리전의 실행으로 바꿔 표시하지 않았습니다.
 
 **도움말:** [문제 해결](docs/troubleshooting.md) · [기능 찾기](docs/feature-map.md) · [코드 읽기](docs/code-reading.md) · [공식 자료](docs/sources.md)

@@ -1,179 +1,134 @@
 1
 00:00:00,000 --> 00:00:06,000
-Final Hosted v3 uses GPT-6 Sol and actual IQ.
-Real portal/CLI recordings; no reconstructed results.
+Real NC CLI captures and explicitly read-only evidence reviews.
+No model responses or provider results were reconstructed.
 
 2
 00:00:06,000 --> 00:00:12,000
-Final v3: SHARED KOREAN LAB 8/8; policy violations 0/8.
-A lab diagnostic, not a fresh holdout or production certification.
+Shown: four known policy-regression cases, not managed red-team ASR.
+Portal recapture needs renewed sign-in; this edition contains CLI only.
 
 3
 00:00:12,000 --> 00:00:20,000
-Primary: GPT-6 Sol, deployed as workshop-compare.
-GPT-6 Luna is optional for account-API comparison. Existing deployments are retained.
+A new dedicated lab group was created in North Central US.
+Only the explicitly selected old Sweden group was archived, then deleted.
 
 4
 00:00:20,000 --> 00:00:28,000
-A genuinely English prompt and Sol response in the Playground.
-Web tool removed; no external web call.
+Primary answers use GPT-6 Sol / workshop-chat.
+Comparison Luna, GPT-5.5 judging, and IQ Chat have separate roles.
 
 5
-00:00:28,000 --> 00:00:34,000
-Search succeeded after the user freed other groups.
-Basic / one replica / one partition / same retained Sweden Central lab group.
+00:00:28,000 --> 00:00:36,000
+Six synthetic Hanbit policies were connected to actual File Search.
+No real company documents, booking, or payment authority.
 
 6
-00:00:34,000 --> 00:00:40,000
-KO/EN recap: keyword, GA IQ, 3,072-dimension Hybrid, and IQ Chat verified.
-Search and IQ are no longer blocked.
+00:00:36,000 --> 00:00:44,000
+Local MAF function/MCP paths differ from managed agent tools.
+Verify actual calls and results, not just configured tool names.
 
 7
-00:00:40,000 --> 00:00:46,000
-Earlier indexing: six synthetic policies, retained without expiry.
-Not an agent invocation or real company rules.
+00:00:44,000 --> 00:00:52,000
+Code Interpreter generated a CSV; its rows and hash were checked.
+File verification is not overall policy-answer certification.
 
 8
-00:00:46,000 --> 00:00:56,000
-Real English GA IQ: separate prefix and ownership ledger.
-API 2026-04-01, original policy IDs, and searchIndex activity.
+00:00:52,000 --> 00:01:00,000
+Sequential, concurrent, and group-chat execution remain distinct.
+A group chat stopping at its round limit does not prove agreement.
 
 9
-00:00:56,000 --> 00:01:02,000
-model_planning_verified and model_synthesis_verified are both true.
-This separate IQ Chat check used actual retrieved evidence.
+00:01:00,000 --> 00:01:08,000
+NC Basic Search uses separate Korean/English ownership records.
+Free feature allowances do not make the Basic service free.
 
 10
-00:01:02,000 --> 00:01:08,000
-This separate IQ Chat capture uses gpt-5.6-luna for planning/synthesis.
-Primary Sol agents/Hosted are different; this is not fallback.
+00:01:08,000 --> 00:01:16,000
+Actual embeddings and text-plus-vector retrieval were verified.
+No zero vectors or renamed keyword results were substituted.
 
 11
-00:01:08,000 --> 00:01:16,000
-Earlier local Python function execution, separate from Hosted IQ.
-Above KRW 150,000/night needs prior team-lead approval. No booking or payment.
+00:01:16,000 --> 00:01:24,000
+A real Sol answer used separate English sources, index, and ledger.
+The distinct IQ Chat planning/synthesis model is gpt-5.6-luna.
 
 12
-00:01:16,000 --> 00:01:22,000
-Verified policy_search call and Sol answer.
-SDK credentials: ProjectManagedIdentity, not an API key.
+00:01:24,000 --> 00:01:32,000
+English dev first scored 5/6 after retrieval omitted SCOPE-01.
+A new threshold-zero run passed 6/6; calibration matched 24/24.
 
 13
-00:01:22,000 --> 00:01:28,000
-Separate recap: remote Hosted Toolbox v1 was deployed;
-its response/package identity were verified. This clip is the Toolbox call.
+00:01:32,000 --> 00:01:40,000
+NC Toolbox v3 and Skill v1 actually loaded and ran.
+Separate Hosted v1 was checked against final SSE, package, and source hashes.
 
 14
-00:01:28,000 --> 00:01:34,000
-Recorded Toolbox v3 / Skill v1: load_skill → tool_search → call_tool.
-Sol returned needs_approval and original citations.
+00:01:40,000 --> 00:01:48,000
+Both Korean Hosted versions passed dev 6/6 with code/model/corpus fixed.
+Policy criteria and traces passed; no pass-rate improvement is claimed.
 
 15
-00:01:34,000 --> 00:01:40,000
-Update recap: tightened Skill v2 uploaded; readback hash matched.
-Toolbox v4 pins v2. Old Skill v1 is retained.
+00:01:48,000 --> 00:01:56,000
+The separate Korean v2 diagnostic passed 8/8 with 0/8 violations.
+Not fresh holdout or Microsoft's managed red-team ASR.
 
 16
-00:01:40,000 --> 00:01:46,000
-Hosted deployment v3; v2 in the command is the prompt key.
-Actual IQ plus GPT-6 Sol, not substituted local retrieval.
+00:01:56,000 --> 00:02:02,000
+A new Task Adherence-only managed job returned five passing rows.
+Severity 0, threshold 3, and attack_success=false were consistent.
 
 17
-00:01:46,000 --> 00:01:52,000
-D03: KRW 170,000 hotel, KRW 150,000 limit; prior approval required.
-No approval, booking, or payment occurred.
+00:02:02,000 --> 00:02:08,000
+num_turns=1 means depth, not five predetermined test questions.
+Provider-redacted inputs and unavailable response IDs remain explicit.
 
 18
-00:01:52,000 --> 00:01:58,000
-v1/v2 recap: paired code/corpus, dev 6/6 and all three judges passed.
-No pass-rate improvement. The screen shows final v3.
+00:02:08,000 --> 00:02:16,000
+The earlier mixed job retains six rows, five pass, and one fail.
+No failed row was removed and no native flag was inverted.
 
 19
-00:01:58,000 --> 00:02:04,000
-Fixes: procedure-only limit_krw=null; allowed_citations made explicit.
-Mandatory sources kept; unrelated citations rejected; failures retained.
+00:02:16,000 --> 00:02:24,000
+Separate Hosted v2 retains all eleven DefaultV2 filter settings.
+It refused false approval; this is not proof of a platform filter block.
 
 20
-00:02:04,000 --> 00:02:10,000
-policy_groundedness, policy_helpfulness, policy_compliance.
-Original source envelope in ground_truth; threshold 4, higher is better.
+00:02:24,000 --> 00:02:32,000
+Original items were read back from Korean/English TTL-zero stores.
+Not automatic extraction or a real-user authorization-boundary test.
 
 21
-00:02:10,000 --> 00:02:16,000
-Agent: GPT-6 Sol. Judge: GPT-5.5 / workshop-optimizer.
-Different base models do not prove absence of bias.
+00:02:32,000 --> 00:02:40,000
+Native history recovered real IDs hidden by an empty CLI list.
+Original-answer verification retained Finished/cancelled and Killed attempts.
 
 22
-00:02:16,000 --> 00:02:22,000
-8 controls × 3 metrics: KO/EN each 24/24 correct decisions; KO shown.
-Prewritten fixtures, not generated agent responses.
+00:02:40,000 --> 00:02:48,000
+One on-demand scan analyzed 16 traces and returned one finding.
+Suggestions are not ground truth; no automatic fix or active schedule.
 
 23
-00:02:22,000 --> 00:02:28,000
-Good/bad, justified abstention, pointless refusal, false approval, source swap.
-Correctly failing a bad control counts as correct.
+00:02:48,000 --> 00:02:56,000
+The v1 initialization/zero-row failure remains; v13 was verified.
+Same judge/threshold: one original response scored 5/pass; both rules paused.
 
 24
-00:02:28,000 --> 00:02:35,000
-Native job completed: baseline 1.0, early stop, no new candidates.
-Old self-grounding failure retained. No promotion/improvement; export audit shown.
+00:02:56,000 --> 00:03:04,000
+The native job failed at required pass_threshold initialization.
+No evaluator weakening, claimed improvement, or promotion.
 
 25
-00:02:35,000 --> 00:02:42,000
-Audited: six references, three pinned judges, thresholds/directions and IDs.
-Proof: source echo + reason reference IDs + controls, not hidden judge requests.
+00:03:04,000 --> 00:03:12,000
+Eight JSON files from the exact session were retained and hash-checked.
+Readback is not new inference; remote files and volumes remain.
 
 26
-00:02:42,000 --> 00:02:49,000
-Final v3: KO dev 6/6 + LAB 8/8; all three policy metrics pass both.
-Traces 6+8 verified. English dev 6/6 independently passed.
+00:03:12,000 --> 00:03:20,000
+CI used the new NC identity and exact repository/environment trust.
+Its English 6/6 uses local retrieval, separate from the IQ validation above.
 
 27
-00:02:49,000 --> 00:02:56,000
-Policy violations 0/8: SHARED KOREAN LAB only.
-Not a fresh holdout, separate English eight-case run, or managed Red Team ASR.
-
-28
-00:02:56,000 --> 00:03:03,000
-New KO/EN stores: TTL=0; old one-hour stores untouched.
-KO item survived 4,063 seconds. Real managed-memory readback shown.
-
-29
-00:03:03,000 --> 00:03:10,000
-Recap: managed sessions still expire.
-Remote Toolbox files archived locally, hashes checked. No Azure deletion or user-auth proof.
-
-30
-00:03:10,000 --> 00:03:18,000
-Real stateless timer fired at scheduled UTC time.
-AppGenAIContent matched original response ID, agent/version, project, trace, and answer.
-
-31
-00:03:18,000 --> 00:03:26,000
-After disable: execution Finished, phase cancelled; original completed response cross-verified.
-Failed user-created conversations remain failed. No replacement inference.
-
-32
-00:03:26,000 --> 00:03:32,000
-Earlier English A2A: caller v1 → target v1, matching answer.
-A2A 1.0 / JSONRPC configuration verified—not packet capture.
-
-33
-00:03:32,000 --> 00:03:37,000
-Earlier readback: immutable_subject=true.
-Lab RBAC and exact repository/environment OIDC trust retained.
-
-34
-00:03:37,000 --> 00:03:42,000
-Prior OIDC CI passed; this is configuration evidence.
-New R2 commit/CI awaits publication; not yet claimed successful.
-
-35
-00:03:42,000 --> 00:03:47,000
-Same Sweden Central group, models, and data retained.
-Hosted now uses actual IQ. This is the R2 result.
-
-36
-00:03:47,000 --> 00:03:52,000
-Korean LAB 0/8 is not production certification or business authority.
-No actual approval, booking, or payment.
+00:03:20,000 --> 00:03:28,000
+New NC resources remain; unused compute and schedules are stopped.
+Search, files, and logs can still cost money. Lab gates are not approval.

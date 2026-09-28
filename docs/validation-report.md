@@ -40,9 +40,9 @@ Routine의 CLI history는 `value: null`이었지만 native SDK에는 실제 두 
 
 **Optimizer는 차단 상태입니다.** 실제 NC SDK job은 custom evaluator의 필수 `pass_threshold` 누락으로 실패했습니다. 이름/버전만 받는 SDK 참조 계약과 설치된 azd의 instruction/metadata 사전 검사 문제를 기록했습니다. 평가기를 교체하거나 required 필드를 제거하지 않았고 개선/승격은 없습니다.
 
-새 CI 관리 ID·프로젝트 범위 역할·계정 Reader·immutable 저장소/Environment federation과 main-only 보호를 확인했습니다. **현재 NC 릴리스 run은 게시 후 별도 확인 대상**입니다.
+새 CI 관리 ID·프로젝트 범위 역할·계정 Reader·immutable 저장소/Environment federation과 main-only 보호를 확인했습니다. 코드 commit **`edf0990`**의 [저장소 검사](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36382485708)와 [실제 NC OIDC 릴리스](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36382758497)가 성공했습니다. 내려받은 원본 artifact에서 **CI agent v1·영어 6/6·코드/응답 hash 일치·세션 idle·persistent 파일 비삭제**를 확인했습니다. CI는 로컬 검색이며 위 Hosted IQ 검증과 별개입니다.
 
-현재 링크된 R2 영상은 아래 Sweden 기록입니다. NC의 새 CLI 녹화는 편집 중이며 **인증된 포털 재녹화는 새 로그인이 필요**합니다. 이전 포털 영상을 NC 증거로 재표시하지 않습니다.
+현재 링크된 영상은 **새 NC CLI 편집본, 한·영 각 3분 28초**입니다. **인증된 포털 재녹화는 새 로그인이 필요해 미완료**입니다. 이전 Sweden 포털 영상은 원래 revision에 보존하며 NC 증거로 재표시하지 않았습니다.
 
 로컬 core 278개·SDK 146개와 Ruff/compile/dependency 검사를 통과했습니다. 이는 실제 모델 품질이나 서비스 제한 해결의 대체물이 아닙니다. 새 자원은 보존하며 Search Basic·저장 파일/volume·로그 비용은 남습니다. Insights의 약 USD 2.01은 서비스의 해당 분석 **추정치**이지 전체 청구액이 아닙니다.
 

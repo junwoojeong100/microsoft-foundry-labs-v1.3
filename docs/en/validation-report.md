@@ -40,9 +40,9 @@ Routine CLI history returned `value: null` although native SDK history contained
 
 **Optimizer remains blocked.** The actual NC SDK job failed because required custom-evaluator `pass_threshold` was missing. The name/version-only SDK reference contract and installed azd instruction/metadata preflight failure are recorded. Evaluators and required fields were not weakened; no improvement or promotion is claimed.
 
-A new CI identity, project-scoped role, account Reader, exact immutable repository/Environment federation, and unchanged main-only protection are configured. **The current NC release run still requires verification after publication.**
+A new CI identity, project-scoped role, account Reader, exact immutable repository/Environment federation, and unchanged main-only protection are verified. Code commit **`edf0990`** passed [repository checks](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36382485708) and the [actual NC OIDC release](https://github.com/junwoojeong100/microsoft-foundry-v1.5-labs/actions/runs/36382758497). Downloaded originals verified **CI agent v1, six English responses/6 of 6 passing, matching code/response hashes, idle session, and retained persistent files**. CI uses local retrieval, separate from Hosted IQ above.
 
-The currently linked R2 videos belong to the Sweden history below. Fresh NC CLI captures are being edited; **authenticated portal re-recording requires renewed sign-in**. Old portal footage is not relabelled as NC evidence.
+The linked videos are now the **new NC CLI edition, 3:28 per language**. **Authenticated portal re-recording remains incomplete pending renewed sign-in.** Sweden portal footage remains in its original revision and was not relabelled as NC evidence.
 
 All 278 core tests, 146 SDK tests, Ruff, compilation, and dependency checks passed. These do not substitute for model quality or resolved service limitations. New assets are retained; Search Basic, stored files/volumes, and logs continue to incur costs. Insights' approximately USD 2.01 is that analysis's service **estimate**, not total billed cost.
 

@@ -75,15 +75,17 @@ Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/`
 - Never replace errors or empty responses with fixtures, or treat one good answer as evidence that the whole lab passed.
 - **Even when stopping early, follow [chapter 15](docs/en/15-capstone-cleanup.md).** In retention mode, keep resources and ownership records, disable routines, and stop compute without deleting agents or volumes.
 
-## Portal and CLI summary videos
+<a id="portal-and-cli-summary-videos"></a>
 
-**R2 update: 3:52 each, silent with captions.** These are edited recordings of real portal interactions and live CLI output—not simulated model answers.
+## North Central US CLI summary videos
+
+**NC edition: 3:28 each, silent with captions.** Fresh real CLI captures and explicitly read-only reviews of original evidence—not simulated model answers. **Authenticated portal re-recording still requires renewed sign-in; this edition is CLI-only.**
 
 | English | 한국어 |
 |---|---|
 | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) |
 | [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) |
 
-[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). These linked recordings preserve the **earlier Sweden Central run**, not the North Central US rebuild. Their links and durations remain unchanged until new recordings are integrated; do not rebrand old footage or results as North Central US evidence.
+[Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md). These links now show the **NC CLI edition**. Historical Sweden footage remains in revision `0a8ab50`; it was not relabelled as a new-region run.
 
 **Help:** [Troubleshooting](docs/en/troubleshooting.md) · [Feature map](docs/en/feature-map.md) · [Checkpoints](docs/en/checkpoints.md) · [Code reading](docs/en/code-reading.md) · [Official sources](docs/en/sources.md) · [Next steps](docs/en/next-steps.md)
