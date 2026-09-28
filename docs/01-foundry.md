@@ -8,6 +8,8 @@
 
 **실행 위치:** Foundry Playground → 실습 폴더의 터미널 → 편집기의 결과 JSON.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -90,4 +92,4 @@ python scripts/workshop.py model --question "처음 국내 출장을 가는 직�
 
 ---
 
-[← 00. 준비](00-setup.md) · [전체 과정](../README.ko.md#진행-순서) · [02. 모델·지침 →](02-models-prompts.md)
+[← 00. 준비](00-setup.md) · [전체 과정](../README.ko.md#진행-순서) · [02. 모델·지침 →](02-models-prompts.md) · [진행 지도 ↑](#chapter-map)

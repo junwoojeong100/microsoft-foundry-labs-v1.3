@@ -10,6 +10,8 @@
 
 > **진행 조건:** GitHub 권한이 없다면 [15장](15-capstone-cleanup.md)으로 갑니다. 진행한다면 **변수 → federation → 인증 확인 → 릴리스** 순서를 지킵니다.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -72,7 +74,17 @@ CI agent는 08/12의 수동 실습·고정 matrix와 다른 이름을 사용합�
 
 ```bash
 gh auth login
+```
+
+**저장소의 OIDC 정책 조회**
+
+```bash
 gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
+```
+
+**저장소의 실제 숫자 ID 조회**
+
+```bash
 gh api repos/YOUR-OWNER/YOUR-REPOSITORY --jq '{repository: .full_name, owner_id: .owner.id, repository_id: .id}'
 ```
 
@@ -130,4 +142,4 @@ CI 관리 ID의 **Federated credentials → Add credential**에서 그 저장소
 
 ---
 
-[← 13. 실습 안전](13-governance.md) · [전체 과정](../README.ko.md#진행-순서) · [15. 마무리·정리 →](15-capstone-cleanup.md)
+[← 13. 실습 안전](13-governance.md) · [전체 과정](../README.ko.md#진행-순서) · [15. 마무리·정리 →](15-capstone-cleanup.md) · [진행 지도 ↑](#chapter-map)

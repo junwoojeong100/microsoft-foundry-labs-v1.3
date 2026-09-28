@@ -10,6 +10,8 @@
 
 > **비교 조건:** 기능별 비용을 먼저 확인합니다. 코드를 동결하고 **지침만 바꾸며, holdout은 열지 않습니다.** Optimizer 후보를 기다리거나 자동 적용하지 않고 포함된 `v1`/`v2`로 Hosted를 비교합니다.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -27,7 +29,11 @@
 | [10. 보완 진단](#10-별도의-policy-lab-진단-8문항) | 별도 8문항 결과와 세션 중지 |
 | [완료 확인](#완료-확인) | 실행 완료와 개선·인수를 구분 |
 
-이 장의 비교는 **코드를 먼저 동결한 뒤 새 Hosted baseline/candidate 쌍**으로 수행합니다. 모델·원문·언어·retrieval·API·judge catalog·기준점·생성 설정을 고정하고 지침만 바꿉니다. 중간에 결합된 코드가 바뀌면 새 label의 전후 쌍을 다시 만들며, manifest의 hash를 수정하거나 검사를 완화하지 않습니다.
+이 장의 비교는 **코드를 먼저 동결한 뒤 새 Hosted baseline/candidate 쌍**으로 수행합니다.
+
+- **고정:** 모델·원문·언어·retrieval·API·judge catalog·기준점·생성 설정.
+- **변경:** 지침만 `v1`에서 `v2`로 바꿉니다.
+- **코드가 달라졌다면:** 새 label의 전후 쌍을 다시 만듭니다. manifest의 hash를 수정하거나 검사를 완화하지 않습니다.
 
 파생된 policy/Skill 입력의 prompt/source hash도 달라졌다면 새 입력 label로 다시 준비합니다. 이미 배포된 agent나 Skill이 로컬 v2 수정만으로 자동 갱신됐다고 가정하지 않습니다.
 
@@ -48,6 +54,11 @@
 
 ```bash
 python scripts/workshop.py --script package-hosted --kind workflow --pattern sequential --retrieval local --prompt v1 --api account-chat --protocol invocations
+```
+
+**반환된 패키지로 배포 폴더 준비**
+
+```bash
 python scripts/selfstudy.py prepare-hosted --kind matrix --package "실제-local-v1-패키지-경로" --name matrix-local --run v1
 ```
 
@@ -61,9 +72,29 @@ python scripts/selfstudy.py prepare-hosted --kind matrix --package "실제-local
 
 ```bash
 python scripts/workshop.py conversations plan
+```
+
+**실제 대화 수집 · `conversations-first`**
+
+```bash
 python scripts/workshop.py conversations collect --label conversations-first --prompt v2 --confirm-cost
+```
+
+**저장된 대화 보고서 확인 · `conversations-first`**
+
+```bash
 python scripts/workshop.py conversations report --label conversations-first
+```
+
+**같은 대화의 평가 실행 · `conversations-first` · `turn`**
+
+```bash
 python scripts/workshop.py conversations evaluate --label conversations-first --level turn --confirm-cost
+```
+
+**같은 대화의 평가 실행 · `conversations-first` · `conversation`**
+
+```bash
 python scripts/workshop.py conversations evaluate --label conversations-first --level conversation --confirm-cost
 ```
 
@@ -191,6 +222,11 @@ candidate_generation_assessed: false
 
 ```bash
 python scripts/selfstudy.py status
+```
+
+**OpenAI 루트 Endpoint 등록**
+
+```bash
 python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "실제-같은-계정의-OpenAI-루트-URL"
 ```
 
@@ -231,7 +267,17 @@ python scripts/workshop.py --script package-hosted --kind workflow --pattern seq
 
 ```bash
 python scripts/selfstudy.py prepare-hosted --kind matrix --package "실제-v1-패키지-경로" --name matrix --run v1
+```
+
+**준비한 서비스만 원격 배포**
+
+```bash
 azd deploy "내-prefix-matrix" --cwd "실제-matrix-v1-절대경로"
+```
+
+**배포된 실제 버전과 런타임 ID 조회**
+
+```bash
 azd ai agent show "내-prefix-matrix" --cwd "실제-matrix-v1-절대경로" --output json
 ```
 
@@ -255,6 +301,11 @@ azd ai agent show "내-prefix-matrix" --cwd "실제-matrix-v1-절대경로" --ou
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "실제-matrix-v1-폴더" --service "실제-matrix-서비스-이름"
+```
+
+**연결한 버전에 한 건 요청 · `matrix-v1-smoke`**
+
+```bash
 python scripts/workshop.py benchmark smoke --label matrix-v1-smoke --kind workflow --pattern sequential --retrieval iq --prompt v1 --api account-chat --protocol invocations --case D01 --model-key primary --confirm-cost
 ```
 
@@ -266,6 +317,11 @@ smoke가 실패하면 matrix를 실행하지 않습니다.
 
 ```bash
 python scripts/workshop.py benchmark plan --kind workflow --pattern sequential --retrieval iq --prompt v1 --api account-chat --protocol invocations
+```
+
+**전체 문항 수집 · `wf-baseline`**
+
+```bash
 python scripts/workshop.py benchmark collect --label wf-baseline --kind workflow --pattern sequential --retrieval iq --prompt v1 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 ```
 
@@ -275,8 +331,23 @@ python scripts/workshop.py benchmark collect --label wf-baseline --kind workflow
 
 ```bash
 python scripts/workshop.py benchmark evaluate --policy --label wf-baseline --confirm-cost
+```
+
+**저장된 결과로 HTML 보고서 생성 · `wf-baseline`**
+
+```bash
 python scripts/workshop.py benchmark report --label wf-baseline
+```
+
+**trace 조회용 KQL 확인 · `wf-baseline`**
+
+```bash
 python scripts/workshop.py benchmark trace-plan --label wf-baseline
+```
+
+**실제 trace 조회 · `wf-baseline`**
+
+```bash
 python scripts/workshop.py benchmark monitor --label wf-baseline
 ```
 
@@ -296,7 +367,17 @@ python scripts/workshop.py --script package-hosted --kind workflow --pattern seq
 
 ```bash
 python scripts/selfstudy.py prepare-hosted --kind matrix --package "실제-v2-패키지-경로" --name matrix --run v2
+```
+
+**준비한 서비스만 원격 배포**
+
+```bash
 azd deploy "내-prefix-matrix" --cwd "실제-matrix-v2-절대경로"
+```
+
+**배포된 실제 버전과 런타임 ID 조회**
+
+```bash
 azd ai agent show "내-prefix-matrix" --cwd "실제-matrix-v2-절대경로" --output json
 ```
 
@@ -306,6 +387,11 @@ azd ai agent show "내-prefix-matrix" --cwd "실제-matrix-v2-절대경로" --ou
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "실제-matrix-v2-폴더" --service "같은-matrix-서비스-이름"
+```
+
+**연결한 버전에 한 건 요청 · `matrix-v2-smoke`**
+
+```bash
 python scripts/workshop.py benchmark smoke --label matrix-v2-smoke --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --case D01 --model-key primary --confirm-cost
 ```
 
@@ -315,9 +401,29 @@ smoke 성공을 확인한 뒤 전체 dev를 수집합니다. 명시적 로컬 �
 
 ```bash
 python scripts/workshop.py benchmark collect --label wf-candidate --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**저장된 전후 결과 비교**
+
+```bash
 python scripts/workshop.py benchmark compare --baseline wf-baseline --candidate wf-candidate
+```
+
+**저장된 응답을 policy judge로 평가 · `wf-candidate`**
+
+```bash
 python scripts/workshop.py benchmark evaluate --policy --label wf-candidate --reference wf-baseline --confirm-cost
+```
+
+**저장된 결과로 HTML 보고서 생성 · `wf-candidate`**
+
+```bash
 python scripts/workshop.py benchmark report --label wf-candidate
+```
+
+**실제 trace 조회 · `wf-candidate`**
+
+```bash
 python scripts/workshop.py benchmark monitor --label wf-candidate
 ```
 
@@ -356,6 +462,11 @@ reviewer 문자열은 Entra로 검증된 업무 승인자가 아닙니다. 회�
 
 ```bash
 python scripts/workshop.py benchmark stop-session --label wf-baseline
+```
+
+**해당 실행의 세션 중지 · `wf-candidate`**
+
+```bash
 python scripts/workshop.py benchmark stop-session --label wf-candidate
 ```
 
@@ -371,7 +482,17 @@ IQ 경로:
 
 ```bash
 python scripts/workshop.py benchmark collect --suite policy-lab --label policy-lab-iq-ko --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**저장된 응답을 policy judge로 평가 · `policy-lab-iq-ko`**
+
+```bash
 python scripts/workshop.py benchmark evaluate --policy --label policy-lab-iq-ko --confirm-cost
+```
+
+**저장된 진단 결과 확인 · `policy-lab-iq-ko`**
+
+```bash
 python scripts/workshop.py benchmark policy-report --label policy-lab-iq-ko --calibration policy-calibration-ko
 ```
 
@@ -382,7 +503,17 @@ python scripts/workshop.py benchmark policy-report --label policy-lab-iq-ko --ca
 
 ```bash
 python scripts/workshop.py benchmark collect --suite policy-lab --label policy-lab-local-ko --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**저장된 응답을 policy judge로 평가 · `policy-lab-local-ko`**
+
+```bash
 python scripts/workshop.py benchmark evaluate --policy --label policy-lab-local-ko --confirm-cost
+```
+
+**저장된 진단 결과 확인 · `policy-lab-local-ko`**
+
+```bash
 python scripts/workshop.py benchmark policy-report --label policy-lab-local-ko --calibration policy-calibration-ko
 ```
 
@@ -409,4 +540,4 @@ python scripts/workshop.py benchmark stop-session --label policy-lab-iq-ko
 
 ---
 
-[← 11. 기억·위임·예약](11-memory-a2a-routines.md) · [전체 과정](../README.ko.md#진행-순서) · [13. 실습 안전 →](13-governance.md)
+[← 11. 기억·위임·예약](11-memory-a2a-routines.md) · [전체 과정](../README.ko.md#진행-순서) · [13. 실습 안전 →](13-governance.md) · [진행 지도 ↑](#chapter-map)

@@ -10,6 +10,8 @@
 
 > **기본 지침 비교:** 포함된 `v1`/`v2`만 바꿉니다. **중간에 코드·원문·모델을 바꾸지 않고, holdout은 열지 않습니다.** 6절의 선택적 모델 비교는 별도 결과로 진행합니다.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -41,6 +43,13 @@ holdout은 15장까지 열지 않습니다. 정답 필드를 모델 입력에 �
 
 ```bash
 python scripts/workshop.py collect --split dev --label baseline --prompt v1 --retrieval local
+```
+
+`outputs/baseline/responses.jsonl`에서 **실제 응답 6행**을 먼저 확인합니다. 응답 누락·인증/API 오류가 있으면 해결한 뒤 다음으로 갑니다.
+
+**저장된 응답의 업무 검사 · `baseline`**
+
+```bash
 python scripts/workshop.py evaluate --label baseline
 ```
 
@@ -73,7 +82,19 @@ python scripts/workshop.py feedback --label baseline --case "실제-실패-case-
 
 ```bash
 python scripts/workshop.py collect --split dev --label candidate --prompt v2 --retrieval local
+```
+
+`outputs/candidate/responses.jsonl`도 **실제 응답 6행과 요청 오류 유무**를 먼저 확인합니다.
+
+**저장된 응답의 업무 검사 · `candidate`**
+
+```bash
 python scripts/workshop.py evaluate --label candidate
+```
+
+**저장된 전후 결과 비교**
+
+```bash
 python scripts/workshop.py compare --baseline baseline --candidate candidate --variable prompt
 ```
 
@@ -116,6 +137,11 @@ GPT-5.5는 GPT-6 대상과 다르지만, 이 선택만으로 모든 편향이 �
 
 ```bash
 python scripts/workshop.py prepare-extensions --policy --label policy-inputs-ko
+```
+
+**judge의 기대 판정 확인 · `policy-calibration-ko`**
+
+```bash
 python scripts/workshop.py calibrate-judge --policy --label policy-calibration-ko --confirm-cost --timeout 900
 ```
 
@@ -137,6 +163,11 @@ Canonical 출력은 정수 `result`(1~5)와 문자열 `reason`입니다. 8개 co
 
 ```bash
 python scripts/workshop.py cloud-evaluate --policy --label baseline --confirm-cost --timeout 900
+```
+
+**저장된 응답을 policy judge로 평가 · `candidate`**
+
+```bash
 python scripts/workshop.py cloud-evaluate --policy --label candidate --reference baseline --confirm-cost --timeout 900
 ```
 
@@ -154,9 +185,29 @@ python scripts/workshop.py cloud-evaluate --policy --label candidate --reference
 
 ```bash
 python scripts/workshop.py --model-deployment "ACTUAL-SOL-DEPLOYMENT" collect --api account-responses --split dev --label model-sol --prompt v2 --retrieval local
+```
+
+**실제 모델 응답 수집 · `model-luna`**
+
+```bash
 python scripts/workshop.py --model-deployment "ACTUAL-LUNA-DEPLOYMENT" collect --api account-responses --split dev --label model-luna --prompt v2 --retrieval local
+```
+
+**저장된 응답의 업무 검사 · `model-sol`**
+
+```bash
 python scripts/workshop.py evaluate --label model-sol
+```
+
+**저장된 응답의 업무 검사 · `model-luna`**
+
+```bash
 python scripts/workshop.py evaluate --label model-luna
+```
+
+**저장된 전후 결과 비교**
+
+```bash
 python scripts/workshop.py compare --baseline model-sol --candidate model-luna --variable model
 ```
 
@@ -181,4 +232,4 @@ candidate와 해당 설정을 보관합니다.
 
 ---
 
-[← 06. 검색](06-search-iq.md) · [전체 과정](../README.ko.md#진행-순서) · [08. 배포 →](08-hosted.md)
+[← 06. 검색](06-search-iq.md) · [전체 과정](../README.ko.md#진행-순서) · [08. 배포 →](08-hosted.md) · [진행 지도 ↑](#chapter-map)

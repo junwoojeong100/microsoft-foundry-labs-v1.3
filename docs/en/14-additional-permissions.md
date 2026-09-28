@@ -10,6 +10,8 @@
 
 > **Entry condition:** without GitHub permissions, go to [15](15-capstone-cleanup.md). Otherwise, follow **variables → federation → authentication check → release**, in that order.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -72,7 +74,17 @@ First read your repository's OIDC policy and identifiers. Install [GitHub CLI](h
 
 ```bash
 gh auth login
+```
+
+**Read the repository's OIDC policy**
+
+```bash
 gh api repos/YOUR-OWNER/YOUR-REPOSITORY/actions/oidc/customization/sub
+```
+
+**Read the repository's actual numeric IDs**
+
+```bash
 gh api repos/YOUR-OWNER/YOUR-REPOSITORY --jq '{repository: .full_name, owner_id: .owner.id, repository_id: .id}'
 ```
 
@@ -130,4 +142,4 @@ In retention mode, do not delete identities, federation, agents, or volumes.
 
 ---
 
-[← 13. Lab safety](13-governance.md) · [Course home](../../README.md#curriculum) · [15. Acceptance and cleanup →](15-capstone-cleanup.md)
+[← 13. Lab safety](13-governance.md) · [Course home](../../README.md#curriculum) · [15. Acceptance and cleanup →](15-capstone-cleanup.md) · [Chapter map ↑](#chapter-map)

@@ -10,6 +10,8 @@
 
 > **Before starting:** prepare Azure resources in **North Central US (`northcentralus`)**. New resources and model calls can incur charges. Follow the **portal route** on your first run; skip the collapsed CLI alternatives.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -54,6 +56,11 @@ All code and data are included. A ZIP provided to you requires neither a GitHub 
 
 ```bash
 git clone https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5.git
+```
+
+**Enter the cloned folder**
+
+```bash
 cd microsoft-foundry-labs-v1.5
 ```
 
@@ -82,7 +89,7 @@ Check your current folder/files using `pwd` and `ls` on macOS/Linux, or `Get-Loc
 
 Do not overwrite a `.venv` created with another Python version or existing personal lab state. Preserve that folder and **extract the ZIP into a new folder**.
 
-**On a first run, skip the collapsed section below and execute only the installation block for your OS.** Continue to package installation only after `python --version` reports **Python 3.13.x**.
+**On a first run, skip the collapsed section below and follow only your OS's installation steps.** Continue to package installation only after `python --version` reports **Python 3.13.x**.
 
 <details>
 <summary>Existing environments only: start again with a different project</summary>
@@ -100,25 +107,73 @@ Do not overwrite a `.venv` created with another Python version or existing perso
 
 ### macOS / Linux
 
+**Create a new virtual environment**
+
 ```bash
 python3.13 -m venv .venv
+```
+
+**Activate the virtual environment**
+
+```bash
 source .venv/bin/activate
+```
+
+**Check for Python 3.13**
+
+```bash
 python --version
+```
+
+**Continue only if you see `Python 3.13.x`.** If another version appears, check the virtual environment before installing packages.
+
+**Install the required packages**
+
+```bash
 python -m pip install -r requirements.txt
+```
+
+**Check the installed packages**
+
+```bash
 python -m pip check
 ```
 
 ### Windows PowerShell
 
+**Create a new virtual environment**
+
 ```powershell
 py -3.13 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python --version
-python -m pip install -r requirements.txt
-python -m pip check
 ```
 
-If PowerShell blocks activation, do not weaken system policy. Replace subsequent `python ...` commands with `.\.venv\Scripts\python.exe ...`.
+**Activate the virtual environment**
+
+If activation is blocked, do not weaken system policy. Instead of activating it, replace every subsequent `python ...` command with `.\.venv\Scripts\python.exe ...`.
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+**Check for Python 3.13**
+
+```powershell
+python --version
+```
+
+**Continue only if you see `Python 3.13.x`.** If another version appears, check the virtual environment before installing packages.
+
+**Install the required packages**
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+**Check the installed packages**
+
+```powershell
+python -m pip check
+```
 
 ### All operating systems: verify installation
 
@@ -151,7 +206,17 @@ English workshop commands use `--language en` **before the subcommand**. Wrapper
 
 ```bash
 az login
+```
+
+**Inspect accessible subscriptions**
+
+```bash
 az account list --output table
+```
+
+**Sign in to azd in the same tenant**
+
+```bash
 azd auth login
 ```
 
@@ -228,6 +293,11 @@ Use this instead of the portal route. Do not omit `--assign-identity` or `--allo
 
 ```bash
 az cognitiveservices account create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-yourname-nc-0928" --name "YOUR-UNIQUE-FOUNDRY-NAME" --custom-domain "YOUR-UNIQUE-FOUNDRY-NAME" --kind AIServices --sku S0 --location northcentralus --assign-identity --allow-project-management true
+```
+
+**Create a project in the new Foundry account**
+
+```bash
 az cognitiveservices account project create --subscription "YOUR-SUBSCRIPTION-ID" --resource-group "rg-mf15-yourname-nc-0928" --name "YOUR-UNIQUE-FOUNDRY-NAME" --project-name "mf15-nc-project" --location northcentralus
 ```
 
@@ -305,11 +375,21 @@ New configuration uses **reasoning `low` and a `32768` output-token cap**. Reaso
 
 ```bash
 python scripts/selfstudy.py set WORKSHOP_REASONING_EFFORT low
+```
+
+**Set the output-token limit**
+
+```bash
 python scripts/selfstudy.py set WORKSHOP_MAX_OUTPUT_TOKENS 32768
 ```
 
 ```bash
 python scripts/selfstudy.py values
+```
+
+**Check readiness**
+
+```bash
 python scripts/workshop.py --language en doctor --cloud
 ```
 
@@ -327,6 +407,11 @@ Find your user Object ID in the Azure portal or use:
 
 ```bash
 az ad signed-in-user show --query id --output tsv
+```
+
+**Read the required-role plan**
+
+```bash
 python scripts/selfstudy.py roles --user-object-id "YOUR-USER-OBJECT-ID"
 ```
 
@@ -343,4 +428,4 @@ Resolve blockers using [Troubleshooting](troubleshooting.md). If stopping, revie
 
 ---
 
-[Course home](../../README.md#curriculum) · [Next: 01. First model response →](01-foundry.md)
+[Course home](../../README.md#curriculum) · [Next: 01. First model response →](01-foundry.md) · [Chapter map ↑](#chapter-map)

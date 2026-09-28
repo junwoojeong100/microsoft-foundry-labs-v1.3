@@ -18,6 +18,8 @@ Do not recreate all three because one is blocked. Mark only the unavailable expe
 
 **Where you work:** terminal for API/CLI calls, editor for Routine JSON, Azure portal for permissions.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -36,7 +38,17 @@ Verify `workshop-embedding` from 06 and select a **new retained-store name under
 
 ```bash
 python scripts/selfstudy.py status
+```
+
+**Select a new retained-store name**
+
+```bash
 python scripts/selfstudy.py set WORKSHOP_MEMORY_STORE_NAME "YOUR-PREFIX-memory-retained-en"
+```
+
+**Review the Memory creation plan**
+
+```bash
 python scripts/workshop.py --language en memory plan
 ```
 
@@ -46,6 +58,11 @@ Inspect the plan's actual name, Sol/embedding deployments, and `default_ttl_seco
 
 ```bash
 python scripts/workshop.py --language en memory create --ttl-seconds 0 --confirm-create
+```
+
+**Store a new Memory item · `alpha`**
+
+```bash
 python scripts/workshop.py --language en memory put --scope alpha --case D02 --confirm-write --confirm-cost
 ```
 
@@ -59,8 +76,23 @@ For another **new store** that should expire items, `--ttl-seconds` accepts 1–
 
 ```bash
 python scripts/workshop.py --language en memory inspect --scope alpha
+```
+
+**Inspect stored Memory items · `beta`**
+
+```bash
 python scripts/workshop.py --language en memory inspect --scope beta
+```
+
+**Recall Memory in an independent request · `memory-retained-alpha-en` · `alpha`**
+
+```bash
 python scripts/workshop.py --language en memory recall --scope alpha --label memory-retained-alpha-en --confirm-cost
+```
+
+**Recall Memory in an independent request · `memory-retained-beta-en` · `beta`**
+
+```bash
 python scripts/workshop.py --language en memory recall --scope beta --label memory-retained-beta-en --confirm-cost
 ```
 
@@ -72,6 +104,11 @@ Use the **memory_id returned by this new retained store** to explicitly update t
 
 ```bash
 python scripts/workshop.py --language en memory update --scope alpha --case D01 --memory-id "ACTUAL-MEMORY-ID" --confirm-write --confirm-cost
+```
+
+**Inspect stored Memory items · `alpha`**
+
+```bash
 python scripts/workshop.py --language en memory inspect --scope alpha
 ```
 
@@ -85,7 +122,17 @@ For transient 404s or delays, perform bounded reads of the same item; do not rep
 
 ```bash
 python scripts/workshop.py --language en a2a plan
+```
+
+**Create the planned target**
+
+```bash
 python scripts/workshop.py --language en a2a target --confirm-create
+```
+
+**Inspect the actual target card**
+
+```bash
 python scripts/workshop.py --language en a2a inspect
 ```
 
@@ -97,7 +144,17 @@ Use the returned **target_base and connection_name**. The target is a base path,
 
 ```bash
 azd ai connection create "RETURNED-CONNECTION-NAME" --kind remote-a2a --target "RETURNED-TARGET-BASE" --auth-type project-managed-identity --audience https://ai.azure.com --project-endpoint "YOUR-PROJECT-ENDPOINT" --cwd "YOUR-08-HOSTED-ABSOLUTE-PATH"
+```
+
+**Create the caller using this connection**
+
+```bash
 python scripts/workshop.py --language en a2a caller --confirm-create
+```
+
+**Send a delegation request to the caller · `a2a-first-en`**
+
+```bash
 python scripts/workshop.py --language en a2a invoke --label a2a-first-en --confirm-cost
 ```
 
@@ -110,6 +167,11 @@ Current code checks both the connection target and A2A tool's `base_url`. If an 
 
 ```bash
 python scripts/workshop.py --language en a2a caller --confirm-create --new-version
+```
+
+**Send a delegation request to the caller · `a2a-fixed-en`**
+
+```bash
 python scripts/workshop.py --language en a2a invoke --label a2a-fixed-en --confirm-cost
 ```
 
@@ -164,6 +226,11 @@ The manifest uses wire type **`invoke_agent_responses_api`**, not CLI alias `age
 
 ```bash
 azd ai routine create "YOUR-PREFIX-timer-static-en" --file .selfstudy/routine-static-en.json --enabled=false --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
+```
+
+**Inspect the saved Routine configuration**
+
+```bash
 azd ai routine show "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 ```
 
@@ -179,6 +246,11 @@ Enable only after reviewing cost, timing, and input:
 
 ```bash
 azd ai routine enable "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-PROJECT-ENDPOINT"
+```
+
+**Read the same Routine's run history**
+
+```bash
 azd ai routine run list "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 ```
 
@@ -190,7 +262,17 @@ After the scheduled time, perform bounded reads of the same run list. Record the
 
 ```bash
 azd ai routine disable "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-PROJECT-ENDPOINT"
+```
+
+**Read the same Routine's run history**
+
+```bash
 azd ai routine run list "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
+```
+
+**Inspect the saved Routine configuration**
+
+```bash
 azd ai routine show "YOUR-PREFIX-timer-static-en" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 ```
 
@@ -249,4 +331,4 @@ Verified timer delivery does not mean every new policy-quality criterion has pas
 
 ---
 
-[← 10. Shared tools](10-toolbox-skills.md) · [Course home](../../README.md#curriculum) · [12. Improvement →](12-improvement.md)
+[← 10. Shared tools](10-toolbox-skills.md) · [Course home](../../README.md#curriculum) · [12. Improvement →](12-improvement.md) · [Chapter map ↑](#chapter-map)

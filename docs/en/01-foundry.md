@@ -8,6 +8,8 @@
 
 **Where you work:** Foundry Playground → terminal in the workshop folder → result JSON in your editor.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -90,4 +92,4 @@ For 401/403, check identity, tenant, and data roles. For 404, check the project 
 
 ---
 
-[← 00. Setup](00-setup.md) · [Course home](../../README.md#curriculum) · [02. Models and prompts →](02-models-prompts.md)
+[← 00. Setup](00-setup.md) · [Course home](../../README.md#curriculum) · [02. Models and prompts →](02-models-prompts.md) · [Chapter map ↑](#chapter-map)

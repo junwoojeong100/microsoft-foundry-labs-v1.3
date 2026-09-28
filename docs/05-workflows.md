@@ -8,6 +8,8 @@
 
 **실행 위치:** 실습 폴더의 터미널. 5절만 터미널 A·B 두 개를 사용합니다.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -83,6 +85,11 @@ A의 서버 시작 로그를 확인한 뒤 **새 터미널 B**를 엽니다. B�
 
 ```bash
 python scripts/workshop.py --script resilience --language ko --run-id first-pass start
+```
+
+**같은 요청의 현재 상태 확인**
+
+```bash
 python scripts/workshop.py --script resilience --language ko --run-id first-pass status
 ```
 
@@ -94,7 +101,17 @@ python scripts/workshop.py --script resilience --language ko --run-id first-pass
 
 ```bash
 python scripts/workshop.py --script resilience --language ko --run-id first-pass decide --decision approve --confirm-simulated-decision
+```
+
+**같은 요청의 완료 대기**
+
+```bash
 python scripts/workshop.py --script resilience --language ko --run-id first-pass wait --timeout-seconds 30
+```
+
+**같은 요청의 현재 상태 확인**
+
+```bash
 python scripts/workshop.py --script resilience --language ko --run-id first-pass status
 ```
 
@@ -114,4 +131,4 @@ python scripts/workshop.py --script resilience --language ko --run-id first-pass
 
 ---
 
-[← 04. 도구](04-tools.md) · [전체 과정](../README.ko.md#진행-순서) · [06. 검색 →](06-search-iq.md)
+[← 04. 도구](04-tools.md) · [전체 과정](../README.ko.md#진행-순서) · [06. 검색 →](06-search-iq.md) · [진행 지도 ↑](#chapter-map)

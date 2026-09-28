@@ -34,7 +34,11 @@ Take one step at a time: **run → inspect → next**. No separate write-up or s
 | A JSON/YAML block or question text | Not a shell command. Save it to the specified file or paste it into Playground as instructed. |
 | Optional, alternative, or collapsed recovery section | Do not execute it in addition to every default command. Use it only when its condition applies. |
 
-Even a multiline command block is executed **one line at a time**. For ordinary commands, wait for the prompt to return and inspect the result before the next line. Long-running servers such as `serve` are the exception; their chapters explain terminals A and B.
+The lab chapters use **one command per executable block**. Read **the explanation above → run that command → check the result below**. For ordinary commands, wait for the prompt to return and inspect the result before the next block. Long-running servers such as `serve` are the exception; their chapters explain terminals A and B.
+
+For long commands, scroll horizontally or use the block's copy button to copy **the entire line**. Visual wrapping is fine; do not insert Enter, a backslash, or a PowerShell backtick yourself. Quoted questions, paths, and options must remain part of the same command.
+
+JSON, YAML, questions, and example output can span multiple lines. Do not execute those blocks in the terminal; use the editor, Playground, or result-viewing location specified immediately above them.
 
 `--confirm-create`, `--confirm-cost`, and `--confirm-delete` explicitly acknowledge creation, charges, and deletion. **Model requests without these options can still incur charges.** Check the target and cost before running them.
 
@@ -110,6 +114,11 @@ If organizational policy blocks activation, use `.\.venv\Scripts\python.exe` ins
 
 ```bash
 python scripts/workshop.py --language en doctor
+```
+
+After checking local readiness, read the saved settings.
+
+```bash
 python scripts/selfstudy.py values
 ```
 

@@ -18,6 +18,8 @@
 
 **실행 위치:** 터미널에서 API·CLI 실행, 편집기에서 Routine JSON 작성, Azure 포털에서 역할 확인.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -36,7 +38,17 @@
 
 ```bash
 python scripts/selfstudy.py status
+```
+
+**새 보존용 store 이름 선택**
+
+```bash
 python scripts/selfstudy.py set WORKSHOP_MEMORY_STORE_NAME "YOUR-PREFIX-memory-retained-ko"
+```
+
+**Memory 생성 계획 확인**
+
+```bash
 python scripts/workshop.py memory plan
 ```
 
@@ -46,6 +58,11 @@ python scripts/workshop.py memory plan
 
 ```bash
 python scripts/workshop.py memory create --ttl-seconds 0 --confirm-create
+```
+
+**새 Memory 항목 저장 · `alpha`**
+
+```bash
 python scripts/workshop.py memory put --scope alpha --case D02 --confirm-write --confirm-cost
 ```
 
@@ -59,8 +76,23 @@ python scripts/workshop.py memory put --scope alpha --case D02 --confirm-write -
 
 ```bash
 python scripts/workshop.py memory inspect --scope alpha
+```
+
+**저장된 Memory 항목 확인 · `beta`**
+
+```bash
 python scripts/workshop.py memory inspect --scope beta
+```
+
+**독립 요청으로 Memory 조회 · `memory-retained-alpha-ko` · `alpha`**
+
+```bash
 python scripts/workshop.py memory recall --scope alpha --label memory-retained-alpha-ko --confirm-cost
+```
+
+**독립 요청으로 Memory 조회 · `memory-retained-beta-ko` · `beta`**
+
+```bash
 python scripts/workshop.py memory recall --scope beta --label memory-retained-beta-ko --confirm-cost
 ```
 
@@ -72,6 +104,11 @@ python scripts/workshop.py memory recall --scope beta --label memory-retained-be
 
 ```bash
 python scripts/workshop.py memory update --scope alpha --case D01 --memory-id "실제-memory_id" --confirm-write --confirm-cost
+```
+
+**저장된 Memory 항목 확인 · `alpha`**
+
+```bash
 python scripts/workshop.py memory inspect --scope alpha
 ```
 
@@ -85,7 +122,17 @@ python scripts/workshop.py memory inspect --scope alpha
 
 ```bash
 python scripts/workshop.py a2a plan
+```
+
+**계획한 target 생성**
+
+```bash
 python scripts/workshop.py a2a target --confirm-create
+```
+
+**실제 target card 확인**
+
+```bash
 python scripts/workshop.py a2a inspect
 ```
 
@@ -97,7 +144,17 @@ target 출력의 **target_base와 connection_name**을 사용합니다. card URL
 
 ```bash
 azd ai connection create "반환된-connection_name" --kind remote-a2a --target "반환된-target_base" --auth-type project-managed-identity --audience https://ai.azure.com --project-endpoint "실제-프로젝트-Endpoint" --cwd "실제-08-Hosted-절대경로"
+```
+
+**연결을 사용하는 caller 생성**
+
+```bash
 python scripts/workshop.py a2a caller --confirm-create
+```
+
+**caller에 위임 요청 · `a2a-first`**
+
+```bash
 python scripts/workshop.py a2a invoke --label a2a-first --confirm-cost
 ```
 
@@ -110,6 +167,11 @@ python scripts/workshop.py a2a invoke --label a2a-first --confirm-cost
 
 ```bash
 python scripts/workshop.py a2a caller --confirm-create --new-version
+```
+
+**caller에 위임 요청 · `a2a-fixed`**
+
+```bash
 python scripts/workshop.py a2a invoke --label a2a-fixed --confirm-cost
 ```
 
@@ -162,6 +224,11 @@ Manifest의 action type은 CLI 별칭 `agent-response`가 아니라 `invoke_agen
 
 ```bash
 azd ai routine create "YOUR-PREFIX-timer-static-ko" --file .selfstudy/routine-static-ko.json --enabled=false --project-endpoint "실제-프로젝트-Endpoint" --output json
+```
+
+**저장된 Routine 설정 확인**
+
+```bash
 azd ai routine show "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
@@ -177,6 +244,11 @@ azd ai routine show "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프
 
 ```bash
 azd ai routine enable "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프로젝트-Endpoint"
+```
+
+**같은 Routine의 실행 기록 조회**
+
+```bash
 azd ai routine run list "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
@@ -188,7 +260,17 @@ azd ai routine run list "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제
 
 ```bash
 azd ai routine disable "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프로젝트-Endpoint"
+```
+
+**같은 Routine의 실행 기록 조회**
+
+```bash
 azd ai routine run list "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프로젝트-Endpoint" --output json
+```
+
+**저장된 Routine 설정 확인**
+
+```bash
 azd ai routine show "YOUR-PREFIX-timer-static-ko" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
@@ -245,4 +327,4 @@ Timer 전달이 확인되어도 새로운 policy judge의 품질 기준까지 �
 
 ---
 
-[← 10. 공유 도구](10-toolbox-skills.md) · [전체 과정](../README.ko.md#진행-순서) · [12. 품질 개선 →](12-improvement.md)
+[← 10. 공유 도구](10-toolbox-skills.md) · [전체 과정](../README.ko.md#진행-순서) · [12. 품질 개선 →](12-improvement.md) · [진행 지도 ↑](#chapter-map)

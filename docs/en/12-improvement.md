@@ -10,6 +10,8 @@
 
 > **Comparison conditions:** review each feature's cost. Freeze code, **change only instructions, and leave holdout closed**. Compare Hosted using the bundled `v1`/`v2`; do not wait for or automatically apply an Optimizer candidate.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -30,7 +32,11 @@
 
 Section 10 is a local-retrieval alternative, not an additional required matrix. Record zero candidates or no improvement honestly.
 
-This chapter requires **freezing code first, then collecting a fresh Hosted baseline/candidate pair**. Fix model, corpus, language, retrieval, API, judge catalog, threshold, and generation settings; vary only instructions. If coupled code changes during the comparison, start a new matched pair under fresh labels. Do not edit manifest hashes or weaken comparison checks.
+This chapter requires **freezing code first, then collecting a fresh Hosted baseline/candidate pair**.
+
+- **Keep fixed:** model, corpus, language, retrieval, API, judge catalog, threshold, and generation settings.
+- **Change:** only instructions, from `v1` to `v2`.
+- **If coupled code changes:** start a new matched pair under fresh labels. Do not edit manifest hashes or weaken comparison checks.
 
 If derived policy/Skill inputs have changed prompt/source hashes, prepare them under new input labels too. Editing local v2 files does not automatically update an already deployed agent or Skill.
 
@@ -54,9 +60,29 @@ Stored-result commands such as `evaluate`, `compare`, `monitor`, and `verify` ha
 
 ```bash
 python scripts/workshop.py --language en conversations plan
+```
+
+**Collect actual conversations · `conversations-first-en`**
+
+```bash
 python scripts/workshop.py --language en conversations collect --label conversations-first-en --prompt v2 --confirm-cost
+```
+
+**Review the saved conversation report · `conversations-first-en`**
+
+```bash
 python scripts/workshop.py --language en conversations report --label conversations-first-en
+```
+
+**Evaluate the same conversations · `conversations-first-en` · `turn`**
+
+```bash
 python scripts/workshop.py --language en conversations evaluate --label conversations-first-en --level turn --confirm-cost
+```
+
+**Evaluate the same conversations · `conversations-first-en` · `conversation`**
+
+```bash
 python scripts/workshop.py --language en conversations evaluate --label conversations-first-en --level conversation --confirm-cost
 ```
 
@@ -186,6 +212,11 @@ Here, a **matrix** is the set of runs comparing deployed versions on the same de
 
 ```bash
 python scripts/selfstudy.py status
+```
+
+**Register the OpenAI service-root endpoint**
+
+```bash
 python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "YOUR-SAME-ACCOUNT-OPENAI-ROOT-URL"
 ```
 
@@ -228,7 +259,17 @@ Use the returned package path and a **new preparation folder**. The helper reuse
 
 ```bash
 python scripts/selfstudy.py prepare-hosted --language en --kind matrix --package "ACTUAL-ENGLISH-V1-PACKAGE-PATH" --name matrix-en --run v1
+```
+
+**Deploy only the prepared service**
+
+```bash
 azd deploy "YOUR-PREFIX-matrix-en" --cwd "ACTUAL-MATRIX-V1-ABSOLUTE-PATH"
+```
+
+**Read the deployed version and runtime identity**
+
+```bash
 azd ai agent show "YOUR-PREFIX-matrix-en" --cwd "ACTUAL-MATRIX-V1-ABSOLUTE-PATH" --output json
 ```
 
@@ -252,6 +293,11 @@ Use that exact service/folder to **read and save the active version and actual I
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "ACTUAL-MATRIX-V1-FOLDER" --service "YOUR-PREFIX-matrix-en"
+```
+
+**Send one smoke request to the bound version · `matrix-v1-smoke-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark smoke --label matrix-v1-smoke-en --kind workflow --pattern sequential --retrieval iq --prompt v1 --api account-chat --protocol invocations --case D01 --model-key primary --confirm-cost
 ```
 
@@ -263,6 +309,11 @@ Do not run the matrix if smoke fails.
 
 ```bash
 python scripts/workshop.py --language en benchmark plan --kind workflow --pattern sequential --retrieval iq --prompt v1 --api account-chat --protocol invocations
+```
+
+**Collect the complete case set · `wf-baseline-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark collect --label wf-baseline-en --kind workflow --pattern sequential --retrieval iq --prompt v1 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
 ```
 
@@ -272,8 +323,23 @@ python scripts/workshop.py --language en benchmark collect --label wf-baseline-e
 
 ```bash
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-baseline-en --confirm-cost
+```
+
+**Build an HTML report from saved results · `wf-baseline-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark report --label wf-baseline-en
+```
+
+**Inspect the KQL for trace queries · `wf-baseline-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark trace-plan --label wf-baseline-en
+```
+
+**Query actual traces · `wf-baseline-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark monitor --label wf-baseline-en
 ```
 
@@ -293,7 +359,17 @@ Prepare and deploy the v2 package under the **same agent name**, but in a **new 
 
 ```bash
 python scripts/selfstudy.py prepare-hosted --language en --kind matrix --package "ACTUAL-ENGLISH-V2-PACKAGE-PATH" --name matrix-en --run v2
+```
+
+**Deploy only the prepared service**
+
+```bash
 azd deploy "YOUR-PREFIX-matrix-en" --cwd "ACTUAL-MATRIX-V2-ABSOLUTE-PATH"
+```
+
+**Read the deployed version and runtime identity**
+
+```bash
 azd ai agent show "YOUR-PREFIX-matrix-en" --cwd "ACTUAL-MATRIX-V2-ABSOLUTE-PATH" --output json
 ```
 
@@ -303,6 +379,11 @@ Verify the actual new version and its runtime permissions, then update the bindi
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "ACTUAL-MATRIX-V2-FOLDER" --service "YOUR-PREFIX-matrix-en"
+```
+
+**Send one smoke request to the bound version · `matrix-v2-smoke-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark smoke --label matrix-v2-smoke-en --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --case D01 --model-key primary --confirm-cost
 ```
 
@@ -312,9 +393,29 @@ Collect the full dev set only after that exact version's smoke succeeds:
 
 ```bash
 python scripts/workshop.py --language en benchmark collect --label wf-candidate-en --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**Compare the saved before-and-after results**
+
+```bash
 python scripts/workshop.py --language en benchmark compare --baseline wf-baseline-en --candidate wf-candidate-en
+```
+
+**Evaluate saved responses with the policy judge · `wf-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-candidate-en --reference wf-baseline-en --confirm-cost
+```
+
+**Build an HTML report from saved results · `wf-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark report --label wf-candidate-en
+```
+
+**Query actual traces · `wf-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark monitor --label wf-candidate-en
 ```
 
@@ -353,6 +454,11 @@ If every dev business check passed, skip the `regression` command above. Do not 
 
 ```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-baseline-en
+```
+
+**Stop this run's session · `wf-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-candidate-en
 ```
 
@@ -375,8 +481,23 @@ Use the model map and same-account OpenAI endpoint from section 4 and the judge/
 
 ```bash
 python scripts/workshop.py --script package-hosted --language en --kind workflow --pattern sequential --retrieval local --prompt v1 --api account-chat --protocol invocations
+```
+
+**Prepare a deployment folder from the returned package**
+
+```bash
 python scripts/selfstudy.py prepare-hosted --language en --kind matrix --package "ACTUAL-ENGLISH-LOCAL-V1-PACKAGE-PATH" --name matrix-local-en --run v1
+```
+
+**Deploy only the prepared service**
+
+```bash
 azd deploy "YOUR-PREFIX-matrix-local-en" --cwd "ACTUAL-LOCAL-MATRIX-V1-ABSOLUTE-PATH"
+```
+
+**Read the deployed version and runtime identity**
+
+```bash
 azd ai agent show "YOUR-PREFIX-matrix-local-en" --cwd "ACTUAL-LOCAL-MATRIX-V1-ABSOLUTE-PATH" --output json
 ```
 
@@ -384,7 +505,17 @@ Use the service/folder actually printed by preparation. Inspect the new active v
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "ACTUAL-LOCAL-MATRIX-V1-FOLDER" --service "YOUR-PREFIX-matrix-local-en"
+```
+
+**Review the complete collection plan**
+
+```bash
 python scripts/workshop.py --language en benchmark plan --kind workflow --pattern sequential --retrieval local --prompt v1 --api account-chat --protocol invocations
+```
+
+**Send one smoke request to the bound version · `matrix-local-v1-smoke-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark smoke --label matrix-local-v1-smoke-en --kind workflow --pattern sequential --retrieval local --prompt v1 --api account-chat --protocol invocations --case D01 --model-key primary --confirm-cost
 ```
 
@@ -392,9 +523,29 @@ Inspect the reported profile: `retrieval: local`, `api: account-chat`, `protocol
 
 ```bash
 python scripts/workshop.py --language en benchmark collect --label wf-local-baseline-en --kind workflow --pattern sequential --retrieval local --prompt v1 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**Evaluate saved responses with the policy judge · `wf-local-baseline-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-local-baseline-en --confirm-cost
+```
+
+**Build an HTML report from saved results · `wf-local-baseline-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark report --label wf-local-baseline-en
+```
+
+**Inspect the KQL for trace queries · `wf-local-baseline-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark trace-plan --label wf-local-baseline-en
+```
+
+**Query actual traces · `wf-local-baseline-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark monitor --label wf-local-baseline-en
 ```
 
@@ -406,8 +557,23 @@ Keep the same local matrix service name, but prepare a new folder and immutable 
 
 ```bash
 python scripts/workshop.py --script package-hosted --language en --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations
+```
+
+**Prepare a deployment folder from the returned package**
+
+```bash
 python scripts/selfstudy.py prepare-hosted --language en --kind matrix --package "ACTUAL-ENGLISH-LOCAL-V2-PACKAGE-PATH" --name matrix-local-en --run v2
+```
+
+**Deploy only the prepared service**
+
+```bash
 azd deploy "YOUR-PREFIX-matrix-local-en" --cwd "ACTUAL-LOCAL-MATRIX-V2-ABSOLUTE-PATH"
+```
+
+**Read the deployed version and runtime identity**
+
+```bash
 azd ai agent show "YOUR-PREFIX-matrix-local-en" --cwd "ACTUAL-LOCAL-MATRIX-V2-ABSOLUTE-PATH" --output json
 ```
 
@@ -415,12 +581,49 @@ Check the new runtime identity/permissions and bind only the actual new version:
 
 ```bash
 python scripts/selfstudy.py bind-matrix --directory "ACTUAL-LOCAL-MATRIX-V2-FOLDER" --service "YOUR-PREFIX-matrix-local-en"
+```
+
+**Review the complete collection plan**
+
+```bash
 python scripts/workshop.py --language en benchmark plan --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations
+```
+
+**Send one smoke request to the bound version · `matrix-local-v2-smoke-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark smoke --label matrix-local-v2-smoke-en --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations --case D01 --model-key primary --confirm-cost
+```
+
+**Check the exact version's smoke result before collecting dev cases.** If it fails, preserve the error and stop here.
+
+**Collect the complete case set · `wf-local-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark collect --label wf-local-candidate-en --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**Compare the saved before-and-after results**
+
+```bash
 python scripts/workshop.py --language en benchmark compare --baseline wf-local-baseline-en --candidate wf-local-candidate-en
+```
+
+**Evaluate saved responses with the policy judge · `wf-local-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-local-candidate-en --reference wf-local-baseline-en --confirm-cost
+```
+
+**Build an HTML report from saved results · `wf-local-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark report --label wf-local-candidate-en
+```
+
+**Query actual traces · `wf-local-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark monitor --label wf-local-candidate-en
 ```
 
@@ -438,6 +641,11 @@ Do not invent a failure. Regressions are only reused when explicitly selected in
 
 ```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-local-baseline-en
+```
+
+**Stop this run's session · `wf-local-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-local-candidate-en
 ```
 
@@ -453,7 +661,17 @@ IQ path:
 
 ```bash
 python scripts/workshop.py --language en benchmark collect --suite policy-lab --label policy-lab-iq-en --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**Evaluate saved responses with the policy judge · `policy-lab-iq-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark evaluate --policy --label policy-lab-iq-en --confirm-cost
+```
+
+**Review the saved diagnostic results · `policy-lab-iq-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark policy-report --label policy-lab-iq-en --calibration policy-calibration-en
 ```
 
@@ -464,7 +682,17 @@ For the explicitly selected local path, use this instead. Do not run both diagno
 
 ```bash
 python scripts/workshop.py --language en benchmark collect --suite policy-lab --label policy-lab-local-en --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**Evaluate saved responses with the policy judge · `policy-lab-local-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark evaluate --policy --label policy-lab-local-en --confirm-cost
+```
+
+**Review the saved diagnostic results · `policy-lab-local-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark policy-report --label policy-lab-local-en --calibration policy-calibration-en
 ```
 
@@ -491,4 +719,4 @@ python scripts/workshop.py --language en benchmark stop-session --label policy-l
 
 ---
 
-[← 11. State and scheduling](11-memory-a2a-routines.md) · [Course home](../../README.md#curriculum) · [13. Lab safety →](13-governance.md)
+[← 11. State and scheduling](11-memory-a2a-routines.md) · [Course home](../../README.md#curriculum) · [13. Lab safety →](13-governance.md) · [Chapter map ↑](#chapter-map)

@@ -10,6 +10,8 @@
 
 **실행 위치:** 편집기에서 원문 읽기 → 터미널에서 생성·호출 → Foundry에서 버전 확인.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -98,7 +100,17 @@ Reasoning은 생성 시 **agent definition**에 저장합니다. 이후 `agent_r
 
 ```bash
 python scripts/workshop.py file-search ask --question "2026년 9월 국내 출장 숙박비 한도와 근거는?" --label current
+```
+
+**파일 검색 질문 실행 · `previous`**
+
+```bash
 python scripts/workshop.py file-search ask --question "2026년 5월 국내 출장 숙박비 한도와 근거는?" --label previous
+```
+
+**파일 검색 질문 실행 · `missing`**
+
+```bash
 python scripts/workshop.py file-search ask --question "도쿄 출장 호텔비 한도는?" --label missing
 ```
 
@@ -132,4 +144,4 @@ python scripts/workshop.py file-search ask --question "도쿄 출장 호텔비 �
 
 ---
 
-[← 02. 모델·지침](02-models-prompts.md) · [전체 과정](../README.ko.md#진행-순서) · [04. 도구 →](04-tools.md)
+[← 02. 모델·지침](02-models-prompts.md) · [전체 과정](../README.ko.md#진행-순서) · [04. 도구 →](04-tools.md) · [진행 지도 ↑](#chapter-map)

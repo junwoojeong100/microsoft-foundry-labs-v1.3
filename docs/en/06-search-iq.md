@@ -10,6 +10,8 @@
 
 > **Restore configuration:** whether Hybrid succeeds or fails, **return to the original index at the end of section 6**. Later exercises use that index.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -53,6 +55,11 @@ Select **Identity → System assigned → On → Save**. This identity is used l
 
 ```bash
 python scripts/selfstudy.py resource --kind search --id "YOUR-SEARCH-ARM-ID" --endpoint "YOUR-SEARCH-URL"
+```
+
+**Read the required-role plan**
+
+```bash
 python scripts/selfstudy.py roles --user-object-id "YOUR-USER-OBJECT-ID"
 ```
 
@@ -72,7 +79,17 @@ Use one language throughout this workspace. An existing Korean Search ownership 
 
 ```bash
 python scripts/workshop.py --language en retrieve --provider local --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-local.json
+```
+
+**Prepare the search index and documents**
+
+```bash
 python scripts/workshop.py --language en seed-search --confirm-create
+```
+
+**Inspect the retrieved source documents**
+
+```bash
 python scripts/workshop.py --language en retrieve --provider search --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-search.json
 ```
 
@@ -86,8 +103,23 @@ For this six-document synthetic corpus, explicitly set the **reranker retrieval 
 
 ```bash
 python scripts/selfstudy.py set WORKSHOP_IQ_RERANKER_THRESHOLD 0
+```
+
+**Prepare the search index and documents**
+
+```bash
 python scripts/workshop.py --language en seed-search --iq --confirm-create
+```
+
+**Inspect the retrieved source documents**
+
+```bash
 python scripts/workshop.py --language en retrieve --provider iq --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-iq.json
+```
+
+**Ask the model using retrieved evidence**
+
+```bash
 python scripts/workshop.py --language en answer --prompt v2 --retrieval iq --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-iq-answer.json
 ```
 
@@ -106,8 +138,23 @@ This GA retrieval path is not the same as the model-based planning and synthesis
 
 ```bash
 python scripts/selfstudy.py model --role embedding
+```
+
+**Set the actual embedding dimensions**
+
+```bash
 python scripts/selfstudy.py set WORKSHOP_EMBEDDING_DIMENSIONS 3072
+```
+
+**Set the embedding API path**
+
+```bash
 python scripts/selfstudy.py set WORKSHOP_EMBEDDING_API account
+```
+
+**Register the OpenAI service-root endpoint**
+
+```bash
 python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "YOUR-SAME-ACCOUNT-OPENAI-ROOT-URL"
 ```
 
@@ -117,8 +164,23 @@ Keep the original index and explicitly name a **new hybrid index**. Replace the 
 
 ```bash
 python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "lab-yourname-nc-0928-policies-hybrid-en"
+```
+
+**Prepare the search index and documents**
+
+```bash
 python scripts/workshop.py --language en seed-search --hybrid --confirm-create --confirm-cost
+```
+
+**Inspect the retrieved source documents**
+
+```bash
 python scripts/workshop.py --language en retrieve --provider hybrid --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-hybrid.json
+```
+
+**Ask the model using retrieved evidence**
+
+```bash
 python scripts/workshop.py --language en answer --prompt v2 --retrieval hybrid --question "What are the domestic lodging limit and advance-approval conditions for September 2026?" --output outputs/learner-notes-en/06-hybrid-answer.json
 ```
 
@@ -149,8 +211,23 @@ Keep **GPT-6 Sol** as the configured answer model. **GPT-5.6 Luna** here is Sear
 
 ```bash
 python scripts/selfstudy.py model --role iq
+```
+
+**Check IQ Chat prerequisites**
+
+```bash
 python scripts/workshop.py --language en iq-chat check
+```
+
+**Create IQ Chat assets**
+
+```bash
 python scripts/workshop.py --language en iq-chat setup --confirm-create
+```
+
+**Send an actual IQ Chat request · `iq-chat-first-en`**
+
+```bash
 python scripts/workshop.py --language en iq-chat ask --label iq-chat-first-en --confirm-cost
 ```
 
@@ -168,4 +245,4 @@ Preserve results and ownership for the original index/IQ base and the hybrid ind
 
 ---
 
-[← 05. Workflows](05-workflows.md) · [Course home](../../README.md#curriculum) · [07. Evaluation →](07-evaluation.md)
+[← 05. Workflows](05-workflows.md) · [Course home](../../README.md#curriculum) · [07. Evaluation →](07-evaluation.md) · [Chapter map ↑](#chapter-map)

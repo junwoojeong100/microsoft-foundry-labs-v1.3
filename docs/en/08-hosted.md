@@ -8,6 +8,8 @@
 
 **Where you work:** terminal for packaging/deployment/requests, editor for manifests, Azure portal for roles. Local requests use terminals A and B.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -27,6 +29,11 @@ Package path, deployment folder, and service name are different values. Use **[s
 
 ```bash
 azd version
+```
+
+**Inspect installed Foundry extensions**
+
+```bash
 azd extension list --installed
 ```
 
@@ -34,7 +41,17 @@ Install `microsoft.foundry` only if missing:
 
 ```bash
 azd extension install microsoft.foundry
+```
+
+**Sign in to azd in the same tenant**
+
+```bash
 azd auth login
+```
+
+**Check that Foundry commands are available**
+
+```bash
 azd ai agent show --help
 ```
 
@@ -106,10 +123,17 @@ Open terminal B in the same root and activate `.venv` there too. The Python read
 
 ```bash
 python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8088/readiness', timeout=10).read().decode())"
+```
+
+**Check:** the status must be `healthy`. Otherwise, inspect terminal A's server log before sending the request below.
+
+**Send the model request after checking readiness**
+
+```bash
 azd ai agent invoke --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --local --port 8088 --new-session --new-conversation --timeout 120 "What is the domestic business-trip lodging limit for September 2026, and what is the source?"
 ```
 
-**Check:** if readiness fails, do not invoke. `healthy` means the server is ready; an actual answer with evidence demonstrates inference. The local server still incurs Azure model charges.
+**Check:** an actual answer with evidence demonstrates inference. The earlier `healthy` status establishes server readiness only. The local server still incurs Azure model charges.
 
 **Stop:** after verification, use `Ctrl+C` in A to stop your server.
 
@@ -119,6 +143,11 @@ Verify subscription, project, service, and code/session costs, then deploy **onl
 
 ```bash
 azd deploy "YOUR-AGENT-SERVICE-NAME" --cwd "YOUR-HOSTED-ABSOLUTE-PATH"
+```
+
+**Read the deployed version and runtime identity**
+
+```bash
 azd ai agent show "YOUR-AGENT-SERVICE-NAME" --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --output json
 ```
 
@@ -146,6 +175,11 @@ If you do not plan to reuse it, stop **only the session you just created**:
 
 ```bash
 azd ai agent sessions list --cwd "YOUR-HOSTED-ABSOLUTE-PATH" --limit 10
+```
+
+**Stop only your session identified in the list**
+
+```bash
 azd ai agent sessions stop "YOUR-ACTUAL-SESSION-ID" --cwd "YOUR-HOSTED-ABSOLUTE-PATH"
 ```
 
@@ -186,4 +220,4 @@ Preserve the Hosted folder, exact version, and session stop/retention status.
 
 ---
 
-[← 07. Evaluation](07-evaluation.md) · [Course home](../../README.md#curriculum) · [09. Operations →](09-operations.md)
+[← 07. Evaluation](07-evaluation.md) · [Course home](../../README.md#curriculum) · [09. Operations →](09-operations.md) · [Chapter map ↑](#chapter-map)

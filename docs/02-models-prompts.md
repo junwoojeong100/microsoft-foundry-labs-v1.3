@@ -8,6 +8,8 @@
 
 **실행 위치:** 기본 실습은 Foundry Playground. 선택 비교는 포털과 터미널.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -85,6 +87,11 @@ python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "https://YOUR-FOUNDRY-DOMA
 
 ```bash
 python scripts/workshop.py --model-deployment "ACTUAL-SOL-DEPLOYMENT" answer --api account-responses --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-sol-account.json
+```
+
+**검색 근거로 모델에 질문**
+
+```bash
 python scripts/workshop.py --model-deployment "ACTUAL-LUNA-DEPLOYMENT" answer --api account-responses --prompt v2 --retrieval local --question "2026년 9월 국내 출장 숙박비 한도와 예약 전 절차는?" --output outputs/learner-notes-ko/02-luna-account.json
 ```
 
@@ -114,4 +121,4 @@ Router는 고정 모델 하나가 아니라 **요청에 따라 모델을 선택�
 
 ---
 
-[← 01. 첫 응답](01-foundry.md) · [전체 과정](../README.ko.md#진행-순서) · [03. 에이전트·파일 →](03-knowledge.md)
+[← 01. 첫 응답](01-foundry.md) · [전체 과정](../README.ko.md#진행-순서) · [03. 에이전트·파일 →](03-knowledge.md) · [진행 지도 ↑](#chapter-map)

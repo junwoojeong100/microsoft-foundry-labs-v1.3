@@ -8,6 +8,8 @@
 
 **실행 위치:** 터미널에서 패키징·배포·호출, 편집기에서 설정 확인, Azure 포털에서 역할 확인. 로컬 호출은 터미널 A·B를 사용합니다.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -27,6 +29,11 @@
 
 ```bash
 azd version
+```
+
+**설치된 Foundry 확장 확인**
+
+```bash
 azd extension list --installed
 ```
 
@@ -34,7 +41,17 @@ azd extension list --installed
 
 ```bash
 azd extension install microsoft.foundry
+```
+
+**같은 테넌트로 azd 로그인**
+
+```bash
 azd auth login
+```
+
+**Foundry 명령 사용 가능 여부 확인**
+
+```bash
 azd ai agent show --help
 ```
 
@@ -106,10 +123,17 @@ python scripts/workshop.py serve
 
 ```bash
 python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8088/readiness', timeout=10).read().decode())"
+```
+
+**확인:** 상태가 `healthy`여야 합니다. 실패하면 아래 요청을 실행하지 말고 터미널 A의 서버 로그부터 확인합니다.
+
+**준비 상태를 확인한 뒤 모델에 요청**
+
+```bash
 azd ai agent invoke --cwd "실제-Hosted-절대경로" --local --port 8088 --new-session --new-conversation --timeout 120 "2026년 9월 국내 출장 숙박비 한도와 근거를 알려주세요."
 ```
 
-**확인:** readiness가 실패하면 invoke를 실행하지 않습니다. 상태 `healthy`는 서버 준비, 실제 답변·근거는 추론 성공입니다. 로컬 서버도 Azure 모델 비용이 있습니다.
+**확인:** 실제 답변·근거가 있어야 추론 성공입니다. 앞의 `healthy`는 서버 준비만 뜻합니다. 로컬 서버도 Azure 모델 비용이 있습니다.
 
 **중지:** 확인 후 A에서 `Ctrl+C`로 내 서버를 종료합니다.
 
@@ -119,6 +143,11 @@ azd ai agent invoke --cwd "실제-Hosted-절대경로" --local --port 8088 --new
 
 ```bash
 azd deploy "실제-agent-서비스-이름" --cwd "실제-Hosted-절대경로"
+```
+
+**배포된 실제 버전과 런타임 ID 조회**
+
+```bash
 azd ai agent show "실제-agent-서비스-이름" --cwd "실제-Hosted-절대경로" --output json
 ```
 
@@ -146,6 +175,11 @@ azd ai agent invoke --cwd "실제-Hosted-절대경로" --version "방금-확인�
 
 ```bash
 azd ai agent sessions list --cwd "실제-Hosted-절대경로" --limit 10
+```
+
+**목록에서 확인한 내 세션만 중지**
+
+```bash
 azd ai agent sessions stop "실제-내-session-id" --cwd "실제-Hosted-절대경로"
 ```
 
@@ -184,4 +218,4 @@ python scripts/workshop.py serve --kind workflow --pattern sequential --retrieva
 
 ---
 
-[← 07. 평가](07-evaluation.md) · [전체 과정](../README.ko.md#진행-순서) · [09. 운영 →](09-operations.md)
+[← 07. 평가](07-evaluation.md) · [전체 과정](../README.ko.md#진행-순서) · [09. 운영 →](09-operations.md) · [진행 지도 ↑](#chapter-map)

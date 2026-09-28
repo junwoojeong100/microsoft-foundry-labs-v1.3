@@ -8,6 +8,8 @@
 
 **Where you work:** Foundry Playground for the core exercise; portal and terminal for optional comparisons.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -85,6 +87,11 @@ Generate direct SDK answers using the same Hanbit Technology policies and **acco
 
 ```bash
 python scripts/workshop.py --model-deployment "ACTUAL-SOL-DEPLOYMENT" --language en answer --api account-responses --prompt v2 --retrieval local --question "What are the domestic business-trip lodging limit and pre-booking procedure for September 2026?" --output outputs/learner-notes-en/02-sol-account.json
+```
+
+**Ask the model using retrieved evidence**
+
+```bash
 python scripts/workshop.py --model-deployment "ACTUAL-LUNA-DEPLOYMENT" --language en answer --api account-responses --prompt v2 --retrieval local --question "What are the domestic business-trip lodging limit and pre-booking procedure for September 2026?" --output outputs/learner-notes-en/02-luna-account.json
 ```
 
@@ -114,4 +121,4 @@ Reuse additional models in later comparisons. Do not delete `workshop-chat` at t
 
 ---
 
-[← 01. First response](01-foundry.md) · [Course home](../../README.md#curriculum) · [03. Agents and files →](03-knowledge.md)
+[← 01. First response](01-foundry.md) · [Course home](../../README.md#curriculum) · [03. Agents and files →](03-knowledge.md) · [Chapter map ↑](#chapter-map)

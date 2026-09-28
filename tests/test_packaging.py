@@ -313,13 +313,69 @@ class GuideReadabilityTests(unittest.TestCase):
                 anchors = re.findall(r"\]\(#([^)\n]+)\)", chapter_map)
                 self.assertGreaterEqual(len(anchors), 4)
                 self.assertTrue({unquote(anchor) for anchor in anchors} <= headings(path))
+                self.assertEqual(introduction.count('<a id="chapter-map"></a>'), 1)
                 self.assertIn("\n---\n", text)
                 footer = text.rsplit("\n---\n", 1)[1]
                 self.assertIn(f"]({home})", footer)
+                self.assertIn("](#chapter-map)", footer)
                 if index:
                     self.assertIn(f"]({paths[index - 1].name})", footer)
                 if index + 1 < len(paths):
                     self.assertIn(f"]({paths[index + 1].name})", footer)
+
+    def test_executable_blocks_contain_one_command_for_safe_copying(self):
+        paths = [path for _, _, _, path in self.chapters()]
+        paths.extend(
+            ROOT / relative
+            for relative in (
+                "README.md", "README.ko.md", "docs/checkpoints.md", "docs/en/checkpoints.md",
+            )
+        )
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+            blocks = re.findall(r"^```(?:bash|powershell)\n(.*?)\n```", text, re.MULTILINE | re.DOTALL)
+            with self.subTest(guide=path.relative_to(ROOT)):
+                self.assertTrue(blocks)
+                for block in blocks:
+                    commands = [line for line in block.splitlines() if line.strip()]
+                    self.assertEqual(
+                        len(commands), 1,
+                        f"Keep independently executed commands in separate copyable blocks: {block}",
+                    )
+
+    def test_troubleshooting_groups_complete_answers_without_wide_tables(self):
+        categories = {
+            "environment", "identity", "models", "retrieval", "tools",
+            "evaluation", "managed-safety", "observability", "state-schedules",
+        }
+        for language, relative in (
+            ("ko", "docs/troubleshooting.md"),
+            ("en", "docs/en/troubleshooting.md"),
+        ):
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            answers = re.findall(
+                r"<details>\s*<summary>(.*?)</summary>\s*(.*?)\s*</details>",
+                text, re.DOTALL,
+            )
+            labels = (
+                ("**먼저 할 일:**", "**먼저 확인:**", "**다음 행동:**")
+                if language == "ko"
+                else ("**First action:**", "**Check first:**", "**Next action:**")
+            )
+            with self.subTest(guide=relative):
+                for anchor in categories:
+                    self.assertEqual(text.count(f'<a id="{anchor}"></a>'), 1)
+                    self.assertIn(f"](#{anchor})", text)
+                self.assertNotRegex(text, r"(?m)^\|")
+                self.assertGreaterEqual(len(answers), 75)
+                self.assertEqual(len(answers), text.count("<details>"))
+                self.assertEqual(len(answers), text.count("</details>"))
+                for summary, body in answers:
+                    self.assertTrue(summary.strip())
+                    self.assertNotIn("`", summary, "Use HTML code tags inside disclosure summaries.")
+                    if labels[0] not in body:
+                        self.assertIn(labels[1], body)
+                        self.assertIn(labels[2], body)
 
     def test_default_steps_and_completion_remain_visible_and_reachable(self):
         for language, _, index, path in self.chapters():
@@ -362,9 +418,12 @@ class GuideReadabilityTests(unittest.TestCase):
                 self.assertGreaterEqual(len(re.findall(r"^- \[ \] ", checklist, re.MULTILINE)), 3)
 
     def test_korean_emphasis_avoids_punctuation_before_particles(self):
-        for language, _, _, path in self.chapters():
-            if language != "ko":
-                continue
+        paths = [path for language, _, _, path in self.chapters() if language == "ko"]
+        paths.extend(
+            ROOT / relative
+            for relative in ("README.ko.md", "docs/checkpoints.md", "docs/troubleshooting.md")
+        )
+        for path in paths:
             fenced = False
             for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
                 if line.startswith("```"):
@@ -372,7 +431,7 @@ class GuideReadabilityTests(unittest.TestCase):
                 elif not fenced:
                     with self.subTest(guide=path.relative_to(ROOT), line=number):
                         self.assertNotRegex(
-                            line, r"[`)\]]\*\*[가-힣]",
+                            line, r"[`)\]↑]\*\*[가-힣]",
                             "Use code/link styling alone, or end bold before punctuation.",
                         )
 

@@ -10,6 +10,8 @@
 
 > **Core instruction comparison:** change only the bundled `v1`/`v2` instructions. **Do not change code, sources, or model between runs, and leave holdout closed.** Section 6's optional model comparison uses separate results.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -41,6 +43,13 @@ Do not open holdout until 15. Do not put expected-answer fields in model inputs.
 
 ```bash
 python scripts/workshop.py --language en collect --split dev --label baseline-en --prompt v1 --retrieval local
+```
+
+First inspect **all six actual responses** in `outputs/baseline-en/responses.jsonl`. Resolve missing responses or authentication/API errors before continuing.
+
+**Run business checks on saved responses · `baseline-en`**
+
+```bash
 python scripts/workshop.py --language en evaluate --label baseline-en
 ```
 
@@ -73,7 +82,19 @@ Compare `prompts/en/v1.txt` and `prompts/en/v2.txt`. These are the two instructi
 
 ```bash
 python scripts/workshop.py --language en collect --split dev --label candidate-en --prompt v2 --retrieval local
+```
+
+Check `outputs/candidate-en/responses.jsonl` for **all six actual responses and any request errors** before continuing.
+
+**Run business checks on saved responses · `candidate-en`**
+
+```bash
 python scripts/workshop.py --language en evaluate --label candidate-en
+```
+
+**Compare the saved before-and-after results**
+
+```bash
 python scripts/workshop.py --language en compare --baseline baseline-en --candidate candidate-en --variable prompt
 ```
 
@@ -120,6 +141,11 @@ Prepare a new input label. `--policy` is a separate mode; it does not rewrite ea
 
 ```bash
 python scripts/workshop.py --language en prepare-extensions --policy --label policy-inputs-en
+```
+
+**Check the judge against expected judgments · `policy-calibration-en`**
+
+```bash
 python scripts/workshop.py --language en calibrate-judge --policy --label policy-calibration-en --confirm-cost --timeout 900
 ```
 
@@ -141,6 +167,11 @@ Evaluate the complete dev responses **collected under new labels** above. Replac
 
 ```bash
 python scripts/workshop.py --language en cloud-evaluate --policy --label baseline-en --confirm-cost --timeout 900
+```
+
+**Evaluate saved responses with the policy judge · `candidate-en`**
+
+```bash
 python scripts/workshop.py --language en cloud-evaluate --policy --label candidate-en --reference baseline-en --confirm-cost --timeout 900
 ```
 
@@ -158,9 +189,29 @@ Run this only if you selected the optional Luna comparison in 02. Verify actual 
 
 ```bash
 python scripts/workshop.py --model-deployment "ACTUAL-SOL-DEPLOYMENT" --language en collect --api account-responses --split dev --label model-sol-en --prompt v2 --retrieval local
+```
+
+**Collect actual model responses · `model-luna-en`**
+
+```bash
 python scripts/workshop.py --model-deployment "ACTUAL-LUNA-DEPLOYMENT" --language en collect --api account-responses --split dev --label model-luna-en --prompt v2 --retrieval local
+```
+
+**Run business checks on saved responses · `model-sol-en`**
+
+```bash
 python scripts/workshop.py --language en evaluate --label model-sol-en
+```
+
+**Run business checks on saved responses · `model-luna-en`**
+
+```bash
 python scripts/workshop.py --language en evaluate --label model-luna-en
+```
+
+**Compare the saved before-and-after results**
+
+```bash
 python scripts/workshop.py --language en compare --baseline model-sol-en --candidate model-luna-en --variable model
 ```
 
@@ -185,4 +236,4 @@ Preserve the candidate and its exact configuration.
 
 ---
 
-[← 06. Retrieval](06-search-iq.md) · [Course home](../../README.md#curriculum) · [08. Deployment →](08-hosted.md)
+[← 06. Retrieval](06-search-iq.md) · [Course home](../../README.md#curriculum) · [08. Deployment →](08-hosted.md) · [Chapter map ↑](#chapter-map)

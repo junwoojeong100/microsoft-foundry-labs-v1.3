@@ -10,6 +10,8 @@
 
 > **먼저 확인:** Azure 자원은 **North Central US**(`northcentralus`)에 준비합니다. 새 자원과 모델 호출에는 비용이 발생할 수 있습니다. 처음에는 **포털 경로만** 따라가고, 접힌 CLI 대안은 생략합니다.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -54,6 +56,11 @@
 
 ```bash
 git clone https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5.git
+```
+
+**복제한 폴더로 이동**
+
+```bash
 cd microsoft-foundry-labs-v1.5
 ```
 
@@ -100,25 +107,73 @@ PC에는 다음이 필요합니다. 회사 단말의 설치 제한은 Azure Owne
 
 ### macOS / Linux
 
+**새 가상 환경 만들기**
+
 ```bash
 python3.13 -m venv .venv
+```
+
+**가상 환경 활성화**
+
+```bash
 source .venv/bin/activate
+```
+
+**Python 3.13 확인**
+
+```bash
 python --version
+```
+
+**`Python 3.13.x`가 보여야 다음으로 갑니다.** 다른 버전이 나오면 지금 설치하지 말고 가상 환경부터 확인합니다.
+
+**필수 패키지 설치**
+
+```bash
 python -m pip install -r requirements.txt
+```
+
+**설치된 패키지 검사**
+
+```bash
 python -m pip check
 ```
 
 ### Windows PowerShell
 
+**새 가상 환경 만들기**
+
 ```powershell
 py -3.13 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python --version
-python -m pip install -r requirements.txt
-python -m pip check
 ```
 
-PowerShell 활성화가 차단되면 시스템 정책을 낮추지 않습니다. 이후 모든 `python ...`을 `.\.venv\Scripts\python.exe ...`로 실행할 수 있습니다.
+**가상 환경 활성화**
+
+활성화가 차단되면 시스템 정책을 낮추지 않습니다. 아래 활성화 대신, 이후 모든 `python ...`을 `.\.venv\Scripts\python.exe ...`로 실행할 수 있습니다.
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+**Python 3.13 확인**
+
+```powershell
+python --version
+```
+
+**`Python 3.13.x`가 보여야 다음으로 갑니다.** 다른 버전이 나오면 지금 설치하지 말고 가상 환경부터 확인합니다.
+
+**필수 패키지 설치**
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+**설치된 패키지 검사**
+
+```powershell
+python -m pip check
+```
 
 ### 모든 OS: 설치 결과 확인
 
@@ -148,7 +203,17 @@ holdout은 개수만 확인하며 문항·정답 파일은 15장까지 열지 �
 
 ```bash
 az login
+```
+
+**접근 가능한 구독 확인**
+
+```bash
 az account list --output table
+```
+
+**같은 테넌트로 azd 로그인**
+
+```bash
 azd auth login
 ```
 
@@ -225,6 +290,11 @@ Azure 포털에서 **프로젝트 리소스 → JSON View**를 열고 `id`도 �
 
 ```bash
 az cognitiveservices account create --subscription "내-구독-ID" --resource-group "rg-mf15-yourname-nc-0928" --name "내-고유-foundry-이름" --custom-domain "내-고유-foundry-이름" --kind AIServices --sku S0 --location northcentralus --assign-identity --allow-project-management true
+```
+
+**생성한 Foundry 계정에 프로젝트 생성**
+
+```bash
 az cognitiveservices account project create --subscription "내-구독-ID" --resource-group "rg-mf15-yourname-nc-0928" --name "내-고유-foundry-이름" --project-name "mf15-nc-project" --location northcentralus
 ```
 
@@ -302,11 +372,21 @@ python scripts/selfstudy.py configure --project-id "실제-프로젝트-ARM-ID" 
 
 ```bash
 python scripts/selfstudy.py set WORKSHOP_REASONING_EFFORT low
+```
+
+**출력 토큰 상한 설정**
+
+```bash
 python scripts/selfstudy.py set WORKSHOP_MAX_OUTPUT_TOKENS 32768
 ```
 
 ```bash
 python scripts/selfstudy.py values
+```
+
+**준비 상태 확인**
+
+```bash
 python scripts/workshop.py doctor --cloud
 ```
 
@@ -324,6 +404,11 @@ Azure 포털에서 본인 사용자 Object ID를 확인하거나 다음 읽기 �
 
 ```bash
 az ad signed-in-user show --query id --output tsv
+```
+
+**필요한 역할의 계획 조회**
+
+```bash
 python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 ```
 
@@ -340,4 +425,4 @@ python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 
 ---
 
-[전체 과정](../README.ko.md#진행-순서) · [다음: 01. 첫 모델 응답 →](01-foundry.md)
+[전체 과정](../README.ko.md#진행-순서) · [다음: 01. 첫 모델 응답 →](01-foundry.md) · [진행 지도 ↑](#chapter-map)

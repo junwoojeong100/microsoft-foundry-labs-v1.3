@@ -10,6 +10,8 @@
 
 > **Important:** responses from before the logging connection are not collected retroactively. **Pause** any recurring evaluation at the planned time, even without a result.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -57,7 +59,17 @@ A connection does not itself grant permission to read logs. Verify your access:
 
 ```bash
 python scripts/selfstudy.py resource --kind insights --id "YOUR-APPLICATION-INSIGHTS-ARM-ID"
+```
+
+**Register the actual resource ID in local settings**
+
+```bash
 python scripts/selfstudy.py resource --kind logs --id "YOUR-LOG-ANALYTICS-ARM-ID"
+```
+
+**Read the required-role plan**
+
+```bash
 python scripts/selfstudy.py roles --user-object-id "YOUR-USER-OBJECT-ID"
 ```
 
@@ -154,4 +166,4 @@ Preserve the evidence and review logging/retention costs.
 
 ---
 
-[← 08. Deployment](08-hosted.md) · [Course home](../../README.md#curriculum) · [10. Shared tools →](10-toolbox-skills.md)
+[← 08. Deployment](08-hosted.md) · [Course home](../../README.md#curriculum) · [10. Shared tools →](10-toolbox-skills.md) · [Chapter map ↑](#chapter-map)

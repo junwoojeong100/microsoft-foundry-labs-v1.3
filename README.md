@@ -32,8 +32,11 @@ Luna and Router comparisons in 02 are optional. Chapter 14 requires GitHub repos
 |---|---|
 | **Where you work** | Check whether the action belongs in the portal, terminal, or editor. |
 | **Chapter map** | Select a step to jump to its section. The right column identifies the result to inspect. |
+| **Command block** | Copy and run one block's command, inspect its result, then move to the next block. |
 | **Check** / **Completion check** | Compare against real output and files. Finishing a command is not the same as passing quality checks. |
 | **Optional** / collapsed notes | Expand only when the condition applies; do not run every alternative in addition to the default. |
+
+Lost your place in a long chapter? Use **Chapter map ↑** at the bottom. Copy a long command in full even if it extends beyond the visible box; do not insert line breaks yourself. See [commands and placeholders](docs/en/checkpoints.md#read-commands-and-placeholders).
 
 ## What will you build?
 
@@ -45,7 +48,15 @@ The intended answer explains the **KRW 150,000 limit, team-lead approval require
 
 Foundry connects **models, agents, knowledge, tools, evaluation, and operations** in one Azure platform. You will explore that lifecycle through the same synthetic business case.
 
-Start directly with **GPT-6 Sol**. **GPT-6 Luna is an optional comparison**, and **GPT-5.5 is the judge**, using a different base model and a separate target/judge deployment. Fresh deployments use `workshop-chat`, `workshop-compare`, and `workshop-judge` respectively. Existing aliases may differ: never replace the model behind an existing name or delete it to match these examples. See [Model roles and existing aliases](docs/en/model-selection.md).
+Keep the model **roles separate**. Prepare only the answer model at first.
+
+| Role | Base model → fresh deployment alias |
+|---|---|
+| Primary answers · from 00 | **GPT-6 Sol** → `workshop-chat` |
+| Optional comparison · only if chosen in 02 | GPT-6 Luna → `workshop-compare` |
+| Answer grading · 07 | GPT-5.5 → `workshop-judge` |
+
+The judge uses a **different base model and a separate deployment** from the target. Existing aliases may differ: never replace the model behind an existing name or delete it to match these examples. See [Model roles and existing aliases](docs/en/model-selection.md).
 
 ![Workshop architecture: models, knowledge, tools, evaluation, and operations](docs/assets/architecture.svg)
 
@@ -97,6 +108,11 @@ Run all commands from **the folder containing this README**. **These are resume 
 
 ```bash
 python scripts/workshop.py --language en doctor
+```
+
+After checking local readiness, read the saved connection settings.
+
+```bash
 python scripts/selfstudy.py values
 ```
 
@@ -113,7 +129,11 @@ Keep `.venv/` for Python, `.env` for private Azure configuration, and `outputs/`
 
 ## Validation status and limits
 
-**The September 28, 2026 validation separates execution from final quality acceptance.** New SDK and Hosted dev results passed 6/6 each, but managed Task Adherence returned six rows/five pass/one fail with inconsistent severity/verdict flags. **Final acceptance is held and no new holdout was run.** Optimizer returned no new full candidate, so no improvement or promotion is claimed.
+**Final acceptance is held in the September 28, 2026 validation; no new holdout was run.** Execution and final quality acceptance are separate.
+
+- **SDK and Hosted dev:** 6/6 each.
+- **Managed Task Adherence:** six rows, five pass, one fail; severity and verdict flags disagree.
+- **Optimizer:** no new full candidate, so no improvement or promotion is claimed.
 
 The [live validation report](docs/en/validation-report.md) is reference evidence, not your completion record. Chapter 13's managed AI red teaming cannot be replaced by the custom eight-case diagnostic. The report and relevant chapters retain regional-document discrepancies and historical run details.
 

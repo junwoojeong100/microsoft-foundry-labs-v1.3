@@ -12,6 +12,8 @@ Even without a successful remote deployment in 08, **successful folder preparati
 
 > **Keep versions separate:** Skill, Toolbox, and Hosted agent versions are different values. Use the version returned by the corresponding command.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -35,6 +37,11 @@ Check that the **original index from 06** is selected:
 
 ```bash
 python scripts/selfstudy.py status
+```
+
+**Read the required-role plan**
+
+```bash
 python scripts/selfstudy.py roles --user-object-id "YOUR-USER-OBJECT-ID"
 ```
 
@@ -48,10 +55,15 @@ Use the actual Search/project endpoints and your unique connection name. For `--
 
 ```bash
 azd ai connection create "YOUR-PREFIX-search-en" --kind cognitive-search --target "YOUR-SEARCH-ENDPOINT" --auth-type project-managed-identity --audience https://search.azure.com --project-endpoint "YOUR-PROJECT-ENDPOINT" --cwd "YOUR-08-HOSTED-ABSOLUTE-PATH"
-python scripts/selfstudy.py set TOOLBOX_SEARCH_CONNECTION_NAME "YOUR-PREFIX-search-en"
 ```
 
 **Check:** in Foundry **Project details → Connected resources**, read back the connection, target, and authentication type. Do not use `--force`, API keys, or another project's connection.
+
+**Save the verified connection name**
+
+```bash
+python scripts/selfstudy.py set TOOLBOX_SEARCH_CONNECTION_NAME "YOUR-PREFIX-search-en"
+```
 
 The current SDK can report project-managed-identity authentication as **`ProjectManagedIdentity`**. Do not reject a valid connection merely because earlier code expected only legacy `AAD`. Keep the CLI's `--auth-type project-managed-identity`; do not bypass an enum mismatch with an API key or another identity.
 
@@ -59,6 +71,13 @@ The current SDK can report project-managed-identity authentication as **`Project
 
 ```bash
 python scripts/workshop.py --language en toolbox plan
+```
+
+Verify that the planned project, Search connection, and index belong to your lab before creating anything.
+
+**Create the planned Toolbox**
+
+```bash
 python scripts/workshop.py --language en toolbox create --confirm-create
 ```
 
@@ -66,7 +85,19 @@ Record the actual `selected_version` and substitute it below:
 
 ```bash
 python scripts/workshop.py --language en toolbox probe --version "ACTUAL-VERSION" --label toolbox-list-en
+```
+
+**Query Search through Toolbox · `toolbox-query-en`**
+
+```bash
 python scripts/workshop.py --language en toolbox query --version "ACTUAL-VERSION" --label toolbox-query-en --confirm-cost
+```
+
+**Continue only after retrieval succeeds.** A tool listing or a failed query is not enough to run `ask` below.
+
+**Call the model using Toolbox · `toolbox-answer-en`**
+
+```bash
 python scripts/workshop.py --language en toolbox ask --version "ACTUAL-VERSION" --label toolbox-answer-en --confirm-cost
 ```
 
@@ -86,7 +117,17 @@ Check feature availability/Preview status and CLI support:
 
 ```bash
 azd ai skill create --help
+```
+
+**Check Skill download support**
+
+```bash
 azd ai skill download --help
+```
+
+**Review the Toolbox creation plan**
+
+```bash
 python scripts/workshop.py --language en toolbox plan --discovery --pin-policy
 ```
 
@@ -94,6 +135,11 @@ Once support is confirmed:
 
 ```bash
 python scripts/workshop.py --language en toolbox add-version --discovery --pin-policy --confirm-create
+```
+
+**Inspect tools in the specified version · `discovery-list-en`**
+
+```bash
 python scripts/workshop.py --language en toolbox probe --version "NEW-SELECTED-VERSION" --label discovery-list-en
 ```
 
@@ -113,6 +159,11 @@ The generated `skill_name` is `<prefix>-policy-review-en`. Use the exact value f
 
 ```bash
 azd ai skill create "SKILL-NAME-FROM-MANIFEST" --file outputs/extensions-en/policy-review --project-endpoint "YOUR-PROJECT-ENDPOINT"
+```
+
+**Read the actual Skill version**
+
+```bash
 azd ai skill show "SKILL-NAME-FROM-MANIFEST" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 ```
 
@@ -122,6 +173,11 @@ Specify the returned `default_version` and download into a **new readback folder
 
 ```bash
 azd ai skill download "SKILL-NAME-FROM-MANIFEST" --version "ACTUAL-SKILL-VERSION" --output-dir .selfstudy/skill-readback-en --project-endpoint "YOUR-PROJECT-ENDPOINT"
+```
+
+**Compare the download with the original**
+
+```bash
 python scripts/selfstudy.py compare-files outputs/extensions-en/policy-review/SKILL.md .selfstudy/skill-readback-en/SKILL.md
 ```
 
@@ -144,6 +200,11 @@ Verify the new manifest's `skill_name` matches the existing owned Skill and the 
 
 ```bash
 azd ai skill update "EXISTING-OWNED-SKILL-NAME" --file outputs/skill-update-inputs-en/policy-review --project-endpoint "YOUR-PROJECT-ENDPOINT"
+```
+
+**Read the actual Skill version**
+
+```bash
 azd ai skill show "EXISTING-OWNED-SKILL-NAME" --project-endpoint "YOUR-PROJECT-ENDPOINT" --output json
 ```
 
@@ -151,6 +212,11 @@ Keep the previous version and use the actual newly returned version rather than 
 
 ```bash
 azd ai skill download "EXISTING-OWNED-SKILL-NAME" --version "RETURNED-NEW-SKILL-VERSION" --output-dir .selfstudy/skill-readback-v2-en --project-endpoint "YOUR-PROJECT-ENDPOINT"
+```
+
+**Compare the download with the original**
+
+```bash
 python scripts/selfstudy.py compare-files outputs/skill-update-inputs-en/policy-review/SKILL.md .selfstudy/skill-readback-v2-en/SKILL.md
 ```
 
@@ -162,8 +228,23 @@ Never overwrite an existing input label or readback directory. Explicitly bind t
 
 ```bash
 python scripts/workshop.py --language en toolbox plan --discovery --pin-policy --skill-version "ACTUAL-SKILL-VERSION"
+```
+
+**Create a Toolbox version from reviewed settings**
+
+```bash
 python scripts/workshop.py --language en toolbox add-version --discovery --pin-policy --skill-version "ACTUAL-SKILL-VERSION" --confirm-create
+```
+
+**Inspect tools in the specified version · `skilled-list-en`**
+
+```bash
 python scripts/workshop.py --language en toolbox probe --version "NEW-TOOLBOX-VERSION" --label skilled-list-en
+```
+
+**Call the model using Toolbox · `skilled-answer-en`**
+
+```bash
 python scripts/workshop.py --language en toolbox ask --version "NEW-TOOLBOX-VERSION" --label skilled-answer-en --with-skill --confirm-cost
 ```
 
@@ -193,6 +274,11 @@ Start with a verified **standard Toolbox version**. If selecting a Skill-enabled
 
 ```bash
 python scripts/workshop.py --script package-toolbox --language en --version "VERIFIED-TOOLBOX-VERSION"
+```
+
+**Prepare a deployment folder from the returned package**
+
+```bash
 python scripts/selfstudy.py prepare-hosted --language en --kind toolbox --package "ACTUAL-RETURNED-PACKAGE-PATH" --name toolbox-hosted-en
 ```
 
@@ -212,6 +298,13 @@ Open terminal B in the same root and activate `.venv` there too:
 
 ```bash
 python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8088/readiness', timeout=10).read().decode())"
+```
+
+**Check:** if the status is not `healthy`, inspect terminal A's server log before sending a request.
+
+**Send the model request after checking readiness**
+
+```bash
 azd ai agent invoke --cwd "YOUR-TOOLBOX-HOSTED-ABSOLUTE-PATH" --local --port 8088 --new-session --new-conversation --timeout 210 "What advance approval is required for a KRW 170000 hotel on a domestic business trip in September 2026?"
 ```
 
@@ -223,6 +316,11 @@ Decide separately whether to deploy remotely:
 
 ```bash
 azd deploy "YOUR-PREFIX-toolbox-hosted-en" --cwd "YOUR-TOOLBOX-HOSTED-ABSOLUTE-PATH"
+```
+
+**Read the deployed version and runtime identity**
+
+```bash
 azd ai agent show "YOUR-PREFIX-toolbox-hosted-en" --cwd "YOUR-TOOLBOX-HOSTED-ABSOLUTE-PATH" --output json
 ```
 
@@ -269,4 +367,4 @@ Retain assets and ledgers for later exercises. Remove them in reference order on
 
 ---
 
-[← 09. Operations](09-operations.md) · [Course home](../../README.md#curriculum) · [11. State and scheduling →](11-memory-a2a-routines.md)
+[← 09. Operations](09-operations.md) · [Course home](../../README.md#curriculum) · [11. State and scheduling →](11-memory-a2a-routines.md) · [Chapter map ↑](#chapter-map)

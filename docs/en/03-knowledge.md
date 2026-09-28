@@ -10,6 +10,8 @@
 
 **Where you work:** read sources in your editor, create/invoke in the terminal, and inspect versions in Foundry.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -100,7 +102,17 @@ Send each question independently to the exact saved agent version:
 
 ```bash
 python scripts/workshop.py --language en file-search ask --question "What is the domestic business-trip lodging limit for September 2026, and what is the source?" --label current-en
+```
+
+**Ask a File Search question · `previous-en`**
+
+```bash
 python scripts/workshop.py --language en file-search ask --question "What is the domestic business-trip lodging limit for May 2026, and what is the source?" --label previous-en
+```
+
+**Ask a File Search question · `missing-en`**
+
+```bash
 python scripts/workshop.py --language en file-search ask --question "What is the hotel limit for a business trip to Tokyo?" --label missing-en
 ```
 
@@ -134,4 +146,4 @@ If indexing is still in progress after a timeout, resume with the same creation 
 
 ---
 
-[← 02. Models and prompts](02-models-prompts.md) · [Course home](../../README.md#curriculum) · [04. Tools →](04-tools.md)
+[← 02. Models and prompts](02-models-prompts.md) · [Course home](../../README.md#curriculum) · [04. Tools →](04-tools.md) · [Chapter map ↑](#chapter-map)

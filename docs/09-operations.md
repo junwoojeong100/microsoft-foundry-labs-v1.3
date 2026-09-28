@@ -10,6 +10,8 @@
 
 > **중요:** 로그 연결 전의 응답은 소급 수집되지 않습니다. 반복 평가를 켰다면 결과 유무와 관계없이 계획한 시각에 **Pause**합니다.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -57,7 +59,17 @@
 
 ```bash
 python scripts/selfstudy.py resource --kind insights --id "실제-Application-Insights-ARM-ID"
+```
+
+**실제 자원 ID를 로컬 설정에 등록**
+
+```bash
 python scripts/selfstudy.py resource --kind logs --id "실제-Log-Analytics-ARM-ID"
+```
+
+**필요한 역할의 계획 조회**
+
+```bash
 python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 ```
 
@@ -154,4 +166,4 @@ CLI·포털·MCP가 서로 다른 로그인 주체를 사용할 수 있습니다
 
 ---
 
-[← 08. 배포](08-hosted.md) · [전체 과정](../README.ko.md#진행-순서) · [10. 공유 도구 →](10-toolbox-skills.md)
+[← 08. 배포](08-hosted.md) · [전체 과정](../README.ko.md#진행-순서) · [10. 공유 도구 →](10-toolbox-skills.md) · [진행 지도 ↑](#chapter-map)

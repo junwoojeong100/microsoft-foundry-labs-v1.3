@@ -20,6 +20,8 @@
 
 **참고 검증은 최종 인수 보류 상태입니다.** 새 관리형 Task Adherence의 6행·5 pass/1 fail에 severity/flag 불일치가 있어 새 holdout을 열지 않았습니다. [보고서의 결과·정리 이력](validation-report.md)은 본인의 완료나 삭제 지시가 아닙니다. **실습 실행과 최종 품질 인수는 별개**입니다.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -77,8 +79,23 @@ holdout 실행 전 다음을 확인합니다. **하나라도 충족하지 못하
 
 ```bash
 python scripts/workshop.py benchmark collect --split holdout --label wf-final --candidate wf-candidate --unlock-holdout --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**저장된 응답을 policy judge로 평가 · `wf-final`**
+
+```bash
 python scripts/workshop.py benchmark evaluate --policy --label wf-final --reference wf-baseline --confirm-cost
+```
+
+**실제 trace 조회 · `wf-final`**
+
+```bash
 python scripts/workshop.py benchmark monitor --label wf-final
+```
+
+**저장된 증거로 최종 기준 확인**
+
+```bash
 python scripts/workshop.py benchmark verify --policy --baseline wf-baseline --candidate wf-candidate --holdout wf-final --require-native --require-native-pass --require-traces --calibration policy-calibration-ko
 ```
 
@@ -93,8 +110,23 @@ python scripts/workshop.py benchmark verify --policy --baseline wf-baseline --ca
 
 ```bash
 python scripts/workshop.py collect --split holdout --label final-holdout --prompt v2 --retrieval local --candidate candidate --unlock-holdout
+```
+
+**저장된 응답의 업무 검사 · `final-holdout`**
+
+```bash
 python scripts/workshop.py evaluate --label final-holdout
+```
+
+**저장된 응답을 policy judge로 평가 · `final-holdout`**
+
+```bash
 python scripts/workshop.py cloud-evaluate --policy --label final-holdout --reference baseline --confirm-cost --timeout 900
+```
+
+**최종 업무 검사 확인**
+
+```bash
 python scripts/workshop.py accept --candidate candidate --holdout final-holdout
 ```
 
@@ -118,7 +150,17 @@ python scripts/workshop.py accept --candidate candidate --holdout final-holdout
 
 ```bash
 python scripts/workshop.py benchmark stop-session --label wf-baseline
+```
+
+**해당 실행의 세션 중지 · `wf-candidate`**
+
+```bash
 python scripts/workshop.py benchmark stop-session --label wf-candidate
+```
+
+**holdout을 실제로 실행한 경우에만 · `wf-final` 세션 중지**
+
+```bash
 python scripts/workshop.py benchmark stop-session --label wf-final
 ```
 
@@ -130,10 +172,19 @@ python scripts/workshop.py benchmark stop-session --label wf-final
 
 ## 5. 소유 자산 목록 대조
 
-00의 `configure`를 마친 경우에만 첫 명령을 실행합니다. 아직 설정하지 않았다면 첫 줄은 생략하고 Azure 포털의 실제 실습 그룹과 생성한 자원을 확인합니다. Python 설치도 마치지 못했다면 두 명령 모두 생략하고 포털에서 확인합니다. 두 번째 명령은 로컬 기록 확인이며 **Azure 전체 자산을 자동 탐색하지 않습니다**.
+**저장한 설정 확인 — 00의 `configure`를 마쳤을 때만**
+
+아직 설정하지 않았다면 아래 상자를 건너뛰고 Azure 포털에서 실제 실습 그룹과 생성한 자원을 확인합니다.
 
 ```bash
 python scripts/selfstudy.py status
+```
+
+**소유 자산의 정리 계획 조회**
+
+Python 설치를 마쳤다면 아래 명령으로 로컬 기록을 읽습니다. **Azure 전체 자산을 자동 탐색하지는 않습니다.** Python 설치 전이라면 이 명령도 생략하고 포털에서 확인합니다.
+
+```bash
 python scripts/workshop.py cleanup-plan
 ```
 
@@ -199,4 +250,4 @@ Azure의 soft delete/보관 정책은 API 삭제와 즉시 물리 삭제를 다�
 
 ---
 
-**과정 종료.** [← 14. CI/CD](14-additional-permissions.md) · [전체 과정](../README.ko.md#진행-순서) · [저장한 결과 찾기](checkpoints.md#설정과-결과를-다시-찾는-곳) · [실습 복습](next-steps.md)
+**과정 종료.** [← 14. CI/CD](14-additional-permissions.md) · [전체 과정](../README.ko.md#진행-순서) · [저장한 결과 찾기](checkpoints.md#설정과-결과를-다시-찾는-곳) · [실습 복습](next-steps.md) · [진행 지도 ↑](#chapter-map)

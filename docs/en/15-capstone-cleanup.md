@@ -20,6 +20,8 @@
 
 **Reference validation still holds final acceptance.** The new managed Task Adherence result has six rows/five pass/one fail with inconsistent severity/flags, so no new holdout was opened. The [report's results and lifecycle history](validation-report.md) are not your completion record or deletion instructions. **Execution and final quality acceptance are separate.**
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -79,8 +81,23 @@ Only after **all section 1 prerequisites pass**, run the block matching your **c
 
 ```bash
 python scripts/workshop.py --language en benchmark collect --split holdout --label wf-final-en --candidate wf-candidate-en --unlock-holdout --kind workflow --pattern sequential --retrieval iq --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**Evaluate saved responses with the policy judge · `wf-final-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-final-en --reference wf-baseline-en --confirm-cost
+```
+
+**Query actual traces · `wf-final-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark monitor --label wf-final-en
+```
+
+**Check final gates against saved evidence**
+
+```bash
 python scripts/workshop.py --language en benchmark verify --policy --baseline wf-baseline-en --candidate wf-candidate-en --holdout wf-final-en --require-native --require-native-pass --require-traces --calibration policy-calibration-en
 ```
 
@@ -93,8 +110,23 @@ For 12's separately named `matrix-local-en`, keep the frozen local profile throu
 
 ```bash
 python scripts/workshop.py --language en benchmark collect --split holdout --label wf-local-final-en --candidate wf-local-candidate-en --unlock-holdout --kind workflow --pattern sequential --retrieval local --prompt v2 --api account-chat --protocol invocations --concurrency 1 --confirm-cost
+```
+
+**Evaluate saved responses with the policy judge · `wf-local-final-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark evaluate --policy --label wf-local-final-en --reference wf-local-baseline-en --confirm-cost
+```
+
+**Query actual traces · `wf-local-final-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark monitor --label wf-local-final-en
+```
+
+**Check final gates against saved evidence**
+
+```bash
 python scripts/workshop.py --language en benchmark verify --policy --baseline wf-local-baseline-en --candidate wf-local-candidate-en --holdout wf-local-final-en --require-native --require-native-pass --require-traces --calibration policy-calibration-en
 ```
 
@@ -115,8 +147,23 @@ For either Hosted path, inspect every row and error after each step. This guide'
 
 ```bash
 python scripts/workshop.py --language en collect --split holdout --label final-holdout-en --prompt v2 --retrieval local --candidate candidate-en --unlock-holdout
+```
+
+**Run business checks on saved responses · `final-holdout-en`**
+
+```bash
 python scripts/workshop.py --language en evaluate --label final-holdout-en
+```
+
+**Evaluate saved responses with the policy judge · `final-holdout-en`**
+
+```bash
 python scripts/workshop.py --language en cloud-evaluate --policy --label final-holdout-en --reference baseline-en --confirm-cost --timeout 900
+```
+
+**Check final business acceptance**
+
+```bash
 python scripts/workshop.py --language en accept --candidate candidate-en --holdout final-holdout-en
 ```
 
@@ -140,7 +187,17 @@ Learning completion and passing the small lab quality gate are different states.
 
 ```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-baseline-en
+```
+
+**Stop this run's session · `wf-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-candidate-en
+```
+
+**Only if holdout actually ran: stop `wf-final-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-final-en
 ```
 
@@ -148,7 +205,17 @@ For the separately selected local-retrieval path instead:
 
 ```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-local-baseline-en
+```
+
+**Stop this run's session · `wf-local-candidate-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-local-candidate-en
+```
+
+**Only if holdout actually ran: stop `wf-local-final-en`**
+
+```bash
 python scripts/workshop.py --language en benchmark stop-session --label wf-local-final-en
 ```
 
@@ -160,10 +227,19 @@ Do not invent missing experiment labels. Identify separate smoke/manual sessions
 
 ## 5. Reconcile your owned assets
 
-Run the first command only after completing 00's `configure`. Otherwise, skip it and inspect the actual lab group and created resources in Azure. If Python setup is also incomplete, skip both commands and inspect the portal instead. The second command reads local records; **it does not automatically discover all Azure assets**.
+**Read saved settings — only after completing 00's `configure`**
+
+If configuration is incomplete, skip the block below and inspect the actual lab group and created resources in the Azure portal.
 
 ```bash
 python scripts/selfstudy.py status
+```
+
+**Read the owned-resource cleanup plan**
+
+If Python setup is complete, use the command below to read local records. **It does not automatically discover all Azure assets.** If Python setup is incomplete, skip this command too and inspect the portal.
+
+```bash
 python scripts/workshop.py --language en cleanup-plan
 ```
 
@@ -229,4 +305,4 @@ If you created resources outside this folder's workflow, include their inventory
 
 ---
 
-**End of course.** [← 14. CI/CD](14-additional-permissions.md) · [Course home](../../README.md#curriculum) · [Find saved results](checkpoints.md#find-saved-configuration-and-results) · [Review the lab](next-steps.md)
+**End of course.** [← 14. CI/CD](14-additional-permissions.md) · [Course home](../../README.md#curriculum) · [Find saved results](checkpoints.md#find-saved-configuration-and-results) · [Review the lab](next-steps.md) · [Chapter map ↑](#chapter-map)

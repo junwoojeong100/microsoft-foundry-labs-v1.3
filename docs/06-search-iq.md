@@ -10,6 +10,8 @@
 
 > **설정 복귀:** Hybrid 실험이 성공하거나 실패해도 **6절 마지막에 원래 index로 돌아옵니다.** 뒤의 실습은 원래 index를 사용합니다.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -49,6 +51,11 @@ Search의 **Settings → Keys → API access control**을 **Role-based access co
 
 ```bash
 python scripts/selfstudy.py resource --kind search --id "실제-Search-ARM-ID" --endpoint "실제-Search-URL"
+```
+
+**필요한 역할의 계획 조회**
+
+```bash
 python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 ```
 
@@ -66,7 +73,17 @@ python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 
 ```bash
 python scripts/workshop.py retrieve --provider local --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-local.json
+```
+
+**검색 index와 문서 준비**
+
+```bash
 python scripts/workshop.py seed-search --confirm-create
+```
+
+**실제 반환 원문 확인**
+
+```bash
 python scripts/workshop.py retrieve --provider search --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-search.json
 ```
 
@@ -80,8 +97,23 @@ python scripts/workshop.py retrieve --provider search --question "2026년 9월 �
 
 ```bash
 python scripts/selfstudy.py set WORKSHOP_IQ_RERANKER_THRESHOLD 0
+```
+
+**검색 index와 문서 준비**
+
+```bash
 python scripts/workshop.py seed-search --iq --confirm-create
+```
+
+**실제 반환 원문 확인**
+
+```bash
 python scripts/workshop.py retrieve --provider iq --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-iq.json
+```
+
+**검색 근거로 모델에 질문**
+
+```bash
 python scripts/workshop.py answer --prompt v2 --retrieval iq --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-iq-answer.json
 ```
 
@@ -100,8 +132,23 @@ python scripts/workshop.py answer --prompt v2 --retrieval iq --question "2026년
 
 ```bash
 python scripts/selfstudy.py model --role embedding
+```
+
+**실제 embedding 차원 설정**
+
+```bash
 python scripts/selfstudy.py set WORKSHOP_EMBEDDING_DIMENSIONS 3072
+```
+
+**embedding API 경로 설정**
+
+```bash
 python scripts/selfstudy.py set WORKSHOP_EMBEDDING_API account
+```
+
+**OpenAI 루트 Endpoint 등록**
+
+```bash
 python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "실제-같은-계정의-OpenAI-루트-URL"
 ```
 
@@ -111,8 +158,23 @@ python scripts/selfstudy.py set AZURE_OPENAI_ENDPOINT "실제-같은-계정의-O
 
 ```bash
 python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "lab-yourname-nc-0928-policies-hybrid"
+```
+
+**검색 index와 문서 준비**
+
+```bash
 python scripts/workshop.py seed-search --hybrid --confirm-create --confirm-cost
+```
+
+**실제 반환 원문 확인**
+
+```bash
 python scripts/workshop.py retrieve --provider hybrid --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-hybrid.json
+```
+
+**검색 근거로 모델에 질문**
+
+```bash
 python scripts/workshop.py answer --prompt v2 --retrieval hybrid --question "2026년 9월 국내 출장 숙박 한도와 사전 승인 조건은?" --output outputs/learner-notes-ko/06-hybrid-answer.json
 ```
 
@@ -143,8 +205,23 @@ python scripts/selfstudy.py set AZURE_SEARCH_INDEX_NAME "06-search.json의-confi
 
 ```bash
 python scripts/selfstudy.py model --role iq
+```
+
+**IQ Chat 선행 조건 확인**
+
+```bash
 python scripts/workshop.py iq-chat check
+```
+
+**IQ Chat 자산 생성**
+
+```bash
 python scripts/workshop.py iq-chat setup --confirm-create
+```
+
+**IQ Chat에 실제 질문 · `iq-chat-first`**
+
+```bash
 python scripts/workshop.py iq-chat ask --label iq-chat-first --confirm-cost
 ```
 
@@ -162,4 +239,4 @@ python scripts/workshop.py iq-chat ask --label iq-chat-first --confirm-cost
 
 ---
 
-[← 05. 워크플로](05-workflows.md) · [전체 과정](../README.ko.md#진행-순서) · [07. 평가 →](07-evaluation.md)
+[← 05. 워크플로](05-workflows.md) · [전체 과정](../README.ko.md#진행-순서) · [07. 평가 →](07-evaluation.md) · [진행 지도 ↑](#chapter-map)

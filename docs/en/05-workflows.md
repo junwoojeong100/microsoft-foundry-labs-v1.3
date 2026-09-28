@@ -8,6 +8,8 @@
 
 **Where you work:** terminal in the workshop folder; section 5 uses two terminals, A and B.
 
+<a id="chapter-map"></a>
+
 **Chapter map**
 
 | Step | Result to check |
@@ -83,6 +85,11 @@ After A shows the server's startup log, open a **new terminal B** in the same fo
 
 ```bash
 python scripts/workshop.py --script resilience --language en --run-id first-pass-en start
+```
+
+**Inspect the same request's state**
+
+```bash
 python scripts/workshop.py --script resilience --language en --run-id first-pass-en status
 ```
 
@@ -94,7 +101,17 @@ Continue **only after recognizing that this is a simulated decision**:
 
 ```bash
 python scripts/workshop.py --script resilience --language en --run-id first-pass-en decide --decision approve --confirm-simulated-decision
+```
+
+**Wait for the same request to finish**
+
+```bash
 python scripts/workshop.py --script resilience --language en --run-id first-pass-en wait --timeout-seconds 30
+```
+
+**Inspect the same request's state**
+
+```bash
 python scripts/workshop.py --script resilience --language en --run-id first-pass-en status
 ```
 
@@ -114,4 +131,4 @@ Continue restart, rejection, and steering exercises with [the same recovery exam
 
 ---
 
-[← 04. Tools](04-tools.md) · [Course home](../../README.md#curriculum) · [06. Retrieval →](06-search-iq.md)
+[← 04. Tools](04-tools.md) · [Course home](../../README.md#curriculum) · [06. Retrieval →](06-search-iq.md) · [Chapter map ↑](#chapter-map)

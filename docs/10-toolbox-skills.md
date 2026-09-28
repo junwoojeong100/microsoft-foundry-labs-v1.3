@@ -12,6 +12,8 @@
 
 > **버전 구분:** Skill 버전, Toolbox 버전, Hosted agent 버전은 서로 다른 값입니다. 매번 해당 명령이 반환한 버전을 사용합니다.
 
+<a id="chapter-map"></a>
+
 **진행 지도**
 
 | 단계 | 확인할 결과 |
@@ -33,6 +35,11 @@
 
 ```bash
 python scripts/selfstudy.py status
+```
+
+**필요한 역할의 계획 조회**
+
+```bash
 python scripts/selfstudy.py roles --user-object-id "내-사용자-Object-ID"
 ```
 
@@ -46,10 +53,15 @@ Search Service Contributor는 읽기 전용 역할이 아닙니다. 도구가 �
 
 ```bash
 azd ai connection create "내-prefix-search" --kind cognitive-search --target "실제-Search-Endpoint" --auth-type project-managed-identity --audience https://search.azure.com --project-endpoint "실제-프로젝트-Endpoint" --cwd "실제-08-Hosted-절대경로"
-python scripts/selfstudy.py set TOOLBOX_SEARCH_CONNECTION_NAME "내-prefix-search"
 ```
 
 **확인:** Foundry **Project details → Connected resources**에서 같은 연결, 대상, 인증 방식을 읽어 확인합니다. `--force`, API key, 다른 프로젝트 연결을 사용하지 않습니다.
+
+**확인한 연결 이름 저장**
+
+```bash
+python scripts/selfstudy.py set TOOLBOX_SEARCH_CONNECTION_NAME "내-prefix-search"
+```
 
 현재 SDK의 프로젝트 관리 ID 인증 enum은 `ProjectManagedIdentity`로 반환될 수 있습니다. 이전 표현인 `AAD`만 기대해 정상 연결을 거부하지 않습니다. CLI의 `--auth-type project-managed-identity`는 그대로 사용하며, enum 차이를 API key나 다른 ID로 우회하지 않습니다.
 
@@ -57,6 +69,13 @@ python scripts/selfstudy.py set TOOLBOX_SEARCH_CONNECTION_NAME "내-prefix-searc
 
 ```bash
 python scripts/workshop.py toolbox plan
+```
+
+계획의 프로젝트·Search 연결·index가 본인 실습 대상인지 확인한 뒤 생성합니다.
+
+**계획한 Toolbox 생성**
+
+```bash
 python scripts/workshop.py toolbox create --confirm-create
 ```
 
@@ -64,7 +83,19 @@ python scripts/workshop.py toolbox create --confirm-create
 
 ```bash
 python scripts/workshop.py toolbox probe --version "실제-버전" --label toolbox-list
+```
+
+**Toolbox에서 실제 Search 조회 · `toolbox-query`**
+
+```bash
 python scripts/workshop.py toolbox query --version "실제-버전" --label toolbox-query --confirm-cost
+```
+
+**조회 성공을 확인한 뒤** 모델 요청으로 갑니다. 목록만 보이거나 query가 실패했다면 아래 `ask`를 실행하지 않습니다.
+
+**Toolbox를 사용하는 모델 호출 · `toolbox-answer`**
+
+```bash
 python scripts/workshop.py toolbox ask --version "실제-버전" --label toolbox-answer --confirm-cost
 ```
 
@@ -84,7 +115,17 @@ python scripts/workshop.py toolbox ask --version "실제-버전" --label toolbox
 
 ```bash
 azd ai skill create --help
+```
+
+**Skill 다운로드 지원 확인**
+
+```bash
 azd ai skill download --help
+```
+
+**Toolbox 생성 계획 확인**
+
+```bash
 python scripts/workshop.py toolbox plan --discovery --pin-policy
 ```
 
@@ -92,6 +133,11 @@ python scripts/workshop.py toolbox plan --discovery --pin-policy
 
 ```bash
 python scripts/workshop.py toolbox add-version --discovery --pin-policy --confirm-create
+```
+
+**지정한 버전의 도구 목록 확인 · `discovery-list`**
+
+```bash
 python scripts/workshop.py toolbox probe --version "새-selected_version" --label discovery-list
 ```
 
@@ -109,6 +155,11 @@ python scripts/workshop.py prepare-extensions --label extensions-ko
 
 ```bash
 azd ai skill create "manifest의-skill_name" --file outputs/extensions-ko/policy-review --project-endpoint "실제-프로젝트-Endpoint"
+```
+
+**실제 Skill 버전 조회**
+
+```bash
 azd ai skill show "manifest의-skill_name" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
@@ -118,6 +169,11 @@ azd ai skill show "manifest의-skill_name" --project-endpoint "실제-프로젝�
 
 ```bash
 azd ai skill download "manifest의-skill_name" --version "실제-skill-version" --output-dir .selfstudy/skill-readback --project-endpoint "실제-프로젝트-Endpoint"
+```
+
+**다운로드한 파일을 원본과 비교**
+
+```bash
 python scripts/selfstudy.py compare-files outputs/extensions-ko/policy-review/SKILL.md .selfstudy/skill-readback/SKILL.md
 ```
 
@@ -140,6 +196,11 @@ python scripts/workshop.py prepare-extensions --label skill-update-inputs-ko
 
 ```bash
 azd ai skill update "기존-소유-Skill-이름" --file outputs/skill-update-inputs-ko/policy-review --project-endpoint "실제-프로젝트-Endpoint"
+```
+
+**실제 Skill 버전 조회**
+
+```bash
 azd ai skill show "기존-소유-Skill-이름" --project-endpoint "실제-프로젝트-Endpoint" --output json
 ```
 
@@ -147,6 +208,11 @@ azd ai skill show "기존-소유-Skill-이름" --project-endpoint "실제-프로
 
 ```bash
 azd ai skill download "기존-소유-Skill-이름" --version "반환된-새-Skill-버전" --output-dir .selfstudy/skill-readback-v2-ko --project-endpoint "실제-프로젝트-Endpoint"
+```
+
+**다운로드한 파일을 원본과 비교**
+
+```bash
 python scripts/selfstudy.py compare-files outputs/skill-update-inputs-ko/policy-review/SKILL.md .selfstudy/skill-readback-v2-ko/SKILL.md
 ```
 
@@ -158,8 +224,23 @@ python scripts/selfstudy.py compare-files outputs/skill-update-inputs-ko/policy-
 
 ```bash
 python scripts/workshop.py toolbox plan --discovery --pin-policy --skill-version "실제-skill-version"
+```
+
+**검토한 설정으로 새 Toolbox 버전 생성**
+
+```bash
 python scripts/workshop.py toolbox add-version --discovery --pin-policy --skill-version "실제-skill-version" --confirm-create
+```
+
+**지정한 버전의 도구 목록 확인 · `skilled-list`**
+
+```bash
 python scripts/workshop.py toolbox probe --version "새-Toolbox-version" --label skilled-list
+```
+
+**Toolbox를 사용하는 모델 호출 · `skilled-answer`**
+
+```bash
 python scripts/workshop.py toolbox ask --version "새-Toolbox-version" --label skilled-answer --with-skill --confirm-cost
 ```
 
@@ -189,6 +270,11 @@ python scripts/workshop.py openapi invoke --label openapi-policy --confirm-cost
 
 ```bash
 python scripts/workshop.py --script package-toolbox --language ko --version "검증한-Toolbox-version"
+```
+
+**반환된 패키지로 배포 폴더 준비**
+
+```bash
 python scripts/selfstudy.py prepare-hosted --kind toolbox --package "방금-반환한-패키지-경로" --name toolbox-hosted
 ```
 
@@ -208,6 +294,13 @@ python scripts/workshop.py toolbox serve --version "검증한-Toolbox-version"
 
 ```bash
 python -c "from urllib.request import urlopen; print(urlopen('http://127.0.0.1:8088/readiness', timeout=10).read().decode())"
+```
+
+**확인:** `healthy` 상태가 아니면 요청을 보내지 말고 터미널 A의 서버 로그부터 확인합니다.
+
+**준비 상태를 확인한 뒤 모델에 요청**
+
+```bash
 azd ai agent invoke --cwd "실제-Toolbox-Hosted-절대경로" --local --port 8088 --new-session --new-conversation --timeout 210 "2026년 9월 국내 출장에서 170000원 호텔의 사전 승인 조건은?"
 ```
 
@@ -219,6 +312,11 @@ azd ai agent invoke --cwd "실제-Toolbox-Hosted-절대경로" --local --port 80
 
 ```bash
 azd deploy "내-prefix-toolbox-hosted" --cwd "실제-Toolbox-Hosted-절대경로"
+```
+
+**배포된 실제 버전과 런타임 ID 조회**
+
+```bash
 azd ai agent show "내-prefix-toolbox-hosted" --cwd "실제-Toolbox-Hosted-절대경로" --output json
 ```
 
@@ -226,6 +324,11 @@ azd ai agent show "내-prefix-toolbox-hosted" --cwd "실제-Toolbox-Hosted-절�
 
 ```bash
 python scripts/selfstudy.py capture --directory "실제-.selfstudy-하위-Hosted-절대경로" --service "내-prefix-toolbox-hosted" --version "실제-agent-version" --output .selfstudy/toolbox-remote/response.raw --confirm-cost
+```
+
+**보관한 원시 응답 검증**
+
+```bash
 python scripts/workshop.py --script verify-toolbox-response --file "capture가-출력한-raw-절대경로" --package "실제-패키지-절대경로" --agent-name "내-prefix-toolbox-hosted" --agent-version "실제-agent-version" --output "새-검증결과-절대경로"
 ```
 
@@ -254,4 +357,4 @@ python scripts/workshop.py toolbox select --version "검토한-버전" --confirm
 
 ---
 
-[← 09. 운영](09-operations.md) · [전체 과정](../README.ko.md#진행-순서) · [11. 기억·위임·예약 →](11-memory-a2a-routines.md)
+[← 09. 운영](09-operations.md) · [전체 과정](../README.ko.md#진행-순서) · [11. 기억·위임·예약 →](11-memory-a2a-routines.md) · [진행 지도 ↑](#chapter-map)
