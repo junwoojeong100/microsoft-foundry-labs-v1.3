@@ -46,7 +46,7 @@
 
 ### 실습 폴더 열기
 
-1. 받은 ZIP을 압축 해제합니다. ZIP이 없다면 [저장소](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5)의 **Code → Download ZIP**을 선택합니다. 비공개 저장소는 접근 권한이 필요합니다.
+1. 받은 ZIP을 압축 해제합니다. ZIP이 없다면 [저장소](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3)의 **Code → Download ZIP**을 선택합니다. 비공개 저장소는 접근 권한이 필요합니다.
 2. `README.md`, `scripts/`, `curriculum.json`이 함께 있는 폴더를 찾습니다.
 3. [VS Code](https://code.visualstudio.com/download)에서 **File → Open Folder**로 그 폴더를 엽니다.
 4. **Terminal → New Terminal**을 선택합니다. 이후 명령은 모두 이 터미널에서 실행합니다.
@@ -57,13 +57,13 @@
 <summary>선택: Git이 있다면 ZIP 대신 복제</summary>
 
 ```bash
-git clone https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5.git
+git clone https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3.git
 ```
 
 **복제한 폴더로 이동**
 
 ```bash
-cd microsoft-foundry-labs-v1.5
+cd microsoft-foundry-labs-v1.3
 ```
 
 이 폴더를 편집기에서 엽니다. ZIP 다운로드와 둘 다 할 필요는 없습니다.
@@ -225,7 +225,7 @@ azd auth login
 
 1. Azure 포털에서 **Resource groups → Create**를 선택합니다.
 2. 1절의 구독, 내 새 그룹 이름, **North Central US**를 지정합니다.
-3. `workshop=foundry-v1.5` 태그를 추가하고 생성합니다.
+3. `workshop=foundry-v1.3` 태그를 추가하고 생성합니다.
 4. 생성된 그룹의 **Overview**에서 구독·이름·리전을 확인합니다.
 
 이 그룹에는 **실습 자원만** 넣습니다. 업무용 자원이 섞이면 마지막에 그룹 전체를 삭제할 수 없습니다.
@@ -234,7 +234,7 @@ azd auth login
 <summary>선택: 포털 대신 CLI로 그룹 생성 — 둘 중 하나만 실행</summary>
 
 ```bash
-az group create --subscription "내-구독-ID" --name "rg-mf15-yourname-nc-0928" --location northcentralus --tags workshop=foundry-v1.5 lifecycle=retain
+az group create --subscription "내-구독-ID" --name "rg-mf15-yourname-nc-0928" --location northcentralus --tags workshop=foundry-v1.3 lifecycle=retain
 ```
 
 이미 포털에서 만들었다면 실행하지 않습니다. `lifecycle=retain` 태그는 삭제 방지 잠금이 아닙니다.

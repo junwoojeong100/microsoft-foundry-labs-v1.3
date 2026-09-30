@@ -32,7 +32,7 @@ Execution blockers remain recorded. The initial Hosted account-chat 401 occurred
 
 The first Optimizer inline submission was rejected for the `dataset_items` wire field. The SDK model description and service contract differed; a **new request using the public mapping constructor and `train_dataset.items`** succeeded. Required evaluator `initialization_parameters` and threshold 4 remained unchanged. Baseline evaluation `eval_14fc534255ff4927a1582ad18fe3e186` / `evalrun_b72615bcffe74ebfb3971ec004afeb2b` was audited against all six submitted dev rows and source references. Candidate generation and improvement remain separate, unclaimed outcomes.
 
-On the same source revision, [repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36405755604), [new OIDC authentication](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36409519229), [Korean release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36409523146), and [English release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36410260357) succeeded. CI local retrieval is distinct from the separate IQ Hosted matrix.
+On the same source revision, [repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36405755604), [new OIDC authentication](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36409519229), [Korean release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36409523146), and [English release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36410260357) succeeded. CI local retrieval is distinct from the separate IQ Hosted matrix.
 
 New originals remain private in `outputs/rename-*`, `outputs/benchmarks/rename-*`, `.selfstudy/rename-*`, and `dist/recordings/rename-20260928/`. The [new summaries](videos.md) are **4:32/31 scenes per language**, with no old NC/Sweden footage mixed in. The Korean main-guide run and separate English file/agent/CI exercises are distinguished; bilingual captions do not imply a second complete English rerun.
 
@@ -97,15 +97,15 @@ In a counterexperiment, `deployment_name`/required-`threshold` definitions passe
 
 New originals, HTTP body, both full audits, intermediate results, and preservation hashes are under `outputs/nc-resume-20260928/` and `outputs/evaluation-exports/nc-optimizer-initialized-{baseline,candidate}/`. Service verification is recorded in `outputs/nc-resume-20260928/verification-final.json`; subsequent video completion is in that directory's `media-completion.json`. All 19 original failure-file hashes remain unchanged; the replaced CLI videos are separately archived with their original hashes.
 
-Earlier CI identity, project role, account Reader, repository/Environment federation, and main-only protection verification remains valid for its recorded scope. Code commit **`edf0990`** passed [repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36382485708) and the [actual NC OIDC release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36382758497) at that time. Original artifacts retain **CI agent v1, six English responses/6 of 6 passing, matching code/response hashes, idle session, and persistent files**. These are not relabelled as a new CI run for this patch or as Hosted IQ evidence.
+Earlier CI identity, project role, account Reader, repository/Environment federation, and main-only protection verification remains valid for its recorded scope. Code commit **`edf0990`** passed [repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36382485708) and the [actual NC OIDC release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36382758497) at that time. Original artifacts retain **CI agent v1, six English responses/6 of 6 passing, matching code/response hashes, idle session, and persistent files**. These are not relabelled as a new CI run for this patch or as Hosted IQ evidence.
 
 **Subsequent rename recovery:** after the user's approval, only the repository name in the existing
-NC federation subject was changed to `microsoft-foundry-labs-v1.5`. Before/after comparisons preserved
+NC federation subject was changed to the name used at that time (current repository name: `microsoft-foundry-labs-v1.3`). Before/after comparisons preserved
 the managed identity, credential ID, issuer, audience, and both existing roles; the immutable repository
 ID and main-only protection also remain unchanged. On new commit
 **`cc816de2b71ae78730b485024a082eb69e186711`**, both the
-[authentication-only OIDC run](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404614530) and
-[repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404559521) passed.
+[authentication-only OIDC run](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36404614530) and
+[repository checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36404559521) passed.
 The actual emitted issuer, new subject, audience, and authenticated client/tenant/subscription were matched.
 **There were zero new deployments, role grants, or model requests; `deployment_verified: false`.**
 Authentication recovery is not relabelled as a fresh Hosted release or quality evaluation.
@@ -122,13 +122,13 @@ Optimizer/media/documentation changes are not in that commit; these two validati
 
 The current **NC portal/CLI edition is 3:52 per language, with 28 scenes**. It distinguishes the original Optimizer failure, successful fix, six-row baseline/candidate results, and remaining Prohibited Actions inconsistency. Login screens, account emails, and subscription identifiers are excluded. Both files were checked for **5,800 frames, 25 fps, H.264, faststart, full decoding, and 30 subtitle cues**. Recording did not invoke models, promote candidates, or change permissions.
 
-New originals are private at `dist/recordings/portal/nc-headless-final-20260928/`; the earlier CLI videos/provenance are archived under `.selfstudy/archives/nc-cli-before-headless-20260928/`. [Video provenance](../assets/videos/foundry-v1.5-summary-provenance.json) records output hashes and original intervals. The Prohibited Actions service-side contradiction remains **unresolved, separately from the completed media work**.
+New originals are private at `dist/recordings/portal/nc-headless-final-20260928/`; the earlier CLI videos/provenance are archived under `.selfstudy/archives/nc-cli-before-headless-20260928/`. [Video provenance](../assets/videos/foundry-v1.3-summary-provenance.json) records output hashes and original intervals. The Prohibited Actions service-side contradiction remains **unresolved, separately from the completed media work**.
 
 The earlier 278 core/146 SDK tests, Ruff, compilation, and dependency checks remain historical results. The preceding Optimizer/media patch passed **45 related policy/Optimizer/SDK tests** and Ruff. These do not prove model improvement or resolve Prohibited Actions. New assets remain retained; Search Basic, stored files/volumes, and logs can still incur costs. Insights' approximately USD 2.01 is that analysis's **estimate**, not this Optimizer job or total billed cost.
 
 ## Archived Sweden R2 record
 
-The following describes the period **before that group was deleted**. “Retained” and “final” refer to that historical scope, not current NC state. The [original R2 report](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/blob/0a8ab50/docs/en/validation-report.md) and private originals remain available.
+The following describes the period **before that group was deleted**. “Retained” and “final” refer to that historical scope, not current NC state. The [original R2 report](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/blob/0a8ab50/docs/en/validation-report.md) and private originals remain available.
 
 **The September 28, 2026 rerun successfully created Search and exercised IQ, Hybrid, and connected tools. GPT-6 Sol is now explicit, with separately verified source-reference and task-aware evaluation contracts.**
 
@@ -198,6 +198,6 @@ Earlier failures were not overwritten with successful results. Original capacity
 
 ### 6. Code and CI reproducibility
 
-All 278 core tests, 124 SDK tests, Ruff, and bilingual document/command/link checks passed. [GitHub checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36362144665) and the [approved OIDC release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36362528860) succeeded on code commit `5267633`.
+All 278 core tests, 124 SDK tests, Ruff, and bilingual document/command/link checks passed. [GitHub checks](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36362144665) and the [approved OIDC release](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36362528860) succeeded on code commit `5267633`.
 
 Downloaded artifacts verified **six actual English responses from CI agent v2, 6/6 business checks, the current runtime code hash, an idle session, and no persistent-file deletion**. This CI local-retrieval smoke path is separate from the IQ Hosted verification above.

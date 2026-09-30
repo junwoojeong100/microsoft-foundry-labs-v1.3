@@ -3,6 +3,7 @@ import io
 import json
 import re
 import shlex
+import tomllib
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from unittest.mock import patch
@@ -26,6 +27,18 @@ def load_script(name):
 
 
 class PackagingTests(unittest.TestCase):
+    def test_workshop_release_metadata_is_consistent(self):
+        workshop_version = read_json(ROOT / "curriculum.json")["version"]
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+        self.assertEqual(workshop_version, "1.3")
+        self.assertEqual(project["name"], f"microsoft-foundry-v{workshop_version}-labs")
+        self.assertEqual(project["version"], f"{workshop_version}.0")
+        self.assertIn(f"Microsoft Foundry v{workshop_version} workshop.", parser().description)
+        for extra, dependency in (("agents", "cloud"), ("hosted", "agents")):
+            self.assertIn(
+                f"{project['name']}[{dependency}]", project["optional-dependencies"][extra]
+            )
+
     def test_bilingual_intro_guides_serve_the_matching_workflow_profile(self):
         for language, relative in (
             ("ko", "docs/08-hosted.md"),
@@ -78,7 +91,7 @@ class PackagingTests(unittest.TestCase):
                 )
             )
             self.assertNotIn(
-                "microsoft-foundry-v1.5-labs[", (destination / "requirements.txt").read_text()
+                "microsoft-foundry-v1.3-labs[", (destination / "requirements.txt").read_text()
             )
             with self.assertRaises(ValueError):
                 builder.build(root)

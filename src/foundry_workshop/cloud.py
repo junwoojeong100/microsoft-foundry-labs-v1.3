@@ -215,7 +215,7 @@ def create_prompt_agent(
         definition=PromptAgentDefinition(
             model=settings.deployment, instructions=instructions, **agent_options(settings)
         ),
-        description="Synthetic Microsoft Foundry v1.5 workshop. No external actions.",
+        description="Synthetic Microsoft Foundry v1.3 workshop. No external actions.",
     )
     return {
         "mode": "live",

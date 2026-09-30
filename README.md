@@ -1,4 +1,4 @@
-# Microsoft Foundry Hands-on Guide · v1.5
+# Microsoft Foundry Hands-on Guide · v1.3
 
 **English** | [한국어](README.ko.md)
 
@@ -189,8 +189,8 @@ Five authenticated portal scenes accompany this run's actual CLI recordings and 
 
 | English | 한국어 |
 |---|---|
-| [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) | [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) |
-| [Watch MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) | [MP4 보기](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) |
+| [![English summary](docs/assets/videos/foundry-v1.3-summary-en-poster.png)](docs/assets/videos/foundry-v1.3-summary-en.mp4) | [![한국어 요약](docs/assets/videos/foundry-v1.3-summary-ko-poster.png)](docs/assets/videos/foundry-v1.3-summary-ko.mp4) |
+| [Watch MP4](docs/assets/videos/foundry-v1.3-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.3-summary-en.srt) | [MP4 보기](docs/assets/videos/foundry-v1.3-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.3-summary-ko.srt) |
 
 [Recording scope and provenance](docs/en/videos.md) · [Live validation findings](docs/en/validation-report.md)
 

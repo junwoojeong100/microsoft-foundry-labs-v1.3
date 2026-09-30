@@ -2,7 +2,7 @@
 
 **English** | [한국어](../code-reading.md) · [Course home](../../README.md)
 
-**Trace what you just ran without memorizing an entire framework.** The English entrypoint is `python scripts/workshop.py --language en`, run from the v1.5 root.
+**Trace what you just ran without memorizing an entire framework.** The English entrypoint is `python scripts/workshop.py --language en`, run from the v1.3 root.
 
 | Question | Files to open |
 |---|---|

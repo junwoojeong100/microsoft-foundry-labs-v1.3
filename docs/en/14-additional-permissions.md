@@ -28,7 +28,7 @@ OIDC lets GitHub Actions sign in to Azure using short-lived identity evidence ra
 
 ## 1. Prepare the repository and Environment
 
-1. Use an existing lab repository you administer. If you started from ZIP and have none, open [the source repository](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5), then select **Fork → your Owner → Create fork**. The [browser fork procedure](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo?tool=webui) requires no local Git work.
+1. Use an existing lab repository you administer. If you started from ZIP and have none, open [the source repository](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3), then select **Fork → your Owner → Create fork**. The [browser fork procedure](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo?tool=webui) requires no local Git work.
 2. On **your repository's** `main`, verify `.github/workflows/` and `.gitignore`, then record the chosen commit. Forking copies committed remote source, not changes on your PC. If you changed local code, publish only reviewed source changes, never the whole working folder or ZIP. Exclude `.env`, `.selfstudy/`, `.build/`, `outputs/`, and credentials.
 3. If **Actions** asks you to enable workflows in the fork, review your repository and organizational policy before enabling them. Run **Workshop checks → Run workflow → main** and verify the [included checks](../../.github/workflows/check.yml) pass on that commit. These checks do not deploy to Azure or invoke models.
 4. Open **Settings → Environments → New environment** and use the exact name **`foundry-workshop`**. Both workflows require this fixed name; it is not an interchangeable example.

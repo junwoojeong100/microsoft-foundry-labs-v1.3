@@ -29,7 +29,7 @@ CI/CD는 검사·배포를 자동 실행하는 흐름입니다. OIDC는 GitHub�
 
 ## 1. 저장소와 Environment 준비
 
-1. 본인이 관리하는 실습 저장소를 엽니다. 없다면 [원본 저장소](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5)의 **Fork → 본인 계정 → Create fork**로 사본을 만듭니다.
+1. 본인이 관리하는 실습 저장소를 엽니다. 없다면 [원본 저장소](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3)의 **Fork → 본인 계정 → Create fork**로 사본을 만듭니다.
 2. 내 저장소의 `main`에서 `.github/workflows/`를 확인하고 사용할 commit을 확인합니다.
 3. **Actions**에 활성화 안내가 보이면 조직 정책에 따라 활성화합니다.
 4. **Workshop checks → Run workflow → main**을 실행하고 그 commit의 통과를 확인합니다. 이 검사는 Azure를 호출하지 않습니다.

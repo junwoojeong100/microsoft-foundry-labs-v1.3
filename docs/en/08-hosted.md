@@ -136,7 +136,7 @@ Use **that deployment's returned values** for section 7's workflow and each new 
 
 ### Terminal A: start the server
 
-Leave terminal A running in the v1.5 root. See [using two terminals](checkpoints.md#chapters-with-two-terminals).
+Leave terminal A running in the v1.3 root. See [using two terminals](checkpoints.md#chapters-with-two-terminals).
 
 ```bash
 python scripts/workshop.py --language en serve

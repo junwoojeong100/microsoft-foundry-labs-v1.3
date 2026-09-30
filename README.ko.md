@@ -1,4 +1,4 @@
-# Microsoft Foundry 실습 가이드 · v1.5
+# Microsoft Foundry 실습 가이드 · v1.3
 
 [English](README.md) | **한국어**
 
@@ -126,8 +126,8 @@ SDK·Hosted dev는 각각 6/6이지만, 관리형 Task Adherence는 6행 중 5 p
 
 | 한국어 | English |
 |---|---|
-| [![한국어 요약](docs/assets/videos/foundry-v1.5-summary-ko-poster.png)](docs/assets/videos/foundry-v1.5-summary-ko.mp4) | [![English summary](docs/assets/videos/foundry-v1.5-summary-en-poster.png)](docs/assets/videos/foundry-v1.5-summary-en.mp4) |
-| [MP4](docs/assets/videos/foundry-v1.5-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.5-summary-ko.srt) | [MP4](docs/assets/videos/foundry-v1.5-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.5-summary-en.srt) |
+| [![한국어 요약](docs/assets/videos/foundry-v1.3-summary-ko-poster.png)](docs/assets/videos/foundry-v1.3-summary-ko.mp4) | [![English summary](docs/assets/videos/foundry-v1.3-summary-en-poster.png)](docs/assets/videos/foundry-v1.3-summary-en.mp4) |
+| [MP4](docs/assets/videos/foundry-v1.3-summary-ko.mp4) · [자막](docs/assets/videos/foundry-v1.3-summary-ko.srt) | [MP4](docs/assets/videos/foundry-v1.3-summary-en.mp4) · [Captions](docs/assets/videos/foundry-v1.3-summary-en.srt) |
 
 North Central US의 실제 포털·CLI 재실행을 요약했습니다. 한·영 자막은 전체 실습을 두 언어로 각각 실행했다는 뜻이 아닙니다. [녹화 범위·이전 영상](docs/videos.md).
 

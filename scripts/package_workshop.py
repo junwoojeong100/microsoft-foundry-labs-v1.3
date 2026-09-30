@@ -85,7 +85,7 @@ def build(output: Path) -> Path:
         raise FileExistsError("The bundle already exists. Preserve it and choose a new filename.")
     files = input_files()
     manifest = {
-        "workshop_version": "1.5",
+        "workshop_version": "1.3",
         "pacing": "self-paced",
         "package": tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"][
             "name"
@@ -112,9 +112,9 @@ def build(output: Path) -> Path:
     output.parent.mkdir(parents=True, exist_ok=True)
     with ZipFile(output, "x", compression=ZIP_DEFLATED) as archive:
         for path in files:
-            archive.write(path, "microsoft-foundry-v1.5-labs/" + path.relative_to(ROOT).as_posix())
+            archive.write(path, "microsoft-foundry-v1.3-labs/" + path.relative_to(ROOT).as_posix())
         archive.writestr(
-            "microsoft-foundry-v1.5-labs/bundle-manifest.json",
+            "microsoft-foundry-v1.3-labs/bundle-manifest.json",
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
         )
     return output
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output",
         type=Path,
-        default=ROOT / "dist/microsoft-foundry-v1.5-standalone.zip",
+        default=ROOT / "dist/microsoft-foundry-v1.3-standalone.zip",
     )
     args = parser.parse_args()
     print(build(args.output))

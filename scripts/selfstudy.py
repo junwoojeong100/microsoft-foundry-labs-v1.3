@@ -553,7 +553,7 @@ def configure(
         updates["WORKSHOP_REASONING_EFFORT"] = DEFAULT_REASONING_EFFORT
     state = {
         "schema_version": 1,
-        "workshop_version": "1.5",
+        "workshop_version": "1.3",
         **parsed,
         "endpoint": endpoint,
         "custom_subdomain": domain,

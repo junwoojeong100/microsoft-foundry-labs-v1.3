@@ -75,7 +75,7 @@ Verify `azure-ai-agentserver-core: 2.1.0`, `azure-ai-agentserver-responses: 2.2.
 
 ### Terminal A: start the server
 
-Start the server in terminal A in the v1.5 root and leave it running. See [using two terminals](checkpoints.md#chapters-with-two-terminals).
+Start the server in terminal A in the v1.3 root and leave it running. See [using two terminals](checkpoints.md#chapters-with-two-terminals).
 
 ```bash
 python scripts/workshop.py --script resilience --language en --run-id first-pass-en serve

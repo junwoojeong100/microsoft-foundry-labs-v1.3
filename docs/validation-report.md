@@ -32,7 +32,7 @@
 
 Optimizer의 첫 inline 입력은 `dataset_items` wire field 때문에 제출이 거부됐습니다. SDK 모델이 설명하는 이름과 서비스 요구가 달랐으며, **공개 mapping 생성자로 `train_dataset.items`를 전달한 새 요청**이 성공했습니다. 원래 필수 `initialization_parameters`와 문턱 4는 유지했습니다. 성공한 baseline 평가 `eval_14fc534255ff4927a1582ad18fe3e186` / `evalrun_b72615bcffe74ebfb3971ec004afeb2b`는 제출한 dev 6행 전체와 원문 참조를 감사했습니다. 후보 생성·성능 개선은 별도이며 이번에는 주장하지 않습니다.
 
-같은 source revision의 [저장소 검사](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36405755604), [새 OIDC 인증](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36409519229), [한국어 릴리스](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36409523146), [영어 릴리스](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36410260357)가 성공했습니다. CI의 local 검색 프로필과 별도 IQ Hosted를 혼동하지 않습니다.
+같은 source revision의 [저장소 검사](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36405755604), [새 OIDC 인증](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36409519229), [한국어 릴리스](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36409523146), [영어 릴리스](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36410260357)가 성공했습니다. CI의 local 검색 프로필과 별도 IQ Hosted를 혼동하지 않습니다.
 
 새 원본은 `outputs/rename-*`, `outputs/benchmarks/rename-*`, `.selfstudy/rename-*`, `dist/recordings/rename-20260928/`에 비공개로 보관합니다. [새 요약 영상](videos.md)은 **한·영 각 4분 32초·31장면**이며 이전 NC/Sweden 영상을 섞지 않았습니다. 한국어 본 실습과 별도 영어 파일/agent/CI 수행을 구분하며 전체를 영어로도 재실행했다고 주장하지 않습니다.
 
@@ -97,14 +97,14 @@ Routine의 CLI history는 `value: null`이었지만 native SDK에는 실제 두 
 
 새 원본·HTTP body·두 전체 평가 감사·중간 결과·보존 hash는 `outputs/nc-resume-20260928/`와 `outputs/evaluation-exports/nc-optimizer-initialized-{baseline,candidate}/`에 있습니다. 서비스 재검증 기록은 `outputs/nc-resume-20260928/verification-final.json`, 이후 영상 완료 기록은 같은 폴더의 `media-completion.json`입니다. 기존 실패 파일 19개의 hash는 변하지 않았으며, 교체 전 CLI 영상도 원래 hash와 함께 별도 보관했습니다.
 
-앞선 CI 관리 ID·프로젝트 역할·계정 Reader·저장소/Environment federation 및 main-only 보호 검증은 유지합니다. 코드 commit **`edf0990`**의 [저장소 검사](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36382485708)와 [실제 NC OIDC 릴리스](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36382758497)는 당시 성공 결과입니다. 내려받은 원본 artifact의 **CI agent v1·영어 6/6·코드/응답 hash 일치·세션 idle·persistent 파일 비삭제**도 보존합니다. 이번 수정의 새 CI 실행이나 Hosted IQ 검증으로 바꾸어 부르지 않습니다.
+앞선 CI 관리 ID·프로젝트 역할·계정 Reader·저장소/Environment federation 및 main-only 보호 검증은 유지합니다. 코드 commit **`edf0990`**의 [저장소 검사](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36382485708)와 [실제 NC OIDC 릴리스](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36382758497)는 당시 성공 결과입니다. 내려받은 원본 artifact의 **CI agent v1·영어 6/6·코드/응답 hash 일치·세션 idle·persistent 파일 비삭제**도 보존합니다. 이번 수정의 새 CI 실행이나 Hosted IQ 검증으로 바꾸어 부르지 않습니다.
 
 **이후 저장소 이름 변경의 CI 복구:** 사용자 승인 후 기존 NC federation의 subject에서
-저장소 이름만 `microsoft-foundry-labs-v1.5`로 수정했습니다. 관리 ID·credential ID·issuer·audience와
+저장소 이름만 당시 이름으로 수정했습니다(현재 저장소 이름: `microsoft-foundry-labs-v1.3`). 관리 ID·credential ID·issuer·audience와
 기존 역할 두 개의 변경 전후 값이 같고, immutable repository ID와 main-only 보호도 그대로입니다.
 새 commit **`cc816de2b71ae78730b485024a082eb69e186711`**에서
-[인증 전용 OIDC 실행](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404614530)과
-[저장소 검사](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36404559521)가 성공했습니다.
+[인증 전용 OIDC 실행](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36404614530)과
+[저장소 검사](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36404559521)가 성공했습니다.
 실제 발급된 issuer·새 subject·audience 및 로그인한 client·tenant·구독을 대조했습니다.
 **새 배포·역할 부여·모델 호출은 0건이며 `deployment_verified: false`**입니다.
 인증 복구를 새 Hosted 릴리스나 품질 평가로 바꾸어 부르지 않습니다.
@@ -120,13 +120,13 @@ Ruff·compile·의존성·양언어 문서 검사를 통과했습니다. Python 
 
 현재 영상은 **NC 포털·CLI 편집본, 한·영 각 3분 52초·28개 장면**입니다. 원래 Optimizer 실패·새 성공·baseline과 후보 6행·Prohibited Actions의 남은 불일치를 구분합니다. 로그인 화면과 계정 이메일·구독 식별자는 편집본에서 제외했고, 두 파일의 **5,800프레임·25 fps·H.264·faststart·전체 디코딩·30개 자막 구간**을 확인했습니다. 새 녹화로 모델 호출이나 승격·권한 변경을 수행하지 않았습니다.
 
-새 원본은 private `dist/recordings/portal/nc-headless-final-20260928/`, 이전 CLI 영상·출처는 `.selfstudy/archives/nc-cli-before-headless-20260928/`에 보관합니다. 공개 파일별 hash와 원본 구간은 [영상 출처](assets/videos/foundry-v1.5-summary-provenance.json)에 있습니다. Prohibited Actions의 서비스 측 판정 불일치는 **영상 완료와 별개인 미해결 제한**입니다.
+새 원본은 private `dist/recordings/portal/nc-headless-final-20260928/`, 이전 CLI 영상·출처는 `.selfstudy/archives/nc-cli-before-headless-20260928/`에 보관합니다. 공개 파일별 hash와 원본 구간은 [영상 출처](assets/videos/foundry-v1.3-summary-provenance.json)에 있습니다. Prohibited Actions의 서비스 측 판정 불일치는 **영상 완료와 별개인 미해결 제한**입니다.
 
 앞선 전체 core 278개·SDK 146개 및 Ruff/compile/dependency 검사는 당시 결과입니다. 앞선 Optimizer·영상 변경은 관련 정책·Optimizer·SDK 검사 **45개**와 Ruff를 통과했습니다. 이는 모델 개선이나 Prohibited Actions 해결의 대체물이 아닙니다. 새 자원은 보존하며 Search Basic·저장 파일/volume·로그 비용은 남습니다. Insights의 약 USD 2.01은 해당 분석 **추정치**이지 이번 Optimizer나 전체 청구액이 아닙니다.
 
 ## 이전 Sweden R2 보관 기록
 
-아래는 **그룹 삭제 전 시점**의 기록입니다. “보존”이나 “최종” 표현도 당시 범위이며 현재 NC 상태가 아닙니다. [원래 R2 보고서](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/blob/0a8ab50/docs/validation-report.md)와 원본 보관본을 유지합니다.
+아래는 **그룹 삭제 전 시점**의 기록입니다. “보존”이나 “최종” 표현도 당시 범위이며 현재 NC 상태가 아닙니다. [원래 R2 보고서](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/blob/0a8ab50/docs/validation-report.md)와 원본 보관본을 유지합니다.
 
 **2026-09-28 재검증에서 Search 생성과 IQ·Hybrid·연결 도구 실습을 완료했습니다. 기본 모델은 GPT-6 Sol이며, 원문 참조와 업무 목적을 명시한 별도 평가 경로를 검증했습니다.**
 
@@ -196,6 +196,6 @@ Search Basic, 저장소, 로그 등의 보관 비용은 계속 발생할 수 있
 
 ### 6. 코드와 CI 재현 확인
 
-로컬 검사 278개와 SDK 검사 124개, Ruff, 양언어 문서·명령·링크 검사를 통과했습니다. [GitHub 검사](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36362144665)와 [승인된 OIDC 릴리스](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/actions/runs/36362528860)는 같은 코드 커밋 `5267633`에서 성공했습니다.
+로컬 검사 278개와 SDK 검사 124개, Ruff, 양언어 문서·명령·링크 검사를 통과했습니다. [GitHub 검사](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36362144665)와 [승인된 OIDC 릴리스](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/actions/runs/36362528860)는 같은 코드 커밋 `5267633`에서 성공했습니다.
 
 릴리스 artifact를 내려받아 **CI agent v2의 영문 실제 응답 6개, 업무 검사 6/6, 현재 runtime code hash 일치, 세션 idle, persistent 파일 비삭제**를 확인했습니다. 이 CI의 로컬 검색 smoke 경로와 위의 별도 IQ Hosted 검증을 혼동하지 않습니다.

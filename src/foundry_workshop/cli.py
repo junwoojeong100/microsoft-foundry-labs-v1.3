@@ -60,7 +60,7 @@ def output_path(root: Path, value: Path) -> Path:
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(
         description=(
-            "Microsoft Foundry v1.5 workshop. Start with doctor, demo and evaluate offline; "
+            "Microsoft Foundry v1.3 workshop. Start with doctor, demo and evaluate offline; "
             "advanced command families are optional."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,

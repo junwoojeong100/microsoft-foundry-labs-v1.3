@@ -6,8 +6,8 @@ Each **4:32/31-scene summary** covers the actual new North Central US group `rg-
 
 | Language | Video | Captions |
 |---|---|---|
-| English | [MP4](../assets/videos/foundry-v1.5-summary-en.mp4) | [SRT](../assets/videos/foundry-v1.5-summary-en.srt) |
-| 한국어 | [MP4](../assets/videos/foundry-v1.5-summary-ko.mp4) | [SRT](../assets/videos/foundry-v1.5-summary-ko.srt) |
+| English | [MP4](../assets/videos/foundry-v1.3-summary-en.mp4) | [SRT](../assets/videos/foundry-v1.3-summary-en.srt) |
+| 한국어 | [MP4](../assets/videos/foundry-v1.3-summary-ko.mp4) | [SRT](../assets/videos/foundry-v1.3-summary-ko.srt) |
 
 ## What was recorded?
 
@@ -29,10 +29,10 @@ Login screens, account emails, subscription identifiers, credentials, and privat
 - The timer's original response, eight session files, and **Korean CI v1/English CI v2 artifacts each passing 6/6** were checked. CI local retrieval and the separate IQ Hosted matrix are different profiles.
 - The failed native gate **holds acceptance; no new holdout was unlocked**. All 13 observed lab sessions are idle, and timer/continuous/Insights schedules are off. Retained Search, files/volumes, and logs still incur costs.
 
-The [provenance JSON](../assets/videos/foundry-v1.5-summary-provenance.json) records original videos/result screenshots, SHA256 hashes, intervals, hold durations, captions, and crops. New originals remain private under `dist/recordings/rename-20260928/`; previous state/videos were privately hash-archived. The learner bundle includes only edited media.
+The [provenance JSON](../assets/videos/foundry-v1.3-summary-provenance.json) records original videos/result screenshots, SHA256 hashes, intervals, hold durations, captions, and crops. New originals remain private under `dist/recordings/rename-20260928/`; previous state/videos were privately hash-archived. The learner bundle includes only edited media.
 
 **Format:** 1600×1000, 25 fps, H.264/yuv420p, MP4 faststart. Each video has **6,800 frames, 31 scenes, and 31 SRT cues covering 272 seconds**, under 20 MB. Full decoding, caption consistency, and **every scene's final actual-result frame** were checked.
 
-The earlier [NC portal edition](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/blob/7b7ca26/docs/en/videos.md), [NC CLI edition](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/blob/1d53a68/docs/en/videos.md), and [Sweden R2 edition](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/blob/0a8ab50/docs/en/videos.md) remain in their original revisions.
+The earlier [NC portal edition](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/blob/7b7ca26/docs/en/videos.md), [NC CLI edition](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/blob/1d53a68/docs/en/videos.md), and [Sweden R2 edition](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/blob/0a8ab50/docs/en/videos.md) remain in their original revisions.
 
 See the [live validation report](validation-report.md) for execution coverage and limitations.

@@ -123,6 +123,7 @@ class SelfStudyTests(unittest.TestCase):
         self.assertEqual(values["AZURE_AI_PROJECT_ENDPOINT"], ENDPOINT)
         self.assertEqual(values["WORKSHOP_MAX_OUTPUT_TOKENS"], str(DEFAULT_MAX_OUTPUT_TOKENS))
         self.assertEqual(values["WORKSHOP_REASONING_EFFORT"], "low")
+        self.assertEqual(state["workshop_version"], "1.3")
         self.assertEqual(state["resources"][PROJECT.casefold()]["principal_id"], PROJECT_MI)
         self.assertFalse(state["model_invoked"])
         self.assertTrue(state["management_metadata_read"])
@@ -562,6 +563,7 @@ class SelfStudyTests(unittest.TestCase):
             output = bundler.build(self.root / "dist/test.zip")
             with ZipFile(output) as archive:
                 names = archive.namelist()
+                self.assertTrue(all(name.startswith("microsoft-foundry-v1.3-labs/") for name in names))
                 self.assertTrue(any(name.endswith("/README.md") for name in names))
                 self.assertTrue(any(name.endswith("/README.ko.md") for name in names))
                 self.assertTrue(any(name.endswith("/videos/summary-en.mp4") for name in names))
@@ -581,8 +583,9 @@ class SelfStudyTests(unittest.TestCase):
                     any(name.endswith("/examples/hosted/azure.yaml.example") for name in names)
                 )
                 manifest = json.loads(
-                    archive.read("microsoft-foundry-v1.5-labs/bundle-manifest.json")
+                    archive.read("microsoft-foundry-v1.3-labs/bundle-manifest.json")
                 )
+                self.assertEqual(manifest["workshop_version"], "1.3")
                 self.assertFalse(manifest["runtime_download_required"])
                 self.assertTrue(manifest["runtime_included"])
                 self.assertEqual(manifest["pacing"], "self-paced")

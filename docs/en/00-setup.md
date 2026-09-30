@@ -44,7 +44,7 @@ Names in this guide are examples. Do not copy resource groups or IDs from valida
 
 ### Open the workshop folder
 
-1. Extract the **workshop ZIP** you received. Otherwise, open [this repository](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5) and select **Code → Download ZIP**. A private repository requires access.
+1. Extract the **workshop ZIP** you received. Otherwise, open [this repository](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3) and select **Code → Download ZIP**. A private repository requires access.
 2. Find the extracted folder containing **`README.md`, `scripts/`, and `curriculum.json` together**. Do not work inside the ZIP or its parent folder.
 3. If you do not have an editor, install [VS Code](https://code.visualstudio.com/download) first. Use **File → Open Folder** to open that entire folder, then **Terminal → New Terminal** to enter commands.
 
@@ -58,13 +58,13 @@ All code and data are included. A ZIP provided to you requires neither a GitHub 
 <summary>Optional: clone instead of downloading a ZIP if Git is already installed</summary>
 
 ```bash
-git clone https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5.git
+git clone https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3.git
 ```
 
 **Enter the cloned folder**
 
 ```bash
-cd microsoft-foundry-labs-v1.5
+cd microsoft-foundry-labs-v1.3
 ```
 
 Open the cloned folder in your editor. Do not also repeat the ZIP route.
@@ -80,7 +80,7 @@ Use an approved development environment. Azure Owner does not override software-
 | Python **3.13** | Select a **3.13.x release** from [Python downloads](https://www.python.org/downloads/). Check `python3.13 --version` on macOS/Linux or `py -3.13 --version` on Windows. |
 | Azure CLI | Follow the [official installation guide](https://learn.microsoft.com/cli/azure/install-azure-cli), then run `az version`. |
 | Azure Developer CLI | [Install azd](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd), then run `azd version`. |
-| Editor | Open the **entire v1.5 folder** in VS Code or another editor. |
+| Editor | Open the **entire v1.3 folder** in VS Code or another editor. |
 
 After installation, reopen your editor and check these version commands in a new terminal. Stop if a command is not found or not recognized.
 
@@ -268,7 +268,7 @@ Keep the guide's selected models, versions, and region too. If a name already ex
 2. Select your Owner subscription and a new group name.
 3. Select **North Central US**. Project availability is not proof that every model/tool call will work.
 4. Check the [Foundry region table](https://learn.microsoft.com/azure/foundry/reference/region-support) and [Search region table](https://learn.microsoft.com/azure/search/search-region-support). Both official managed red-teaming lists also include North Central US. [Chapter 13 explains their differences](13-governance.md#5-managed-ai-red-teaming--the-primary-verification-target).
-5. Add a nonsecret tag such as `workshop=foundry-v1.5`, then create the group.
+5. Add a nonsecret tag such as `workshop=foundry-v1.3`, then create the group.
 
 Keep only workshop resources in this group. You cannot safely delete an entire existing business resource group at the end.
 
@@ -278,7 +278,7 @@ Keep only workshop resources in this group. You cannot safely delete an entire e
 Replace the subscription ID and names. Do not recreate a group already made in the portal.
 
 ```bash
-az group create --subscription "YOUR-SUBSCRIPTION-ID" --name "rg-mf15-yourname-nc-0928" --location northcentralus --tags workshop=foundry-v1.5 lifecycle=retain
+az group create --subscription "YOUR-SUBSCRIPTION-ID" --name "rg-mf15-yourname-nc-0928" --location northcentralus --tags workshop=foundry-v1.3 lifecycle=retain
 ```
 
 </details>

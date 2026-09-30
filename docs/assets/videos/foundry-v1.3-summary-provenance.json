@@ -3,7 +3,7 @@
   "description": "Bilingual summaries of the fresh renamed-repository lab, not reused old NC footage.",
   "capture_date": "2026-09-28",
   "path_base": "repository root",
-  "repository": "junwoojeong100/microsoft-foundry-labs-v1.5",
+  "repository": "junwoojeong100/microsoft-foundry-labs-v1.3",
   "source_code_revision": "7b7ca26f4be381e8065ed97573fbd8cdf1928487",
   "sources": {
     "portal-agents": {
@@ -455,17 +455,17 @@
     "ko": {
       "files": [
         {
-          "path": "docs/assets/videos/foundry-v1.5-summary-ko.mp4",
+          "path": "docs/assets/videos/foundry-v1.3-summary-ko.mp4",
           "sha256": "10893e4acb16f42f232c71edca367b3f9911e7696d90ad666e2d18d699c48acf",
           "bytes": 2990848
         },
         {
-          "path": "docs/assets/videos/foundry-v1.5-summary-ko-poster.png",
+          "path": "docs/assets/videos/foundry-v1.3-summary-ko-poster.png",
           "sha256": "ff32b11e0bbbefa3a07d1ff6ea82e724db9619ae2b2195a678c1dc67a3b550aa",
           "bytes": 339079
         },
         {
-          "path": "docs/assets/videos/foundry-v1.5-summary-ko.srt",
+          "path": "docs/assets/videos/foundry-v1.3-summary-ko.srt",
           "sha256": "90a5e44e070192b3d89bc97c485a7d82dd9f80699a51c3b8539f01827022ef96",
           "bytes": 5836
         }
@@ -1333,17 +1333,17 @@
     "en": {
       "files": [
         {
-          "path": "docs/assets/videos/foundry-v1.5-summary-en.mp4",
+          "path": "docs/assets/videos/foundry-v1.3-summary-en.mp4",
           "sha256": "1ba1ce3033d64bbb00784f502d883e385f6af63708c3ccf03445ab7ccd8bfb9e",
           "bytes": 3177224
         },
         {
-          "path": "docs/assets/videos/foundry-v1.5-summary-en-poster.png",
+          "path": "docs/assets/videos/foundry-v1.3-summary-en-poster.png",
           "sha256": "e591f4815ddade2bb6bed1f26ef62fe3910d6d8543d31e953f2eb1eedb264393",
           "bytes": 371619
         },
         {
-          "path": "docs/assets/videos/foundry-v1.5-summary-en.srt",
+          "path": "docs/assets/videos/foundry-v1.3-summary-en.srt",
           "sha256": "f42fccb6c249a8977a798290b4c342fcb4bc8eb45734f47e0d49d7ce2a4b7cc0",
           "bytes": 5205
         }

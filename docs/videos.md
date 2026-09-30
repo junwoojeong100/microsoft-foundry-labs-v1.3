@@ -6,8 +6,8 @@
 
 | 언어 | 영상 | 자막 |
 |---|---|---|
-| 한국어 | [MP4](assets/videos/foundry-v1.5-summary-ko.mp4) | [SRT](assets/videos/foundry-v1.5-summary-ko.srt) |
-| English | [MP4](assets/videos/foundry-v1.5-summary-en.mp4) | [SRT](assets/videos/foundry-v1.5-summary-en.srt) |
+| 한국어 | [MP4](assets/videos/foundry-v1.3-summary-ko.mp4) | [SRT](assets/videos/foundry-v1.3-summary-ko.srt) |
+| English | [MP4](assets/videos/foundry-v1.3-summary-en.mp4) | [SRT](assets/videos/foundry-v1.3-summary-en.srt) |
 
 ## 무엇을 녹화했나요?
 
@@ -29,10 +29,10 @@
 - 실제 timer의 원래 답변, 8개 세션 파일과 **한국어 CI v1/영어 CI v2 각각 6/6 artifact**를 확인했습니다. CI local 검색과 별도 IQ Hosted는 다른 프로필입니다.
 - 최종 관리형 gate 미충족으로 **holdout을 새로 열지 않고 인수를 보류**했습니다. 실습 세션 13개는 모두 idle이며, timer·반복 평가·Insights 예약은 껐습니다. 새 Search·파일/volume·로그의 보존 비용은 남습니다.
 
-원본 영상/결과 스크린샷의 이름·SHA256·사용 구간·정지 시간·자막·자르기는 [provenance JSON](assets/videos/foundry-v1.5-summary-provenance.json)에 있습니다. 새 원본은 private `dist/recordings/rename-20260928/`에 있고 이전 상태/영상은 hash와 함께 비공개 보관했습니다. 배포 묶음에는 편집본만 포함합니다.
+원본 영상/결과 스크린샷의 이름·SHA256·사용 구간·정지 시간·자막·자르기는 [provenance JSON](assets/videos/foundry-v1.3-summary-provenance.json)에 있습니다. 새 원본은 private `dist/recordings/rename-20260928/`에 있고 이전 상태/영상은 hash와 함께 비공개 보관했습니다. 배포 묶음에는 편집본만 포함합니다.
 
 **화면/코덱:** 1600×1000, 25 fps, H.264/yuv420p, MP4 faststart. 각 영상은 **6,800프레임·31개 장면**, SRT **31개 구간·272초**이며 각각 20 MB 미만입니다. 전체 디코딩·자막 일치와 **모든 장면의 마지막 실제 결과 화면**을 확인했습니다.
 
-이전 [NC 포털판](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/blob/7b7ca26/docs/videos.md), [NC CLI판](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/blob/1d53a68/docs/videos.md), [Sweden R2판](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.5/blob/0a8ab50/docs/videos.md)은 원래 revision에 보존합니다.
+이전 [NC 포털판](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/blob/7b7ca26/docs/videos.md), [NC CLI판](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/blob/1d53a68/docs/videos.md), [Sweden R2판](https://github.com/junwoojeong100/microsoft-foundry-labs-v1.3/blob/0a8ab50/docs/videos.md)은 원래 revision에 보존합니다.
 
 전체 수행 범위와 제한은 [실제 검증 보고서](validation-report.md)를 확인하세요.
